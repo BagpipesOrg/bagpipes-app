@@ -16,6 +16,7 @@
     "@polkadot/api": "^10.9.1",
     "@polkadot/extension-inject": "^0.46.5",
     "@tippyjs/react": "^4.2.6",
+    "antd": "^5.8.6",
     "axios": "^1.4.0",
     "dotenv": "^16.3.1",
     "draft-js": "^0.11.7",
@@ -32,8 +33,10 @@
     "slate-react": "^0.97.2",
     "socket.io-client": "^4.7.1",
     "styled-components": "^6.0.5",
+    "subconnect": "https://github.com/Koniverse/SubConnect",
     "typescript": "^5.1.6",
     "uuid": "^9.0.0",
+    "wallet-connect": "https://github.com/Koniverse/SubConnect",
     "zukeeper": "^1.0.2"
   },
   "devDependencies": {
