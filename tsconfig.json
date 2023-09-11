@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "baseUrl": "..",
+    "outDir": "./build",
+    "rootDir": "./src",
+    "allowJs": true,
+    "esModuleInterop": true,
+  },
+  "exclude": [
+    "vite.config.js",
+    "node_modules"
+  ],
+  "references": [
+    // { "path": "../sub-connect" },
+    { "path": "./src/components/Wallet/wallet-connect" },
+  ]
+}
