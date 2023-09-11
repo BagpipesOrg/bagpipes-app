@@ -13,7 +13,11 @@ export async function list_assethub_assets() {
     assets.forEach(([{args: [id] } ,asset]) => {
 		dictionary.set(id.toHuman() as number, asset.toHuman());
       });
-	return dictionary;
+// remove asset id in order to be able to parse it
+	const valuesArray = Array.from(dictionary.values());
+//	console.log(`starting to list..`);
+//	console.log(valuesArray);
+	return valuesArray;
 }
 
 
@@ -48,13 +52,14 @@ export async function list_hydradx_assets() {
 
 	const assets = await api.query.assetRegistry.assets.entries();
 	assets.forEach(([{args: [id] } ,asset]) => {
-		console.log(`entry:`);
-		console.log(asset.toHuman());
 		dictionary.set(id.toHuman() as number, asset.toHuman());
       });
 	
-	console.log(`done`);
-	return dictionary;
+	// remove asset id in order to be able to parse it
+	const valuesArray = Array.from(dictionary.values());
+//	console.log(`starting to list..`);
+//	console.log(valuesArray);
+	return valuesArray;
 }
 
 

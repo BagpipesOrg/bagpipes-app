@@ -3,9 +3,9 @@ import React, { useContext } from 'react';
 import { list_chains } from './../../../Chains/chain_info';
 import { list_assethub_assets } from './../../../Chains/draft_tx';
 
-function get_assethub_asset_list() {
+async function get_assethub_asset_list() {
     const assethub_assets = list_assethub_assets();
-
+    return assethub_assets
 }
 
 function listmychains() {
@@ -24,3 +24,4 @@ function listmychains() {
 
 
 export default listmychains;
+

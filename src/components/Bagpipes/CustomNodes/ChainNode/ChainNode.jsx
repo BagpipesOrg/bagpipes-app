@@ -50,12 +50,13 @@ const ChainNode = ({ data, isConnectable }) => {
   const extensionAddresses = useMemo(() => fetchAddressesFromExtension(), []);
 
 
-
+    console.log(`startiiii`);
   // Filtered assets based on the selected chain
   const filteredAssets = selectedChain
   ? assetOptions.find(option => option.chain === selectedChain)?.assets
   : [];
-
+  console.log(`filtered assets are:`);
+  console.log(filteredAssets);
   const addressesFromExtension = fetchAddressesFromExtension();
 
 
@@ -79,17 +80,21 @@ useEffect(() => {
         inputRef.current.focus();
     }
   }, [isModalVisible]);
-
+  console.log(`before req`)
 
   const handleChainChange = (e) => {
     setSelectedChain(e.target.value);
     const assetsForSelectedChain = assetOptions.find(option => option.chain === e.target.value)?.assets;
+    console.log(`assetsForSelectedChain length:`);
+    console.log(assetsForSelectedChain?.length());
     if (assetsForSelectedChain?.length) {
       setSelectedAsset(assetsForSelectedChain[0].value);
     } else {
       setSelectedAsset(null);
     }
 }
+
+  console.log(`[!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!]got handle request back`);
 
   const handleSaveAddress = async () => {
     const success = await addContact({ address: newAddress, name: newName });
@@ -140,8 +145,8 @@ return (
           <select onChange={handleAssetChange} value={selectedAsset}>
               <option value="" disabled>Select an asset</option>
               {filteredAssets.map(asset => (
-                  <option key={asset.value} value={asset.value}>
-                     {asset.ticker} {asset.description}
+                  <option key={asset.name} value={asset.name}>
+                     {asset.name} {asset.name}
                   </option>
               ))}
           </select>

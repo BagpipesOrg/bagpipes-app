@@ -1,3 +1,6 @@
+import { list_assethub_assets, list_hydradx_assets } from './../../../Chains/draft_tx';
+
+
 export const chainOptions = [
     {
       value: 'polkadot',
@@ -10,7 +13,7 @@ export const chainOptions = [
       logo: './polkadot-logo.svg'
     },
     {
-      value: 'hydraDx',
+      value: 'hydradx',
       label: 'Hydra',
       logo: './hydra-logo.svg'
     },
@@ -27,7 +30,7 @@ export const chainOptions = [
       chain: 'polkadot',
       assets: [
         {
-          value: 'polkadotDot',
+          name: 'polkadotDot',
           ticker: 'DOT',
           description: 'Polkadot'
         }
@@ -37,48 +40,22 @@ export const chainOptions = [
       chain: 'rococo',
       assets: [
         {
-          value: 'rococoRoc',
+          name: 'rococoRoc',
           ticker: 'ROC',
           description: 'Rococo'
         }
       ]
     },
     {
-      chain: 'hydraDx',
-      assets: [
-        {
-          value: 'hydraHdx',
-          ticker: 'HDX',
-          description: 'HDX',
-
-        },
-        {
-          value: 'hydraUsdt',
-          ticker: 'USDt',
-          description: 'Polkadot Asset Hub'
-
-        },
-        {
-          value: 'hydraDot',
-          ticker: 'DOT',
-          description: 'Polkadot'
-        }
-      ]
+      chain: 'hydradx',
+      assets: 
+      await list_hydradx_assets()
     },
     {
       chain: 'assetHub',
-      assets: [
-        {
-          value: 'assetHubUsdt',
-          ticker: 'USDt',
-          description: 'Tether'
-        },
-        {
-          value: 'assetHubDot',
-          ticker: 'DOT',
-          description: 'Asset Hub\'s DOT'
-        }
-      ]
+      assets: 
+        await list_assethub_assets()
+      
     }
   ];
 
