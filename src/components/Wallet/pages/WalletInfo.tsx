@@ -6,9 +6,6 @@ import React, { useContext } from 'react';
 
 import AccountList from '../components/AccountList';
 import WalletMetadata from '../components/WalletMetadata';
-
-import ChainList from '../components/WalletChains';
-
 import { WalletContext } from '../contexts';
 
 import './WalletInfo.scss' ;
@@ -30,13 +27,11 @@ function WalletInfo (): React.ReactElement {
         <div className={'wallet-title'}>
           {wallet?.title}
         </div>
-      <div className='wallet-info-page__text'>Version: {(walletContext?.wallet as Wallet)?.extension?.version}</div>
-      <div className='wallet-info-page__text'>Account List</div>
+      <div className='wallet-info-page__title'>Version: {(walletContext?.wallet as Wallet)?.extension?.version}</div>
+      <div className='wallet-info-page__text wallet-info-page__account-list'>Account List</div>
       <AccountList />
       <div className='wallet-info-page__text'>Metadata</div>
       <WalletMetadata />
-      <div className='wallet-info-page__text'>Chains:</div>
-      <ChainList />
     </div>
   </div>;
 }
