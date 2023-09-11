@@ -18,7 +18,7 @@ export const chainOptions = [
       logo: './hydra-logo.svg'
     },
     {
-      value: 'assetHub',
+      value: 'Polkadot AssetHub',
       label: 'Asset Hub',
       logo: './assethub-logo.svg'
     },
@@ -52,7 +52,7 @@ export const chainOptions = [
       await list_hydradx_assets()
     },
     {
-      chain: 'assetHub',
+      chain: 'Polkadot AssetHub',
       assets: 
         await list_assethub_assets()
       

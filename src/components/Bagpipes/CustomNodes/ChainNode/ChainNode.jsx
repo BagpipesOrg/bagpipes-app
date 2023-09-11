@@ -146,7 +146,7 @@ return (
               <option value="" disabled>Select an asset</option>
               {filteredAssets.map(asset => (
                   <option key={asset.name} value={asset.name}>
-                     {asset.name} {asset.name}
+                    {asset.name}
                   </option>
               ))}
           </select>
