@@ -11,7 +11,11 @@ export async function list_assethub_assets() {
 	const dictionary = new Map<number, any>();
 	const assets = await api.query.assets.metadata.entries();
     assets.forEach(([{args: [id] } ,asset]) => {
-		dictionary.set(id.toHuman() as number, asset.toHuman());
+		const myasset = {
+			Asset: asset.toHuman(),
+			AssetID: id.toHuman(),
+		};
+		dictionary.set(id.toHuman() as number, myasset);
       });
 // remove asset id in order to be able to parse it
 	const valuesArray = Array.from(dictionary.values());
@@ -28,7 +32,11 @@ export async function list_polkadex_assets() {
 	const dictionary = new Map<number, any>();
 	const assets = await api.query.assets.metadata.entries();
     assets.forEach(([{args: [id] } ,asset]) => {
-		dictionary.set(id.toHuman() as number, asset.toHuman());
+		const myasset = {
+			Asset: asset.toHuman(),
+			AssetID: id.toHuman(),
+		};
+		dictionary.set(id.toHuman() as number, myasset);
       });
 	return dictionary;
 
@@ -52,7 +60,11 @@ export async function list_hydradx_assets() {
 
 	const assets = await api.query.assetRegistry.assets.entries();
 	assets.forEach(([{args: [id] } ,asset]) => {
-		dictionary.set(id.toHuman() as number, asset.toHuman());
+		const myasset = {
+			Asset: asset.toHuman(),
+			AssetID: id.toHuman(),
+		};
+		dictionary.set(id.toHuman() as number, myasset);
       });
 	
 	// remove asset id in order to be able to parse it

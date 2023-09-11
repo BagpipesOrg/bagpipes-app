@@ -24,25 +24,32 @@ export const chainOptions = [
     },
   ];
 
+  const dot_info = [{
+    Asset: {
+      name: 'polkadotDot',
+      ticker: 'DOT',
+      description: 'Polkadot'
+    },
+    AssetID: 0,
+  }];
+
 
   export const assetOptions = [
     {
       chain: 'polkadot',
-      assets: [
-        {
-          name: 'polkadotDot',
-          ticker: 'DOT',
-          description: 'Polkadot'
-        }
-      ]
+      assets: dot_info,
     },
     {
       chain: 'rococo',
       assets: [
-        {
-          name: 'rococoRoc',
-          ticker: 'ROC',
-          description: 'Rococo'
+      {
+        asset:
+                {
+                  name: 'rococoRoc',
+                 ticker: 'ROC',
+                 description: 'Rococo'
+          },
+        AssetID: 0
         }
       ]
     },
