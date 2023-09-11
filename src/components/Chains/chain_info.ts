@@ -27,6 +27,15 @@ export interface ChainInfo {
 	paraid: number;
   }
 
+export interface AssetInfo {
+    deposit: string;
+    name: string;
+    symbol: string;
+    decimals: string;
+    isFrozen: boolean;
+    }
+  
+
 
 export function list_chains() {
     // dict[paraid] = ChainInfo

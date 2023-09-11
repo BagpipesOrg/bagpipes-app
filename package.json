@@ -51,6 +51,14 @@
     "@sub-wallet/wallet-connect": "./src/components/Wallet/wallet-connect"
   },
   "devDependencies": {
+    "@polkadot/api": "^10.2.1",
+    "@polkadot/keyring": "11.1.2",
+          "@polkadot/rpc-provider": "^10.2.1",
+          "@polkadot/util": "^10.2.1",
+          "@polkadot/util-crypto": "^10.2.1",
+          "@polkadot/api-contract":"^10.2.1",
+        "@polkadot/types":"^10.2.1",
+  
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@types/uuid": "^9.0.2",
