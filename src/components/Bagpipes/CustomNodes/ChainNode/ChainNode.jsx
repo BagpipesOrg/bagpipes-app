@@ -12,6 +12,10 @@ import '../../node.styles.css';
 import useAppStore from '../../../../store/useAppStore';
 import AddContacts from './AddContacts'
 import { chainOptions, assetOptions } from './options';
+import { list_chains } from './../../../Chains/chain_info';
+
+import listmychains from './testimport';
+
 
 const ChainNode = ({ data, isConnectable }) => {
   const { nodeContent } = data;
@@ -111,6 +115,9 @@ useEffect(() => {
     }
   }, [nodeContentMap, nodeId]);
 
+  const chain_list =   list_chains();
+  const ChainInfoList = Object.values(chain_list);
+
 return (
   <CustomNode nodeId={nodeId} isConnectable={isConnectable} data={data} isModalVisible={isModalVisible}>
     <div className="chain-selection">
@@ -118,11 +125,13 @@ return (
           <option value="" disabled selected>
               Select a chain
           </option>
-          {chainOptions.map(chain => (
-              <option key={chain.value} value={chain.value}>
-                  {chain.label}
-              </option>
-          ))}
+          {ChainInfoList.map((ChainInfo, index) => (
+          <option key={ChainInfo.name} value={ChainInfo.name}>
+          {ChainInfo.name}
+      </option>
+      ))}
+
+
       </select>
     </div>
 
