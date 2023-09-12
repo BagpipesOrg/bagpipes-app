@@ -145,8 +145,9 @@ return (
           <select onChange={handleAssetChange} value={selectedAsset}>
               <option value="" disabled>Select an asset</option>
               {filteredAssets.map(asset => (
-                  <option key={asset.name} value={asset.name}>
-                     {asset.name} {asset.name}
+              
+                  <option key={asset.Asset.name} value={asset.Asset.name}>
+                    {asset.Asset.name} | AssetId: {asset.AssetID}
                   </option>
               ))}
           </select>

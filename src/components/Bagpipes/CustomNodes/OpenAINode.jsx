@@ -37,7 +37,7 @@ const OpenAINode = ({ data, isConnectable }) => {
       <CustomNode nodeId={nodeId} fieldsComponent={OpenAINodeFields} data={data} />
 
       {loading ? (
-        <div className="loading-indicator">Loading...</div>
+        <div className="loading-indicator">Loading now...</div>
       ) : null}
 
       <div className="fixed bottom-1 flex px-1 text-center">

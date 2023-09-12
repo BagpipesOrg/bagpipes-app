@@ -18,31 +18,38 @@ export const chainOptions = [
       logo: './hydra-logo.svg'
     },
     {
-      value: 'assetHub',
+      value: 'Polkadot AssetHub',
       label: 'Asset Hub',
       logo: './assethub-logo.svg'
     },
   ];
 
+  const dot_info = [{
+    Asset: {
+      name: 'polkadotDot',
+      ticker: 'DOT',
+      description: 'Polkadot'
+    },
+    AssetID: 0,
+  }];
+
 
   export const assetOptions = [
     {
       chain: 'polkadot',
-      assets: [
-        {
-          name: 'polkadotDot',
-          ticker: 'DOT',
-          description: 'Polkadot'
-        }
-      ]
+      assets: dot_info,
     },
     {
       chain: 'rococo',
       assets: [
-        {
-          name: 'rococoRoc',
-          ticker: 'ROC',
-          description: 'Rococo'
+      {
+        asset:
+                {
+                  name: 'rococoRoc',
+                 ticker: 'ROC',
+                 description: 'Rococo'
+          },
+        AssetID: 0
         }
       ]
     },
@@ -52,7 +59,7 @@ export const chainOptions = [
       await list_hydradx_assets()
     },
     {
-      chain: 'assetHub',
+      chain: 'Polkadot AssetHub',
       assets: 
         await list_assethub_assets()
       
