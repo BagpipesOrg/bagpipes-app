@@ -377,6 +377,7 @@ console.log('Component re-rendered', formState.address);
        <input 
          className='unbounded-black text-xl text-black pl-1 border border-gray-300 rounded amount-selector'
          type="number" 
+         required
          placeholder="0.0000" 
          value={formState.amount}
          onChange={(e) => handleFormChange('amount', e.target.value)}

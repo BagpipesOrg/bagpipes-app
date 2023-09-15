@@ -6,7 +6,7 @@ import ScenarioService from '../../../services/ScenarioService';
 import { processScenarioData, validateDiagramData } from '../utils/scenarioUtils';
 import SocketContext from '../../../contexts/SocketContext';
 import useAppStore from '../../../store/useAppStore';
-
+import diagram2tx from './diagram2tx';
 
 const useExecuteScenario = (nodes, setNodes) => {
     const socket = useContext(SocketContext);
@@ -176,13 +176,13 @@ const useExecuteScenario = (nodes, setNodes) => {
     async function executeScenario() {
         console.log('[executeScenario] Starting Workflow Execution...');
         setLoading(true);
-
-        if (!socket.connected) {
-            console.error('Unable to execute scenario: socket is not connected');
-            // You can notify the user about the connection issue here...
-            return;
-        }
-
+        console.log(`[executeScenario]  set load ok`);
+     //   if (!socket.connected) {
+     //       console.error('Unable to execute scenario: socket is not connected');
+    //        // You can notify the user about the connection issue here...
+    //        return;
+    //    }
+        console.log(`[executeScenario] past socket check`);
         // Clear the nodeContentMap before starting a new execution
         setNodeContentMap({});
 
@@ -203,14 +203,23 @@ const useExecuteScenario = (nodes, setNodes) => {
             };
     
             console.log('[executeScenario] Retrieved diagramData from state:', diagramData);
-    
+            console.log('[executeScenario] reading FORM state: ', diagramData.nodes[2].formState); //check if formstate is a valid option
+            console.log('[executeScenario] diagram2tx loop start');
+            const x = await diagram2tx(diagramData);
+            console.log('[executeScenario] diagram2tx output', x);
+            console.log('[executeScenario] diagram2tx loop end');
+          //  const fluff = diagram2tx(diagramData);
+            console.log('[executeScenario] diagram2tx');
             // Validate the diagramData before processing
             diagramData = validateDiagramData(diagramData);
-    
+            const startingNodes = diagramData.nodes.filter(
+              node => !diagramData.edges.find(edge => edge.target === node.id)
+            );
+            console.log(`[executeScenario] starting Nodes:`, startingNodes);
             // Process the diagram data before sending it to the server
             diagramData = processScenarioData(diagramData);
             console.log('[executeScenario] Processed diagramData:', diagramData);
-    
+            
 
             console.log("[executeScenario] About to run the scenario with the following data:", { diagramData: diagramData, scenario: activeScenarioId });
 
@@ -235,15 +244,15 @@ const useExecuteScenario = (nodes, setNodes) => {
                   timestamp: currentDateTime,
                   nodeContentMap: { ...nodeContentMap },
               };
-              console.log('Saving execution data...');
+              console.log('[executeScenario] Saving execution data...');
               saveExecution(response.executionId, executionData);
             } else {
-              console.error('No executionId received from the server. Cannot save execution.');
+              console.error('[executeScenario] No executionId received from the server. Cannot save execution.');
           }
         } catch (error) {
-            console.error('An error occurred while executing the workflow:', error);
+            console.error('[executeScenario] An error occurred while executing the workflow:', error);
         } finally {
-            console.log('Workflow Execution Prepared and Sent to Server...');
+            console.log('[executeScenario] Workflow Execution Prepared and Sent to Server...');
             setNodes([...nodes]);
         }
     };
