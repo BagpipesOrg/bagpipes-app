@@ -1,6 +1,3 @@
-
-import { cryptoWaitReady } from '@polkadot/util-crypto';
-
 import { connectToWsEndpoint } from './DraftTx';
 import { ChainInfo, listChains } from './ChainsInfo'; 
 import { adjustBalance, parseBalanceString, formatToFourDecimals, toUnit} from './utils'
@@ -56,7 +53,6 @@ function  isAssetHubAssetBalance(obj: any): obj is  AssetHubAssetBalance {
 
 // check asset balance on polkadot assethub
 async function checkAssetHubAssetBalance(assetid: number, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number }> {
-  await cryptoWaitReady();
   const api = await connectToWsEndpoint(endpoints.polkadot.assetHub, signal);
   const balance = await api.query.assets.account(assetid, account_id_32);
   console.log(`checkAssetHubAssetBalance: ${JSON.stringify(balance)}`);
@@ -77,7 +73,6 @@ async function checkAssetHubAssetBalance(assetid: number, account_id_32: string,
 
 // returns the raw asset balance number, if not it returns 0
 async function checkHydraDxRawAssetBalance(assetid: number, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number }> {
-  await cryptoWaitReady();
   const api = await connectToWsEndpoint(endpoints.polkadot.hydraDx, signal);
   const hdxBalance = await api.query.system.account(account_id_32);
   const fluff = hdxBalance.toHuman();
