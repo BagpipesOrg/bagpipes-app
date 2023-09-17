@@ -69,6 +69,22 @@ async function checkAssetHubAssetBalance(assetid: number, account_id_32: string,
 //    console.log(`checkAssetHubAssetBalance done`);
 }
 
+interface OrmlTokensAccountData {
+  free: number;
+  reserved: number;
+  frozen: number;
+}
+
+function isOrmlTokensAccountData(obj: any): obj is OrmlTokensAccountData {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    'free' in obj &&
+    'reserved' in obj &&
+    'frozen' in obj
+        );
+}
+
 
 // returns the raw asset balance number, if not it returns 0
 async function checkHydraDxRawAssetBalance(assetid: number, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number }> {
