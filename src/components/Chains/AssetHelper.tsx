@@ -1,6 +1,8 @@
 import { connectToWsEndpoint } from './DraftTx';
 import { ChainInfo, listChains } from './ChainsInfo'; 
 import { adjustBalance, parseBalanceString, formatToFourDecimals, toUnit} from './utils'
+import { ApiPromise } from "@polkadot/api";
+
 
 import endpoints  from './WsEndpoints';
 import { string } from 'slate';
@@ -243,4 +245,32 @@ export async function getAssetBalanceForChain(chain: string, assetId: number, ac
     }
     console.log(`adjustedBalances [raw]: ${JSON.stringify(adjustedBalances)}`);
     return adjustedTrimmedBalancesIncludingData;
+}
+
+
+// generic function to check native account balance
+async function generic_check_native_balance(api: ApiPromise, address: string) {
+  // convert address to pubkey
+ // const accountId = api.createType("account_id_32", address).toHex();
+  const bal = await api.query.system.account(address);
+  const bal3 = await bal.toHuman();
+  if (isAssetResponseObject(bal3)) {
+      const bal2: AssetResponseObject = bal3;
+
+      return { free: bal3.data.free, reserved: bal3.data.reserved, miscFrozen:  bal3.data.miscFrozen , feeFrozen: bal3.data.feeFrozen} 
+        }
+    return {free: 0, reserved: 0, miscFrozen: 0, feeFrozen: 0};
+}
+
+async function hydradx_native_balance(address: string){
+  const api = await connectToWsEndpoint(endpoints.polkadot.hydraDx);
+  const result = generic_check_native_balance(api, address);
+  return result
+}
+
+async function assethub_native_balance(accountid: string){
+  const api = await connectToWsEndpoint(endpoints.polkadot.assetHub);
+  const result = generic_check_native_balance(api, accountid);
+
+    return result;
 }
