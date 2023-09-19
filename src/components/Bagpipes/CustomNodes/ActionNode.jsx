@@ -97,18 +97,18 @@ useEffect(() => {
             <div className="flex flex-col">
               <div onClick={() => handleDropdownClick('swap')} className="flex items-center p-2 hover:bg-gray-200">
                 <img src={SwapSVG} alt="Swap" className="w-4 h-4 mr-2" />
-                <div className='text-xs bold'>Swap</div>
+                <div className='text-xs bold font-semibold'>Swap</div>
               </div>
               <div onClick={() => handleDropdownClick('teleport')} className="flex items-center p-2 hover:bg-gray-200">
                 <img src={TeleportSVG} alt="Teleport" className="w-5 h-4 mr-2" />
-                <div className='text-xs'>Teleport</div>
+                <div className='text-xs font-semibold'>Teleport</div>
               </div>
             </div>
           </div>
         )}
       </div>
 
-      <div className="mt-2 text-center text-xs">
+      <div className="mt-2 text-center text-xs font-semibold primary-font">
         {formState.action && formState.action.charAt(0).toUpperCase() + formState.action.slice(1)}
       </div>
 

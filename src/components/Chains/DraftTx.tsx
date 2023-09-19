@@ -119,7 +119,7 @@ export async function genericPolkadotToParachain(paraid: number, amount: number,
 
 // working: https://hydradx.subscan.io/xcm_message/polkadot-047344414db62b7c424c8de9037c5a99edd0794c
 export async function dotToHydraDx(amount: number,  address: string){
-	const paraid = 2034;
+	const paraid = 2034; // TODO: call from ChainInfo
 	const api = await connectToWsEndpoint(endpoints.polkadot.default);
 	console.log(`sending dot to hydradx`);
 	// const address = "12u9Ha4PxyyQPvJgq3BghnqNXDwLqTnnJFuXV7aZQoiregT2";
@@ -154,6 +154,8 @@ export async function dotToHydraDx(amount: number,  address: string){
 	console.log(tx.toHex());
 	return tx;
 }
+
+// call await signAndSend()
 
 
 // ref: https://hydradx.subscan.io/extrinsic/3330338-2?event=3330338-7
