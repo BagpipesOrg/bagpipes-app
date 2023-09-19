@@ -274,3 +274,54 @@ async function assethub_native_balance(accountid: string){
 
     return result;
 }
+
+
+
+/// check asset decimals and metadata
+
+interface AssethubAssetMetadata {
+  deposit: number;
+  name: string;
+  symbol: string;
+  decimals: number;
+  isFrozen: boolean;
+}
+
+function isAssethubAssetMetadata(obj: any): obj is AssethubAssetMetadata {
+return (
+  typeof obj === 'object' &&
+  obj !== null &&
+  'deposit' in obj &&
+  'name' in obj &&
+  'decimals' in obj &&
+  'isFrozen' in obj
+      );
+}
+
+// get asset metadata 
+// output:  {"deposit":"u128","name":"Bytes","symbol":"Bytes","decimals":"u8","isFrozen":"bool"}
+async function get_assethub_asset_metadata(assetid: number) {
+const api = await connectToWsEndpoint(endpoints.polkadot.assetHub);
+const quuery = await api.query.asset.metadat(assetid);
+
+if (isAssethubAssetMetadata(quuery)){
+  const data: AssethubAssetMetadata = quuery
+  return { "deposit": data.deposit, "name": data.name, "symbol": data.symbol, "decimals": data.decimals, "isFrozen": data.isFrozen};
+}
+
+return  {"deposit":0 ,"name":"not found","symbol":"NOT FOUND","decimals":0,"isFrozen":false}
+}
+
+
+/*
+assetRegistry.assetMetadataMap(5)
+{
+  symbol: DOT
+  decimals: 10
+}
+*/
+async function get_hydradx_asset_symbol_decimals(assetid: number){
+  const api = await connectToWsEndpoint(endpoints.polkadot.hydraDx);
+  const resp = (await api.query.assetRegistry.assetMetadataMap(assetid)).toHuman();
+  return resp;
+}
