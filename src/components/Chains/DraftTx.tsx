@@ -196,3 +196,18 @@ async function hydraDxToParachain(amount: number, assetId: number, destAccount: 
 }
 
 // Swap functionality 
+// ref: https://github.com/XcmSend/xcm-send-tx/blob/main/scrips/tx-send/src/send_tx.ts#L446
+// assetin = asset I want to sell 
+// assetout = asset I want to buy/get
+// amount = amount I want to sell of AssetIn
+// minBuyAmount = minimum amount to buy, note that function fails if this is not set correctly
+async function hydradx_omnipool_sell(assetin: string, assetout: string, amount: number, minBuyAmount: number) {
+	const api = await connectToWsEndpoint(endpoints.polkadot.hydraDx);
+	const tx = await api.tx.omnipool.sell(
+		assetin,
+		assetout, 
+		amount,
+		minBuyAmount
+	);
+		return tx;
+}
