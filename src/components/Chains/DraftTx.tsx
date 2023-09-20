@@ -151,7 +151,7 @@ export async function dotToHydraDx(amount: number,  address: string){
 // ref: https://hydradx.subscan.io/extrinsic/3330338-2?event=3330338-7
 // dry run results: https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc.hydradx.cloud#/extrinsics/decode and input this: 0x640489010300000300a10f00000000002801010200a10f000000
 // HYDRADX > parachain
-async function hydraDxToParachain(amount: number, assetId: number, destAccount: string, paraId: number) {
+export async function hydraDxToParachain(amount: number, assetId: number, destAccount: string, paraId: number) {
 	const api = await connectToWsEndpoint(endpoints.polkadot.hydraDx);
 
 	
@@ -186,3 +186,19 @@ async function hydraDxToParachain(amount: number, assetId: number, destAccount: 
 }
 
 // Swap functionality 
+/// put in a sell order to sell/swap asset A for asset B on omnipool
+/// Input:
+/// assetin = asset you have on your account
+/// assetout = asset you want to swap to
+/// amount = amount of assetin you want to swap to assetout
+/// minBuyAmount = minimum amount to buy, note: tx will fail if this is set to 0 or to low
+export async function hydradx_omnipool_sell(assetin: string, assetout: string, amount: number, minBuyAmount: number) {
+	const api = await connectToWsEndpoint(endpoints.polkadot.hydraDx);
+	const tx = await api.tx.omnipool.sell(
+		assetin,
+		assetout, 
+		amount,
+		minBuyAmount
+	);
+		return tx;
+}
