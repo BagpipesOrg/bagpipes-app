@@ -191,7 +191,7 @@ export default function ActionNode({ children, data, isConnectable }) {
       </div>
 
       {formState.action === 'swap' && sellPriceInfoMap[nodeId] && (
-            <div className="sell-price-info mt-4 bg-white p-2 rounded border border-gray-300 text-gray-700 mt-1 p-3 m-2">
+            <div className="sell-price-info mt-4 bg-gray-100 p-2 rounded border border-gray-300 text-gray-700 mt-1 p-3 m-2">
         {/* Extract the values from sellPriceInfoMap[nodeId] and display them */}
         <div>Amount In {}: {sellPriceInfoMap[nodeId].amountIn}</div>
         <div>Amount Out: {sellPriceInfoMap[nodeId].amountOut}</div>
