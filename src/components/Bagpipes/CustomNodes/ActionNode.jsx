@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Handle, Position, useNodeId } from 'reactflow';
+import { getHydraDxSellPrice } from '../../Chains/PriceHelper';
 import SwapSVG from '/swap.svg';
 import TeleportSVG from '/teleport.svg';
 import useAppStore from '../../../store/useAppStore';
@@ -47,6 +48,11 @@ useEffect(() => {
   if (currentNodeFormData) {
     setFormState(currentNodeFormData);
   }
+}, []);
+
+useEffect(() => {
+  getHydraDxSellPrice()
+
 }, []);
 
   

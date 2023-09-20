@@ -1,10 +1,7 @@
-import { connectToWsEndpoint } from './DraftTx';
+import connectToWsEndpoint from './connect';
 import { ChainInfo, listChains } from './ChainsInfo'; 
 import { adjustBalance, parseBalanceString, formatToFourDecimals, toUnit} from './utils'
 import { ApiPromise } from "@polkadot/api";
-
-
-import endpoints  from './WsEndpoints';
 import { string } from 'slate';
 
 interface AssetResponseObject {
@@ -57,7 +54,7 @@ function  isAssetHubAssetBalance(obj: any): obj is  AssetHubAssetBalance {
 async function checkAssetHubAssetBalance(assetid: number, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number }> {
   console.log(`checkAssetHubAssetBalance accountId`, account_id_32)
   // below, signal is used to abort the request
-  const api = await connectToWsEndpoint(endpoints.polkadot.assetHub, signal);
+  const api = await connectToWsEndpoint('assetHub', signal);
   const balance = await api.query.assets.account(assetid, account_id_32);
   const b3 = balance.toHuman();
   console.log(`checkAssetHubAssetBalance balance`, balance)
@@ -101,7 +98,7 @@ async function checkHydraDxRawAssetBalance(assetid: number, account_id_32: strin
   let bal_obj: OrmlTokensAccountData;
     console.log(`checkHydraDxRawAssetBalance trying to connect`)
     try {
-      api = await connectToWsEndpoint(endpoints.polkadot.hydraDx, signal);
+      api = await connectToWsEndpoint('hydraDx', signal);
       hdxBalance = await api.query.tokens.accounts(account_id_32, assetid);
   } catch (error) {
       console.error(`Error retrieving balance for asset ID ${assetid} and account ${account_id_32}:`, error);
@@ -131,7 +128,7 @@ async function checkPolkadotDotRawNativeBalance(accountId: string, signal?: Abor
   let bal: any;
   let bal3: any;
   if (accountId) {
-    const api = await connectToWsEndpoint(endpoints.polkadot.default, signal);
+    const api = await connectToWsEndpoint('polkadot', signal);
     bal = await api.query.system.account(accountId);
   }
   bal3 = bal.toHuman();
@@ -149,7 +146,7 @@ async function checkPolkadotDotRawNativeBalance(accountId: string, signal?: Abor
 
 /// returns the raw balance of the native dot token
 async function checkRococoRocRawNativeBalance(accountid: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number }> {
-  const api = await connectToWsEndpoint(endpoints.rococo.default, signal);
+  const api = await connectToWsEndpoint('rococo', signal);
   const bal = await api.query.system.account(accountid);
   const bal3 = bal.toHuman();
   if (isAssetResponseObject(bal3)) {
@@ -163,6 +160,9 @@ async function checkRococoRocRawNativeBalance(accountid: string, signal?: AbortS
   return { free: 0, reserved: 0, total: 0 };
 }
 
+
+
+
 /*
 assetRegistry.assetMetadataMap(5)
 {
@@ -171,7 +171,7 @@ assetRegistry.assetMetadataMap(5)
 }
 */
 async function getHydradxAssetSymbolDecimals(assetid: number){
-    const api = await connectToWsEndpoint(endpoints.polkadot.hydraDx);
+    const api = await connectToWsEndpoint('hydraDx');
     const resp = (await api.query.assetRegistry.assetMetadataMap(assetid)).toHuman();
     return resp;
 }
@@ -200,9 +200,12 @@ export async function getAssetBalanceForChain(chain: string, assetId: number, ac
 
     if (chain === "polkadot") {
         balances = await checkPolkadotDotRawNativeBalance(accountId, signal);
+
     } else if (chain === "hydraDx") {
       console.log(`getAssetBalanceForChain checking hydradx asset id`, assetId);
         balances = await checkHydraDxRawAssetBalance(assetId, accountId, signal);
+        console.log(`getAssetBalanceForChain balance for hydradx`, balances.free.toString());
+
     } else if (chain === "assetHub") {
         balances = await checkAssetHubAssetBalance(sanitizedAssetId, accountId, signal);
     } else if (chain === "rococo") {
@@ -263,13 +266,13 @@ async function generic_check_native_balance(api: ApiPromise, address: string) {
 }
 
 async function hydradx_native_balance(address: string){
-  const api = await connectToWsEndpoint(endpoints.polkadot.hydraDx);
+  const api = await connectToWsEndpoint('hydraDx');
   const result = generic_check_native_balance(api, address);
   return result
 }
 
 async function assethub_native_balance(accountid: string){
-  const api = await connectToWsEndpoint(endpoints.polkadot.assetHub);
+  const api = await connectToWsEndpoint('assetHub');
   const result = generic_check_native_balance(api, accountid);
 
     return result;
@@ -301,7 +304,7 @@ return (
 // get asset metadata 
 // output:  {"deposit":"u128","name":"Bytes","symbol":"Bytes","decimals":"u8","isFrozen":"bool"}
 async function get_assethub_asset_metadata(assetid: number) {
-const api = await connectToWsEndpoint(endpoints.polkadot.assetHub);
+const api = await connectToWsEndpoint('assetHub');
 const quuery = await api.query.asset.metadat(assetid);
 
 if (isAssethubAssetMetadata(quuery)){
@@ -321,7 +324,7 @@ assetRegistry.assetMetadataMap(5)
 }
 */
 async function get_hydradx_asset_symbol_decimals(assetid: number){
-  const api = await connectToWsEndpoint(endpoints.polkadot.hydraDx);
+  const api = await connectToWsEndpoint('hydraDx');
   const resp = (await api.query.assetRegistry.assetMetadataMap(assetid)).toHuman();
   return resp;
 }
