@@ -612,6 +612,8 @@ const BagpipesFlow = () => {
     }, [selectedEdgeId, setSelectedEdgeInScenario, activeScenarioId]);
     
     const onNodeClick = useCallback((event, node) => {
+      console.log("onNodeClick Clicked on:", node);
+
       if (selectedNodeId === node.id) {
           setSelectedNodeId(null); // deselect if the same node is clicked again
           setSelectedNodeInScenario(activeScenarioId, null); // update scenario state
@@ -620,9 +622,8 @@ const BagpipesFlow = () => {
           setSelectedNodeInScenario(activeScenarioId, node.id); // update scenario state
       }
   
-      // Your existing logic
       const connectedNodes = getAllConnectedNodes(currentScenarioNodes.id, currentScenarioEdges);
-      // console.log('All connected nodes:', connectedNodes);
+      console.log('All connected nodes:', connectedNodes);
   
       if (['openAi', 'formGroup', 'chain'].includes(node.type)) {
           setModalNodeId(node.id);

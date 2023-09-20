@@ -4,6 +4,7 @@ import { getHydraDxSellPrice } from '../../Chains/PriceHelper';
 import SwapSVG from '/swap.svg';
 import TeleportSVG from '/teleport.svg';
 import useAppStore from '../../../store/useAppStore';
+import { getOrderedList } from '../utils/scenarioUtils';
 
 import '../../../index.css';
 import '../node.styles.scss';
@@ -18,6 +19,12 @@ export default function ActionNode({ children, data, isConnectable }) {
     saveNodeFormData: state.saveNodeFormData,
 
   }));
+  const selectedNodeId = scenarios[activeScenarioId]?.selectedNodeId;
+  const [assetInNodeId, setAssetInNodeId] = useState(null);
+  const [assetOutNodeId, setAssetOutNodeId] = useState(null);
+  const [sellPriceInfo, setSellPriceInfo] = useState(null);
+  const [sellPriceInfoMap, setSellPriceInfoMap] = useState({});
+
 
   const initialAction = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData?.action || null;
 
@@ -43,19 +50,17 @@ export default function ActionNode({ children, data, isConnectable }) {
   };
 
   // This effect will only run once when the component mounts
-useEffect(() => {
-  const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
-  if (currentNodeFormData) {
-    setFormState(currentNodeFormData);
-  }
-}, []);
+  useEffect(() => {
+    const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+    if (currentNodeFormData) {
+      setFormState(currentNodeFormData);
+    }
+  }, []);
 
-useEffect(() => {
-  getHydraDxSellPrice()
+  useEffect(() => {
+    getHydraDxSellPrice()
 
-}, []);
-
-  
+  }, []);
 
   useEffect(() => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
@@ -74,6 +79,96 @@ useEffect(() => {
     const formData = { ...formState };
     saveNodeFormData(activeScenarioId, nodeId, formData);
   }, [formState, nodeId, activeScenarioId]);
+
+
+
+  // To do with price info in Swap...
+
+  const getAssetNodes = (selectedNodeId) => {
+    const orderedList = getOrderedList(scenarios[activeScenarioId]?.diagramData?.edges);
+    const currentIndex = orderedList.indexOf(selectedNodeId);
+    
+    if (currentIndex === -1) return { assetInNodeId: null, assetOutNodeId: null };
+    
+    const assetInNodeId = orderedList[currentIndex - 1];
+    const assetOutNodeId = orderedList[currentIndex + 1];
+    
+    return { assetInNodeId, assetOutNodeId };
+  }
+
+
+
+  useEffect(() => {
+    if (!selectedNodeId || !selectedNodeId.startsWith('action_')) return;
+    console.log('[ActionNode] active node:', selectedNodeId);
+
+      const { assetInNodeId, assetOutNodeId } = getAssetNodes(selectedNodeId);
+      
+      setAssetInNodeId(assetInNodeId);
+      setAssetOutNodeId(assetOutNodeId);
+  }, [selectedNodeId]);
+
+
+  useEffect(() => {
+    if (!assetInNodeId || !assetOutNodeId) return;
+    
+    const nodes = scenarios[activeScenarioId]?.diagramData?.nodes;
+    
+    const assetInNodeData = nodes.find(node => node.id === assetInNodeId);
+    const assetOutNodeData = nodes.find(node => node.id === assetOutNodeId);
+    
+    const assetInFormData = assetInNodeData?.formData;
+    const assetOutFormData = assetOutNodeData?.formData;
+
+    // Fetch the sell price
+    getHydraDxSellPrice(assetInFormData?.asset?.assetId, assetOutFormData?.asset?.assetId, assetInFormData?.amount)
+    .then(priceInfo => {
+        setSellPriceInfoMap(prevMap => ({
+            ...prevMap,
+            [selectedNodeId]: priceInfo
+        }));
+    });
+
+}, [assetInNodeId, assetOutNodeId]);
+
+//   useEffect(() => {
+
+//     if (nodeId !== selectedNodeId) {
+//       // This means this ActionNode is not the one that's currently selected
+//       return; // Exit the effect early
+//   }
+
+//     console.log('[ActionNode] active node:', nodeId);
+//     const currentDiagramEdges = scenarios[activeScenarioId]?.diagramData?.edges;
+//     const orderedList = getOrderedList(currentDiagramEdges);
+//     // console.log('[ActionNode] Ordered List of Nodes:', orderedList);
+  
+//     const currentIndex = orderedList.indexOf(nodeId);
+//     if (currentIndex !== -1) {  
+//       const assetInNodeId = orderedList[currentIndex - 1];
+//       const assetOutNodeId = orderedList[currentIndex + 1];
+  
+//       // Assuming `scenarios[activeScenarioId].diagramData.nodes` is an array of node objects
+//       const nodes = scenarios[activeScenarioId]?.diagramData?.nodes;
+  
+//       const assetInNodeData = nodes.find(node => node.id === assetInNodeId);
+//       const assetOutNodeData = nodes.find(node => node.id === assetOutNodeId);
+  
+//       const assetInId = assetInNodeData?.formData?.asset;  // Adjust according to your data structure
+//       const assetOutId = assetOutNodeData?.formData?.asset;
+//       const amountIn = assetInNodeData?.formData?.amount;
+  
+//       // console.log('[ActionNode] Asset In ID:', assetInId, assetInNodeId );
+//       // console.log('[ActionNode] Asset Out ID:', assetOutId, assetOutNodeId);
+//       // console.log('[ActionNode] Amount In:', amountIn);
+  
+//       // You can then use these values to perform your logic or calculations
+//       // ...
+  
+//     }
+  
+// }, [ selectedNodeId]); //
+  
   
   return (
     <div className="custom-node rounded-lg shadow-lg text-xs flex flex-col items-center justify-start p-2 bg-gray-100 primary-font">
@@ -114,9 +209,28 @@ useEffect(() => {
         )}
       </div>
 
+
       <div className="mt-2 text-center text-xs font-semibold primary-font">
         {formState.action && formState.action.charAt(0).toUpperCase() + formState.action.slice(1)}
       </div>
+
+      {sellPriceInfoMap[nodeId] && (
+    <div className="sell-price-info mt-4 bg-white p-2 rounded border border-gray-300 text-gray-700">
+        {/* Extract the values from sellPriceInfoMap[nodeId] and display them */}
+        <div>Amount In: {sellPriceInfoMap[nodeId].amountIn}</div>
+        <div>Amount Out: {sellPriceInfoMap[nodeId].amountOut}</div>
+                <div><strong>Type:</strong> {sellPriceInfo.type}</div>
+                <div><strong>Amount In:</strong> {sellPriceInfo.amountIn}</div>
+                <div><strong>Amount Out:</strong> {sellPriceInfo.amountOut}</div>
+                <div><strong>Spot Price:</strong> {sellPriceInfo.spotPrice}</div>
+                <div><strong>Trade Fee:</strong> {sellPriceInfo.tradeFee}</div>
+                <div><strong>Price Impact (%):</strong> {sellPriceInfo.priceImpactPct}</div>
+                <div><strong>Trade Fee (%):</strong> {sellPriceInfo.tradeFeePct}</div>
+                {/* ... add more fields as needed ... */}
+            </div>
+        )}
+
+
 
 
       <div className="space-y-2 mt-2">
