@@ -58,9 +58,11 @@ export default function ActionNode({ children, data, isConnectable }) {
   }, []);
 
   useEffect(() => {
-    getHydraDxSellPrice()
+    if (formState.action === 'teleport') {
+        setSellPriceInfo(null);
+    }
+}, [formState.action]);
 
-  }, []);
 
   useEffect(() => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
@@ -188,7 +190,7 @@ export default function ActionNode({ children, data, isConnectable }) {
         {formState.action && formState.action.charAt(0).toUpperCase() + formState.action.slice(1)}
       </div>
 
-      {sellPriceInfoMap[nodeId] && (
+      {formState.action === 'swap' && sellPriceInfoMap[nodeId] && (
             <div className="sell-price-info mt-4 bg-white p-2 rounded border border-gray-300 text-gray-700 mt-1 p-3 m-2">
         {/* Extract the values from sellPriceInfoMap[nodeId] and display them */}
         <div>Amount In {}: {sellPriceInfoMap[nodeId].amountIn}</div>
