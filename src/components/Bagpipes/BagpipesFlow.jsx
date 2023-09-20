@@ -149,7 +149,7 @@ const BagpipesFlow = () => {
           edges: currentScenarioEdges,
         };
     
-        console.log("Saving State:", diagramData); 
+        // console.log("Saving State:", diagramData); 
 
         // Save the diagram data to local storage
         localStorage.setItem('diagramData', JSON.stringify(diagramData));
@@ -168,7 +168,7 @@ const BagpipesFlow = () => {
         
         // Load diagram data from local storage
         const storedDiagramData = localStorage.getItem('diagramData');
-        console.log('stored diagram data', storedDiagramData)
+        // console.log('stored diagram data', storedDiagramData)
         if (storedDiagramData) {
           const { nodes, edges } = JSON.parse(storedDiagramData);
     
@@ -181,13 +181,13 @@ const BagpipesFlow = () => {
 
 
       useEffect(() => {
-        console.log("Active Scenario ID in Bagpipes:", activeScenarioId);
+        // console.log("Active Scenario ID in Bagpipes:", activeScenarioId);
       }, [activeScenarioId]);
 
       useEffect(() => {
         // Check if there's an active scenario when the component mounts
         if (activeScenarioId === null) {
-          console.log('No active scenario. Redirecting to Lab.');
+          // console.log('No active scenario. Redirecting to Lab.');
           navigate('/lab'); // Redirect to Lab page
         }
       }, []); 
@@ -224,7 +224,7 @@ const BagpipesFlow = () => {
       if (activeScenarioId) {
           const currentScenario = scenarios[activeScenarioId];
           if (currentScenario && currentScenario.diagramData) {
-            console.log('currentScenario.diagramData hook in Bagpipes', currentScenario.diagramData)
+            // console.log('currentScenario.diagramData hook in Bagpipes', currentScenario.diagramData)
               // Set the nodes and edges from the current scenario
               const { nodes: newNodes, edges: newEdges } = currentScenario.diagramData;
               setNodes(newNodes);
@@ -256,8 +256,8 @@ const BagpipesFlow = () => {
      * @param changes {object} - Contains the changes made to the node state.
      */
           const onNodesChange = useCallback((changes) => {
-            console.log("Active Scenario ID:", activeScenarioId);
-            console.log("Changes received:", changes); // Add this line to log changes
+            // console.log("Active Scenario ID:", activeScenarioId);
+            // console.log("Changes received:", changes); // Add this line to log changes
           
             if (!Array.isArray(changes)) {
               console.error("Changes should be an array but received:", changes);
@@ -326,7 +326,7 @@ const BagpipesFlow = () => {
   
       const closeNodeIsSource = closestNode.node.positionAbsolute.x < node.positionAbsolute.x;
   
-      console.log("Closest node found:", closestNode.node);
+      // console.log("Closest node found:", closestNode.node);
       console.log("Resulting edge:", {
         id: `${node.id}-${closestNode.node.id}`,
         source: closeNodeIsSource ? closestNode.node.id : node.id,
@@ -347,7 +347,7 @@ const BagpipesFlow = () => {
      */
       const onNodeDrag = useCallback(
         (_, node) => {
-          console.log("Node being dragged:", node);
+          // console.log("Node being dragged:", node);
           const closeEdge = getClosestEdge(node);
           takeSnapshot();
       
@@ -359,12 +359,12 @@ const BagpipesFlow = () => {
             closeEdge.className = 'temp';
             // setEdges(currentEdges => [...currentEdges, closeEdge]);
             setTempEdge(closeEdge);
-            console.log("Added temp edge:", closeEdge);
+            // console.log("Added temp edge:", closeEdge);
           } 
       
           // Existing logic for updating node position in the scenario
           updateNodePositionInScenario(activeScenarioId, node.id, node.position);
-          console.log("Updating node position:", activeScenarioId, node.id, node.position);
+          // console.log("Updating node position:", activeScenarioId, node.id, node.position);
         },
         [getClosestEdge, currentScenarioEdges, takeSnapshot, updateNodePositionInScenario, activeScenarioId]
       );
@@ -390,7 +390,7 @@ const BagpipesFlow = () => {
               const connectedEdge = { ...closeEdge, className: undefined }; // Remove the 'temp' className
               connectedEdges.push(connectedEdge);
               
-              console.log("Connected edge added:", connectedEdge);
+              // console.log("Connected edge added:", connectedEdge);
               // Call the action to add the edge to the current scenario
               addEdgeToScenario(activeScenarioId, connectedEdge);
             } 
@@ -622,11 +622,11 @@ const BagpipesFlow = () => {
   
       // Your existing logic
       const connectedNodes = getAllConnectedNodes(currentScenarioNodes.id, currentScenarioEdges);
-      console.log('All connected nodes:', connectedNodes);
+      // console.log('All connected nodes:', connectedNodes);
   
       if (['openAi', 'formGroup', 'chain'].includes(node.type)) {
           setModalNodeId(node.id);
-          console.log('modalNodeId:', node.id); 
+          // console.log('modalNodeId:', node.id); 
       }
     }, [selectedNodeId, setSelectedNodeInScenario, activeScenarioId]);
     

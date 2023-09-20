@@ -10,13 +10,15 @@ export const CHAIN_METADATA = {
         nativeAccount: true,
 
     },
-    hydradx: {
+    hydraDx: {
         chain: "HydraDX",
         endpoints: [
-            "wss://hydradx.api.onfinality.io/public-ws",
             "wss://rpc.hydradx.cloud",
-            "wss://hydradx-rpc.dwellir.com"
+            "wss://hydradx-rpc.dwellir.com",
+            "wss://hydradx.api.onfinality.io/public-ws",
+
         ],
+        queryAssetPaths: ["assetRegistry.assets"],  
         queryBalancePaths: ["system.account", "tokens.accounts"],
         transferFunction: "xTokens.transferMultiasset",
         nativeAccount: true,
@@ -25,9 +27,10 @@ export const CHAIN_METADATA = {
     assetHub: {
         chain: "AssetHub",
         endpoints: [
-            "wss://statemint.api.onfinality.io/public-ws",
             "wss://polkadot-asset-hub-rpc.polkadot.io",
+            "wss://statemint.api.onfinality.io/public-ws",
         ],
+        queryAssetPaths: ["assets.metadata"],  
         queryBalancePaths: ["system.account", "assets.account"],
         nativeAccount: true,
 

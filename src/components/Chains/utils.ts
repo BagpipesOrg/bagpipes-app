@@ -39,6 +39,7 @@ export function formatToFourDecimals(value: string) {
 
 
 export function toUnit(balance: string | number, token_decimals: number): number {
+  console.log('[toUnit] balance', balance, token_decimals);
   if (balance === null || balance === undefined) {
     throw new Error('Received invalid balance: null or undefined');
   }
@@ -46,9 +47,11 @@ export function toUnit(balance: string | number, token_decimals: number): number
   // Initialize balanceStr based on balance type
   let balanceStr = typeof balance === "number" ? balance.toString() : balance;
 
-  // Remove commas
-  balanceStr = balanceStr.replace(/,/g, ''); 
-
+  // remove commas
+  // only apply replace if it's a string with a comma
+  if (typeof balanceStr === "string" && balanceStr.includes(',')) {
+    balanceStr = balanceStr.replace(/,/g, '');
+  }
   const base = 10n;
   const exponent = BigInt(token_decimals);
   console.log('[toUnit] exponent', exponent);

@@ -10,7 +10,6 @@ const HydraDx = listChains();
 
 export async function listAssetHubAssets(signal: AbortSignal) {
 	const api = await connectToWsEndpoint(endpoints.polkadot.assetHub, signal);
-	console.log(`Connected to assethub`);
 	
 	const dictionary = new Map<number, any>();
 	const assets = await api.query.assets.metadata.entries();
@@ -31,7 +30,6 @@ export async function listAssetHubAssets(signal: AbortSignal) {
 
 export async function listPolkadexAssets(signal: AbortSignal) {
 	const api = await connectToWsEndpoint(endpoints.polkadot.polkadex, signal);
-	console.log(`Connected to Polkadex`);
 	
 	const dictionary = new Map<number, any>();
 	const assets = await api.query.assets.metadata.entries();
