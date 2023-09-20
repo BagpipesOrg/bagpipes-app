@@ -1,6 +1,12 @@
 import { hexToNumber, bnToHex, hexToBigInt, u8aToHex } from "@polkadot/util";
 
 
+export enum supported_Polkadot_Chains {
+  polkadot,
+  hydradx,
+  assethub,
+}
+
 export function adjustBalance(balance: number, tokenDecimals: number): string {
   if (typeof balance === 'undefined' || balance === null) {
     return "0"; // or whatever default value you wish to return for undefined balances
