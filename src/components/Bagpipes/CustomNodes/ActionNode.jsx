@@ -24,6 +24,7 @@ export default function ActionNode({ children, data, isConnectable }) {
   const [assetOutNodeId, setAssetOutNodeId] = useState(null);
   const [sellPriceInfo, setSellPriceInfo] = useState(null);
   const [sellPriceInfoMap, setSellPriceInfoMap] = useState({});
+  const [dropdownVisible, setDropdownVisible] = useState(false);
 
 
   const initialAction = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData?.action || null;
@@ -32,7 +33,6 @@ export default function ActionNode({ children, data, isConnectable }) {
       action: initialAction
   });
   
-  const [dropdownVisible, setDropdownVisible] = useState(false);
 
   const getActionImage = () => {
     if (formState.action === 'swap') return SwapSVG;
@@ -85,8 +85,10 @@ export default function ActionNode({ children, data, isConnectable }) {
   // To do with price info in Swap...
 
   const getAssetNodes = (selectedNodeId) => {
+
     const orderedList = getOrderedList(scenarios[activeScenarioId]?.diagramData?.edges);
     const currentIndex = orderedList.indexOf(selectedNodeId);
+
     
     if (currentIndex === -1) return { assetInNodeId: null, assetOutNodeId: null };
     
@@ -109,18 +111,25 @@ export default function ActionNode({ children, data, isConnectable }) {
   }, [selectedNodeId]);
 
 
+  const nodes = scenarios[activeScenarioId]?.diagramData?.nodes;
+    
+  const assetInNodeData = nodes.find(node => node.id === assetInNodeId);
+  const assetOutNodeData = nodes.find(node => node.id === assetOutNodeId);
+  
+  const assetInFormData = assetInNodeData?.formData;
+  const assetOutFormData = assetOutNodeData?.formData;
+  console.log('[ActionNode] assetInFormData:', assetInFormData);
+  console.log('[ActionNode] assetOutFormData:', assetOutFormData);
+
   useEffect(() => {
     if (!assetInNodeId || !assetOutNodeId) return;
-    
-    const nodes = scenarios[activeScenarioId]?.diagramData?.nodes;
-    
-    const assetInNodeData = nodes.find(node => node.id === assetInNodeId);
-    const assetOutNodeData = nodes.find(node => node.id === assetOutNodeId);
-    
-    const assetInFormData = assetInNodeData?.formData;
-    const assetOutFormData = assetOutNodeData?.formData;
-    console.log('[ActionNode] assetInFormData:', assetInFormData);
-    console.log('[ActionNode] assetOutFormData:', assetOutFormData);
+
+    const assetInId = assetInFormData?.asset?.assetId;
+    const assetOutId = assetOutFormData?.asset?.assetId;
+    const amount = assetInFormData?.amount;
+
+    if(!assetInId || !assetOutId || !amount) return;  
+
 
     // Fetch the sell price
     getHydraDxSellPrice(assetInFormData?.asset?.assetId, assetOutFormData?.asset?.assetId, assetInFormData?.amount)
@@ -129,9 +138,10 @@ export default function ActionNode({ children, data, isConnectable }) {
             ...prevMap,
             [selectedNodeId]: priceInfo
         }));
+
     });
 
-}, [assetInNodeId, assetOutNodeId]);
+  }, [assetInNodeId, assetOutNodeId, assetInFormData, assetOutFormData]);
   
   
   return (
@@ -154,7 +164,7 @@ export default function ActionNode({ children, data, isConnectable }) {
           <div className="text-gray-500 mx-auto text-xs font-semibold">Select Action</div>
         )}
 
-          <div className="pl-2">⌄</div> {/* This is the dropdown arrow symbol */}
+          <div className="pl-2">⌄</div>
         </div>
         
         {dropdownVisible && (
@@ -183,13 +193,13 @@ export default function ActionNode({ children, data, isConnectable }) {
         {/* Extract the values from sellPriceInfoMap[nodeId] and display them */}
         <div>Amount In {}: {sellPriceInfoMap[nodeId].amountIn}</div>
         <div>Amount Out: {sellPriceInfoMap[nodeId].amountOut}</div>
-                <div><strong>Type:</strong> {sellPriceInfo.type}</div>
-                <div><strong>Amount In:</strong> {sellPriceInfo.amountIn}</div>
-                <div><strong>Amount Out:</strong> {sellPriceInfo.amountOut}</div>
-                <div><strong>Spot Price:</strong> {sellPriceInfo.spotPrice}</div>
-                <div><strong>Trade Fee:</strong> {sellPriceInfo.tradeFee}</div>
-                <div><strong>Price Impact (%):</strong> {sellPriceInfo.priceImpactPct}</div>
-                <div><strong>Trade Fee (%):</strong> {sellPriceInfo.tradeFeePct}</div>
+                <div><strong>Type:</strong> {sellPriceInfoMap[nodeId].type}</div>
+                <div><strong>Amount In:</strong> {sellPriceInfoMap[nodeId].amountIn}</div>
+                <div><strong>Amount Out:</strong> {sellPriceInfoMap[nodeId].amountOut}</div>
+                <div><strong>Spot Price:</strong> {sellPriceInfoMap[nodeId].spotPrice}</div>
+                <div><strong>Trade Fee:</strong> {sellPriceInfoMap[nodeId].tradeFee}</div>
+                <div><strong>Price Impact (%):</strong> {sellPriceInfoMap[nodeId].priceImpactPct}</div>
+                <div><strong>Trade Fee (%):</strong> {sellPriceInfoMap[nodeId].tradeFeePct}</div>
                 {/* ... add more fields as needed ... */}
             </div>
         )}
