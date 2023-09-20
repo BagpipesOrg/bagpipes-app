@@ -4,10 +4,10 @@ import { TradeRouter, CachingPoolService, PoolType } from '@galacticcouncil/sdk'
 import connectToWsEndpoint from './connect';
 import endpoints from './WsEndpoints';
 
-let tradeRouter;
+let tradeRouter: { getAllAssets: () => any; getBestSpotPrice: (arg0: string, arg1: string) => any; getBestSell: (arg0: string, arg1: string, arg2: number) => any; };
 
 async function initializeTradeRouter() {
-  const api = await connectToWsEndpoint(endpoints.polkadot.hydraDx);
+  const api = await connectToWsEndpoint('hydraDx');
 
   console.log(`getHydraDx Initializing PoolService...`);
   const poolService = new CachingPoolService(api);
@@ -41,5 +41,5 @@ export async function getHydraDxSellPrice(assetIn: string, assetOut: string, amo
   const tradeDetails = await tradeRouter.getBestSell(assetIn, assetOut, amount);
   console.log(`getHydraDx trade details:`, tradeDetails);
 
-  return tradeDetails;
+  return tradeDetails.toHuman();
 }
