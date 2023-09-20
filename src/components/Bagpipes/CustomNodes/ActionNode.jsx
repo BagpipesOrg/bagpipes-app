@@ -119,6 +119,8 @@ export default function ActionNode({ children, data, isConnectable }) {
     
     const assetInFormData = assetInNodeData?.formData;
     const assetOutFormData = assetOutNodeData?.formData;
+    console.log('[ActionNode] assetInFormData:', assetInFormData);
+    console.log('[ActionNode] assetOutFormData:', assetOutFormData);
 
     // Fetch the sell price
     getHydraDxSellPrice(assetInFormData?.asset?.assetId, assetOutFormData?.asset?.assetId, assetInFormData?.amount)
@@ -130,44 +132,6 @@ export default function ActionNode({ children, data, isConnectable }) {
     });
 
 }, [assetInNodeId, assetOutNodeId]);
-
-//   useEffect(() => {
-
-//     if (nodeId !== selectedNodeId) {
-//       // This means this ActionNode is not the one that's currently selected
-//       return; // Exit the effect early
-//   }
-
-//     console.log('[ActionNode] active node:', nodeId);
-//     const currentDiagramEdges = scenarios[activeScenarioId]?.diagramData?.edges;
-//     const orderedList = getOrderedList(currentDiagramEdges);
-//     // console.log('[ActionNode] Ordered List of Nodes:', orderedList);
-  
-//     const currentIndex = orderedList.indexOf(nodeId);
-//     if (currentIndex !== -1) {  
-//       const assetInNodeId = orderedList[currentIndex - 1];
-//       const assetOutNodeId = orderedList[currentIndex + 1];
-  
-//       // Assuming `scenarios[activeScenarioId].diagramData.nodes` is an array of node objects
-//       const nodes = scenarios[activeScenarioId]?.diagramData?.nodes;
-  
-//       const assetInNodeData = nodes.find(node => node.id === assetInNodeId);
-//       const assetOutNodeData = nodes.find(node => node.id === assetOutNodeId);
-  
-//       const assetInId = assetInNodeData?.formData?.asset;  // Adjust according to your data structure
-//       const assetOutId = assetOutNodeData?.formData?.asset;
-//       const amountIn = assetInNodeData?.formData?.amount;
-  
-//       // console.log('[ActionNode] Asset In ID:', assetInId, assetInNodeId );
-//       // console.log('[ActionNode] Asset Out ID:', assetOutId, assetOutNodeId);
-//       // console.log('[ActionNode] Amount In:', amountIn);
-  
-//       // You can then use these values to perform your logic or calculations
-//       // ...
-  
-//     }
-  
-// }, [ selectedNodeId]); //
   
   
   return (
@@ -215,9 +179,9 @@ export default function ActionNode({ children, data, isConnectable }) {
       </div>
 
       {sellPriceInfoMap[nodeId] && (
-    <div className="sell-price-info mt-4 bg-white p-2 rounded border border-gray-300 text-gray-700">
+            <div className="sell-price-info mt-4 bg-white p-2 rounded border border-gray-300 text-gray-700 mt-1 p-3 m-2">
         {/* Extract the values from sellPriceInfoMap[nodeId] and display them */}
-        <div>Amount In: {sellPriceInfoMap[nodeId].amountIn}</div>
+        <div>Amount In {}: {sellPriceInfoMap[nodeId].amountIn}</div>
         <div>Amount Out: {sellPriceInfoMap[nodeId].amountOut}</div>
                 <div><strong>Type:</strong> {sellPriceInfo.type}</div>
                 <div><strong>Amount In:</strong> {sellPriceInfo.amountIn}</div>
