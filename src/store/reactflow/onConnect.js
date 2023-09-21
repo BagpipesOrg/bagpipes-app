@@ -1,6 +1,5 @@
 // onConnect.js
 import { addEdge } from 'reactflow';
-import useAppStore from '../useAppStore';
 
 const onConnect = (edges, setEdges, activeScenarioId, addEdgeToScenario) => (params) => {
   console.log("onConnect called with params:", params);

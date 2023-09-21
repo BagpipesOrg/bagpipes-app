@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Handle, Position, useNodeId } from 'reactflow';
 import { getHydraDxSellPrice } from '../../Chains/PriceHelper';
 import SwapSVG from '/swap.svg';
 import TeleportSVG from '/teleport.svg';
 import useAppStore from '../../../store/useAppStore';
 import { getOrderedList } from '../utils/scenarioUtils';
+import PriceInfo from './PriceInfo';
 
 import '../../../index.css';
 import '../node.styles.scss';
@@ -17,29 +18,39 @@ export default function ActionNode({ children, data, isConnectable }) {
     activeScenarioId: state.activeScenarioId,
     loading: state.loading,
     saveNodeFormData: state.saveNodeFormData,
-
   }));
+  const [orderedList, setOrderedList] = useState([]);
   const selectedNodeId = scenarios[activeScenarioId]?.selectedNodeId;
   const [assetInNodeId, setAssetInNodeId] = useState(null);
   const [assetOutNodeId, setAssetOutNodeId] = useState(null);
-  const [sellPriceInfo, setSellPriceInfo] = useState(null);
-  const [sellPriceInfoMap, setSellPriceInfoMap] = useState({});
+  const [priceInfo, setPriceInfo] = useState(null);
+  const [sellPriceInfoMap, setPriceInfoMap] = useState({});
   const [dropdownVisible, setDropdownVisible] = useState(false);
-
-
+  const [isfetchingPriceInfo, setIsFetchingPrice] = useState(false);
   const initialAction = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData?.action || null;
+  const [formState, setFormState] = useState({ action: initialAction });
+  const nodes = scenarios[activeScenarioId]?.diagramData?.nodes;
+  const edges = scenarios[activeScenarioId]?.diagramData?.edges;
 
-  const [formState, setFormState] = useState({
-      action: initialAction
-  });
+  const assetInFormData = useMemo(() => {
+    const nodeData = nodes.find(node => node.id === assetInNodeId);
+    console.log('ActionNode assetInFormData inside useMemo:', nodeData?.formData);
+    return nodeData?.formData;
+  }, [assetInNodeId, nodes]);
   
+  const assetOutFormData = useMemo(() => {
+    const nodeData = nodes.find(node => node.id === assetOutNodeId);
+    console.log('ActionNode assetOutFormData inside useMemo:', nodeData?.formData);
+    return nodeData?.formData;
+  }, [assetOutNodeId, nodes]);
+  // console.log('[ActionNode] assetInFormData:', assetInFormData);
+  // console.log('[ActionNode] assetOutFormData:', assetOutFormData);
 
   const getActionImage = () => {
     if (formState.action === 'swap') return SwapSVG;
     if (formState.action === 'teleport') return TeleportSVG;
     return null;
   };
-  
 
   const handleDropdownClick = (value) => {
     setDropdownVisible(false);
@@ -49,103 +60,106 @@ export default function ActionNode({ children, data, isConnectable }) {
     }));
   };
 
-  // This effect will only run once when the component mounts
   useEffect(() => {
-    const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
-    if (currentNodeFormData) {
-      setFormState(currentNodeFormData);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (formState.action === 'teleport') {
-        setSellPriceInfo(null);
-    }
-}, [formState.action]);
-
-
-  useEffect(() => {
-    const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
-    if (currentNodeFormData && JSON.stringify(currentNodeFormData) !== JSON.stringify(formState)) {
-      setFormState(currentNodeFormData);
-    }
-  }, [nodeId, activeScenarioId]);
-  
-  
-  useEffect(() => {
-    console.log("Attempting to save form state:", formState);
-    if (!activeScenarioId || !nodeId) {
-      console.warn("Missing activeScenarioId or nodeId. Not proceeding with save.");
-      return;
-    }
-    const formData = { ...formState };
-    saveNodeFormData(activeScenarioId, nodeId, formData);
-  }, [formState, nodeId, activeScenarioId]);
+    // logic to generate new orderedList
+    const newList = getOrderedList();  // Assuming this is your function to generate the list
+    setOrderedList(newList);
+  }, [edges]);
 
 
 
-  // To do with price info in Swap...
-
-  const getAssetNodes = (selectedNodeId) => {
-
-    const orderedList = getOrderedList(scenarios[activeScenarioId]?.diagramData?.edges);
-    const currentIndex = orderedList.indexOf(selectedNodeId);
-
-    
-    if (currentIndex === -1) return { assetInNodeId: null, assetOutNodeId: null };
-    
-    const assetInNodeId = orderedList[currentIndex - 1];
-    const assetOutNodeId = orderedList[currentIndex + 1];
-    
-    return { assetInNodeId, assetOutNodeId };
-  }
 
 
-
-  useEffect(() => {
-    if (!selectedNodeId || !selectedNodeId.startsWith('action_')) return;
-    console.log('[ActionNode] active node:', selectedNodeId);
-
-      const { assetInNodeId, assetOutNodeId } = getAssetNodes(selectedNodeId);
-      
-      setAssetInNodeId(assetInNodeId);
-      setAssetOutNodeId(assetOutNodeId);
-  }, [selectedNodeId]);
-
-
-  const nodes = scenarios[activeScenarioId]?.diagramData?.nodes;
-    
-  const assetInNodeData = nodes.find(node => node.id === assetInNodeId);
-  const assetOutNodeData = nodes.find(node => node.id === assetOutNodeId);
-  
-  const assetInFormData = assetInNodeData?.formData;
-  const assetOutFormData = assetOutNodeData?.formData;
-  console.log('[ActionNode] assetInFormData:', assetInFormData);
-  console.log('[ActionNode] assetOutFormData:', assetOutFormData);
-
-  useEffect(() => {
-    if (!assetInNodeId || !assetOutNodeId) return;
-
+  const fetchPriceInfo = async () => {
     const assetInId = assetInFormData?.asset?.assetId;
     const assetOutId = assetOutFormData?.asset?.assetId;
     const amount = assetInFormData?.amount;
 
-    if(!assetInId || !assetOutId || !amount) return;  
+    if (!assetInId || !assetOutId || !amount) return;  
 
-
-    // Fetch the sell price
-    getHydraDxSellPrice(assetInFormData?.asset?.assetId, assetOutFormData?.asset?.assetId, assetInFormData?.amount)
-    .then(priceInfo => {
-        setSellPriceInfoMap(prevMap => ({
+    try {
+        setIsFetchingPrice(true);
+        const fetchedPriceInfo = await getHydraDxSellPrice(assetInId, assetOutId, amount);
+        setPriceInfoMap(prevMap => ({
             ...prevMap,
-            [selectedNodeId]: priceInfo
+            [selectedNodeId]: fetchedPriceInfo
         }));
+    } catch (error) {
+        // Handle error
+    } finally {
+        setIsFetchingPrice(false);
+    } 
+  };
 
-    });
+  useEffect(() => {
+    fetchPriceInfo();
+  }, [assetInNodeId, assetOutNodeId, assetInFormData?.amount, assetInFormData?.address, assetOutFormData?.amount, assetOutFormData?.address]);
 
-  }, [assetInNodeId, assetOutNodeId, assetInFormData, assetOutFormData]);
+
+    useEffect(() => {
+      if (!selectedNodeId || !selectedNodeId.startsWith('action_')) return;
+      console.log('[ActionNode] active node:', selectedNodeId);
+
+      const orderedList = getOrderedList(scenarios[activeScenarioId]?.diagramData?.edges);
+      console.log('ActionNode Ordered List:', orderedList);
+
+      const currentIndex = orderedList.indexOf(selectedNodeId);
+      console.log('ActionNode Current Index:', currentIndex);
+
+      if (currentIndex === -1) return;
+
+      const assetInNodeId = orderedList[currentIndex - 1];
+
+      const assetOutNodeId = orderedList[currentIndex + 1];
+      console.log('[ActionNode] assetInNodeId:', assetInNodeId);
+      console.log('[ActionNode] assetOutNodeId:', assetOutNodeId);
+
+        
+        setAssetInNodeId(assetInNodeId);
+        setAssetOutNodeId(assetOutNodeId);
+    }, [selectedNodeId, scenarios]);
+
+    useEffect(() => {
+      console.log('[ActionNode] Updated assetInNodeId:', assetInNodeId);
+      console.log('[ActionNode] Updated assetOutNodeId:', assetOutNodeId);
+  }, [assetInNodeId, assetOutNodeId]);
+  
+    // This effect will only run once when the component mounts
+    useEffect(() => {
+      const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+      if (currentNodeFormData) {
+        setFormState(currentNodeFormData);
+      }
+    }, []);
+    
+    useEffect(() => {
+      if (formState.action === 'teleport') {
+          setPriceInfo(null);
+      }
+    }, [formState.action]);
+    
+    
+    useEffect(() => {
+      const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+      if (currentNodeFormData && JSON.stringify(currentNodeFormData) !== JSON.stringify(formState)) {
+        setFormState(currentNodeFormData);
+      }
+    }, [nodeId, activeScenarioId]);
+    
+    
+    useEffect(() => {
+      console.log("Attempting to save form state:", formState);
+      if (!activeScenarioId || !nodeId) {
+        console.warn("Missing activeScenarioId or nodeId. Not proceeding with save.");
+        return;
+      }
+      const formData = { ...formState };
+      saveNodeFormData(activeScenarioId, nodeId, formData);
+    }, [formState, nodeId, activeScenarioId]);
   
   
+  
+    
   return (
     <div className="custom-node rounded-lg shadow-lg text-xs flex flex-col items-center justify-start p-2 bg-gray-100 primary-font">
           <h1 className="text-xxs text-gray-400 primary-font mb-1">{nodeId}</h1>
@@ -186,28 +200,25 @@ export default function ActionNode({ children, data, isConnectable }) {
       </div>
 
 
-      <div className="mt-2 text-center text-xs font-semibold primary-font">
-        {formState.action && formState.action.charAt(0).toUpperCase() + formState.action.slice(1)}
-      </div>
-
-      {formState.action === 'swap' && sellPriceInfoMap[nodeId] && (
-            <div className="sell-price-info mt-4 bg-gray-100 p-2 rounded border border-gray-300 text-gray-700 mt-1 p-3 m-2">
-        {/* Extract the values from sellPriceInfoMap[nodeId] and display them */}
-        <div>Amount In {}: {sellPriceInfoMap[nodeId].amountIn}</div>
-        <div>Amount Out: {sellPriceInfoMap[nodeId].amountOut}</div>
-                <div><strong>Type:</strong> {sellPriceInfoMap[nodeId].type}</div>
-                <div><strong>Amount In:</strong> {sellPriceInfoMap[nodeId].amountIn}</div>
-                <div><strong>Amount Out:</strong> {sellPriceInfoMap[nodeId].amountOut}</div>
-                <div><strong>Spot Price:</strong> {sellPriceInfoMap[nodeId].spotPrice}</div>
-                <div><strong>Trade Fee:</strong> {sellPriceInfoMap[nodeId].tradeFee}</div>
-                <div><strong>Price Impact (%):</strong> {sellPriceInfoMap[nodeId].priceImpactPct}</div>
-                <div><strong>Trade Fee (%):</strong> {sellPriceInfoMap[nodeId].tradeFeePct}</div>
-                {/* ... add more fields as needed ... */}
-            </div>
-        )}
+      {isfetchingPriceInfo ? (
+        <div className="small-spinner"></div>
+      ) : (
+        sellPriceInfoMap[nodeId] ? (
+          <PriceInfo priceInfo={sellPriceInfoMap[nodeId]} />
+        ) : (
+          // You can put some placeholder or default content here
+          <div>No price info available</div>
+        )
+      )}
 
 
 
+    
+
+
+  <button onClick={() => fetchPriceInfo(assetInFormData, assetOutFormData)} className="text-xs m-1 p-0 rounded refresh-button">
+          <img className="h-3 w-3" src="/refresh.svg" />
+        </button>
 
       <div className="space-y-2 mt-2">
         {data.children}

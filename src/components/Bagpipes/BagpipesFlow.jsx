@@ -5,10 +5,11 @@
 
 import React, { useState, useRef, useCallback , useEffect, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ReactFlow, { Panel, ReactFlowProvider, MiniMap, Controls, Background,   BackgroundVariant, useNodesState, useEdgesState, addEdge, applyNodeChanges, applyEdgeChanges, Handle, Position, NodeToolbar, useStoreApi, useNodeId, EdgeLabelRenderer } from 'reactflow';
+import ReactFlow, { Panel, MiniMap, Controls, Background, BackgroundVariant, applyNodeChanges, useStoreApi, EdgeLabelRenderer } from 'reactflow';
 // import AuthService from '../../services/AuthService';
 import { useExecuteChainScenario, useCopyPaste, useUndoRedo, useSaveDiagramState } from './hooks';
 import useAppStore from '../../store/useAppStore';
+import { generateEdgeId } from './utils/storageUtils';
 import TextUpdaterNode from './TextupdaterNode';
 import Sidebar from './Sidebar';
 import FormGroupNode from './FormGroupNode';
@@ -387,7 +388,12 @@ const BagpipesFlow = () => {
                 (ne.source === closeEdge.source && ne.target === closeEdge.target) ||
                 (ne.source === closeEdge.target && ne.target === closeEdge.source)
               )) {
-              const connectedEdge = { ...closeEdge, className: undefined }; // Remove the 'temp' className
+              const connectedEdge = { 
+                ...closeEdge, 
+                id: generateEdgeId(closeEdge.source, closeEdge.target), // Ensure consistent id
+                className: undefined // Remove the 'temp' className
+              }; 
+              console.log("Connected edge added:", connectedEdge);
               connectedEdges.push(connectedEdge);
               
               // console.log("Connected edge added:", connectedEdge);
