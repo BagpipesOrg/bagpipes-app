@@ -100,6 +100,8 @@ const BagpipesFlow = () => {
       tempEdge: state.tempEdge,
       loading: state.loading,
     }));
+
+
     const store = useStoreApi();
     const currentScenarioNodes = scenarios[activeScenarioId]?.diagramData?.nodes || [];
     const currentScenarioEdges = scenarios[activeScenarioId]?.diagramData?.edges || [];
@@ -281,6 +283,7 @@ const BagpipesFlow = () => {
     
     const handleEdgesChange = onEdgesChange(setEdges, setInputVariablesByEdgeId, inputVariablesByEdgeId, activeScenarioId, addEdgeToScenario, scenarios, takeSnapshot);
     // const handleEdgesChange = useOnEdgesChange(appStore.setState, appStore.getState, setInputVariablesByEdgeId, inputVariablesByEdgeId, handleEdgesOperation, activeScenarioId, takeSnapshot);
+
 
     const handleConnect = (params) => {
       onConnect(currentScenarioEdges, nodeConnections, setEdges, setNodeConnections, activeScenarioId, addEdgeToScenario)(params);
@@ -632,7 +635,7 @@ const BagpipesFlow = () => {
     }, [selectedNodeId, setSelectedNodeInScenario, activeScenarioId]);
     
   
-        
+
     return (
 
       <div className="bagpipe-flow-canvass" style={{ width: '100vw', height: '1000px' }}>
