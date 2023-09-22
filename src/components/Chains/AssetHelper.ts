@@ -262,7 +262,7 @@ function getTokenDecimalsByChainName(chainName: string): number {
 async function generic_check_native_balance(api: ApiPromise, address: string) {
   // convert address to pubkey
  // const accountId = api.createType("account_id_32", address).toHex();
-  const bal = await api.query.system.account(address);
+  const bal= await api.query.system.account(address); // Codec type
   const bal3 = await bal.toHuman();
   if (isAssetResponseObject(bal3)) {
       const bal2: AssetResponseObject = bal3;
@@ -450,4 +450,26 @@ console.log(`processChainSpecificBalances tokenDecimals`, tokenDecimals);
 
  
   return adjustedBalances;
+}
+
+
+
+// get the system account balance in a generic way
+export async function genericRawNativeBalance(api: ApiPromise,accountId: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number }> {
+  let bal: any;
+  let bal3: any;
+  if (accountId) {
+    bal = await api.query.system.account(accountId);
+  }
+  bal3 = bal.toHuman();
+
+  if (isAssetResponseObject(bal3)) {
+      const bal2: AssetResponseObject = bal3;
+      return {
+          free: bal2.data.free,
+          reserved: bal2.data.reserved,
+          total: bal2.data.total
+      };
+  }
+  return { free: 0, reserved: 0, total: 0 };
 }
