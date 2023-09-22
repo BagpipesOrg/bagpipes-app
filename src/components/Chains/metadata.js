@@ -13,9 +13,11 @@ export const CHAIN_METADATA = {
     hydraDx: {
         chain: "HydraDX",
         endpoints: [
+          
             "wss://hydradx-rpc.dwellir.com",
             "wss://hydradx.api.onfinality.io/public-ws",
             "wss://rpc.hydradx.cloud",
+
 
 
         ],

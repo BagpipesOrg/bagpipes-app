@@ -1,15 +1,20 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Handle, Position, useNodeId } from 'reactflow';
-import { getHydraDxSellPrice } from '../../Chains/PriceHelper';
+import useAppStore from '../../../../store/useAppStore';
+import { getHydraDxSellPrice } from '../../../Chains/PriceHelper';
 import SwapSVG from '/swap.svg';
 import TeleportSVG from '/teleport.svg';
-import useAppStore from '../../../store/useAppStore';
-import { getOrderedList } from '../utils/scenarioUtils';
-import PriceInfo from './PriceInfo';
+import { getOrderedList } from '../../utils/scenarioUtils';
+import { convertFormStateToActionType } from './actionUtils';
+import PriceInfo from '../PriceInfo';
 
-import '../../../index.css';
-import '../node.styles.scss';
-import '../../../main.scss';
+import '../../../../index.css';
+import '../../node.styles.scss';
+import '../../../../main.scss';
+
+const formatTime = (date) => {
+  return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+};
 
 export default function ActionNode({ children, data, isConnectable }) {
   const nodeId = useNodeId();
@@ -31,7 +36,8 @@ export default function ActionNode({ children, data, isConnectable }) {
   const [formState, setFormState] = useState({ action: initialAction });
   const nodes = scenarios[activeScenarioId]?.diagramData?.nodes;
   const edges = scenarios[activeScenarioId]?.diagramData?.edges;
-
+  const [lastUpdated, setLastUpdated] = useState(null);
+  const [actionData, setActionData] = useState({});
   const assetInFormData = useMemo(() => {
     const nodeData = nodes.find(node => node.id === assetInNodeId);
     console.log('ActionNode assetInFormData inside useMemo:', nodeData?.formData);
@@ -84,6 +90,7 @@ export default function ActionNode({ children, data, isConnectable }) {
             ...prevMap,
             [selectedNodeId]: fetchedPriceInfo
         }));
+        setLastUpdated(new Date());
     } catch (error) {
         // Handle error
     } finally {
@@ -150,16 +157,24 @@ export default function ActionNode({ children, data, isConnectable }) {
     useEffect(() => {
       console.log("Attempting to save form state:", formState);
       if (!activeScenarioId || !nodeId) {
-        console.warn("Missing activeScenarioId or nodeId. Not proceeding with save.");
-        return;
+          console.warn("Missing activeScenarioId or nodeId. Not proceeding with save.");
+          return;
       }
-      const formData = { ...formState };
+      const formData = { ...formState, actionData }; // combine formState with actionData
       saveNodeFormData(activeScenarioId, nodeId, formData);
-    }, [formState, nodeId, activeScenarioId]);
+  }, [formState, actionData, nodeId, activeScenarioId]); 
   
   
-  
-    
+  // Here we want to create the action form data object to pass for processing 
+  useEffect(() => {
+    const newActionData = convertFormStateToActionType(formState, assetInFormData, assetOutFormData); 
+    if (newActionData) {
+        setActionData(newActionData);
+        console.log("Constructed action data: ", newActionData);
+    }
+}, [formState, assetInFormData, assetOutFormData]);
+
+
   return (
     <div className="custom-node rounded-lg shadow-lg text-xs flex flex-col items-center justify-start p-2 bg-gray-100 primary-font">
           <h1 className="text-xxs text-gray-400 primary-font mb-1">{nodeId}</h1>
@@ -199,27 +214,32 @@ export default function ActionNode({ children, data, isConnectable }) {
         )}
       </div>
 
+      <div className="mt-2 text-center text-xs font-semibold primary-font m-2">
+        {formState.action && formState.action.charAt(0).toUpperCase() + formState.action.slice(1)}
+      </div>
 
-      {isfetchingPriceInfo ? (
-        <div className="small-spinner"></div>
-      ) : (
-        sellPriceInfoMap[nodeId] ? (
-          <PriceInfo priceInfo={sellPriceInfoMap[nodeId]} />
+
+      {formState.action === 'swap' && (
+        isfetchingPriceInfo ? (
+          <div className="small-spinner"></div>
         ) : (
-          // You can put some placeholder or default content here
-          <div>No price info available</div>
+          sellPriceInfoMap[nodeId] ? (
+            <PriceInfo sourceInfo={assetInFormData} targetInfo={assetOutFormData} priceInfo={sellPriceInfoMap[nodeId]} />
+          ) : (
+            // Placeholder for when no price info is available
+            <div className="border rounded m-2 p-2 ">No price info available</div>
+          )
         )
       )}
 
-
-
-    
-
-
-  <button onClick={() => fetchPriceInfo(assetInFormData, assetOutFormData)} className="text-xs m-1 p-0 rounded refresh-button">
+        <span onClick={() => fetchPriceInfo(assetInFormData, assetOutFormData)} className="text-xs m-1 p-0 rounded refresh-button">
           <img className="h-3 w-3" src="/refresh.svg" />
-        </button>
+        </span>
 
+        {sellPriceInfoMap ? (
+        lastUpdated && <span>Last updated: {formatTime(lastUpdated)}</span>
+        ):( null)
+        }
       <div className="space-y-2 mt-2">
         {data.children}
       </div>

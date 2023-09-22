@@ -15,7 +15,7 @@ import Sidebar from './Sidebar';
 import FormGroupNode from './FormGroupNode';
 import OpenAINode from './CustomNodes/OpenAINode';
 import ChainNode from './CustomNodes/ChainNode/ChainNode';
-import ActionNode from './CustomNodes/ActionNode';
+import ActionNode from './CustomNodes/ActionNode/ActionNode';
 import CustomEdge from './CustomEdges/CustomEdge';
 import OpenAINodeForm from './Forms/OpenAINodeForm/OpenAINodeForm';
 import { initialEdges, initialNodes } from './nodes.jsx';
