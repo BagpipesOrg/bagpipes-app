@@ -160,7 +160,31 @@ async function checkRococoRocRawNativeBalance(accountid: string, signal?: AbortS
   return { free: 0, reserved: 0, total: 0 };
 }
 
+/*
+Sora on rococo
+balances.account: PalletBalancesAccountData
+{
+  free: 0
+  reserved: 0
+  miscFrozen: 0
+  feeFrozen: 0
+}
 
+*/
+async function checkSoraRocRawBalance(accountid: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number }>  {
+  const api = await connectToWsEndpoint('Sora', signal);
+  const bal = await api.query.system.account(accountid);
+  const bal3 = bal.toHuman();
+  if (isAssetResponseObject(bal3)) {
+      const bal2: AssetResponseObject = bal3;
+      return {
+          free: bal2.data.free,
+          reserved: bal2.data.reserved,
+          total: bal2.data.free + bal2.data.reserved
+      };
+  }
+  return { free: 0, reserved: 0, total: 0 };
+}
 
 
 /*
