@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Handle, Position, useNodeId } from 'reactflow';
 import useAppStore from '../../../../store/useAppStore';
-import { getHydraDxSellPrice } from '../../../Chains/PriceHelper';
+import { getHydraDxSellPrice } from '../../../../Chains/Helpers/PriceHelper';
 import SwapSVG from '/swap.svg';
-import TeleportSVG from '/teleport.svg';
+import ReserveXSVG from '/reserveX.svg';
 import { getOrderedList } from '../../utils/scenarioUtils';
 import { convertFormStateToActionType } from './actionUtils';
 import PriceInfo from '../PriceInfo';
@@ -54,9 +54,11 @@ export default function ActionNode({ children, data, isConnectable }) {
 
   const getActionImage = () => {
     if (formState.action === 'swap') return SwapSVG;
-    if (formState.action === 'teleport') return TeleportSVG;
+    if (formState.action === 'reserveX') return ReserveXSVG;
     return null;
   };
+
+  
 
   const handleDropdownClick = (value) => {
     setDropdownVisible(false);
@@ -64,43 +66,77 @@ export default function ActionNode({ children, data, isConnectable }) {
       ...prev,
       action: value
     }));
+    
+    // Create action data based on the selected value
+    const newActionData = convertFormStateToActionType(
+        { ...formState, action: value }, 
+        assetInFormData, 
+        assetOutFormData
+    );
+
+    if (newActionData) {
+        setActionData(newActionData);
+        console.log("[handleDropdownClick] Constructed action data : ", newActionData);
+    }
   };
 
-  useEffect(() => {
-    // logic to generate new orderedList
-    const newList = getOrderedList();  // Assuming this is your function to generate the list
-    setOrderedList(newList);
-  }, [edges]);
 
+  // useEffect(() => {
+  //   // logic to generate new orderedList
+  //   const newList = getOrderedList();  // Assuming this is your function to generate the list
+  //   setOrderedList(newList);
+  // }, [edges]);
 
-
-
-
-  const fetchPriceInfo = async () => {
+  const fetchActionInfo = async () => {
     const assetInId = assetInFormData?.asset?.assetId;
     const assetOutId = assetOutFormData?.asset?.assetId;
     const amount = assetInFormData?.amount;
 
     if (!assetInId || !assetOutId || !amount) return;  
 
-    try {
-        setIsFetchingPrice(true);
-        const fetchedPriceInfo = await getHydraDxSellPrice(assetInId, assetOutId, amount);
-        setPriceInfoMap(prevMap => ({
-            ...prevMap,
-            [selectedNodeId]: fetchedPriceInfo
-        }));
-        setLastUpdated(new Date());
-    } catch (error) {
-        // Handle error
-    } finally {
-        setIsFetchingPrice(false);
-    } 
+    if(formState.action === 'swap' && assetInFormData.chain === 'hydraDx' && assetOutFormData.chain === 'hydraDx') {
+        try {
+            setIsFetchingPrice(true);
+            const fetchedPriceInfo = await getHydraDxSellPrice(assetInId, assetOutId, amount);
+            setPriceInfoMap(prevMap => ({
+                ...prevMap,
+                [nodeId]: fetchedPriceInfo
+            }));
+            setLastUpdated(new Date());
+        } catch (error) {
+            // Handle error
+        } finally {
+            setIsFetchingPrice(false);
+        } 
+    }
+
+    if(formState.action === 'reserveX') {
+        // Handle fetching for reserveX if needed
+        console.log('Fetching for reserveX');
+    }
+
+      // Set actionData outside of the action-specific blocks
+      // Create action data based on the selected value
+      const newActionData = convertFormStateToActionType(
+        { ...formState, action: value }, 
+        assetInFormData, 
+        assetOutFormData
+      );    
+
+        if (newActionData) {
+            setActionData(newActionData);
+            console.log("Constructed action data: ", newActionData);
+        }
   };
 
-  useEffect(() => {
-    fetchPriceInfo();
-  }, [assetInNodeId, assetOutNodeId, assetInFormData?.amount, assetInFormData?.address, assetOutFormData?.amount, assetOutFormData?.address]);
+
+
+
+
+  // useEffect(() => {
+  //   console.log('[ActionNode] assetInFormData:', assetInFormData);
+  //   fetchActionInfo(assetInFormData, assetOutFormData)
+  //   }, [assetInNodeId, assetOutNodeId, assetInFormData?.amount, assetInFormData?.address, assetOutFormData?.amount, assetOutFormData?.address]);
 
 
     useEffect(() => {
@@ -108,6 +144,7 @@ export default function ActionNode({ children, data, isConnectable }) {
       console.log('[ActionNode] active node:', selectedNodeId);
 
       const orderedList = getOrderedList(scenarios[activeScenarioId]?.diagramData?.edges);
+      console.log('ActionNode scenario edges:', scenarios[activeScenarioId]?.diagramData?.edges);
       console.log('ActionNode Ordered List:', orderedList);
 
       const currentIndex = orderedList.indexOf(selectedNodeId);
@@ -139,11 +176,11 @@ export default function ActionNode({ children, data, isConnectable }) {
       }
     }, []);
     
-    useEffect(() => {
-      if (formState.action === 'teleport') {
-          setPriceInfo(null);
-      }
-    }, [formState.action]);
+    // useEffect(() => {
+    //   if (formState.action === 'reserveX') {
+    //       setPriceInfo(null);
+    //   }
+    // }, [formState.action]);
     
     
     useEffect(() => {
@@ -172,16 +209,15 @@ export default function ActionNode({ children, data, isConnectable }) {
         setActionData(newActionData);
         console.log("Constructed action data: ", newActionData);
     }
-}, [formState, assetInFormData, assetOutFormData]);
-
-
+  }, [formState, assetInFormData, assetOutFormData]);
+  
   return (
-    <div className="custom-node rounded-lg shadow-lg text-xs flex flex-col items-center justify-start p-2 bg-gray-100 primary-font">
-          <h1 className="text-xxs text-gray-400 primary-font mb-1">{nodeId}</h1>
+    <div className="custom-node rounded-lg shadow-lg text-xs flex flex-col justify-start p-2 bg-gray-100 primary-font">
+          <h1 className="text-xxs text-gray-400 primary-font mb-2">{nodeId}</h1>
 
       <Handle id="a" type="target" position={Position.Left} isConnectable={isConnectable} />
       <Handle id="b" type="source" position={Position.Right} isConnectable={isConnectable} />
-
+    <div className='p-3 border rounded flex justify-center flex-col items-center mb-3'>
       <div className="text-gray-400 mb-2 text-xxs">{data.name}</div>
 
       {/* Custom dropdown */}
@@ -205,9 +241,9 @@ export default function ActionNode({ children, data, isConnectable }) {
                 <img src={SwapSVG} alt="Swap" className="w-4 h-4 mr-2" />
                 <div className='text-xs bold font-semibold'>Swap</div>
               </div>
-              <div onClick={() => handleDropdownClick('teleport')} className="flex items-center p-2 hover:bg-gray-200">
-                <img src={TeleportSVG} alt="Teleport" className="w-5 h-4 mr-2" />
-                <div className='text-xs font-semibold'>Teleport</div>
+              <div onClick={() => handleDropdownClick('reserveX')} className="flex items-center p-2 hover:bg-gray-200">
+                <img src={ReserveXSVG} alt="ReserveX" className="w-5 h-4 mr-2" />
+                <div className='text-xs font-semibold'>ReserveX</div>
               </div>
             </div>
           </div>
@@ -231,13 +267,14 @@ export default function ActionNode({ children, data, isConnectable }) {
           )
         )
       )}
+      </div>
 
-        <span onClick={() => fetchPriceInfo(assetInFormData, assetOutFormData)} className="text-xs m-1 p-0 rounded refresh-button">
+        <span onClick={() => fetchActionInfo(assetInFormData, assetOutFormData)} className="text-xs m-1 p-0 rounded refresh-button flex justify-center">
           <img className="h-3 w-3" src="/refresh.svg" />
         </span>
 
         {sellPriceInfoMap ? (
-        lastUpdated && <span>Last updated: {formatTime(lastUpdated)}</span>
+        lastUpdated && <span className='text-gray-400 text-xss'>Last updated: {formatTime(lastUpdated)}</span>
         ):( null)
         }
       <div className="space-y-2 mt-2">

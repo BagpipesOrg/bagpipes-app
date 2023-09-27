@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import React, { useState, useRef, useCallback , useEffect, memo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import ReactFlow, { Panel, MiniMap, Controls, Background, BackgroundVariant, applyNodeChanges, useStoreApi, EdgeLabelRenderer } from 'reactflow';
 // import AuthService from '../../services/AuthService';
 import { useExecuteChainScenario, useCopyPaste, useUndoRedo, useSaveDiagramState } from './hooks';
@@ -20,7 +20,13 @@ import CustomEdge from './CustomEdges/CustomEdge';
 import OpenAINodeForm from './Forms/OpenAINodeForm/OpenAINodeForm';
 import { initialEdges, initialNodes } from './nodes.jsx';
 import PlayButton from './PlayButton';
-import GitInfo from './git_tag'
+import StartButton from './StartButton';
+import { startDraftingProcess } from './utils/startDraftingProcess';
+import {  MarkerType } from 'reactflow';
+import toast from 'react-hot-toast';
+
+
+
 import './utils/getAllConnectedNodes';
 import { v4 as uuidv4 } from 'uuid';
 import styled, { ThemeProvider } from 'styled-components';
@@ -39,9 +45,6 @@ import Edges from './edges';
 const ReactFlowStyled = styled(ReactFlow)`
   background-color: ${(props) => props.theme.bg};
 `;
-
-
-
 // Make the dark theme a bg-slate-900 style similar to Tailwind website
 const ControlsStyled = styled(Controls)`
   button {
@@ -81,7 +84,7 @@ const BagpipesFlow = () => {
 
   const reactFlowWrapper = useRef(null);
 
-    const { scenarios, activeScenarioId, addScenario, setActiveScenarioId, saveScenario, saveDiagramData, addNodeToScenario, addEdgeToScenario, deleteNodeFromScenario, deleteEdgeFromScenario, updateNodePositionInScenario, updateNodesInScenario, setSelectedNodeInScenario, setSelectedEdgeInScenario, nodeConnections, setNodes, setEdges, setNodeConnections, tempEdge, setTempEdge, loading } = useAppStore(state => ({
+    const { scenarios, activeScenarioId, addScenario, setActiveScenarioId, saveScenario, saveDiagramData, addNodeToScenario, addEdgeToScenario, deleteNodeFromScenario, deleteEdgeFromScenario, updateNodePositionInScenario, updateNodesInScenario, setSelectedNodeInScenario, setSelectedEdgeInScenario, nodeConnections, setNodes, setEdges, setNodeConnections, tempEdge, setTempEdge, loading, transactions, setTransactions } = useAppStore(state => ({
       scenarios: state.scenarios,
       activeScenarioId: state.activeScenarioId,
       addScenario: state.addScenario,
@@ -103,13 +106,16 @@ const BagpipesFlow = () => {
       setTempEdge: state.setTempEdge,
       tempEdge: state.tempEdge,
       loading: state.loading,
+      transactions: state.transactions,
+      setTransactions: state.setTransactions,
     }));
     const store = useStoreApi();
     const currentScenarioNodes = scenarios[activeScenarioId]?.diagramData?.nodes || [];
     const currentScenarioEdges = scenarios[activeScenarioId]?.diagramData?.edges || [];
 
 
-    const navigate = useNavigate(); // Using `useNavigate` hook from `react-router-dom`
+    const navigate = useNavigate(); 
+    const location = useLocation();
     const [mode, setMode] = useState('light');
     const { undo, redo, canUndo, canRedo, takeSnapshot } = useUndoRedo();
     // console.log("takeSnapshot from useUndoRedo:", takeSnapshot);
@@ -375,7 +381,22 @@ const BagpipesFlow = () => {
       
       
       
-      
+      const DEFAULT_EDGE_STYLE = {
+        style: {
+          stroke: '#000',
+          strokeWidth: 2
+        },
+        animated: true,
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          color: 'gray',
+          strokeWidth: 1
+        },
+        // type: 'arrow',
+        // label: 'Edge Label',
+        focusable: true,
+
+      };
   
       const onNodeDragStop = useCallback(
         (_, node) => {
@@ -394,7 +415,8 @@ const BagpipesFlow = () => {
               const connectedEdge = { 
                 ...closeEdge, 
                 id: generateEdgeId(closeEdge.source, closeEdge.target), // Ensure consistent id
-                className: undefined // Remove the 'temp' className
+                className: undefined, // Remove the 'temp' className
+                // ...DEFAULT_EDGE_STYLE
               }; 
               console.log("Connected edge added:", connectedEdge);
               connectedEdges.push(connectedEdge);
@@ -619,6 +641,7 @@ const BagpipesFlow = () => {
 
       
     }, [selectedEdgeId, setSelectedEdgeInScenario, activeScenarioId]);
+    
     const onNodeClick = useCallback((event, node) => {
       console.log("onNodeClick Clicked on:", node);
 
@@ -639,7 +662,44 @@ const BagpipesFlow = () => {
       }
     }, [selectedNodeId, setSelectedNodeInScenario, activeScenarioId]);
     
-  
+    const handleDraftTransactions = async () => {
+      try {
+         const draftedTransactions = await startDraftingProcess(activeScenarioId, scenarios);
+         console.log('Drafted transactions:', draftedTransactions);
+   
+         // Now navigate the user to TransactionMain for review
+         setTransactions(draftedTransactions);
+         navigate('/transaction/review');
+      } catch (error) {
+         console.error("Error during transaction drafting:", error);
+         toast.error('An error occurred during transaction drafting.');
+      }
+   };
+
+  useEffect(() => {
+    if (location.state && location.state.executeScenario) {
+      const executeMyScenario = executeChainScenario();
+
+      toast.promise(executeMyScenario,
+         {
+           loading: 'Processing workflow...',
+           success: <b>Workflow success!</b>,
+           error: <b>Could notexecute.</b>,
+         },
+         {
+         success: {
+          duration: 30000,
+          icon: '🔥',
+        },
+      }
+       );
+      
+      // Reset the executeScenario flag in the location state
+      navigate('/builder', { state: { ...location.state, executeScenario: false } });
+    }
+  }, [location]);
+
+   
         
     return (
 
@@ -692,8 +752,10 @@ const BagpipesFlow = () => {
 
             </Panel> */}
             </ReactFlowStyled>
+            <StartButton draftTransactions={handleDraftTransactions} />
+
             <PlayButton executeScenario={executeChainScenario} stopExecution={stopExecution} disabled={loading} />
-            <GitInfo />
+             
            
             </div>
             <Sidebar />

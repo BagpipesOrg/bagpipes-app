@@ -9,9 +9,9 @@ import AccountDropdown from './AccountDropdown';
 import useAppStore from '../../../../store/useAppStore';
 import AddContacts from './AddContacts'
 import {  getAssetOptions } from './options';
-import { listChains } from '../../../Chains/ChainsInfo';
+import { listChains } from '../../../../Chains/ChainsInfo';
 import { getSavedFormState, setSavedFormState } from '../../utils/storageUtils';
-import { getAssetBalanceForChain } from '../../../Chains/AssetHelper';
+import { getAssetBalanceForChain } from '../../../../Chains/Helpers/AssetHelper';
 import BalanceTippy from './BalanceTippy';
 import 'antd/dist/antd.css';
 import '../../../../index.css';
@@ -106,7 +106,8 @@ const ChainNode = ({ children, data, isConnectable }) => {
         ...prevState,
         asset: {
           name: selectedAssetInfo.asset.name,
-          assetId: selectedAssetInfo.assetId
+          assetId: selectedAssetInfo.assetId,
+          symbol: selectedAssetInfo.asset.symbol
         }
       }));
     } else {
@@ -256,7 +257,11 @@ useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
 
+    if (formState.chain && formState.asset && formState.address) {
+
     fetchBalance(signal);
+
+    }
 
     return () => controller.abort();
 }, [formState.chain, formState.asset, formState.address]);
@@ -313,7 +318,7 @@ console.log('Component re-rendered', formState.address);
               <option value="">Select an asset</option>
                {assetsForChain.map(asset => (
                    <option key={asset.assetId} value={asset.asset.name}>
-                     {asset.asset.name} | AssetId: {asset.assetId}
+                    {asset.asset.symbol} | {asset.asset.name} | AssetId: {asset.assetId}
                    </option>
                ))}
             </select>
