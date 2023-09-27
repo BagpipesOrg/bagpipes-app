@@ -1,9 +1,9 @@
-import { listAssetHubAssets, listHydraDxAssets } from './../../../Chains/listAssetsForChain';
+import { listAssetHubAssets, listHydraDxAssets } from '../../../../Chains/Assets/listAssetsForChain';
 
 const dotAssets = {
   asset: {
     name: 'polkadotDot',
-    ticker: 'DOT',
+    symbol: 'DOT',
     description: 'Polkadot',
   },
   assetId: 0,
@@ -12,7 +12,7 @@ const dotAssets = {
 const rococoAssets = {
   asset: {
     name: 'rococoRoc',
-    ticker: 'ROC',
+    symbol: 'ROC',
     description: 'Rococo',
   },
   assetId: 0,

@@ -17,6 +17,7 @@ import { io } from "socket.io-client";
 import Layout from './components/Wallet/components/Layout';
 import Welcome from './components/Wallet/components/Welcome';
 import Builder from './components/Builder';
+import TransactionMain  from './components/Bagpipes/CustomNodes/TransactionReview/TransactionMain';
 import ReactTestFlow from './ReactTestFlow';
 import WalletInfo from './components/Wallet/pages/WalletInfo';
 import initializeKeyring from './services/initializeKeyring';
@@ -59,7 +60,35 @@ export function App () {
     <WalletContextProvider>
       <SocketContext.Provider value={socket}>
       <ConfigProvider>
-        <Toaster>
+       
+        {/* <Notifications /> */}
+        <AddressBookProvider>
+        <Toaster
+        
+        position="top-center"
+        reverseOrder={false}
+        gutter={8}
+        containerClassName=""
+        containerStyle={{}}
+        toastOptions={{
+          // Define default options
+          className: '',
+          duration: 5000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+          },
+
+          // Default options for specific types
+          success: {
+            duration: 20000,
+            theme: {
+              primary: 'green',
+              secondary: 'black',
+            },
+          },
+        }}
+        >
           {(t) => (
             <ToastBar toast={t}>
               {({ icon, message }) => (
@@ -73,9 +102,7 @@ export function App () {
               )}
             </ToastBar>
           )}
-        </Toaster>      
-        {/* <Notifications /> */}
-        <AddressBookProvider>
+        </Toaster> 
           <Routes>
             <Route element={<Layout />} path='/' >
             <Route
@@ -97,6 +124,10 @@ export function App () {
                 <Route
                 element={<BagpipesFlowRoute />}
                 path='/builder'
+              />
+               <Route
+                element={<TransactionMain />}
+                path='/transaction/review'
               />
                 <Route element={<Lab />} path='/lab' />
 

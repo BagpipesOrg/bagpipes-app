@@ -3,11 +3,14 @@ import { useState, useContext, useEffect, useRef } from 'react';
 import { useStoreApi } from 'reactflow';
 import { getSavedFormState } from '../utils/storageUtils'; 
 import ScenarioService from '../../../services/ScenarioService';
-import { processScenarioData, validateDiagramData, getOrderedList } from '../utils/scenarioUtils';
+import { processScenarioData, validateDiagramData } from '../utils/scenarioUtils';
 import SocketContext from '../../../contexts/SocketContext';
 import useAppStore from '../../../store/useAppStore';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'react-hot-toast';
+import { getOrderedList } from '../utils/scenarioUtils';
+import { broadcastToChain } from '../../../Chains/api/broadcast';
+
 
 
 const useExecuteChainScenario = (nodes, setNodes) => {
@@ -23,36 +26,146 @@ const useExecuteChainScenario = (nodes, setNodes) => {
       updateNodeContent: state.updateNodeContent,
       setLoading: state.setLoading,
       loading: state.loading,
+      
     }));
+    // const [executionId, setExecutionId] = useState(null);
     const [nodeContentMap, setNodeContentMap] = useState({}); 
     const [nodeContentHistory, setNodeContentHistory] = useState({});
     const [lastReceived, setLastReceived] = useState({});
     
     const prevExecutionIdRef = useRef(null);  
 
-    // useEffect(() => {
-    //   if (socket == null) return; // Make sure the socket object is available
+    useEffect(() => {
+      if (socket == null) return; // Make sure the socket object is available
 
 
-    //   // socket stuff that was for interacting with our server
+        if (executionId === prevExecutionIdRef.current) {
+          return;
+      }
 
-    //     });
+      console.log("Client-side Execution ID before emitting joinRoom: ", executionId);
 
-    //     return () => {
-    //       socket.off('message');
-    //       socket.off('nodeOutput');
-    //       socket.off('processingCompleted');
-    //       socket.off('updateClient');
-    //       socket.off('status');
+      socket.emit('joinRoom', executionId);
+      prevExecutionIdRef.current = executionId; // Update the ref to the new executionId
+  
+     
+      // Listen for 'message' events (real-time updates during processing)
+      socket.on('message', ({ content, nodeId }) => {
+        // console.log('[socket] Message event received', content, nodeId);
 
-    //     };
-    //   }, [executionId, socket]);
+
+        if (!executionId) return;
       
+        console.log(`Received update for node ${nodeId}:`, content);
+      
+        // Update nodeContentMap with the new content for the nodeId
+        setNodeContentMap(prevNodeContentMap => {
+          const existingContent = prevNodeContentMap[nodeId] || '';
+          const updatedContent = existingContent + content;
+
+          updateNodeContent(executionId, nodeId, updatedContent);
+
+          return { ...prevNodeContentMap, [nodeId]: updatedContent };
+        });
+
+        // Set up a timer to periodically check the last received message:
+        setLastReceived(prev => ({ ...prev, [nodeId]: Date.now() }));
+
+
+      });
+      
+        // Listen for 'nodeOutput' events (final output for each node)
+        socket.on('nodeOutput', ({ nodeId, content }) => {
+          console.log(`[socket] Received final output for node ${nodeId}:`, content);
+          if (!executionId) return;
+          updateNodeContent(executionId, nodeId, content);
+          // Add logic to update the corresponding node in the UI with its final output
+          socket.emit('messageAcknowledged', { messageId: nodeId });
+
+
+        });
+      
+        // Listen for 'processingCompleted' event
+        socket.on('processingCompleted', (data) => {
+          if (!executionId) return;
+          console.log('[socket] processingCompleted', data.message);  
+          // Update the nodes state
+          // setNodes([...nodes]);
+          saveExecution(executionId);
+          setLoading(false);  
+
+        });
+
+        // Listen for 'status' events
+        socket.on('status', (data) => {
+          if (!executionId) return;
+          console.log('[socket] Received status:', data);
+
+          if (data.message === 'Workflow execution started') {
+            // Handle the start of workflow execution
+          } else if (data.message === 'Workflow execution failed') {
+            console.log('Error:', data.error);
+            // Handle the failure of workflow execution
+          }
+        });
+
+
+        socket.on('updateClient', ({ nodeId, concatenatedContent }) => {
+          if (!executionId) return;
+
+          console.log(`[socket] Final content for node ${nodeId}:`, concatenatedContent);
+
+          // You can update the UI here with the final concatenated content.
+          setNodeContentMap(prevNodeContentMap => ({
+            ...prevNodeContentMap,
+            [nodeId]: concatenatedContent
+          }));
+
+        });
+
+        return () => {
+          socket.off('message');
+          socket.off('nodeOutput');
+          socket.off('processingCompleted');
+          socket.off('updateClient');
+          socket.off('status');
+
+        };
+      }, [executionId, socket]);
+      
+      // useEffect(() => {
+      //     const timer = setInterval(() => {
+      //         for (let [node, timestamp] of Object.entries(lastReceived)) {
+      //             if (Date.now() - timestamp > 1500) { // 1.5 seconds
+      //                 // Fetch missing data for this node
+      //                 fetchMissingData(node);
+      //             }
+      //         }
+      //     }, 500); // Check every 0.5 seconds, but you can adjust this as needed
+
+      //     return () => clearInterval(timer); // Cleanup on unmount
+      // }, [lastReceived]);
+
+
+      const fetchMissingData = async (nodeId) => {
+        try {
+            const data = await ScenarioService.fetchMissingData(executionId);  // Using the executionId here
+            // Handle the received data
+            
+            // Clear the timestamp for this nodeId so we don't keep fetching
+            setLastReceived(prev => {
+                const updated = { ...prev };
+                delete updated[nodeId];
+                return updated;
+            });
+            
+        } catch (error) {
+            console.error(`Failed to fetch missing data for node ${nodeId}`, error);
+        }
+    }
+
     async function stopExecution() {
-
-      // we need to modify this code for our chain flow so that it gracefully stops at the end of the current step, because of course once you execute an extrinsic you cannot undo it. 
       try {
-
         console.log('Stopping execution...');
           const response = await ScenarioService.stopExecution(executionId);
           console.log('Stopped execution:', response);
@@ -66,7 +179,7 @@ const useExecuteChainScenario = (nodes, setNodes) => {
   }
 
   async function executeChainScenario() {
-    toast.success('Starting Workflow Execution...');
+    toast('Starting Workflow Execution...');
     console.log('[executeChainScenario] Starting Workflow Execution...');
     setLoading(true);
 
@@ -74,6 +187,7 @@ const useExecuteChainScenario = (nodes, setNodes) => {
     setNodeContentMap({});
 
     try {
+
         const rawDiagramData = store.getState();
         console.log('[executeChainScenario] rawDiagramData:', rawDiagramData);
 
@@ -83,7 +197,7 @@ const useExecuteChainScenario = (nodes, setNodes) => {
                 id: node.id, 
                 type: node.type, 
                 data: node.data, 
-                formState: getSavedFormState(node.id) || {},  // Get the form state for each node
+                formState: getSavedFormState(node.id) || {},  
             })),
             edges: rawDiagramData.edges.map(edge => ({ ...edge })),
         };
@@ -114,50 +228,71 @@ const useExecuteChainScenario = (nodes, setNodes) => {
         let executionCycleFinished = false;
 
         // Iterate over the nodes based on the order from orderedList
-        for(let nodeId of orderedList) {
+        for(let index = 0; index < orderedList.length; index++) {
+            let nodeId = orderedList[index];
             let currentNode = diagramData.nodes.find(node => node.id === nodeId);
             if (!currentNode) {
                 toast.error('The execution has ended due to an unknown node.');
                 return;
             }
 
-
             switch(currentNode.type) {
-              case 'openAi':
-                  // Handle the openAi node execution
-                  break;
+            case 'openAi':
+                // Handle the openAi node execution
+                break;
 
-              case 'chain':
+            case 'chain':
                 toast.success('Executing Chain Node...');
-                  // Handle the chain node execution
-          
-                  break;
+                // Handle the chain node execution
+                break;
 
-              case 'action':
-                toast.success('Executing Action Node...');
+            case 'action':
+                toast('Executing action node!', {
+                    icon: '💥',
+                });
 
-                  // Handle the action node execution
-                  break;
-          }
-      }
+
+                // Retrieve the signedExtrinsic from the current node data
+                const signedExtrinsic = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData?.signedExtrinsic || null;
+                const chain = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData?.actionData?.source?.chain || null; 
+                console.log('executeChainScenario Signed Extrinsic:', signedExtrinsic);
+                console.log('executeChainScenario Chain:', chain);
+
+                if(signedExtrinsic) {
+                    await broadcastToChain(chain, signedExtrinsic); 
+
+                }
+                // if it's the last iteration and set executionCycleFinished accordingly
+                executionCycleFinished = index === orderedList.length - 1; 
+                break;
+            }
+        }
+
 
       if (executionCycleFinished) {
-          // Handle the end of the execution
+         toast.success('Workflow Execution Completed! The execution cycle has finished.');
       }
 
-              // Here we have the logic from handleSaveScenario (from runChainScenarioOnce)
+            if (executionId) {
 
+              const currentDateTime = new Date().toISOString();
 
-
-
-    } catch (error) {
-        console.error('An error occurred while executing the workflow:', error);
-        toast.error(`Workflow execution error: ${error.message}`);
-    } finally {
-        console.log('Workflow Execution Prepared and Sent to Server...');
-        setNodes([...nodes]);
-    }
-};
+              const executionData = {
+                  timestamp: currentDateTime,
+                  nodeContentMap: { ...nodeContentMap },
+              };
+              console.log('Saving execution data...');
+              saveExecution(executionId, executionData);
+            } else {
+              console.error('No executionId received from the server. Cannot save execution.');
+          }
+        } catch (error) {
+            console.error('An error occurred while executing the workflow:', error);
+        } finally {
+            console.log('Workflow Execution Prepared and Sent to Server...');
+            setNodes([...nodes]);
+        }
+    };
     return { nodeContentMap, executeChainScenario, stopExecution };
 };
 
