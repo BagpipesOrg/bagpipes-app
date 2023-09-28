@@ -9,3 +9,7 @@ $ npm install -f
 $ npm run dev
 ```
 
+## Run tests:
+```shell
+$ yarn run test
+```

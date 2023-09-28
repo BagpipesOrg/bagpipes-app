@@ -8,9 +8,10 @@
     "esModuleInterop": true,
     "target": "ES2020",
     "moduleResolution": "node",
+    
 
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "./src/tests/*.ts"],
 
   "exclude": [
     "vite.config.js",
