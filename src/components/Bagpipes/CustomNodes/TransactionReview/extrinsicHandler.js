@@ -24,7 +24,8 @@ function handleReserveX(formData) {
     const chains = listChains();
     const source = formData.source;
     const target = formData.target;
-
+    console.log(`handleReserve source:`);
+    console.log(formData);
     // Retrieve token decimals for the source chain
     const tokenDecimals = getTokenDecimalsByChainName(source.chain);
 

@@ -1,4 +1,4 @@
-// import axios from './AxiosService';
+import axios from 'axios';
 import useAppStore from '../store/useAppStore';
 import { toast } from 'react-hot-toast';
 class ScenarioService {
