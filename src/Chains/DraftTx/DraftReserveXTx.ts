@@ -52,6 +52,44 @@ export async function genericPolkadotToParachain(paraid: number, amount: number,
 	return tx;
 }
 
+
+// working: https://polkadot.subscan.io/xcm_message/polkadot-6cff92a4178a7bf397617201e13f00c4da124981
+/// ref: https://polkaholic.io/tx/0x47914429bcf15b47f4d202d74172e5fbe876c5ac8b8a968f1db44377906f6654
+/// DOT to assethub
+export async function polkadot_to_assethub(amount: number, accountId: string) {
+	const api = await connectToWsEndpoint('polkadot');
+	const paraid = 1000;
+	//console.log(`Connected to assethub`);
+	const destination = {
+		parents: 0,
+		interior: { X1: { Parachain: paraid } },
+	};
+
+	const account = {
+		parents: 0,
+		interior: { X1: { AccountId32: { id: accountId, network: null } } },
+	};
+
+	const asset = [
+		{
+			id: { Concrete: { parents: 0, interior: "Here" } },
+			fun: { Fungible: amount },
+		},
+	];
+
+
+	const tx = await api.tx.xcmPallet.limitedTeleportAssets(
+		{ V3: destination },
+		{ V3: account	 },
+		{ V3: asset },
+		{ fee_asset_item: 0},
+		{ Unlimited: 0 },
+
+	);
+
+	return tx;
+}
+
 // working: https://hydradx.subscan.io/xcm_message/polkadot-047344414db62b7c424c8de9037c5a99edd0794c
 export async function dotToHydraDx(amount: number, targetAddress: string){
     const paraid = 2034; // TODO: call from ChainInfo

@@ -1,4 +1,4 @@
-import { dotToHydraDx, hydraDxToParachain, assethub_to_parachain, dotToParachain } from "../../../../Chains/DraftTx/DraftReserveXTx";
+import { dotToHydraDx, polkadot_to_assethub, hydraDxToParachain, assethub_to_parachain, dotToParachain } from "../../../../Chains/DraftTx/DraftReserveXTx";
 import { getTokenDecimalsByChainName } from "../../../../Chains/Helpers/AssetHelper";
 
 // import { hydradx_omnipool_sell } from "../../../Chains/DraftTx/DraftSwapTx";
@@ -50,8 +50,7 @@ function handleReserveX(formData) {
         },
         'polkadot:assetHub': () => {
             console.log("handleReserveX for Polkadot to AssetHub...");
-            // const paraid = chains.find(chain => chain.name === 'assethub').paraid;
-            return dotToParachain(submittableAmount, target.address);
+            return polkadot_to_assethub(submittableAmount, target.address);
         },
         'hydradx:polkadot': () => {
             console.log("handleReserveX for HydraDx to Polkadot...");
