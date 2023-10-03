@@ -56,9 +56,11 @@ export async function genericPolkadotToParachain(paraid: number, amount: number,
 // working: https://polkadot.subscan.io/xcm_message/polkadot-6cff92a4178a7bf397617201e13f00c4da124981
 /// ref: https://polkaholic.io/tx/0x47914429bcf15b47f4d202d74172e5fbe876c5ac8b8a968f1db44377906f6654
 /// DOT to assethub
-export async function polkadot_to_assethub(amount: number, accountId: string) {
+export async function polkadot_to_assethub(amount: number, address: string) {
 	const api = await connectToWsEndpoint('polkadot');
 	const paraid = 1000;
+  const accountId = api.createType("AccountId32", address).toHex();
+
 	//console.log(`Connected to assethub`);
 	const destination = {
 		parents: 0,
