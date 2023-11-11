@@ -14,6 +14,7 @@ import GitInfo from './git_tag';
 import { useDebounce } from 'use-debounce';
 import TextUpdaterNode from './TextupdaterNode';
 import Sidebar from './Sidebar';
+import Toolbar from '../Toolbar/Toolbar';
 import FormGroupNode from './FormGroupNode';
 import OpenAINode from './CustomNodes/OpenAINode';
 import ChainNode from './CustomNodes/ChainNode/ChainNode';
@@ -903,6 +904,7 @@ const handleDraftTransactions = async () => {
 
             </div>
             <Sidebar />
+            <Toolbar />
             {/* {modalNodeId && currentScenarioNodes && currentScenarioEdges && (
                 <OpenAINodeForm
                   nodeId={modalNodeId}
