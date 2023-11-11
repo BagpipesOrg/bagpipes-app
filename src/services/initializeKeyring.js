@@ -1,5 +1,7 @@
-import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
+import { web3Accounts, web3Enable, web3AccountsSubscribe } from '@polkadot/extension-dapp';
 import { keyring } from '@polkadot/ui-keyring';
+
+
 
 export default async function initializeKeyring() {
     console.log("[initializeKeyring] initializeKeyring started");

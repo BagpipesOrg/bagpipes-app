@@ -55,7 +55,7 @@ export async function polkadot_to_assethub(amount: number, address: string) {
 	];
 
 
-	const tx = await api.tx.xcmPallet.limitedTeleportAssets(
+	const tx = api.tx.xcmPallet.limitedTeleportAssets(
 		{ V3: destination },
 		{ V3: account	 },
 		{ V3: asset },
@@ -111,15 +111,14 @@ export async function assethub2interlay(assetid: number, amount: number, destacc
 }
 
 // https://polkaholic.io/tx/0xaa4ccd2b190b9c96d60068ef418860a99b1cea6c220c726284712c081b90766d
-export async function interlay2assethub(assetid: number, amount: number, accountid32: string){
-	const api = await connectToWsEndpoint('interlay');	
-	const paraid = 1000;
-	const currency_id = {
-		"foreignasset": assetid
-	};
-	const dest_weight_limit = {
-        "unlimited": null
-    };
+export async function parachain2assethub(assetid: number, amount: number, accountid32: string, chain: string='interlay', paraid: number=1000){
+	const api = await connectToWsEndpoint(chain);	
+	// const currency_id = {
+	// 	"foreignasset": assetid
+	// };
+	// const dest_weight_limit = {
+    //     "unlimited": null
+    // };
 
 	const destination = {
 		parents: 0,
@@ -129,7 +128,7 @@ export async function interlay2assethub(assetid: number, amount: number, account
 		} }] },
 	};
 
-	const tx = await api.tx.xTokens.transfer(
+	const tx = api.tx.xTokens.transfer(
 		{ "foreignasset": assetid },
 		{ amount: amount.toString() },
 		{ V3: destination },

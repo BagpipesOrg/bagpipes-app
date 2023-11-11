@@ -1,6 +1,5 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-// import NodeNotifications from './toasts/NodeNotifications';
 import toast, { Toaster, ToastBar } from 'react-hot-toast';
 import Layout from './Wallet/components/Layout';
 import Welcome from './Wallet/components/Welcome';
@@ -57,8 +56,6 @@ function MainLayout({ children }) {
         )}
         </Toaster>
 
-
-      {/* <NodeNotifications /> */}
       <Routes>
         <Route element={<CreateFromTemplate />} path='/create'>
       <Route path="/create" element={<CreateFromTemplate />} />

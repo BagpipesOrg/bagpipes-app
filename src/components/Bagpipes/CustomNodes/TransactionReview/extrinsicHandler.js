@@ -1,4 +1,4 @@
-import { dotToHydraDx, hydraDxToParachain, polkadot_to_assethub, interlay2assethub, assethub2interlay } from "../../../../Chains/DraftTx/DraftxTransferTx";
+import { dotToHydraDx, hydraDxToParachain, polkadot_to_assethub, parachain2assethub, assethub2interlay } from "../../../../Chains/DraftTx/DraftxTransferTx";
 import { getTokenDecimalsByChainName } from "../../../../Chains/Helpers/AssetHelper";
 import toast from "react-hot-toast";
 
@@ -62,13 +62,16 @@ function handlexTransfer(formData) {
             const paraid = 0;
             return hydraDxToParachain(submittableAmount, source.assetId, target.chain, paraid);
         },
-
+        'polkadot:interlay': () => {
+            console.log("handlexTransfer for Polkadot to Interlay...");
+            return polkadot2Interlay(source.assetId, submittableAmount, target.address);
+        },
         'assetHub:interlay': () => {
             return assethub2interlay(source.assetId, submittableAmount, target.address);
         },
 
         'interlay:assethub': () => {
-            return interlay2assethub(source.assetId, submittableAmount, target.address);
+            return parachain2assethub(source.assetId, submittableAmount, target.address);
         },
 
         'assetHub:hydraDx': () => {

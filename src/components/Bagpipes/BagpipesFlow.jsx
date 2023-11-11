@@ -704,16 +704,16 @@ const processDraftTransactions = async () => {
   // Start the drafting process and return a promise that either resolves with the transactions
   // or rejects after a timeout.
   return new Promise(async (resolve, reject) => {
-      const timeoutId = setTimeout(() => {
-          reject(new Error('Drafting is taking longer than expected. Please refresh the page and try again.'));
-      }, 10000); // 10 seconds timeout
+      // const timeoutId = setTimeout(() => {
+      //     reject(new Error('Drafting is taking longer than expected. Please refresh the page and try again.'));
+      // }, 10000); // 10 seconds timeout
 
       try {
           const result = await startDraftingProcess(activeScenarioId, scenarios);
-          clearTimeout(timeoutId); // Clear the timeout if drafting succeeds in time
+          // clearTimeout(timeoutId); // Clear the timeout if drafting succeeds in time
           resolve(result);
       } catch (error) {
-          clearTimeout(timeoutId); // Clear the timeout if there's an error
+          // clearTimeout(timeoutId); // Clear the timeout if there's an error
           reject(error);
       }
   });
@@ -841,7 +841,7 @@ const handleDraftTransactions = async () => {
 
         <ThemeProvider theme={theme}>
             <Panel position="top-center">   
-            <CreateTemplateLink scenarioId={activeScenarioId} />
+            {/* <CreateTemplateLink scenarioId={activeScenarioId} /> */}
        
                 {/* <button className="bg-slate-900  p-3 text-white" onClick={toggleMode}>light / dark</button> */}
             </Panel>

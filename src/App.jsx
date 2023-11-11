@@ -19,16 +19,28 @@ export function App () {
   const [socket, setSocket] = useState(null);
   const location = useLocation();
 
+  useEffect(() => {
+    let unsubscribe;
 
-    async function setupKeyring() {
+    const setupKeyring = async () => {
       try {
-        await initializeKeyring();
+        unsubscribe = await initializeKeyring();
         console.log("Keyring initialized");
       } catch (error) {
-          console.error("Failed to initialize keyring:", error);
+        console.error("Failed to initialize keyring:", error);
       }
-    }
+    };
+
     setupKeyring();
+
+    // Cleanup function to unsubscribe when the component unmounts
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+        console.log("Unsubscribed from keyring updates");
+      }
+    };
+  }, []); 
 
   
     useEffect(() => {
