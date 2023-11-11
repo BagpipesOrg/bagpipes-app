@@ -19,6 +19,12 @@ const nodeNames = {
     action: 'Action',
 };
 
+const nodeDescriptions = {
+  chain: 'Drag and drop a chain node on to the canvas to select the chain you want to use.',
+  action: 'Drag and drop an action to make an action (transfer, xTransfer, Swap, etc.).',
+
+  }
+
 const Toolbar = () => {
   const { theme } = useContext(ThemeContext);
   const onDragStart = (event, nodeType) => {
@@ -27,7 +33,7 @@ const Toolbar = () => {
   };
 
   const renderNode = (nodeKey) => (
-    <Tippy content={nodeNames[nodeKey]}>
+    <Tippy theme="light" content={nodeDescriptions[nodeKey]}>
       <div className={`toolbar-icon ${theme}`} onDragStart={(event) => onDragStart(event, nodeKey)} draggable>
         {nodeNames[nodeKey]}
       </div>

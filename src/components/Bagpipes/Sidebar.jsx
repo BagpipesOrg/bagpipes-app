@@ -32,16 +32,16 @@ export default () => {
   }
 
   return (
-<aside className={`${theme} sidebar fixed top-100 right-0`}>
+<aside className={`${theme} sidebar fixed`}>
         <CreateButton createScenario={createScenario} />
-      <div className="description">Drag thes nodes to the canvas, connect them together to build a workflow. </div>
+      {/* <div className="description">Drag thes nodes to the canvas, connect them together to build a workflow. </div>
     
       <div className={` dndnode chain`} onDragStart={(event) => onDragStart(event, 'chain')} draggable>
         {nodeNames.chain}
       </div>
       <div className=" dndnode action" onDragStart={(event) => onDragStart(event, 'action')} draggable>
         {nodeNames.action}
-      </div>
+      </div> */}
     </aside>
   );
 };

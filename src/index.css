@@ -76,6 +76,9 @@ button:focus-visible {
 
 .sidebar {
   background-color: var(--no-bg) !important;
+  position: absolute;
+  top: 70px;
+  right:20px;
 }
 
 .bagpipe {

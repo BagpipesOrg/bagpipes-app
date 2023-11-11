@@ -8,7 +8,7 @@
     top: 50px; // 20px margin from the bottom
     left: 50%;
     transform: translateX(-50%);
-    background-color: var(--bg-accent); // Theme-based background
+    background-color: $primary-color; // Theme-based background
     padding: 10px 20px;
     border-radius: 16px; // Rounded edges
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); // Subtle shadow for depth
@@ -19,10 +19,12 @@
     margin: 0 10px;
     cursor: pointer;
     transition: all 0.3s ease;
+    font-weight: 600;
+    color: white;
 
     &:hover {
       transform: translateY(-5px); // Lift effect on hover
-      color: var(--primary); // Change color on hover for better visibility
+      // color: var(----color); // Change color on hover for better visibility
     }
 }
 
