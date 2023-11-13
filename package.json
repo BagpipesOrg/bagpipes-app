@@ -93,7 +93,7 @@
     "@metamask/detect-provider": "^2.0.0",
     "@polkadot/dev": "^0.66.28",
     "@types/react": "^18.2.15",
-    "@types/react-dom": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
     "@types/uuid": "^9.0.2",
     "@types/web3-provider-engine": "^14.0.1",
     "@vitejs/plugin-react": "^4.0.1",
