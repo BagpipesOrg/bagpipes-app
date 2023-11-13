@@ -1,8 +1,11 @@
 import React, { useContext } from 'react';
 import Tippy from '@tippyjs/react';
 import ThemeContext from '../../contexts/ThemeContext';
-import 'tippy.js/dist/tippy.css'; // Optional for styling
-import './Toolbar.scss'; // Path to your custom CSS
+import { ActionIcon, ChainIcon } from '../Icons/icons'; 
+import 'tippy.js/dist/tippy.css'; 
+import './Toolbar.scss'; 
+
+
 
 const nodeNames = {
     // inputPrompt: 'Input Prompt',
@@ -20,8 +23,8 @@ const nodeNames = {
 };
 
 const nodeDescriptions = {
-  chain: 'Drag and drop a chain node on to the canvas to select the chain you want to use.',
-  action: 'Drag and drop an action to make an action (transfer, xTransfer, Swap, etc.).',
+  chain: 'Chain: Drag and drop a chain node on to the canvas to select the chain you want to use.',
+  action: 'Action: Drag and drop an action to make an action (transfer, xTransfer, Swap, etc.).',
 
   }
 
@@ -32,14 +35,23 @@ const Toolbar = () => {
     event.dataTransfer.effectAllowed = 'move';
   };
 
-  const renderNode = (nodeKey) => (
-    <Tippy theme="light" content={nodeDescriptions[nodeKey]}>
-      <div className={`toolbar-icon ${theme}`} onDragStart={(event) => onDragStart(event, nodeKey)} draggable>
-        {nodeNames[nodeKey]}
-      </div>
-    </Tippy>
-  );
+  const renderNode = (nodeKey) => {
+    let IconComponent;
+    if (nodeKey === 'chain') {
+      IconComponent = <ChainIcon />;
+    } else if (nodeKey === 'action') {
+      IconComponent = <ActionIcon />;
+    }
 
+    return (
+      <Tippy theme="light" content={nodeDescriptions[nodeKey]}>
+        <div className={`toolbar-icon ${theme}`} onDragStart={(event) => onDragStart(event, nodeKey)} draggable>
+          {IconComponent}
+          <span>{nodeNames[nodeKey]}</span>
+        </div>
+      </Tippy>
+    );
+  };
   return (
     <div className={`toolbar-node ${theme}`}>
       {Object.keys(nodeNames).map(nodeKey => renderNode(nodeKey))}

@@ -16,11 +16,20 @@
 }
 
 .toolbar-icon {
+  display: flex;
+  flex-direction: column;
     margin: 0 10px;
+    align-items: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-weight: 600;
+    font-weight: 500;
     color: white;
+
+    svg {
+      width: 24px; // Adjust as needed
+      height: 24px; // Adjust as needed
+      margin-bottom: 4px;
+    }
 
     &:hover {
       transform: translateY(-5px); // Lift effect on hover
