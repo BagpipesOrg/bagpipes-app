@@ -8,7 +8,7 @@ export const EDGE_STYLES = {
   default: {
     style: {
       stroke: 'gray',
-      strokeWidth: 3,
+      strokeWidth: 1,
     },
     animated: true,
     markerEnd: {
@@ -16,16 +16,17 @@ export const EDGE_STYLES = {
       color: 'gray',
       strokeWidth: 2,
     },
+    type: 'smoothstep',
     label: 'Edge Label',
   },
   executing: {
     style: {
       stroke: 'green',
-      strokeWidth: 7,
+      strokeWidth: 3,
     },
     animated: true,
     markerEnd: {
-      type: MarkerType.ArrowClosed,
+      // type: MarkerType.ArrowClosed,
       color: 'green',
       strokeWidth: 3,
     },
@@ -35,7 +36,7 @@ export const EDGE_STYLES = {
   default_connected: {
     style: {
       stroke: ``,
-      strokeWidth: 2
+      strokeWidth: 2,
     },
     // animated: true,
     markerEnd: {
@@ -47,6 +48,7 @@ export const EDGE_STYLES = {
     // label: 'Edge Label',
     focusable: true,
     label: '',
+    type: 'smoothstep',
 
   
   }
