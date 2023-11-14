@@ -1,0 +1,21 @@
+@import '../../../variables.scss';
+
+
+.start-stop-create-button {
+    position: relative;
+    background-color:$primary-color; /* bg-blue-500 */
+    color: white; /* text-white */
+    font-weight: bold; /* font-bold */
+    padding: 0.5rem 1rem; /* py-2 px-4 */
+    border-radius: 0.25rem; /* rounded */
+    display: flex; /* flex */
+    align-items: center; /* items-center */
+    z-index: 1000; /* Inline style */
+    transition: background-color 0.3s; /* For hover effect */
+  }
+  
+  .start-stop-create-button:hover {
+    background-color: #2b6cb0; /* hover:bg-blue-700 */
+  }
+
+

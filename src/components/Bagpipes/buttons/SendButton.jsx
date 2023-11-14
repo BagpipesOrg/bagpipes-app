@@ -1,6 +1,7 @@
 import React from 'react';
 import { SendIcon } from '../../Icons/icons';
 import { useAppStore } from '../../../components/Bagpipes/hooks';
+import './Buttons.scss';
 
 const SendButton = ({ executeChainScenario, stopExecution }) => {
     const { executionState } = useAppStore((state) => ({
@@ -34,7 +35,7 @@ const SendButton = ({ executeChainScenario, stopExecution }) => {
 
     return (
         <button 
-            className="fixed right-10 bottom-10 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded flex items-center" 
+            className="start-stop-create-button bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded flex items-center" 
             style={{ zIndex: 1000 }}
             disabled={executionState === 'sending'}
             onClick={executionState === 'sending' ? stopExecution : executeChainScenario}

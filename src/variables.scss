@@ -27,11 +27,12 @@ $chain-node-width: 250px;
     --color: rgb(19, 19, 19);
     --border-color: rgb(202, 202, 202); 
     --button-bg-hover: darken(#{$primary-color}, 10%);
-    --box-shadow-color: #bdbdbd44;
+    --box-shadow-color: #b3b3b344;
     --toast-bg: #b9b9b9;
     --toast-bg-accent: #5182f6;
     --default-edge: black;
     --button-color: white;
+    --node-perimeter: white;
     
 }
 
@@ -63,4 +64,5 @@ $chain-node-width: 250px;
     --toast-bg-accent: #1c4cbe;
     --default-edge: white;
     --button-color: white;
+    --node-perimeter: black;
 }

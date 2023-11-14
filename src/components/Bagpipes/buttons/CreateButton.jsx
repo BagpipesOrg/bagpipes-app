@@ -1,15 +1,15 @@
 // @ts-nocheck
 import React from 'react';
-import { PlusIcon } from '../Icons/icons';
-import './nodes.jsx';
-import '../../index.css';
+import { PlusIcon } from '../../Icons/icons';
+import '../nodes.jsx';
+import '../../../index.css';
+import './Buttons.scss'
 
 export const CreateButton = ({createScenario}) => {
     return (
         <button 
-        className="flex items-center dndnode new-scenario  bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" 
+        className="start-stop-create-button ml-2" 
         onClick={createScenario} 
-            style={{ zIndex: 1000 }}
         >
             {PlusIcon}
             New Scenario

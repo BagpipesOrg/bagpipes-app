@@ -125,7 +125,7 @@ button:focus-visible {
 }
 
 .new-scenario {
-    height: 20px !important;
+  height: 20px !important;
   padding: 20px;
   border: 1px solid #250303;
   border-radius: 8px;
@@ -134,8 +134,20 @@ button:focus-visible {
   justify-content: center;
   align-items: center;
   cursor: grab;
+  z-index: 100 !important;
+
 
 }
+
+.top-bar {
+  display:flex;
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  justify-content: space-between;
+}
+
 
 .bagpipe .dndnode.input {
   border-color: #0041d0;
@@ -152,8 +164,21 @@ button:focus-visible {
 
 .reactflow-wrapper {
   flex-grow: 1;
-  height: 100% !important;
+  height: 90vh !important;
+  /* min-height: 94vh !important; */
+  overflow:hidden !important;
 }
+
+.react-flow__pane {
+  overflow: hidden !important;
+  /* height:100vh !important; */
+}
+
+/* .reactflow-container {
+    width: 100% !important;
+    height: 100vh !important; 
+    overflow: hidden !important;
+} */
 
 
 .bagpipe .selectall {
@@ -186,7 +211,7 @@ button:focus-visible {
 }
 
 .react-flow__edge-path {
-  stroke: #5e5e5e;
+  stroke: #252525;
   stroke-width: 3 !important;
 }
 
@@ -248,9 +273,11 @@ border: 1px solid rgb(184, 184, 184);
 
 
 .bagpipe-flow-canvass {
-  height: 100% !important;
   content: " ";
   overflow: scroll !important;
+  width: 100% !important;
+  height: auto !important; 
+  overflow: hidden !important;
 }
 
 .react-flow__background {
@@ -290,7 +317,7 @@ border: 1px solid rgb(184, 184, 184);
 }
 
 .react-flow {
-  height: 93% !important;
+  height: 95vh !important;
 }
 
 .node-notifications {

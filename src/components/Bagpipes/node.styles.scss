@@ -1,9 +1,9 @@
 @import "../../variables";
 
 
-// .react-flow__renderer {
-//   transition: transform 0.5s ease !important;
-// }
+.react-flow__renderer {
+  height: 100%;
+}
 
 .react-flow__node-openAi.selectable, .react-flow__node-openAi.selectable:focus {
     border: 3px solid #ffffff !important;
@@ -50,11 +50,11 @@
   }
 
   .react-flow__node  {
-    outline: 1px solid rgba(195, 195, 195, 0.535) !important;
+    outline: 1px solid rgba(188, 188, 188, 0.212) !important;
     border-radius: 12px !important;
     background-color: var(--node-bg);
     color: var(--node-color) !important;
-    box-shadow: 8px 8px 10px 5px var(--box-shadow-color) !important;
+    box-shadow: 10px 20px 10px 10px var(--box-shadow-color) !important;
     font-family: $primary-font, sans-serif;
     /* border: 3px solid black !important; */
   }
@@ -95,7 +95,7 @@
     background: rgb(189, 196, 204) !important;
     border: 1px solid black !important;
     /* color: black; */
-    border-radius: 100%;
+    border-radius: 14px;
     margin-left: -5px;
     margin-right: -5px
 }
@@ -172,7 +172,7 @@ background-color: white !important;
     height: 100%;
     // overflow-wrap: break-word;
     padding: 5px;
-    box-shadow: 8px 8px 10px 5px var(--box-shadow-color) !important;
+    box-shadow: 8px 8px 8px 2px var(--box-shadow-color) !important;
     
     /* ...any other necessary styles... */
 

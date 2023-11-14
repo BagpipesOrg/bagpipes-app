@@ -13,7 +13,6 @@ import { generateEdgeId } from './utils/storageUtils';
 import GitInfo from './git_tag';
 import { useDebounce } from 'use-debounce';
 import TextUpdaterNode from './TextupdaterNode';
-import Sidebar from './Sidebar';
 import Toolbar from '../Toolbar/Toolbar';
 import FormGroupNode from './FormGroupNode';
 import OpenAINode from './CustomNodes/OpenAINode';
@@ -33,6 +32,7 @@ import { v4 as uuidv4 } from 'uuid';
 import styled, { ThemeProvider } from 'styled-components';
 import ThemeContext from '../../contexts/ThemeContext';
 import { lightTheme, darkTheme } from './theme';
+import { CreateButton } from './buttons/CreateButton';
 import { node } from 'stylis';
 import transformOrderedList from '../toasts/utils/transformOrderedList';
 import { getOrderedList } from './hooks/utils/scenarioExecutionUtils';
@@ -148,6 +148,7 @@ const BagpipesFlow = () => {
 
     const { executeChainScenario, nodeContentMap, stopExecution } = useExecuteChainScenario(currentScenarioNodes, setNodes, instance);
 
+    const createScenario = useCreateScenario();
 
 
     // // Related to proximity connections 
@@ -836,7 +837,7 @@ const handleDraftTransactions = async () => {
         
     return (
 
-      <div className="bagpipe-flow-canvass" style={{ width: '100vw', height: '1000px' }}>
+      <div className="bagpipe-flow-canvass" >
 
 
         <ThemeProvider theme={theme}>
@@ -845,9 +846,8 @@ const handleDraftTransactions = async () => {
        
                 {/* <button className="bg-slate-900  p-3 text-white" onClick={toggleMode}>light / dark</button> */}
             </Panel>
-            <div className="bagpipe">
         
-            <div style={{ height: 800 }} className="reactflow-wrapper" ref={reactFlowWrapper}>
+            <div className="" ref={reactFlowWrapper}>
               <ReactFlowStyled
                   nodes={currentScenarioNodes}
                   edges={combinedEdges}
@@ -875,7 +875,7 @@ const handleDraftTransactions = async () => {
               {/* <MiniMap /> */}
               {/* <Background id="1" gap={10} color="#f1f1f1" variant={BackgroundVariant.Lines} /> 
              <Background id="2" gap={100} offset={1} color="#ccc" variant={BackgroundVariant.Lines} />  */}
-              <Background color={theme.dots} className={theme.bg === lightTheme.bg ? "bg-gray-300" : "bg-gray-900"} variant={BackgroundVariant.Dots} />
+              <Background color={theme.dots} className={theme.bg === lightTheme.bg ? "bg-white" : "bg-gray-900"} variant={BackgroundVariant.Dots} />
               <ControlsStyled />
               <EdgeLabelRenderer type='' />
               {/* <Panel position="bottom-center">
@@ -889,22 +889,30 @@ const handleDraftTransactions = async () => {
                 </div>
 
             </Panel> */}
-            </ReactFlowStyled>
-           
-            {shouldExecuteChainScenario ? (
+
+            
+
+          <div className='top-bar'>
+              {shouldExecuteChainScenario ? (
               <SendButton executeChainScenario={handleExecuteChainScenario} />
             ) : (
               <StartButton draftTransactions={handleDraftTransactions} />
 
             )}
+            <CreateButton createScenario={createScenario} />
+            </div>
+
+            <Toolbar />
+            </ReactFlowStyled>
+            
+           
         
             {/* <PlayButton executeScenario={executeChainScenario} stopExecution={stopExecution} disabled={loading} /> */}
              
             {/* <GitInfo /> */}
 
             </div>
-            <Sidebar />
-            <Toolbar />
+            
             {/* {modalNodeId && currentScenarioNodes && currentScenarioEdges && (
                 <OpenAINodeForm
                   nodeId={modalNodeId}
@@ -918,7 +926,6 @@ const handleDraftTransactions = async () => {
                 />
        
               )} */}
-            </div>
     </ThemeProvider>
     </div>
   
