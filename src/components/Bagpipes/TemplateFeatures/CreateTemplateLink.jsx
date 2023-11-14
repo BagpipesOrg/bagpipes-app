@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAppStore } from '../hooks';
+import { compressString } from './compress';
+
 
 const CreateTemplateLink = ({ scenarioId }) => {
   const { scenarios } = useAppStore((state) => ({
@@ -9,7 +11,11 @@ const CreateTemplateLink = ({ scenarioId }) => {
   
   useEffect(() => {
     if (scenarioId && scenarios && scenarios[scenarioId]) {
-      const link = createLink(scenarios[scenarioId].diagramData);
+      console.log(`Diagram data:`, scenarios[scenarioId].diagramData);
+      const compressed_link = compressString(JSON.stringify((scenarios[scenarioId].diagramData)));
+      console.log(`compressed:`, compressed_link);
+      const link = createLink(compressed_link);
+      console.log(`link:`, link);
       setTemplateLink(link);
     } else {
       console.error('Scenarios not loaded or scenarioId is invalid.');
@@ -17,7 +23,8 @@ const CreateTemplateLink = ({ scenarioId }) => {
   }, [scenarioId, scenarios]);
   
   const createLink = (diagramData) => {
-    const encodedData = encodeURIComponent(JSON.stringify(diagramData));
+    const encodedData = encodeURI(diagramData);// encodeURI(diagramData);
+    console.log(`creating link to: /#/create/?diagramData=`, encodedData);
     return `${window.location.origin}/#/create/?diagramData=${encodedData}`;
   };
 

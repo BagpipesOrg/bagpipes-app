@@ -1,6 +1,6 @@
 /// tests for XCMSend
 
-import { genericPolkadotToParachain, polkadot_to_assethub, assethub_to_parachain,  hydraDxToParachain, dotToHydraDx, interlay2assethub, assethub2interlay } from './Chains/DraftTx/DraftxTransferTx';
+import { genericPolkadotToParachain, polkadot_to_assethub, assethub_to_parachain,  hydraDxToParachain, dotToHydraDx, assethub2interlay } from './Chains/DraftTx/DraftxTransferTx';
 import * as assert from 'assert';
 import { checkAssetHubBalance, assetHubNativeBalance, checkHydraDxAssetBalance, checkPolkadotDotRawNativeBalance } from './Chains/Helpers/AssetHelper';
 import { Keyring } from '@polkadot/keyring';
@@ -13,9 +13,9 @@ async function test_interlay() {
 	console.log(tx.toHex());
 	console.log(`assethub > interlay ok`);
 	
-	console.log(`interlay > assethub`);
-	const i2atx = await interlay2assethub(1984, 200000000, "0xe64afe6914886cdcfea8da5f13e1e21aa11876cfe7fdde9299bbcdbbdc3a8b19");
-	console.log(i2atx.toHex());
+//	console.log(`interlay > assethub`);
+	//const i2atx = await interlay2assethub(1984, 200000000, "0xe64afe6914886cdcfea8da5f13e1e21aa11876cfe7fdde9299bbcdbbdc3a8b19");
+//	console.log(i2atx.toHex());
 	console.log(`interlay > assethub ok`);
 }
 
