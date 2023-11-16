@@ -23,10 +23,19 @@ const nodeNames = {
 };
 
 const nodeDescriptions = {
-  chain: 'Chain: Drag and drop a chain node on to the canvas to select the chain you want to use.',
-  action: 'Action: Drag and drop an action to make an action (transfer, xTransfer, Swap, etc.).',
-
-  }
+  chain: 
+  <div className='m-4'>
+    <h1 className='text-xl font-bold'>Chain </h1>
+    <p>Drag and drop a chain node on to the canvas to select the chain you want to use.</p>
+<img src='./ChainNodeScreenshot.png'></img>
+  </div>,
+  action: 
+  <div className='m-4'>
+    <h1 className='text-xl font-bold'>Action </h1>
+    <p>Drag and drop an action to make an action (transfer, xTransfer, Swap, etc.).</p>
+<img src='./ActionNodeScreenshot.png'></img>
+  </div>,
+}
 
 const Toolbar = () => {
   const { theme } = useContext(ThemeContext);
@@ -44,7 +53,7 @@ const Toolbar = () => {
     }
 
     return (
-      <Tippy placement="top" theme="light" content={nodeDescriptions[nodeKey]}>
+      <Tippy  placement="bottom" theme="light" content={nodeDescriptions[nodeKey]}>
         <div className={`toolbar-icon ${theme}`} onDragStart={(event) => onDragStart(event, nodeKey)} draggable>
           {IconComponent}
           <span>{nodeNames[nodeKey]}</span>

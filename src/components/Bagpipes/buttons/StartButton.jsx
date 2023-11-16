@@ -1,18 +1,23 @@
 // @ts-nocheck
 import React from 'react';
-import { PlayIcon } from '../../Icons/icons';
+import { DraftIcon } from '../../Icons/icons';
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css';
 import './Buttons.scss';
+import { buttonDescriptions}  from './buttonDescriptions';
 
 const StartButton = ({ draftTransactions }) => {
     return (
+        <Tippy theme='light' content={buttonDescriptions.draft}>
         <button 
         className="start-stop-create-button" 
         onClick={draftTransactions} 
             style={{ zIndex: 1000 }}
         >
-            <PlayIcon />
-            Draft
+            <DraftIcon />
+            {/* Draft */}
         </button>
+        </Tippy>
     );
 }
 

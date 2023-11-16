@@ -24,6 +24,7 @@ import { initialEdges, initialNodes } from './nodes.jsx';
 import PlayButton from './buttons/PlayButton';
 import StartButton from './buttons/StartButton';
 import SendButton from './buttons/SendButton';
+import CreateUiButton from './buttons/CreateUiButton';
 import { startDraftingProcess } from './utils/startDraftingProcess';
 import { MarkerType } from 'reactflow';
 import { useCreateScenario } from './hooks/useCreateScenario';
@@ -893,6 +894,8 @@ const handleDraftTransactions = async () => {
             
 
           <div className='top-bar'>
+
+            <CreateUiButton />
               {shouldExecuteChainScenario ? (
               <SendButton executeChainScenario={handleExecuteChainScenario} />
             ) : (
@@ -900,7 +903,7 @@ const handleDraftTransactions = async () => {
 
             )}
             <CreateButton createScenario={createScenario} />
-            </div>
+          </div>
 
             <Toolbar />
             </ReactFlowStyled>
