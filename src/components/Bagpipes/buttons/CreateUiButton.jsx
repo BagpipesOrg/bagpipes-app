@@ -13,7 +13,7 @@ export const CreateUiButton = ({ onCreateUi }) => {
     <Tippy theme='light'  content={
     <div className='bg-white m-4'>
       <div className='flex justify-between'>
-    <h1 className="text-xl font-bold">Create UI</h1>
+    <h1 className="text-xl font-bold">Create UI (coming soon)</h1>
 
     <span className='h-7 w-7'><CreateUIBlack /></span>
     </div>

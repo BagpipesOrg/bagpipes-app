@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import Tippy from '@tippyjs/react';
 import ThemeContext from '../../contexts/ThemeContext';
-import { ActionIcon, ChainIcon } from '../Icons/icons'; 
+import { ActionIcon, ChainIcon, ToolsIcon } from '../Icons/icons'; 
 import 'tippy.js/dist/tippy.css'; 
 import './Toolbar.scss'; 
 
@@ -20,6 +20,7 @@ const nodeNames = {
     // vectorDb: 'Vector DB',
     chain: 'Chain',
     action: 'Action',
+    tools: 'Tools',
 };
 
 const nodeDescriptions = {
@@ -35,6 +36,12 @@ const nodeDescriptions = {
     <p>Drag and drop an action to make an action (transfer, xTransfer, Swap, etc.).</p>
 <img src='./ActionNodeScreenshot.png'></img>
   </div>,
+   tools: 
+   <div className='m-4'>
+     <h1 className='text-xl font-bold'>Tools (coming soon) </h1>
+     <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
+
+   </div>
 }
 
 const Toolbar = () => {
@@ -50,6 +57,8 @@ const Toolbar = () => {
       IconComponent = <ChainIcon />;
     } else if (nodeKey === 'action') {
       IconComponent = <ActionIcon />;
+    } else if (nodeKey === 'tools') {
+      IconComponent = <ToolsIcon />;
     }
 
     return (
