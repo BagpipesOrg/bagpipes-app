@@ -10,13 +10,15 @@ import { buttonDescriptions}  from './buttonDescriptions';
 
 export const CreateButton = ({createScenario}) => {
     return (
-        <Tippy  theme='light' content={buttonDescriptions.newFlow}>
+        <Tippy  theme='light' interactive={true}  content={buttonDescriptions.newFlow}>
         <button 
         className="start-stop-create-button" 
         onClick={createScenario} 
         >
+             
             {PlusIcon}
-    {/* New Flow         */}
+            <span className='ml-2 '>New Flow</span>
+ 
         </button>
         </Tippy>
     );

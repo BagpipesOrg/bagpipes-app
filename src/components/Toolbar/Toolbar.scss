@@ -18,12 +18,12 @@
 .toolbar-icon {
   display: flex;
   flex-direction: column;
-    margin: 0 10px;
-    align-items: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
-    color: white;
+  margin: 0 10px;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 400;
+  color: white;
 
     svg {
       width: 24px; // Adjust as needed
@@ -42,4 +42,12 @@
   .toolbar-node {
     width: 90%;
   }
+}
+
+.tippy-node {
+  // min-width:500px;
+}
+
+.action-image {
+  width:500px !important;
 }

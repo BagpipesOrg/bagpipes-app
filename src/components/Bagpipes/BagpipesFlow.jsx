@@ -876,7 +876,7 @@ const handleDraftTransactions = async () => {
               {/* <MiniMap /> */}
               {/* <Background id="1" gap={10} color="#f1f1f1" variant={BackgroundVariant.Lines} /> 
              <Background id="2" gap={100} offset={1} color="#ccc" variant={BackgroundVariant.Lines} />  */}
-              <Background color={theme.dots} className={theme.bg === lightTheme.bg ? "bg-white" : "bg-gray-900"} variant={BackgroundVariant.Dots} />
+              <Background color={theme.dots} className={theme.bg === lightTheme.bg ? "bagpipes-bg" : "bagpipes-bg-dark"} variant={BackgroundVariant.Dots} />
               <ControlsStyled />
               <EdgeLabelRenderer type='' />
               {/* <Panel position="bottom-center">
@@ -896,13 +896,14 @@ const handleDraftTransactions = async () => {
           <div className='top-bar'>
 
             <CreateUiButton />
+            <CreateButton createScenario={createScenario} />
               {shouldExecuteChainScenario ? (
               <SendButton executeChainScenario={handleExecuteChainScenario} />
             ) : (
               <StartButton draftTransactions={handleDraftTransactions} />
 
             )}
-            <CreateButton createScenario={createScenario} />
+           
           </div>
 
             <Toolbar />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { CreateUI, CreateUIBlack } from '../../Icons/icons';
+import { CreateUI } from '../../Icons/icons';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import { buttonDescriptions }  from './buttonDescriptions';
@@ -10,12 +10,12 @@ export const CreateUiButton = ({ onCreateUi }) => {
 
 
   return (
-    <Tippy theme='light'  content={
+    <Tippy theme='light' interactive={true}   content={
     <div className='bg-white m-4'>
       <div className='flex justify-between'>
     <h1 className="text-xl font-bold">Create UI (coming soon)</h1>
 
-    <span className='h-7 w-7'><CreateUIBlack /></span>
+    <span className='h-7 w-7'><CreateUI /></span>
     </div>
     <p>Create a UI for from the flow you built then share it with others.</p>
     <img className='' src='/bagpipe-UI.jpg'></img>
@@ -23,10 +23,12 @@ export const CreateUiButton = ({ onCreateUi }) => {
     
     }>
     <button 
-      className="start-stop-create-button" 
+      className="start-stop-create-button flex items-center" 
       onClick={onCreateUi} 
     >
-<CreateUI />      
+      
+      <CreateUI />      
+      <span className='ml-2'>Create UI</span>
     </button>
     </Tippy>
   );

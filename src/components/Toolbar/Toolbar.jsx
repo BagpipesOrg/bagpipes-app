@@ -25,20 +25,20 @@ const nodeNames = {
 
 const nodeDescriptions = {
   chain: 
-  <div className='m-4'>
+  <div className='m-4 tippy-node'>
     <h1 className='text-xl font-bold'>Chain </h1>
     <p>Drag and drop a chain node on to the canvas to select the chain you want to use.</p>
 <img src='./ChainNodeScreenshot.png'></img>
   </div>,
   action: 
-  <div className='m-4'>
+  <div className='m-4 tippy-node'>
     <h1 className='text-xl font-bold'>Action </h1>
     <p>Drag and drop an action to make an action (transfer, xTransfer, Swap, etc.).</p>
-<img src='./ActionNodeScreenshot.png'></img>
+<img className='action-image'src='./ActionNodeScreenshot.png'></img>
   </div>,
    tools: 
-   <div className='m-4'>
-     <h1 className='text-xl font-bold'>Tools (coming soon) </h1>
+   <div className='m-4 tippy-node'>
+     <h1 className='text-xl font-bold '>Tools (coming soon) </h1>
      <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
 
    </div>
@@ -62,7 +62,7 @@ const Toolbar = () => {
     }
 
     return (
-      <Tippy  placement="bottom" theme="light" content={nodeDescriptions[nodeKey]}>
+      <Tippy  placement="bottom" theme="light" className='tippy-node' interactive={true} content={nodeDescriptions[nodeKey]}>
         <div className={`toolbar-icon ${theme}`} onDragStart={(event) => onDragStart(event, nodeKey)} draggable>
           {IconComponent}
           <span>{nodeNames[nodeKey]}</span>
