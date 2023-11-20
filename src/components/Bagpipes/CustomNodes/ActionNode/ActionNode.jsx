@@ -50,6 +50,7 @@ export default function ActionNode({ children, data, isConnectable }) {
   const [actionData, setActionData] = useState({});
   const currentNode = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId);
   const currentActionData = currentNode?.formData?.actionData;
+  console.log('ActionNode currentActionData:', currentActionData);
   const nodeRef = useRef(null);
 
   const assetInFormData = useMemo(() => {
@@ -72,9 +73,6 @@ export default function ActionNode({ children, data, isConnectable }) {
     return null;
   };
 
-  
-
-
 
   const fetchActionInfo = async (currentNodeId) => {
     if (isFetchingActionData) return;  
@@ -89,11 +87,15 @@ export default function ActionNode({ children, data, isConnectable }) {
 
         // Now that you have the asset node IDs, derive the assetInFormData and assetOutFormData
         const assetInFormData = nodes.find(node => node.id === assetInNodeId)?.formData;
+        console.log('ActionNode fetchActionInfo assetInFormData:', assetInFormData);
         const assetOutFormData = nodes.find(node => node.id === assetOutNodeId)?.formData;
 
         const assetInId = assetInFormData?.asset?.assetId;
         const assetOutId = assetOutFormData?.asset?.assetId;
         const amount = assetInFormData?.amount;
+        const chainInName = assetInFormData?.chain;
+        const chainOutName = assetOutFormData?.chain;
+        
         
         if(formState.action === 'swap' && assetInFormData.chain === 'hydraDx' && assetOutFormData.chain === 'hydraDx') {
           console.log('fetchActionInfo Fetching for swap');
@@ -277,7 +279,7 @@ const toggleDropdown = () => {
   return (
     <>
       
-    <div ref={nodeRef} className={`${theme} custom-node rounded-lg shadow-lg text-xs flex flex-col justify-start bg-gray-100 primary-font`}>
+    <div ref={nodeRef} className={`${theme} action-node rounded-lg shadow-lg text-xs flex flex-col justify-start primary-font`}>
  
           <h1 className="text-xxs text-gray-400 primary-font mb-2">{nodeId}</h1>
 
