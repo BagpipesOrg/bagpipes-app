@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import Tippy from '@tippyjs/react';
 import ThemeContext from '../../contexts/ThemeContext';
-import { ActionIcon, ChainIcon, ToolsIcon, RouterIcon, WebhookIcon, ScheduleIcon, DelayIcon } from '../Icons/icons'; 
+import { ActionIcon, ChainIcon, ToolsIcon, RouterIcon, WebhookIcon, ScheduleIcon, DelayIcon, APIIcon } from '../Icons/icons'; 
 import 'tippy.js/dist/tippy.css'; 
 import './Toolbar.scss'; 
 
@@ -25,6 +25,7 @@ const nodeNames = {
     router: 'Router',
     schedule: 'Schedule',
     delay: 'Delay',
+    api: 'API',
 };
 
 const nodeDescriptions = {
@@ -63,6 +64,11 @@ const nodeDescriptions = {
 delay: 
 <div className='m-4 tippy-node'>
   <h1 className='text-xl font-bold '>Delay (coming soon) </h1>
+  <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
+</div>,
+api: 
+<div className='m-4 tippy-node'>
+  <h1 className='text-xl font-bold '>API Call (coming soon) </h1>
   <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
 </div>,
 }
@@ -130,6 +136,8 @@ const Toolbar = () => {
       IconComponent = <ScheduleIcon />;
     } else if (nodeKey === 'delay') {
       IconComponent = <DelayIcon />;
+    } else if (nodeKey === 'api') {
+      IconComponent = <APIIcon />;
     }
 
 
