@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from 'react';
-import { DraftIcon } from '../../Icons/icons';
+import { DraftIcon, PlayIcon } from '../../Icons/icons';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import './Buttons.scss';
@@ -16,8 +16,8 @@ const StartButton = ({ draftTransactions }) => {
             style={{ zIndex: 1000 }}
         >
           
-            <DraftIcon />
-            <span className='ml-2 '>Create Draft</span>
+            <PlayIcon />
+            <span className='ml-2 '>Start Draft</span>
             {/* Draft */}
         </button>
         </Tippy>
