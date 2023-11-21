@@ -93,9 +93,7 @@ export default function ActionNode({ children, data, isConnectable }) {
         const assetInId = assetInFormData?.asset?.assetId;
         const assetOutId = assetOutFormData?.asset?.assetId;
         const amount = assetInFormData?.amount;
-        const chainInName = assetInFormData?.chain;
-        const chainOutName = assetOutFormData?.chain;
-        
+
         
         if(formState.action === 'swap' && assetInFormData.chain === 'hydraDx' && assetOutFormData.chain === 'hydraDx') {
           console.log('fetchActionInfo Fetching for swap');
@@ -212,32 +210,6 @@ export default function ActionNode({ children, data, isConnectable }) {
     }
   }, [formState, assetInFormData, assetOutFormData]);
 
-
-//   useEffect(() => {
-//     console.log('ActionNode currentNode:', currentNode);
-//     if (currentNode.data.triggerToast) {
-//         const nodeRect = nodeRef.current.getBoundingClientRect();
-//         const x = window.scrollX - 100 // position of the node relative to the document
-//         const y = window.scrollY - 130// position of the node relative to the document
-//         console.log('Calculated X:', x, 'Calculated Y:', y);
-        
-
-//         toast('Executing action node!', {
-//             icon: '💥',
-//             data: {
-//                 position: { x, y },
-//                 theme: theme  
-//             },
-//             visible: true,
-//             zIndex: 100000,
-//             styleClass: 'node-notifications'
-            
-//           });
-
-//         saveTriggerNodeToast(activeScenarioId, nodeId, false);
-//     }
-// }, [data.triggerToast, data.position, nodeRef, activeScenarioId, nodeId]);
-
 const handleDropdownClick = (value) => {
   console.log("[handleDropdownClick] Selected value clicked:", value);
   setDropdownVisible(false);
@@ -281,12 +253,12 @@ const toggleDropdown = () => {
       
     <div ref={nodeRef} className={`${theme} action-node rounded-lg shadow-lg text-xs flex flex-col justify-start primary-font`}>
  
-          <h1 className="text-xxs text-gray-400 primary-font mb-2">{nodeId}</h1>
+      <h1 className="text-xxs text-gray-400 primary-font mb-2">{nodeId}</h1>
 
       <Handle id="a" type="target" position={Position.Left} isConnectable={isConnectable} className='' />
       <Handle id="b" type="source" position={Position.Right} isConnectable={isConnectable} className=''  />
-    <div  className='p-3 in-node-border rounded flex justify-center flex-col items-center mb-3'>
-      <div className="text-gray-400 mb-2 text-xxs"> {data.name}</div>
+      <div  className='p-3 in-node-border rounded flex justify-center flex-col items-center mb-3'>
+        <div className="text-gray-400 mb-2 text-xxs"> {data.name}</div>
 
       
       
@@ -357,12 +329,12 @@ const toggleDropdown = () => {
 
     <button 
       onClick={() => fetchActionInfo(nodeId)} 
-      className="flex  justify-center align-center font-bold py-1 px-1 mb-1 in-node-border-gray-300 hover:in-node-border-green rounded" 
+      className="fetch-action flex justify-center align-center font-bold py-1 px-1 mb-1 in-node-border-gray-300 hover:in-node-border-green rounded" 
       >
        { isFetchingActionData ? (
           <div className="small-spinner"></div>
         ) : (
-          <img className="h-4 w-4" src="/refresh.svg" alt="refresh icon" />
+          <img className="h-4 w-4" src="/refresh-white.svg" alt="refresh icon" />
         )}
 
     </button>

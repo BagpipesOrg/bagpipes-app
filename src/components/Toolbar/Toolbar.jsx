@@ -144,7 +144,7 @@ const Toolbar = () => {
     
 
     return (
-      <Tippy  placement="bottom" theme="light" className='tippy-node' interactive={true} content={nodeDescriptions[nodeKey]}>
+      <Tippy   theme="light" placement="bottom" className='tippy-node' interactive={true} content={nodeDescriptions[nodeKey]}>
         <div className={`toolbar-icon ${theme}`} onDragStart={(event) => onDragStart(event, nodeKey)} draggable>
           {IconComponent}
           <span>{nodeNames[nodeKey]}</span>

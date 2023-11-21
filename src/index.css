@@ -1,327 +1,281 @@
 @import './variables.scss';
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
-
-
+ @import 'tailwindcss/base';
+ @import 'tailwindcss/components';
+ @import 'tailwindcss/utilities';
 /* :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
-} */
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+     line-height: 1.5;
+     font-weight: 400;
+     color-scheme: light dark;
+     color: rgba(255, 255, 255, 0.87);
+     background-color: #242424;
+     font-synthesis: none;
+     text-rendering: optimizeLegibility;
+     -webkit-font-smoothing: antialiased;
+     -moz-osx-font-smoothing: grayscale;
+     -webkit-text-size-adjust: 100%;
 }
-a:hover {
-  color: #535bf2;
+ */
+ a {
+     font-weight: 500;
+     color: #646cff;
+     text-decoration: inherit;
 }
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+ a:hover {
+     color: #535bf2;
 }
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+ body {
+     margin: 0;
+     display: flex;
+     place-items: center;
+     min-width: 320px;
+     min-height: 100vh;
 }
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: var(--button-bg);
-  cursor: pointer;
-  transition: border-color 0.25s;
+ h1 {
+     font-size: 3.2em;
+     line-height: 1.1;
 }
-button:hover {
-  border-color: #646cff;
+ button {
+     border-radius: 8px;
+     border: 1px solid transparent;
+     padding: 0.6em 1.2em;
+     font-size: 1em;
+     font-weight: 500;
+     font-family: inherit;
+     background-color: var(--button-bg);
+     cursor: pointer;
+     transition: border-color 0.25s;
 }
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+ button:hover {
+     border-color: #646cff;
 }
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: var(--button-bg);
-  }
+ button:focus, button:focus-visible {
+     outline: 4px auto -webkit-focus-ring-color;
 }
-
-.sidebar {
-  background-color: var(--no-bg) !important;
-  position: absolute;
-  top: 70px;
-  right:20px;
+ @media (prefers-color-scheme: light) {
+     :root {
+         color: #213547;
+         background-color: #ffffff;
+    }
+     a:hover {
+         color: #747bff;
+    }
+     button {
+         background-color: var(--button-bg);
+    }
 }
-
-.bagpipe {
-  flex-direction: column;
-  display: flex;
-  flex-grow: 1;
-  height: 1000vh !important; 
+ .sidebar {
+     background-color: var(--no-bg) !important;
+     position: absolute;
+     top: 70px;
+     right:20px;
 }
-
-.reactflowcomponent {
-  width: 70%;
-  overflow: auto;
+ .bagpipe {
+     flex-direction: column;
+     display: flex;
+     flex-grow: 1;
+     height: 1000vh !important;
 }
-
-.openainodeform {
-  width: 30%;
-  overflow: auto;
+ .reactflowcomponent {
+     width: 70%;
+     overflow: auto;
 }
-
-.bagpipe aside {
-  border-right: 1px solid #eee;
-  padding: 15px 10px;
-  font-size: 12px;
-  background: #fcfcfc;
+ .openainodeform {
+     width: 30%;
+     overflow: auto;
 }
-
-.bagpipe aside .description {
-  margin-bottom: 10px;
-  min-width:5rem !important;
+ .bagpipe aside {
+     border-right: 1px solid #eee;
+     padding: 15px 10px;
+     font-size: 12px;
+     background: #fcfcfc;
 }
-
-.bagpipe .dndnode {
-  background-color: var(--button-bg) !important;
-  height: 20px !important;
-  padding: 20px;
-  border: 1px solid #250303;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: grab;
-  color: var(--button-color) !important;
+ .bagpipe aside .description {
+     margin-bottom: 10px;
+     min-width:5rem !important;
 }
-
-.new-scenario {
-  height: 20px !important;
-  padding: 20px;
-  border: 1px solid #250303;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: grab;
-  z-index: 100 !important;
-
-
+ .bagpipe .dndnode {
+     background-color: var(--button-bg) !important;
+     height: 20px !important;
+     padding: 20px;
+     border: 1px solid #250303;
+     border-radius: 8px;
+     margin-bottom: 10px;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     cursor: grab;
+     color: var(--button-color) !important;
 }
-
-.top-bar {
-  display:flex;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  justify-content: space-between;
-  gap: 5px;
+ .new-scenario {
+     height: 20px !important;
+     padding: 20px;
+     border: 1px solid #250303;
+     border-radius: 8px;
+     margin-bottom: 10px;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     cursor: grab;
+     z-index: 100 !important;
 }
-
-
-.bagpipe .dndnode.input {
-  border-color: #0041d0;
+ .top-bar {
+     display:flex;
+     position: absolute;
+     top: 10px;
+     right: 10px;
+     justify-content: space-between;
+     gap: 5px;
 }
-
-.bagpipe .dndnode.output {
-  border-color: #ff0072;
+ .bagpipe .dndnode.input {
+     border-color: #0041d0;
 }
-
-.bagpipe {
-  flex-grow: 1;
-  height: 100% !important;
+ .bagpipe .dndnode.output {
+     border-color: #ff0072;
 }
-
-.reactflow-wrapper {
-  flex-grow: 1;
-  height: 90vh !important;
-  /* min-height: 94vh !important; */
-  overflow:hidden !important;
+ .bagpipe {
+     flex-grow: 1;
+     height: 100% !important;
 }
-
-.react-flow__pane {
-  overflow: hidden !important;
-  /* height:100vh !important; */
+ .reactflow-wrapper {
+     flex-grow: 1;
+     height: 90vh !important;
+    /* min-height: 94vh !important;
+     */
+     overflow:hidden !important;
 }
-
+ .react-flow__pane {
+     overflow: hidden !important;
+    /* height:100vh !important;
+     */
+}
 /* .reactflow-container {
-    width: 100% !important;
-    height: 100vh !important; 
-    overflow: hidden !important;
-} */
-
-
-.bagpipe .selectall {
-  margin-top: 10px;
+     width: 100% !important;
+     height: 100vh !important;
+     overflow: hidden !important;
 }
-
-@media screen and (min-width: 768px) {
-  .bagpipe {
-    flex-direction: row;
-  }
-
-  .bagpipe aside {
-    width: 20%;
-    max-width: 175px;
-  }
+ */
+ .bagpipe .selectall {
+     margin-top: 10px;
 }
-
-.close-modal {
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 10px;
-  cursor: pointer;
-  background-color: transparent;
-  border: 0;
+ @media screen and (min-width: 768px) {
+     .bagpipe {
+         flex-direction: row;
+    }
+     .bagpipe aside {
+         width: 20%;
+         max-width: 175px;
+    }
 }
-
-.modal-style {
-  max-width: 200px !important;
+ .close-modal {
+     position: absolute;
+     top: 0;
+     right: 0;
+     padding: 10px;
+     cursor: pointer;
+     background-color: transparent;
+     border: 0;
 }
-
-.react-flow__edge-path {
-  stroke: #252525;
-  stroke-width: 3 !important;
+ .modal-style {
+     max-width: 200px !important;
 }
-
-.temp .react-flow__edge-path {
-  stroke: #bbb !important;
-  stroke-dasharray: 5 5 !important;
+ .react-flow__edge-path {
+     stroke: #252525;
+     stroke-width: 3 !important;
 }
-
-.open-ai-handle {
-  background-color: red !important;
+ .temp .react-flow__edge-path {
+     stroke: #bbb !important;
+     stroke-dasharray: 5 5 !important;
 }
-
-.flex-container {
-  display: flex;
+ .open-ai-handle {
+     background-color: red !important;
 }
-
-.output-1 {
-position: relative !important;
+ .flex-container {
+     display: flex;
 }
-.output-2 {
-  position: relative !important;
+ .output-1 {
+     position: relative !important;
 }
-.output-3 {
-  position: relative !important;
+ .output-2 {
+     position: relative !important;
 }
-
-.form-heading {
-  font-weight: 500;
-  margin-bottom: 10px;
-  font-family:  Poppins, DM Sans, Figtree, Muli, Avenir, Mulish, Inter, Arial, Helvetica, sans-serif;
+ .output-3 {
+     position: relative !important;
 }
-
-.main-font {
-  font-family:  Söhne,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif,Helvetica Neue,Arial,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji, Poppins, DM Sans, Figtree, Muli, Avenir, Mulish, Inter, Arial, Helvetica, sans-serif !important;
+ .form-heading {
+     font-weight: 500;
+     margin-bottom: 10px;
+     font-family: Poppins, DM Sans, Figtree, Muli, Avenir, Mulish, Inter, Arial, Helvetica, sans-serif;
 }
-
-
-
-.open-ai-form {
-  width: 250px !important;
-  resize: horizontal !important;
-  background: #f5f5f5;
-  height: 100vh !important;
-  overflow: scroll !important;
+ .main-font {
+     font-family: Söhne,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif,Helvetica Neue,Arial,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji, Poppins, DM Sans, Figtree, Muli, Avenir, Mulish, Inter, Arial, Helvetica, sans-serif !important;
 }
-
-.input-node {
-  cursor: pointer !important;
-  background: white !important;
+ .open-ai-form {
+     width: 250px !important;
+     resize: horizontal !important;
+     background: #f5f5f5;
+     height: 100vh !important;
+     overflow: scroll !important;
 }
-
-.input-node:hover {
-border: 1px solid rgb(184, 184, 184);
+ .input-node {
+     cursor: pointer !important;
+     background: white !important;
 }
-
-.input-node:focus-visible .input-node:active .input-node:target {
-  border: 3px solid rgba(252, 158, 58, 0.528) !important;
-  }
-
-
-.bagpipe-flow-canvass {
-  content: " ";
-  overflow: scroll !important;
-  width: 100% !important;
-  height: auto !important; 
-  overflow: hidden !important;
+ .input-node:hover {
+     border: 1px solid rgb(184, 184, 184);
 }
-
-.react-flow__background {
-  height: 100% !important;
+ .input-node:focus-visible .input-node:active .input-node:target {
+     border: 3px solid rgba(252, 158, 58, 0.528) !important;
 }
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+ .bagpipe-flow-canvass {
+     content: " ";
+    /* overflow: scroll !important;
+     */
+     width: 100% !important;
+     height: auto !important;
+     overflow: hidden !important;
 }
-
-.spinner {
-  border: 4px solid var(--controls-color);
-  border-radius: 50%;
-  border-top: 4px solid var(--controls-color); 
-  width: 24px;
-  height: 24px;
-  animation: spin 1s linear infinite;
-  margin: 0 auto;
+ .react-flow__background {
+     height: 100% !important;
 }
-
-.spinner-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+ @keyframes spin {
+     0% {
+         transform: rotate(0deg);
+    }
+     100% {
+         transform: rotate(360deg);
+    }
 }
-
-.small-spinner {
-  border: 1px solid var(--controls-color);
-  border-radius: 100%;
-  border-top: 1px solid rgb(65, 65, 255); 
-  width: 8px;
-  height: 8px;
-  animation: spin 1s linear infinite;
-  margin: 0 auto;
+ .spinner {
+     border: 4px solid var(--controls-color);
+     border-radius: 50%;
+     border-top: 4px solid var(--controls-color);
+     width: 24px;
+     height: 24px;
+     animation: spin 1s linear infinite;
+     margin: 0 auto;
 }
-
-.react-flow {
-  height: 95vh !important;
+ .spinner-container {
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     height: 100vh;
 }
-
-.node-notifications {
-  background-color: var(--toast-bg) !important;
-  padding: 5px;
-  color: var(--color) !important;
+ .small-spinner {
+     border: 1px solid var(--controls-color);
+     border-radius: 100%;
+     border-top: 1px solid rgb(65, 65, 255);
+     width: 8px;
+     height: 8px;
+     animation: spin 1s linear infinite;
+     margin: 0 auto;
 }
+ .react-flow {
+     height: 95vh !important;
+}
+ .node-notifications {
+     background-color: var(--toast-bg) !important;
+     padding: 5px;
+     color: var(--color) !important;
+}
+ 
