@@ -6,6 +6,8 @@ import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { OpenSelectWallet, WalletContext } from './Wallet/contexts';
 import ThemeContext from '../contexts/ThemeContext';
+import { WalletIcon } from './Icons/icons'
+import ThemeToggleButton from './Theme/ThemeToggleButton'
 import'./styles/Header.scss';
 
 interface Props {
@@ -14,13 +16,12 @@ interface Props {
 
 }
 
-
-
-function Header ({ open, theme }: Props): React.ReactElement<Props> {
+function Header ({ open }: Props): React.ReactElement<Props> {
   const navigate = useNavigate();  // Add this line to get the navigate function
   const walletContext = useContext(WalletContext);
   const selectWallet = useContext(OpenSelectWallet);
   const wallet = walletContext.wallet || walletContext.evmWallet;
+  const { theme } = React.useContext(ThemeContext);
   const logoSrc = theme === 'dark' ? '/logo-white.svg' : '/logo.svg';
 
   if (!open) {
@@ -46,7 +47,7 @@ function Header ({ open, theme }: Props): React.ReactElement<Props> {
     };
 
       return (
-        <header className={`wallet-header-wrapper ${theme}`}>
+        <header className={`header header-wrapper ${theme}`}>
           <div className={'boxed-container'}>
             <div className={'wallet-header-content flex justify-left'}>
               <img src={logoSrc} className='bagpipe-logo' alt="Bagpipe Logo" />
@@ -65,21 +66,30 @@ function Header ({ open, theme }: Props): React.ReactElement<Props> {
               >
                 <span className='button-header-text'>Parachains</span>
               </Button>
-              {/* <Button
+              <Button
                 className='xcm-send-btn xcm-send-btn-small-size button-header'
                 onClick={goToLab}
                 type={'primary'}
                 >
                 <span className='button-header-text'>Lab</span>
-              </Button> */}
-          
-              {/* <Button
+              </Button>
+              <Button
                 className='xcm-send-btn-wallet xcm-send-btn-small-size'
                 onClick={selectWallet.open}
                 type={'primary'}
-              >Select Wallet</Button>  */}
-            </div>
+              >
+                <WalletIcon />Select Wallet
+              </Button> 
+              <div className="absolute top-0 right-0">
+              <ThemeToggleButton />
+        </div> 
+              
+
+          
           </div>
+          
+         
+            </div>
         </header>
       );
       

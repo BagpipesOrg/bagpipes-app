@@ -64,17 +64,17 @@
          background-color: var(--button-bg);
     }
 }
- .sidebar {
+ /* .sidebar {
      background-color: var(--no-bg) !important;
      position: absolute;
      top: 70px;
      right:20px;
-}
- .bagpipe {
-     flex-direction: column;
+} */
+ .bagpipes {
+     /* flex-direction: column;
      display: flex;
      flex-grow: 1;
-     height: 1000vh !important;
+     height: 1000vh !important; */
 }
  .reactflowcomponent {
      width: 70%;
@@ -227,7 +227,7 @@
  .input-node:focus-visible .input-node:active .input-node:target {
      border: 3px solid rgba(252, 158, 58, 0.528) !important;
 }
- .bagpipe-flow-canvass {
+ .bagpipes {
      content: " ";
     /* overflow: scroll !important;
      */
@@ -235,6 +235,7 @@
      height: auto !important;
      overflow: hidden !important;
 }
+
  .react-flow__background {
      height: 100% !important;
 }
@@ -279,3 +280,13 @@
      color: var(--color) !important;
 }
  
+.main-container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+.main-content {
+  flex-grow: 1; /* Takes up the available space */
+  width: 100%; /* Ensures it fills the container */
+}

@@ -2,6 +2,8 @@
   
   .lab-container {
      padding: 20px;
+     flex-grow: 1; /* Takes up the available space */
+     width: 100%;
    }
   
   .lab-top-bar {
@@ -30,7 +32,7 @@
     &:hover {
       // Reduced scaling
       transform: scale(1.02);
-      background-color: white;
+      background-color: var(--bg);
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     }
   }

@@ -13,6 +13,7 @@ import ScenarioService from '../../services/ScenarioService';
 import toast from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
 import { useCreateScenario } from '../../components/Bagpipes/hooks/useCreateScenario';
+import ThemeContext from '../../contexts/ThemeContext';
 
 function Lab() {
     const { scenarios, addScenario, setActiveScenarioId, activeScenarioId, setNodeContentMap, activeExecutionId, setActiveExecutionId, loadScenario } = useAppStore((state) => ({
@@ -27,7 +28,7 @@ function Lab() {
     const navigate = useNavigate();
     const createScenario = useCreateScenario();
     const [templateScenarioId, setTemplateScenarioId] = useState(null);
-
+    const { theme } = React.useContext(ThemeContext);
 
     // const saveScenario = (scenarioId) => {
     //     const scenarioToSave = scenarios[scenarioId];
@@ -61,14 +62,14 @@ function Lab() {
     
 
           return (
-            <div className="bg-gray-100 p-8 h-full">
+            <div className={`${theme} lab-container p-8 h-full`}>
               <div className="flex justify-between items-center mb-8">
                 <h1 className="text-2xl font-semibold">Lab</h1>
                 <button 
                   className="button flex items-center"
                   onClick={createScenario}
                 >
-                   {PlusIcon}
+                   <span className='mr-2'>{PlusIcon}</span>
                   Create New Scenario
                 </button>
               </div>

@@ -5,11 +5,11 @@ import { Button } from 'antd';
 import React, {useContext, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { OpenSelectWallet, WalletContext } from '../contexts';
+import { OpenSelectWallet, WalletContext } from '../Wallet/contexts';
 
-import './styles/Welcome.scss' ;
+import './Welcome.scss' ;
 
-function Welcome (): React.ReactElement {
+function Welcome () {
   const selectWallet = useContext(OpenSelectWallet);
   const walletContext = useContext(WalletContext);
   const navigate = useNavigate();
@@ -31,9 +31,9 @@ function Welcome (): React.ReactElement {
       <div className='welcome-content__text'>Wanna bagpipe?</div>
       <Button
         className='xcm-send-btn xcm-send-btn-normal-size'
-        onClick={
-            selectWallet.open}
-      >Let's play...</Button>
+        onClick={ selectWallet.open}
+      >Let's play...
+      </Button>
     </div>
   </div>);
 }

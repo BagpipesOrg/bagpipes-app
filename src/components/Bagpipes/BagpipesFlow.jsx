@@ -130,7 +130,7 @@ const BagpipesFlow = () => {
 
     const navigate = useNavigate(); 
     const location = useLocation();
-    const [mode, setMode] = useState('light');
+    // const [mode, setMode] = useState('light');
     // console.log("  from useUndoRedo:",  );
     const { theme: appTheme, setTheme: setAppTheme } = useContext(ThemeContext);
     const theme = appTheme === 'light' ? lightTheme : darkTheme;
@@ -837,15 +837,15 @@ const handleDraftTransactions = async () => {
 
         
     return (
+      // <div style={{ width: '100vw', height: '100vh' }}>
 
-      <div className="bagpipe-flow-canvass" >
+      <div className="bagpipes" >
 
 
         <ThemeProvider theme={theme}>
             <Panel position="top-center">   
             {/* <CreateTemplateLink scenarioId={activeScenarioId} /> */}
        
-                {/* <button className="bg-slate-900  p-3 text-white" onClick={toggleMode}>light / dark</button> */}
             </Panel>
         
             <div className="" ref={reactFlowWrapper}>
@@ -932,7 +932,7 @@ const handleDraftTransactions = async () => {
               )} */}
     </ThemeProvider>
     </div>
-  
+  // </div>
     );
   }
   
