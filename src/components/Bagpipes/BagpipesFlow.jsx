@@ -16,9 +16,8 @@ import TextUpdaterNode from './TextupdaterNode';
 import Toolbar from '../Toolbar/Toolbar';
 import FormGroupNode from './FormGroupNode';
 import OpenAINode from './CustomNodes/OpenAINode';
-import ChainNode from './CustomNodes/ChainNode/ChainNode';
-import ActionNode from './CustomNodes/ActionNode/ActionNode';
 import CustomEdge from './CustomEdges/CustomEdge';
+import { ChainNode, ActionNode, RouterNode, WebhookNode, APINode, CodeNode, ScheduleNode } from './CustomNodes';
 import OpenAINodeForm from './Forms/OpenAINodeForm/OpenAINodeForm';
 import { initialEdges, initialNodes } from './nodes.jsx';
 import PlayButton from './buttons/PlayButton';
@@ -79,6 +78,11 @@ const nodeTypes = {
   openAi: OpenAINode,
   chain: ChainNode,
   action: ActionNode,
+  router: RouterNode,
+  webhook: WebhookNode,
+  api: APINode,
+  code: CodeNode,
+  schedule: ScheduleNode,
 };
 
 const edgeTypes = {
@@ -523,6 +527,8 @@ const BagpipesFlow = () => {
                 style: { backgroundColor: 'rgba(255, 0, 0, 0)', width: 100, height: 100 },
             };
             // setNodes((nds) => nds.concat(newNode));
+
+
             // Call the action to add the node to the current scenario
             addNodeToScenario(activeScenarioId, newNode);
             } else if (type === 'chain') {
@@ -546,6 +552,106 @@ const BagpipesFlow = () => {
                   position,
                   data,
                   style: { backgroundColor: 'rgba(255, 0, 0, 0)', width: 100, height: 100 },
+              };
+              // setNodes((nds) => nds.concat(newNode));
+              // Call the action to add the node to the current scenario
+              addNodeToScenario(activeScenarioId, newNode);
+            } else if (type === 'webhook') {
+
+              
+              // Chain node data
+              const data = {
+                  label: 'Webhook',
+                  image: './webhook.svg',
+                  name: "Webhook",
+              };
+              // Chain node creation
+              const nodeId = getId();
+              const newNode = {
+                  id: getId(nodeType),          
+                  type,
+                  position,
+                  data,
+              };
+              // setNodes((nds) => nds.concat(newNode));
+              // Call the action to add the node to the current scenario
+              addNodeToScenario(activeScenarioId, newNode);
+            } else if (type === 'router') {
+
+              
+              // Chain node data
+              const data = {
+                  label: 'Router',
+                  image: './router.svg',
+                  name: "Router",
+              };
+              // Chain node creation
+              const nodeId = getId();
+              const newNode = {
+                  id: getId(nodeType),          
+                  type,
+                  position,
+                  data,
+              };
+              // setNodes((nds) => nds.concat(newNode));
+              // Call the action to add the node to the current scenario
+              addNodeToScenario(activeScenarioId, newNode);
+            } else if (type === 'api') {
+
+              
+              // Chain node data
+              const data = {
+                  label: 'API',
+                  image: './api.svg',
+                  name: "API",
+              };
+              // Chain node creation
+              const nodeId = getId();
+              const newNode = {
+                  id: getId(nodeType),          
+                  type,
+                  position,
+                  data,
+              };
+              // setNodes((nds) => nds.concat(newNode));
+              // Call the action to add the node to the current scenario
+              addNodeToScenario(activeScenarioId, newNode);
+            } else if (type === 'code') {
+
+              
+              // Chain node data
+              const data = {
+                  label: 'Custom Code',
+                  image: './code.svg',
+                  name: "Custom Code",
+              };
+              // Chain node creation
+              const nodeId = getId();
+              const newNode = {
+                  id: getId(nodeType),          
+                  type,
+                  position,
+                  data,
+              };
+              // setNodes((nds) => nds.concat(newNode));
+              // Call the action to add the node to the current scenario
+              addNodeToScenario(activeScenarioId, newNode);
+            } else if (type === 'schedule') {
+
+              
+              // Chain node data
+              const data = {
+                  label: 'Schedule',
+                  image: './schedule.svg',
+                  name: "Schedule",
+              };
+              // Chain node creation
+              const nodeId = getId();
+              const newNode = {
+                  id: getId(nodeType),          
+                  type,
+                  position,
+                  data,
               };
               // setNodes((nds) => nds.concat(newNode));
               // Call the action to add the node to the current scenario

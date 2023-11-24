@@ -3,9 +3,9 @@
 
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { windowReload } from '../../../utils/window';
-import { getWalletBySource } from '@subwallet/wallet-connect/dotsama/wallets';
-import { getEvmWalletBySource } from '@subwallet/wallet-connect/evm/evmWallets';
-import { EvmWallet, Wallet, WalletAccount } from '@subwallet/wallet-connect/types';
+import { getWalletBySource } from '../wallet-connect/src/dotsama/wallets';
+import { getEvmWalletBySource } from '../wallet-connect/src/evm/evmWallets';
+import { EvmWallet, Wallet, WalletAccount } from '../wallet-connect/src/types';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { OpenSelectWallet, WalletContext, WalletContextInterface } from '../contexts';

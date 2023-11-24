@@ -1,7 +1,7 @@
 // Copyright 2019-2022 @subwallet/wallet-connect authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { EvmWalletInfo } from '@subwallet/wallet-connect/types';
+import { EvmWalletInfo } from './types';
 
 // @ts-ignore
 import MetaMaskLogo from './MetaMaskLogo.svg';
@@ -9,6 +9,8 @@ import MetaMaskLogo from './MetaMaskLogo.svg';
 import SubWalletLogo from './SubWalletLogo.svg';
 // @ts-ignore
 import NovaWalletLogo from './NovaWalletLogo.svg';
+// @ts-ignore
+import TalismanWalletLogo from './TalismanLogo.svg';
 
 export const PREDEFINED_EVM_WALLETS: EvmWalletInfo[] = [
   {
@@ -23,6 +25,17 @@ export const PREDEFINED_EVM_WALLETS: EvmWalletInfo[] = [
     initEvent: 'subwallet#initialized'
   },
   {
+    extensionName: 'talisman',
+    title: 'Talisman',
+    installUrl: 'https://chrome.google.com/webstore/detail/talisman-wallet/fijngjgcjhjmmpcmkeiomlglpeiijkld',
+    logo: {
+      src: TalismanWalletLogo as string,
+      alt: 'Talisman'
+    },
+    isSetGlobalString: 'isTalisman',
+    initEvent: 'talisman#initialized'
+  },
+  {
     extensionName: 'ethereum',
     title: 'MetaMask',
     installUrl: 'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn',
@@ -31,7 +44,7 @@ export const PREDEFINED_EVM_WALLETS: EvmWalletInfo[] = [
       alt: 'MetaMask Extension'
     },
     isSetGlobalString: 'isMetaMask',
-    initEvent: 'ethereum#initialized'
+    initEvent: 'metamask#initialized'
   },
   {
     extensionName: 'ethereum',

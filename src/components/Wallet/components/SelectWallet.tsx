@@ -5,8 +5,8 @@
 import React, { useCallback } from 'react';
 
 import { getWallets } from '../wallet-connect/src/dotsama/wallets';
-import { getEvmWallets } from '@subwallet/wallet-connect/evm/evmWallets';
-import { EvmWallet, Wallet } from '@subwallet/wallet-connect/types';
+import { getEvmWallets } from '../wallet-connect/src/evm/evmWallets';
+import { EvmWallet, Wallet } from '../wallet-connect/src/types';
 
 import './styles/SelectWallet.scss';
 import ThemeContext from '../../../contexts/ThemeContext';

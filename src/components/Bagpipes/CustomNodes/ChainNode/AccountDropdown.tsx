@@ -3,7 +3,7 @@ import { WalletContext } from '../../../Wallet/contexts';
 import '../../../../index.css';
 import '../../node.styles.scss';
 import './AccountDropdown.scss';
-import { WalletAccount } from '@subwallet/wallet-connect/types';
+import { WalletAccount } from '../../../Wallet/wallet-connect/src/types';
 import { listChains } from '../../../../Chains/ChainsInfo';
 import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
 

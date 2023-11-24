@@ -17,7 +17,7 @@ interface Props {
 }
 
 function Header ({ open }: Props): React.ReactElement<Props> {
-  const navigate = useNavigate();  // Add this line to get the navigate function
+  const navigate = useNavigate();  
   const walletContext = useContext(WalletContext);
   const selectWallet = useContext(OpenSelectWallet);
   const wallet = walletContext.wallet || walletContext.evmWallet;
