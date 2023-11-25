@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
+    
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <link href="fonts/Lexend/lexend.css" rel="stylesheet">
@@ -9,10 +10,20 @@
     <link href="/fonts/fontawesome/css/fontawesome.css" rel="stylesheet">
     <link href="/fonts/fontawesome/css/brands.css" rel="stylesheet">
     <link href="/fonts/fontawesome/css/solid.css" rel="stylesheet">
-
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bagpipes</title>
+
+    <script>
+      window.global = window;
+    </script>
+    <script type="module">
+      import process from "process";
+      import EventEmitter from "events";
+      import {Buffer} from "buffer";
+      window.Buffer = Buffer;
+      window.process = process;
+      window.EventEmitter = EventEmitter;
+    </script>
   </head>
   <body>
     <div id="root"></div>
