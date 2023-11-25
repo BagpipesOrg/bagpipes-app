@@ -26,7 +26,7 @@ function MainLayout({ children }) {
     //     toastPosition: state.toastPosition,
     //   }));
   return  (
-        <>
+    
             <div className={`main-layout ${theme === 'dark' ? '-dark' : '-light'}`}>
 
         {/* <Toaster /> */}
@@ -86,8 +86,6 @@ function MainLayout({ children }) {
             <Outlet />
       
 </div>
-
-    </>
   );
 }
   

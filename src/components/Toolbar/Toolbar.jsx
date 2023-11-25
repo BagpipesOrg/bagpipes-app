@@ -27,7 +27,6 @@ const nodeNames = {
     delay: 'Delay',
     api: 'API',
     code: 'Code',
-    discord: 'Discord', 
 };
 
 const nodeDescriptions = {
@@ -62,27 +61,27 @@ const nodeDescriptions = {
   <div className='m-4 tippy-node'>
     <h1 className='text-xl font-bold '>Schedule (coming soon) </h1>
     <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
-</div>,
-delay: 
-<div className='m-4 tippy-node'>
-  <h1 className='text-xl font-bold '>Delay (coming soon) </h1>
-  <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
-</div>,
-api: 
-<div className='m-4 tippy-node'>
-  <h1 className='text-xl font-bold '>API Call (coming soon) </h1>
-  <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
-</div>,
-code: 
-<div className='m-4 tippy-node'>
-  <h1 className='text-xl font-bold '>Custom Code (coming soon) </h1>
-  <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
-</div>,
-discord: 
-<div className='m-4 tippy-node'>
-  <h1 className='text-xl font-bold '>Discord (coming soon) </h1>
-  <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
-</div>,
+  </div>,
+  delay: 
+  <div className='m-4 tippy-node'>
+    <h1 className='text-xl font-bold '>Delay (coming soon) </h1>
+    <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
+  </div>,
+  api: 
+  <div className='m-4 tippy-node'>
+    <h1 className='text-xl font-bold '>API Call (coming soon) </h1>
+    <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
+  </div>,
+  code: 
+  <div className='m-4 tippy-node'>
+    <h1 className='text-xl font-bold '>Custom Code (coming soon) </h1>
+    <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
+  </div>,
+// discord: 
+// <div className='m-4 tippy-node'>
+//   <h1 className='text-xl font-bold '>Discord (coming soon) </h1>
+//   <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
+// </div>
 }
 
 const Toolbar = () => {
@@ -152,15 +151,16 @@ const Toolbar = () => {
       IconComponent = <APIIcon />;
     } else if (nodeKey === 'code') {
       IconComponent = <CodeIcon />;
-    } else if (nodeKey === 'discord') {
-      IconComponent = <DiscordIcon className='h-6 w-6' fillColor='white' />;
     }
+    // } else if (nodeKey === 'discord') {
+    //   IconComponent = <DiscordIcon className='h-6 w-6' fillColor='white' />;
+    // }
 
 
     
 
     return (
-      <Tippy   theme="light" placement="bottom" className='tippy-node' interactive={true} content={nodeDescriptions[nodeKey]}>
+      <Tippy theme="light" placement="bottom" className='tippy-node' interactive={true} content={nodeDescriptions[nodeKey]}>
         <div className={`toolbar-icon ${theme}`} onDragStart={(event) => onDragStart(event, nodeKey)} draggable>
           {IconComponent}
           <span>{nodeNames[nodeKey]}</span>

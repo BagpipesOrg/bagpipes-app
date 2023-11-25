@@ -59,7 +59,7 @@ function App () {
           <SocketContext.Provider value={socket}>
             <ConfigProvider>
               <AddressBookProvider>
-                <div className='absolute top-0 lef-0'>
+                <div className='absolute top-0 left-0'>
               </div>
               <Header open={true} />
 

@@ -1023,7 +1023,6 @@ const handleDraftTransactions = async () => {
 
         
     return (
-      // <div style={{ width: '100vw', height: '100vh' }}>
 
       <div className="bagpipes" >
 
@@ -1090,7 +1089,7 @@ const handleDraftTransactions = async () => {
 
             )}
            
-          </div>
+        </div>
 
             <Toolbar />
             </ReactFlowStyled>
@@ -1118,7 +1117,7 @@ const handleDraftTransactions = async () => {
               )} */}
     </ThemeProvider>
     </div>
-  // </div>
+
     );
   }
   
