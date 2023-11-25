@@ -1,1 +1,1 @@
-export default "063431b5df8b779da023b3461ebbe5a33e7e92e4"
+export default "6b2777c3f2973432e06170bc9b10aa47114ee192"
