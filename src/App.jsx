@@ -20,7 +20,7 @@ import 'tippy.js/dist/tippy.css';
 import 'antd/dist/antd.css';
 
 
-export function App () {
+function App () {
   const [socket, setSocket] = useState(null);
   const location = useLocation();
   const walletContext = useContext(WalletContext);
@@ -78,4 +78,6 @@ export function App () {
         </ThemeProvider>
     );
   }
+
+  export default App;
   
