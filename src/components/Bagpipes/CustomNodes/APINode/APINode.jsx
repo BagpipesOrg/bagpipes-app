@@ -1,5 +1,5 @@
 import { Handle, Position } from 'reactflow';
-import { APINodeIcon } from '../../../Icons/icons';
+import { APINodeIcon } from '../../../Icons/Icons';
 import './APINode.scss';
 import '../../node.styles.scss';
 

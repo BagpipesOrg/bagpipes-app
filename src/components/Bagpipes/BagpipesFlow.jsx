@@ -17,7 +17,7 @@ import Toolbar from '../Toolbar/Toolbar';
 import FormGroupNode from './FormGroupNode';
 import OpenAINode from './CustomNodes/OpenAINode';
 import CustomEdge from './CustomEdges/CustomEdge';
-import { ChainNode, ActionNode, RouterNode, WebhookNode, APINode, CodeNode, ScheduleNode } from './CustomNodes';
+import { ChainNode, ActionNode, RouterNode, WebhookNode, APINode, CodeNode, ScheduleNode, DiscordNode } from './CustomNodes';
 import OpenAINodeForm from './Forms/OpenAINodeForm/OpenAINodeForm';
 import { initialEdges, initialNodes } from './nodes.jsx';
 import PlayButton from './buttons/PlayButton';
@@ -83,6 +83,8 @@ const nodeTypes = {
   api: APINode,
   code: CodeNode,
   schedule: ScheduleNode,
+  discord: DiscordNode,
+  delay: DelayNode,
 };
 
 const edgeTypes = {
@@ -543,6 +545,28 @@ const BagpipesFlow = () => {
                   { label: "Field 1", type: "text" },
                   { label: "Field 2", type: "number" },
                   ]
+              };
+              // Chain node creation
+              const nodeId = getId();
+              const newNode = {
+                  id: getId(nodeType),          
+                  type,
+                  position,
+                  data,
+                  style: { backgroundColor: 'rgba(255, 0, 0, 0)', width: 100, height: 100 },
+              };
+              // setNodes((nds) => nds.concat(newNode));
+              // Call the action to add the node to the current scenario
+              addNodeToScenario(activeScenarioId, newNode);
+            } else if (type === 'discord') {
+
+              
+              // Chain node data
+              const data = {
+                  label: 'Discord',
+                  image: './discord-purple.svg',
+                  name: "Discord",
+                  
               };
               // Chain node creation
               const nodeId = getId();

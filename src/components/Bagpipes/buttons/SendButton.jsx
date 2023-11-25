@@ -1,5 +1,5 @@
 import React from 'react';
-import { BroadcastIcon } from '../../Icons/icons';
+import { BroadcastIcon } from '../../Icons/Icons';
 import { useAppStore } from '../../../components/Bagpipes/hooks';
 import './Buttons.scss';
 import Tippy from '@tippyjs/react';

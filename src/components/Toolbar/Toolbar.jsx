@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import Tippy from '@tippyjs/react';
 import ThemeContext from '../../contexts/ThemeContext';
-import { ActionIcon, ChainIcon, ToolsIcon, RouterIcon, WebhookIcon, ScheduleIcon, DelayIcon, APIIcon, CodeIcon } from '../Icons/icons'; 
+import { ActionIcon, ChainIcon, ToolsIcon, RouterIcon, WebhookIcon, ScheduleIcon, DelayIcon, APIIcon, CodeIcon, DiscordIcon } from '../Icons/Icons'; 
 import 'tippy.js/dist/tippy.css'; 
 import './Toolbar.scss'; 
 
@@ -27,6 +27,7 @@ const nodeNames = {
     delay: 'Delay',
     api: 'API',
     code: 'Code',
+    discord: 'Discord', 
 };
 
 const nodeDescriptions = {
@@ -75,6 +76,11 @@ api:
 code: 
 <div className='m-4 tippy-node'>
   <h1 className='text-xl font-bold '>Custom Code (coming soon) </h1>
+  <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
+</div>,
+discord: 
+<div className='m-4 tippy-node'>
+  <h1 className='text-xl font-bold '>Discord (coming soon) </h1>
   <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
 </div>,
 }
@@ -146,6 +152,8 @@ const Toolbar = () => {
       IconComponent = <APIIcon />;
     } else if (nodeKey === 'code') {
       IconComponent = <CodeIcon />;
+    } else if (nodeKey === 'discord') {
+      IconComponent = <DiscordIcon className='h-6 w-6' fillColor='white' />;
     }
 
 

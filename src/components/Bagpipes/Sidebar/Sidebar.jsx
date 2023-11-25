@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { SettingsIcon, ChatIcon, PlaygroundIcon, LabIcon } from '../../Icons/icons';
+import { SettingsIcon, ChatIcon, PlaygroundIcon, LabIcon } from '../../Icons/Icons';
 import ThemeContext from '../../../contexts/ThemeContext';
 
 import './Sidebar.scss';

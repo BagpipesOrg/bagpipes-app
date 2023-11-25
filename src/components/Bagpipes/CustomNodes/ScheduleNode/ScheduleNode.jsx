@@ -1,5 +1,5 @@
 import { Handle, Position } from 'reactflow';
-import { ScheduleNodeIcon } from '../../../Icons/icons';
+import { ScheduleNodeIcon } from '../../../Icons/Icons';
 import './ScheduleNode.scss'
 import '../../node.styles.scss'
 

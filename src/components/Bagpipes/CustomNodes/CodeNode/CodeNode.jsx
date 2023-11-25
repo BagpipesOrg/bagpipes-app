@@ -1,5 +1,5 @@
 import { Handle, Position } from 'reactflow';
-import { CodeIcon } from '../../../Icons/icons';
+import { CodeIcon } from '../../../Icons/Icons';
 import './CodeNode.scss'
 
 export default function CodeNode({ data }) {

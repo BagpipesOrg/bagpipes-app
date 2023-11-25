@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from 'react';
-import { PlayIcon } from '../../Icons/icons';
+import { PlayIcon } from '../../Icons/Icons';
 import { useAppStore } from '../hooks';
 
 const PlayButton = ({ executeScenario, stopExecution }) => {

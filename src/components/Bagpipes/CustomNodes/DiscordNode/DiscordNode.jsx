@@ -1,8 +1,9 @@
 import { Handle, Position } from 'reactflow';
-import { RouterNodeIcon } from '../../../Icons/Icons';
-import './RouterNode.scss'
+import { DiscordIcon } from '../../../Icons/Icons';
+import './DiscordNode.scss';
+import '../../node.styles.scss';
 
-export default function RouterNode({ data }) {
+export default function DiscordNode({ data }) {
   const { logo, title, showArrow, instruction } = data;
 
   return (
@@ -14,12 +15,12 @@ export default function RouterNode({ data }) {
         </div>
       )}
       
-<RouterNodeIcon className='h-7 w-7' fillColor='indigo' />
+    <DiscordIcon className='h-7 w-7' />
       {/* Logo in the middle of the circle */}
 
       {/* Title outside the circle below the logo */}
       <div className="absolute bottom-[-38%] text-center w-full">
-        <span className="font-medium text-xl text-gray-500">Router</span>
+        <span className="font-medium text-xl text-gray-500">Discord</span>
       </div>
       
       <Handle position={Position.Right} type="source" className=" z-10" />

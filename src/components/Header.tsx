@@ -6,7 +6,7 @@ import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { OpenSelectWallet, WalletContext } from './Wallet/contexts';
 import ThemeContext from '../contexts/ThemeContext';
-import { WalletIcon } from './Icons/icons'
+import { WalletIcon } from './Icons/Icons'
 import ThemeToggleButton from './Theme/ThemeToggleButton'
 import'./styles/Header.scss';
 

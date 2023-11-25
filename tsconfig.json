@@ -12,6 +12,6 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/components/Bagpipes/buttons/buttonDescriptions.jsx","src/**/*.json", "src/components/Icons/icons.jsx" ],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/components/Bagpipes/buttons/buttonDescriptions.jsx","src/**/*.json", "src/components/Icons/Icons.jsx" ],
   "exclude": ["vite.config.js", "node_modules"]
 }

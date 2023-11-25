@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from 'react';
-import { DraftIcon, PlayIcon } from '../../Icons/icons';
+import { DraftIcon, PlayIcon } from '../../Icons/Icons';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import './Buttons.scss';
