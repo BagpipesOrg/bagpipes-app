@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from 'react';
-import { PlusIcon } from '../../Icons/Icons';
+import { PlusIcon } from '../../Icons/icons';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import '../nodes.jsx';

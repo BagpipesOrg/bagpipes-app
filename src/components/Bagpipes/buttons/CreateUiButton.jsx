@@ -1,5 +1,5 @@
 import React from 'react';
-import { CreateUI } from '../../Icons/Icons';
+import { CreateUI } from '../../Icons/icons';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import { buttonDescriptions }  from './buttonDescriptions';

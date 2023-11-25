@@ -1,5 +1,5 @@
 import { Handle, Position } from 'reactflow';
-import { WebhookNodeIcon }  from '../../../Icons/Icons';
+import { WebhookNodeIcon }  from '../../../Icons/icons';
 import './WebhookNode.scss'
 import '../../node.styles.scss'
 

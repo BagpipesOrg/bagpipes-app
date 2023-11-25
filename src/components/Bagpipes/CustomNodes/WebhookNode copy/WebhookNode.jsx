@@ -1,9 +1,9 @@
 import { Handle, Position } from 'reactflow';
-import { ScheduleNodeIcon } from '../../../Icons/icons';
-import './ScheduleNode.scss'
+import { WebhookNodeIcon }  from '../../../Icons/icons';
+import './WebhookNode.scss'
 import '../../node.styles.scss'
 
-export default function ScheduleNode({ data }) {
+export default function WebhookNode({ data }) {
   const { logo, title, showArrow, instruction } = data;
 
   return (
@@ -14,18 +14,18 @@ export default function ScheduleNode({ data }) {
           <div className='text-gray-500 font-mono text-2xl left-1/4 mb-1'>⤹</div>
         </div>
       )}
-   <ScheduleNodeIcon className="h-8" fillColor='orange' />
+   <WebhookNodeIcon className="h-8" fillColor='black' />
       
       {/* Logo in the middle of the circle */}
       {/* <img src={`/chains/${logo}`} alt={`${title} Logo`} className="text-slate-800 h-8 w-8" /> */}
 
       {/* Title outside the circle below the logo */}
       <div className="absolute bottom-[-38%] text-center w-full">
-        <span className="font-medium text-xl text-gray-500">Schedule</span>
+        <span className="font-medium text-xl text-gray-500">Webhook</span>
       </div>
       
       <Handle position={Position.Right} type="source" className="z-10" />
-      {/* <Handle position={Position.Left} type="target" className="hidden z-10" /> */}
+      <Handle position={Position.Left} type="target" className="hidden z-10" />
     </div>
   );
 }

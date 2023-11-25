@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { useAppStore } from '../../components/Bagpipes/hooks';
 import './Lab.scss';
-import { EyeIcon } from '../../components/Icons/Icons';
+import { EyeIcon } from '../../components/Icons/icons';
 import { deleteExecutionAsync, loadScenarioAsync} from '../../store/AsyncHelpers';
 import ScenarioService from '../../services/ScenarioService';
 

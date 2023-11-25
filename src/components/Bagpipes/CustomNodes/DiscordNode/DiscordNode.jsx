@@ -1,5 +1,5 @@
 import { Handle, Position } from 'reactflow';
-import { DiscordIcon } from '../../../Icons/Icons';
+import { DiscordIcon } from '../../../Icons/icons';
 import './DiscordNode.scss';
 import '../../node.styles.scss';
 

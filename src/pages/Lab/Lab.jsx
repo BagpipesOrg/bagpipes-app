@@ -6,7 +6,7 @@ import Scenario from './Scenario';
 import './Lab.scss';
 import '../../index.css';
 import '../../main.scss';
-import { EditIcon, PlusIcon, CloseIcon } from '../../components/Icons/Icons';
+import { EditIcon, PlusIcon, CloseIcon } from '../../components/Icons/icons';
 import { deleteScenarioAsync, loadScenarioAsync } from '../../store/AsyncHelpers';
 import CreateTemplateLink from '../../components/Bagpipes/TemplateFeatures/CreateTemplateLink';
 import ScenarioService from '../../services/ScenarioService';

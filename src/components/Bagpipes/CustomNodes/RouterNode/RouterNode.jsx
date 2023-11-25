@@ -1,5 +1,5 @@
 import { Handle, Position } from 'reactflow';
-import { RouterNodeIcon } from '../../../Icons/Icons';
+import { RouterNodeIcon } from '../../../Icons/icons';
 import './RouterNode.scss'
 
 export default function RouterNode({ data }) {

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import Tippy from '@tippyjs/react';
 import ThemeContext from '../../contexts/ThemeContext';
-import { ActionIcon, ChainIcon, ToolsIcon, RouterIcon, WebhookIcon, ScheduleIcon, DelayIcon, APIIcon, CodeIcon, DiscordIcon } from '../Icons/Icons'; 
+import { ActionIcon, ChainIcon, ToolsIcon, RouterIcon, WebhookIcon, ScheduleIcon, DelayIcon, APIIcon, CodeIcon, DiscordIcon } from '../Icons/icons'; 
 import 'tippy.js/dist/tippy.css'; 
 import './Toolbar.scss'; 
 
