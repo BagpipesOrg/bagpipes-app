@@ -478,6 +478,66 @@ const BagpipesFlow = () => {
             y: event.clientY - reactFlowBounds.top,
             });
 
+            // const getNodeConfig = (type, position) => {
+            //   const commonStyle = { backgroundColor: 'rgba(255, 0, 0, 0)', width: 100, height: 100 };
+            
+            //   const nodeConfigs = {
+            //     formGroup: {
+            //       label: 'Form Group',
+            //       image: './formGroup.svg',
+            //       name: 'Form Group Example',
+            //       fields: [{ label: "Field 1", type: "text" }, { label: "Field 2", type: "number" }],
+            //       style: commonStyle,
+            //     },
+            //     openAi: {
+            //       label: 'Open AI',
+            //       image: './openai.svg',
+            //       name: "OpenAI",
+            //       style: commonStyle,  
+            //     },
+            //     chain: {
+            //       label: 'Chain',
+            //       image: './chain.svg',
+            //       name: "Chain",
+                  
+            //     },
+            //     discord: {
+            //       label: 'Discord',
+            //       image: './discord-purple.svg',
+            //       name: "Discord",
+                  
+            //     },
+            //      webhook: {
+            //       label: 'Webhook',
+            //       image: './webhook.svg',
+            //       name: "Webhook",
+                  
+            //     },
+            //     discord: {
+            //       label: 'Discord',
+            //       image: './discord-purple.svg',
+            //       name: "Discord",
+                  
+            //     },
+            //     discord: {
+            //       label: 'Discord',
+            //       image: './discord-purple.svg',
+            //       name: "Discord",
+                  
+            //     },
+            //     // ... other node types
+            //   };
+            
+            //   return {
+            //     id: getId(type),
+            //     type,
+            //     position,
+            //     data: nodeConfigs[type] || { label: type },
+            //     style: nodeConfigs[type]?.style || {},
+            //   };
+            // };
+            
+
         
             // Handle formGroup node
             if (type === 'formGroup') {
@@ -514,10 +574,6 @@ const BagpipesFlow = () => {
                 label: 'Open AI',
                 image: './openai.svg',
                 name: "OpenAI",
-                fields: [
-                { label: "Field 1", type: "text" },
-                { label: "Field 2", type: "number" },
-                ]
             };
             // openAi node creation
             const nodeId = getId();
