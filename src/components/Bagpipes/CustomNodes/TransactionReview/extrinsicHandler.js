@@ -26,6 +26,7 @@ function handlexTransfer(formData) {
     const chains = listChains();
     const source = formData.source;
     const target = formData.target;
+    const delay = formData.source.delay;
 
     // check if the asset is native or on-chain asset. 
     // Retrieve token decimals for the source chain
@@ -42,6 +43,12 @@ function handlexTransfer(formData) {
     // Define a map for each xTransfer action
     const reserverTransferActions = {
         'polkadot:hydraDx': () => {
+            if(delay) {
+                const numberValue = Number(delay);
+                if (numberValue >= 1){
+                    return dotToHydraDx(submittableAmount, target.address, numberValue);
+                };
+            };
             console.log("handlexTransfer for Polkadot to HydraDx...");
             return dotToHydraDx(submittableAmount, target.address);
         },
@@ -51,6 +58,12 @@ function handlexTransfer(formData) {
             return hydraDxToParachain(submittableAmount, source.assetId, target.chain, paraid);
         },
         'polkadot:assetHub': () => {
+            if(delay) {
+                const numberValue = Number(delay);
+                if (numberValue >= 1){
+                    return polkadot_to_assethub(submittableAmount, target.address, numberValue);
+                };
+            };
             console.log("handlexTransfer for Polkadot to AssetHub...");
             return polkadot_to_assethub(submittableAmount, target.address);
         },
