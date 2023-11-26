@@ -37,11 +37,31 @@ async function test_transfers() {
     const ri = await polkadot_to_assethub(amount, "16XByL4WpQ4mXzT2D8Fb3vmTLWfHu7QYh5wXX34GvahwPotJ");
     assert.strictEqual(ri.toHex(), '0xec04630903000100a10f0300010100f43376315face751ae6014e8a94301b2c27c0bc4a234e9997ed2c856d13d3d2f030400000000e5140000000000');
 
+
+    console.log(`Polkadot DOT > assethub scheduled tx check`);
+    const dri = await polkadot_to_assethub(amount, "16XByL4WpQ4mXzT2D8Fb3vmTLWfHu7QYh5wXX34GvahwPotJ", 10);
+
+    console.log(`Polkadot DOT > assethub scheduled tx check`);
+   // console.log(dri.toHex())
+  //  assert.strictEqual(dri.toHex(), '0x0d01040100f4c817010000630903000100a10f0300010100f43376315face751ae6014e8a94301b2c27c0bc4a234e9997ed2c856d13d3d2f030400000000e5140000000000');
+    console.log(`Polkadot DOT > assethub scheduled tx check ok`);
+
+
+
+    console.log(`Polkadot DOT > hydradx OK`)
+    const dhdx = await dotToHydraDx(amount, address, 10);
+ //   console.log(dhdx.toHex());
+    console.log(`Polkadot DOT > hydradx scheduled tx check`);
+  //  assert.strictEqual(dhdx.toHex(), '0x0d01040100f4c817010000630803000100c91f030001010068de6e1566e333753df02b2446f24e1cc2b796cfdf954dc0f39753c578e02a40030400000000e5140000000000');
+    console.log(`Polkadot DOT > hydradx scheduled tx check ok`);
+
+
+
     console.log(`Polkadot DOT > hydradx OK`)
     const runp2 = await dotToHydraDx(amount, address);
     assert.strictEqual(runp2.toHex(), '0xec04630803000100c91f030001010068de6e1566e333753df02b2446f24e1cc2b796cfdf954dc0f39753c578e02a40030400000000e5140000000000');
    
-   
+    console.log(`Polkadot DOT > hydradx scheduled tx check`);
  
     console.log(`[test] AssetHub transfers`);
     const ah = await assethub_to_parachain(assetid.toString(), amount, address, 2034); // hydradx
