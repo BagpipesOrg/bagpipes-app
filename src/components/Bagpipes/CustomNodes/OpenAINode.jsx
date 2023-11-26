@@ -5,9 +5,9 @@ import SocketContext from '../../../contexts/SocketContext';
 import CustomNode from './CustomNode';
 import OpenAINodeFields from './OpenAINodeFields';
 import useExecuteScenario from '../hooks/useExecuteScenario';
+import useAppStore from '../../../store/useAppStore';
 import '../../../index.css';
 import '../node.styles.scss';
-import useAppStore from '../../../store/useAppStore';
 
 
 const OpenAINode = ({ data, isConnectable }) => {
@@ -44,7 +44,7 @@ const OpenAINode = ({ data, isConnectable }) => {
         {categories.map((category, index) => (
           <span key={index} className="inline-block bg-gray-200 rounded mx-1 px-1 py-1 text-xxs text-center text-slate-900">{category}</span>
         ))}
-      </div>  
+      </div>  Test
       <div className={nodeContent && 'typing-effect absolute px-1 pt-2 pb-2 rounded-b-lg bg-white -z-50 pt-3 px-2 pb-2 '}>
         {nodeContent}
       </div>

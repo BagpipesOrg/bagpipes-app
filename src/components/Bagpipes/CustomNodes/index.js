@@ -6,7 +6,8 @@ import APINode from './APINode/APINode';
 import CodeNode from './CodeNode/CodeNode';
 import ScheduleNode from './ScheduleNode/ScheduleNode';
 import DiscordNode from './DiscordNode/DiscordNode';
+import OpenAINode from './OpenAINode';
 // import SwitchNode from './SwitchNode/SwitchNode';
 
 
-export { ActionNode, ChainNode, RouterNode, WebhookNode, APINode, CodeNode, ScheduleNode, DiscordNode };
+export { ActionNode, ChainNode, RouterNode, WebhookNode, APINode, CodeNode, ScheduleNode, DiscordNode, OpenAINode };

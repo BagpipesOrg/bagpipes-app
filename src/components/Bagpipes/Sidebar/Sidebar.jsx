@@ -30,9 +30,9 @@ const Sidebar = () => {
 
         {/* Chat */}
         <div className="sidebar-item">
-          <Link to="/chat">
+          <Link to="/contacts">
             <ChatIcon />
-            {isExpanded && <span className="sidebar-text">Chat</span>}
+            {isExpanded && <span className="sidebar-text">Contacts</span>}
           </Link>
         </div>
 

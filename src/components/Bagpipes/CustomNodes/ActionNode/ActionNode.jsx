@@ -265,7 +265,7 @@ const toggleDropdown = () => {
 
       {/* Custom dropdown */}
       <div className="relative">
-        <div className="action-type flex justify-between items-center in-node-border py-1 px-2 rounded cursor-pointer text-xs ml-2 mr-2 font-semibold bg-white" onClick={toggleDropdown}>
+        <div className="action-type flex justify-between items-center in-node-border rounded cursor-pointer text-xs ml-2 mr-2 font-semibold bg-white" onClick={toggleDropdown}>
           {formState.action ? (
             <img src={getActionImage()} alt={formState.action} className="w-12 h-12 p-1 mx-auto" />
           ) : (
@@ -322,10 +322,6 @@ const toggleDropdown = () => {
         </div>
       </div>
     )}
-
-
-
-
 
     <button 
       onClick={() => fetchActionInfo(nodeId)} 

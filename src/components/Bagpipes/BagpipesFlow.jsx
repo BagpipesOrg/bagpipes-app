@@ -15,9 +15,8 @@ import { useDebounce } from 'use-debounce';
 import TextUpdaterNode from './TextupdaterNode';
 import Toolbar from '../Toolbar/Toolbar';
 import FormGroupNode from './FormGroupNode';
-import OpenAINode from './CustomNodes/OpenAINode';
 import CustomEdge from './CustomEdges/CustomEdge';
-import { ChainNode, ActionNode, RouterNode, WebhookNode, APINode, CodeNode, ScheduleNode, DiscordNode } from './CustomNodes';
+import { ChainNode, ActionNode, RouterNode, WebhookNode, APINode, CodeNode, ScheduleNode, DiscordNode, OpenAINode } from './CustomNodes';
 import OpenAINodeForm from './Forms/OpenAINodeForm/OpenAINodeForm';
 import { initialEdges, initialNodes } from './nodes.jsx';
 import PlayButton from './buttons/PlayButton';
@@ -40,6 +39,7 @@ import OrderedListContent from '../toasts/OrderedListContent';
 import { onConnect, onEdgesChange, onNodesChange } from '../../store/reactflow/';
 import useOnEdgesChange from '../../store/reactflow/useOnEdgesChange';
 import Edges from './edges';
+import { getNodeConfig } from './nodeConfigs';
 import { EDGE_STYLES } from '../../store/reactflow/onConnect';
 import './utils/getAllConnectedNodes';
 
@@ -75,10 +75,11 @@ const proOptions = { hideAttribution: true };
 const nodeTypes = { 
   textUpdater: TextUpdaterNode, 
   formGroup: FormGroupNode,
-  openAi: OpenAINode,
+  
   chain: ChainNode,
   action: ActionNode,
   router: RouterNode,
+  openAi: OpenAINode,
   webhook: WebhookNode,
   api: APINode,
   code: CodeNode,
@@ -464,10 +465,9 @@ const BagpipesFlow = () => {
             event.preventDefault();
              
             // The type of the node is determined based on what was dragged and dropped.
-            const nodeType = event.dataTransfer.getData('application/reactflow').toLowerCase();
+            const type = event.dataTransfer.getData('application/reactflow');
     
             const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-            const type = event.dataTransfer.getData('application/reactflow');
         
             if (typeof type === 'undefined' || !type) {
             return;
@@ -478,302 +478,11 @@ const BagpipesFlow = () => {
             y: event.clientY - reactFlowBounds.top,
             });
 
-            // const getNodeConfig = (type, position) => {
-            //   const commonStyle = { backgroundColor: 'rgba(255, 0, 0, 0)', width: 100, height: 100 };
-            
-            //   const nodeConfigs = {
-            //     formGroup: {
-            //       label: 'Form Group',
-            //       image: './formGroup.svg',
-            //       name: 'Form Group Example',
-            //       fields: [{ label: "Field 1", type: "text" }, { label: "Field 2", type: "number" }],
-            //       style: commonStyle,
-            //     },
-            //     openAi: {
-            //       label: 'Open AI',
-            //       image: './openai.svg',
-            //       name: "OpenAI",
-            //       style: commonStyle,  
-            //     },
-            //     chain: {
-            //       label: 'Chain',
-            //       image: './chain.svg',
-            //       name: "Chain",
-                  
-            //     },
-            //     discord: {
-            //       label: 'Discord',
-            //       image: './discord-purple.svg',
-            //       name: "Discord",
-                  
-            //     },
-            //      webhook: {
-            //       label: 'Webhook',
-            //       image: './webhook.svg',
-            //       name: "Webhook",
-                  
-            //     },
-            //     discord: {
-            //       label: 'Discord',
-            //       image: './discord-purple.svg',
-            //       name: "Discord",
-                  
-            //     },
-            //     discord: {
-            //       label: 'Discord',
-            //       image: './discord-purple.svg',
-            //       name: "Discord",
-                  
-            //     },
-            //     // ... other node types
-            //   };
-            
-            //   return {
-            //     id: getId(type),
-            //     type,
-            //     position,
-            //     data: nodeConfigs[type] || { label: type },
-            //     style: nodeConfigs[type]?.style || {},
-            //   };
-            // };
-            
+            const newNode = getNodeConfig(type, position, getId);
 
-        
-            // Handle formGroup node
-            if (type === 'formGroup') {
-            // formGroup node data
-            const data = {
-                label: 'Form Group',
-                image: './.svg',
-                name: "Form Group Example",
-                fields: [
-                { label: "Field 1", type: "text" },
-                { label: "Field 2", type: "number" },
-                ]
-            };
-        
-            // formGroup node creation
-            const groupId = getId();
-            const nodesToAdd = [
-                {
-                id: groupId,
-                type,
-                position,
-                data,
-                style: { backgroundColor: 'rgba(255, 0, 0, 0)', width: 100, height: 100 },
-                }
-            ];
-        
-            // setNodes((nds) => nds.concat(nodesToAdd));
+  
             addNodeToScenario(activeScenarioId, newNode);
-            } else if (type === 'openAi') {
-
-              
-            // openAi node data
-            const data = {
-                label: 'Open AI',
-                image: './openai.svg',
-                name: "OpenAI",
-            };
-            // openAi node creation
-            const nodeId = getId();
-            const newNode = {
-                id: getId(nodeType),          
-                type,
-                position,
-                data,
-                style: { backgroundColor: 'rgba(255, 0, 0, 0)', width: 100, height: 100 },
-            };
-            // setNodes((nds) => nds.concat(newNode));
-
-
-            // Call the action to add the node to the current scenario
-            addNodeToScenario(activeScenarioId, newNode);
-            } else if (type === 'chain') {
-
-              
-              // Chain node data
-              const data = {
-                  label: 'Chain',
-                  image: './chain.svg',
-                  name: "Chain",
-                  fields: [
-                  { label: "Field 1", type: "text" },
-                  { label: "Field 2", type: "number" },
-                  ]
-              };
-              // Chain node creation
-              const nodeId = getId();
-              const newNode = {
-                  id: getId(nodeType),          
-                  type,
-                  position,
-                  data,
-                  style: { backgroundColor: 'rgba(255, 0, 0, 0)', width: 100, height: 100 },
-              };
-              // setNodes((nds) => nds.concat(newNode));
-              // Call the action to add the node to the current scenario
-              addNodeToScenario(activeScenarioId, newNode);
-            } else if (type === 'discord') {
-
-              
-              // Chain node data
-              const data = {
-                  label: 'Discord',
-                  image: './discord-purple.svg',
-                  name: "Discord",
-                  
-              };
-              // Chain node creation
-              const nodeId = getId();
-              const newNode = {
-                  id: getId(nodeType),          
-                  type,
-                  position,
-                  data,
-                  style: { backgroundColor: 'rgba(255, 0, 0, 0)', width: 100, height: 100 },
-              };
-              // setNodes((nds) => nds.concat(newNode));
-              // Call the action to add the node to the current scenario
-              addNodeToScenario(activeScenarioId, newNode);
-            } else if (type === 'webhook') {
-
-              
-              // Chain node data
-              const data = {
-                  label: 'Webhook',
-                  image: './webhook.svg',
-                  name: "Webhook",
-              };
-              // Chain node creation
-              const nodeId = getId();
-              const newNode = {
-                  id: getId(nodeType),          
-                  type,
-                  position,
-                  data,
-              };
-              // setNodes((nds) => nds.concat(newNode));
-              // Call the action to add the node to the current scenario
-              addNodeToScenario(activeScenarioId, newNode);
-            } else if (type === 'router') {
-
-              
-              // Chain node data
-              const data = {
-                  label: 'Router',
-                  image: './router.svg',
-                  name: "Router",
-              };
-              // Chain node creation
-              const nodeId = getId();
-              const newNode = {
-                  id: getId(nodeType),          
-                  type,
-                  position,
-                  data,
-              };
-              // setNodes((nds) => nds.concat(newNode));
-              // Call the action to add the node to the current scenario
-              addNodeToScenario(activeScenarioId, newNode);
-            } else if (type === 'api') {
-
-              
-              // Chain node data
-              const data = {
-                  label: 'API',
-                  image: './api.svg',
-                  name: "API",
-              };
-              // Chain node creation
-              const nodeId = getId();
-              const newNode = {
-                  id: getId(nodeType),          
-                  type,
-                  position,
-                  data,
-              };
-              // setNodes((nds) => nds.concat(newNode));
-              // Call the action to add the node to the current scenario
-              addNodeToScenario(activeScenarioId, newNode);
-            } else if (type === 'code') {
-
-              
-              // Chain node data
-              const data = {
-                  label: 'Custom Code',
-                  image: './code.svg',
-                  name: "Custom Code",
-              };
-              // Chain node creation
-              const nodeId = getId();
-              const newNode = {
-                  id: getId(nodeType),          
-                  type,
-                  position,
-                  data,
-              };
-              // setNodes((nds) => nds.concat(newNode));
-              // Call the action to add the node to the current scenario
-              addNodeToScenario(activeScenarioId, newNode);
-            } else if (type === 'schedule') {
-
-              
-              // Chain node data
-              const data = {
-                  label: 'Schedule',
-                  image: './schedule.svg',
-                  name: "Schedule",
-              };
-              // Chain node creation
-              const nodeId = getId();
-              const newNode = {
-                  id: getId(nodeType),          
-                  type,
-                  position,
-                  data,
-              };
-              // setNodes((nds) => nds.concat(newNode));
-              // Call the action to add the node to the current scenario
-              addNodeToScenario(activeScenarioId, newNode);
-            } else if (type === 'action') {
-
-              
-              // Chain node data
-              const data = {
-                  label: 'Action',
-                  image: './action.svg',
-                  name: "Action",
-                  fields: [
-                  { label: "Field 1", type: "text" },
-                  { label: "Field 2", type: "number" },
-                  ]
-              };
-              // Chain node creation
-              const nodeId = getId();
-              const newNode = {
-                  id: getId(nodeType),          
-                  type,
-                  position,
-                  data,
-                  style: { backgroundColor: 'rgba(255, 0, 0, 0)', width: 100, height: 100 },
-              };
-              // setNodes((nds) => nds.concat(newNode));
-              // Call the action to add the node to the current scenario
-              addNodeToScenario(activeScenarioId, newNode);
-            }
-            else {
-            // other node creation
-            const newNode = {
-            id: getId(nodeType),          
-            type,
-            position,
-            data: { label: `${type}` },
-            };
-            setNodes((nds) => nds.concat(newNode));
-            // Call the action to add the node to the current scenario
-            addNodeToScenario(activeScenarioId, newNode);
-        }},
+        },
         [reactFlowInstance,   activeScenarioId, addNodeToScenario]
     );
 
@@ -1100,9 +809,11 @@ const handleDraftTransactions = async () => {
              
             {/* <GitInfo /> */}
 
+      
+
             </div>
             
-            {/* {modalNodeId && currentScenarioNodes && currentScenarioEdges && (
+            {modalNodeId && currentScenarioNodes && currentScenarioEdges && (
                 <OpenAINodeForm
                   nodeId={modalNodeId}
                   nodes={currentScenarioNodes}
@@ -1114,8 +825,9 @@ const handleDraftTransactions = async () => {
                   setModalNodeId={setModalNodeId}
                 />
        
-              )} */}
+              )}
     </ThemeProvider>
+    
     </div>
 
     );

@@ -1,6 +1,7 @@
 // @ts-nocheck
 import React, { useEffect } from 'react';
 import NodeForm from '../NodeForm';
+import './OpenAINodeForm.scss';
 
 const OpenAINodeForm = ({ nodeId, nodes, edges, onNodesChange, setModalNodeId, inputNodes, formState }) => {
   console.log('OpenAINodeForm rendered for nodeId:', nodeId);
@@ -11,7 +12,7 @@ const OpenAINodeForm = ({ nodeId, nodes, edges, onNodesChange, setModalNodeId, i
   }, [nodeId, formState]);
   
   return (
-    <div className="main-font">
+    <div className="main-font openainodeform">
     <NodeForm
       nodeId={nodeId}
       nodes={nodes}
