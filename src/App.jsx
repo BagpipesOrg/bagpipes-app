@@ -20,7 +20,7 @@ import 'tippy.js/dist/tippy.css';
 import 'antd/dist/antd.css';
 
 
-export function App () {
+function App () {
   const [socket, setSocket] = useState(null);
   const location = useLocation();
   const walletContext = useContext(WalletContext);
@@ -59,7 +59,7 @@ export function App () {
           <SocketContext.Provider value={socket}>
             <ConfigProvider>
               <AddressBookProvider>
-                <div className='absolute top-0 lef-0'>
+                <div className='absolute top-0 left-0'>
               </div>
               <Header open={true} />
 
@@ -78,4 +78,6 @@ export function App () {
         </ThemeProvider>
     );
   }
+
+  export default App;
   

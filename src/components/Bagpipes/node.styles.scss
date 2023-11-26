@@ -58,16 +58,16 @@
     /* border: 3px solid black !important; */
   }
   .react-flow__node.selected  {
-    outline: 10px solid rgba(0, 214, 29, 0.334) !important;
+    outline: 20px solid rgba(1, 179, 24, 0.203) !important;
     border-radius: 12px !important;
-
+  
     /* border: 3px solid black !important; */
   }
 
-  .react-flow__node:focus  {
-    outline: 10px solid rgba(0, 214, 29, 0.334) !important;
+  .react-flow__node.selected  {
+    outline: 20px solid rgba(1, 179, 24, 0.203) !important;
     border-radius: 12px !important;
-
+  
     /* border: 3px solid black !important; */
   }
 
@@ -80,6 +80,11 @@
     // outline: 3px solid rgba(255, 141, 251, 0.535) !important;
     /* border: 3px solid black !important; */
     // box-shadow: 10px 10px 10px 10px #bdbdbd44 !important;
+  }
+
+  .react-flow__node-webhook.selected, .react-flow__node-router.selected, .react-flow__node-api.selected,  .react-flow__node-code.selected, .react-flow__node-schedule.selected, .react-flow__node-discord.selected {
+    outline: 20px solid rgba(1, 179, 24, 0.203) !important;
+    border-radius: 50px !important;
   }
 
   .react-flow__handle {

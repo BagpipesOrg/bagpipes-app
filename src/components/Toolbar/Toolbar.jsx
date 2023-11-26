@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import Tippy from '@tippyjs/react';
 import ThemeContext from '../../contexts/ThemeContext';
-import { ActionIcon, ChainIcon, ToolsIcon, RouterIcon, WebhookIcon, ScheduleIcon, DelayIcon, APIIcon } from '../Icons/icons'; 
+import { ActionIcon, ChainIcon, ToolsIcon, RouterIcon, WebhookIcon, ScheduleIcon, DelayIcon, APIIcon, CodeIcon, DiscordIcon } from '../Icons/icons'; 
 import 'tippy.js/dist/tippy.css'; 
 import './Toolbar.scss'; 
 
@@ -26,6 +26,7 @@ const nodeNames = {
     schedule: 'Schedule',
     delay: 'Delay',
     api: 'API',
+    code: 'Code',
 };
 
 const nodeDescriptions = {
@@ -60,17 +61,27 @@ const nodeDescriptions = {
   <div className='m-4 tippy-node'>
     <h1 className='text-xl font-bold '>Schedule (coming soon) </h1>
     <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
-</div>,
-delay: 
-<div className='m-4 tippy-node'>
-  <h1 className='text-xl font-bold '>Delay (coming soon) </h1>
-  <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
-</div>,
-api: 
-<div className='m-4 tippy-node'>
-  <h1 className='text-xl font-bold '>API Call (coming soon) </h1>
-  <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
-</div>,
+  </div>,
+  delay: 
+  <div className='m-4 tippy-node'>
+    <h1 className='text-xl font-bold '>Delay (coming soon) </h1>
+    <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
+  </div>,
+  api: 
+  <div className='m-4 tippy-node'>
+    <h1 className='text-xl font-bold '>API Call (coming soon) </h1>
+    <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
+  </div>,
+  code: 
+  <div className='m-4 tippy-node'>
+    <h1 className='text-xl font-bold '>Custom Code (coming soon) </h1>
+    <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
+  </div>,
+// discord: 
+// <div className='m-4 tippy-node'>
+//   <h1 className='text-xl font-bold '>Discord (coming soon) </h1>
+//   <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
+// </div>
 }
 
 const Toolbar = () => {
@@ -138,13 +149,18 @@ const Toolbar = () => {
       IconComponent = <DelayIcon />;
     } else if (nodeKey === 'api') {
       IconComponent = <APIIcon />;
+    } else if (nodeKey === 'code') {
+      IconComponent = <CodeIcon />;
     }
+    // } else if (nodeKey === 'discord') {
+    //   IconComponent = <DiscordIcon className='h-6 w-6' fillColor='white' />;
+    // }
 
 
     
 
     return (
-      <Tippy   theme="light" placement="bottom" className='tippy-node' interactive={true} content={nodeDescriptions[nodeKey]}>
+      <Tippy theme="light" placement="bottom" className='tippy-node' interactive={true} content={nodeDescriptions[nodeKey]}>
         <div className={`toolbar-icon ${theme}`} onDragStart={(event) => onDragStart(event, nodeKey)} draggable>
           {IconComponent}
           <span>{nodeNames[nodeKey]}</span>

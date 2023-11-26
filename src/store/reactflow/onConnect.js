@@ -12,7 +12,7 @@ export const EDGE_STYLES = {
     },
     animated: true,
     markerEnd: {
-      // type: MarkerType.ArrowClosed,
+      type: MarkerType.ArrowClosed,
       color: 'gray',
       strokeWidth: 2,
     },
@@ -26,7 +26,7 @@ export const EDGE_STYLES = {
     },
     animated: true,
     markerEnd: {
-      // type: MarkerType.ArrowClosed,
+      type: MarkerType.ArrowClosed,
       color: 'green',
       strokeWidth: 3,
     },
@@ -40,11 +40,11 @@ export const EDGE_STYLES = {
     },
     // animated: true,
     markerEnd: {
-      // type: MarkerType.Arrow,
+      type: MarkerType.Arrow,
       color: ``,
       strokeWidth: 1
     },
-    // type: 'arrow',
+    type: 'arrow',
     // label: 'Edge Label',
     focusable: true,
     label: '',

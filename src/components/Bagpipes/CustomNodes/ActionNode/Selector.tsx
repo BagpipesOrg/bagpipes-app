@@ -4,7 +4,7 @@ import '../../node.styles.scss';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css'; 
 import 'tippy.js/themes/light.css';
-import { iIcon } from '../../../Icons/icons';
+import { iIcon } from '../../../Icons/icons'
 
 // Props type definition
 type SelectorProps = {
