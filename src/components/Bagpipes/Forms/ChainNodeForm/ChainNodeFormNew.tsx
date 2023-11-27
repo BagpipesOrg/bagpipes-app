@@ -28,13 +28,9 @@ import '../../../../main.scss';
 
 import '/plus.svg'
 
-const ChainNodeForm: React.FC<ChainNodeFormProps> = ({ visible, nodeId, nodes, edges, onNodesChange, setModalNodeId, inputNodes, data,  isConnectable}) => {
-  console.log('ChainNodeForm data:', data);
+const ChainNodeForm: React.FC<ChainNodeFormProps> = ({ visible, nodeId, nodes, edges, onNodesChange, setModalNodeId, inputNodes}) => {
   const { theme } = useContext(ThemeContext);
-  const { nodeContent = '' } = data || {}; // Default value if data is undefined
-  if (!data) {
-    return <div>Loading...</div>; //TODO: change this to a loading component.
-  }
+
   const socket = useContext(SocketContext);
   const { nodeContentMap, executeScenario } = useExecuteScenario();
   // const nodeId = useNodeId();
@@ -341,25 +337,33 @@ useEffect(() => {
 
 
   return (
-    <div className={`${theme} node-form main-font`}>test
+    <NodeForm
+    visible={visible}
+    nodeId={nodeId}
+    nodes={nodes}
+    edges={edges}
+    onNodesChange={onNodesChange}
+    setModalNodeId={setModalNodeId}
+    inputNodes={inputNodes}
+>
+    <div className={`${theme} main-font`}>
        
-      <div className='flex justify-between m-1'>
+      <div className='flex justify-between m-1 '>
         <ChainIcon className="h-4 w-4" fillColor='rgb(156 163 175' />
         <div className="text-xxs node-input primary-font mb-1">{nodeId}</div>
       </div>
       {selectedChainLogo && (
-          <div className="chain-logo-container mb-2 mt-2 flex justify-center">
+          <div className="chain-logo-container mb-2 mt-2 flex justify-center ">
             <img src={selectedChainLogo} alt={`${formState.chain} Logo`} className="chain-logo w-12 h-12" /> 
           </div>
         )}
-      <Handle id="a" type="target" position={Position.Left} isConnectable={isConnectable} />
-      <Handle id="b" type="source" position={Position.Right} isConnectable={isConnectable} />
-      <div className="m-2">
-        <div className="in-node-border p-2 rounded mb-2 ">
+     
+      <div className="m-2 ">
+        <div className="in-node-border p-2 rounded mb-2  ">
           <div className="chain-selection mb-2">
             <h3 className="text-xxs node-input primary-font mb-1">Chain</h3> 
             <select 
-                className="chain-selector font-semibold text-black in-node-border border-gray-300 p-2 rounded"
+                className="chain-selector font-semibold text-black in-node-border border-gray-300 p-2 rounded bg-white"
                 onChange={handleChainChange}
                 value={formState.chain}  // sets the value for the dropdown from the state
             >
@@ -383,7 +387,7 @@ useEffect(() => {
                </div>
              </div>
           ) : (
-            <select className="asset-selector text-black in-node-border border-gray-300 p-2 rounded font-semibold" onChange={handleAssetChange} value={formState.asset ? formState.asset.name : ""}>
+            <select className="asset-selector text-black in-node-border border-gray-300 p-2 rounded font-semibold bg-white" onChange={handleAssetChange} value={formState.asset ? formState.asset.name : ""}>
               <option value="">Select an asset</option>
                {assetsForChain.map(asset => (
                    <option key={asset.assetId} value={asset.asset.name}>
@@ -409,40 +413,7 @@ useEffect(() => {
           <AddContacts />
         </div>
       )}
-      {/* Hide delay for now until we have the side form working, and scheduler is in the pallet / parameters area.  */}
-        {/* {formState.chain == 'polkadot' && (
-      <div class="mb-2 in-node-border p-2 rounded"  onChange={handleDelayChange}  value={formState.delay}>
-        <h3 class="text-xxs node-input primary-font mb-1 flex items-center justify-between">Delay amount of blocks<div class="flex items-center primary-font">
-          </div></h3>
-          <div class="unbounded-black">
-            <input class="unbounded-black text-xl text-black pl-1 in-node-border border-gray-300 rounded amount-selector" type="number" placeholder="0" min="0"/>
-        </div></div> )} */}
-
-      {formState.chain && contacts.length > 0 && (
-        <div className="mb-2 in-node-border p-2 rounded flex flex-col items-start justify-start">
-            <h3 className="text-xxs node-input primary-font mb-2 self-start">Contacts</h3>
-            <select 
-                className="contact-selector font-semibold text-black in-node-border border-gray-300 p-2 rounded"
-                value={formState.contact || ""}
-                onChange={(e) => {
-                    if(e.target.value === 'create_new_contact') {
-                      <AddContacts />
-                      setIsModalVisible(true)
-                      } else {
-                        handleFormChange("contact", e.target.value);
-                      }
-                }}
-            >
-                <option value="create_new_contact" style={{ borderBottom: '1px solid #ccc', fontWeight: 500 }}>Create New Contact</option> {/* Added style for borderBottom */}
-                <option value="">Select Contact</option>
-                {contacts.map(contact => (
-                    <option key={contact.address} value={contact.address}>
-                        {`${contact.name} (${contact.address})`}
-                    </option>
-                ))}
-            </select>
-        </div>
-      )}
+ 
 
     {formState.chain && (
       <div className="mb-2 in-node-border p-2 rounded">
@@ -474,28 +445,48 @@ useEffect(() => {
         </div>
       </div>
     )}
+<div className=''>
+{formState.chain == 'polkadot' && (
+      <div class="mb-2 in-node-border p-2 rounded"  onChange={handleDelayChange}  value={formState.delay}>
+        <h3 class="text-xxs node-input primary-font mb-1 flex items-center justify-between">Delay amount of blocks<div class="flex items-center primary-font">
+          </div></h3>
+          <div class="unbounded-black">
+            <input class="unbounded-black text-xl text-black pl-1 in-node-border border-gray-300 rounded amount-selector" type="number" placeholder="0" min="0"/>
+        </div></div> )} 
 
+        {formState.chain && (
 
-      {/* {loading ? (
-        <div className="loading-indicator mb-2">Loading...</div>
-      ) : null} */}
-      
-      <div className={nodeContent && 'typing-effect absolute px-1 pt-2 pb-2 rounded-b-lg bg-white -z-50 pt-3 px-2 pb-2 '}>
-        {nodeContent}
+      // {formState.chain && contacts.length > 0 && (
+        <div className="mb-2 in-node-border p-2 rounded flex flex-col items-start justify-start">
+            <h3 className="text-xxs node-input primary-font mb-2 self-start">Contacts</h3>
+            <select 
+                className="contact-selector font-semibold text-black in-node-border border-gray-300 p-2 rounded"
+                value={formState.contact || ""}
+                onChange={(e) => {
+                    if(e.target.value === 'create_new_contact') {
+                      <AddContacts />
+                      setIsModalVisible(true)
+                      } else {
+                        handleFormChange("contact", e.target.value);
+                      }
+                }}
+            >
+                <option value="create_new_contact" style={{ borderBottom: '1px solid #ccc', fontWeight: 500 }}>Create New Contact</option> {/* Added style for borderBottom */}
+                <option value="">Select Contact</option>
+                {contacts.map(contact => (
+                    <option key={contact.address} value={contact.address}>
+                        {`${contact.name} (${contact.address})`}
+                    </option>
+                ))}
+            </select>
+        </div>
+      )}
       </div>
+ 
     </div>
-    <NodeForm
-                visible={visible}
-                nodeId={nodeId}
-                nodes={nodes}
-                edges={edges}
-                onNodesChange={onNodesChange}
-                setModalNodeId={setModalNodeId}
-                inputNodes={inputNodes}
-                data={data}
-                isConnectable={isConnectable}
-            />
+   
     </div>
+    </NodeForm>
   );
   
 };

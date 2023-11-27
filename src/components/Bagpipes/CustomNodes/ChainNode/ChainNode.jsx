@@ -27,6 +27,7 @@ import '../../../../main.scss';
 import '/plus.svg'
 
 const ChainNode = ({ data, isConnectable }) => {
+  console.log('ChainNode data', data);
   const { theme } = useContext(ThemeContext);
   const { nodeContent } = data;
   const socket = useContext(SocketContext);

@@ -9,7 +9,7 @@ import { NodeFormProps } from './types';
 import './Forms.scss';
 
 
-const NodeForm: React.FC<NodeFormProps> = ({ nodeId, nodes, onNodesChange, setModalNodeId, edges, visible }) => {
+const NodeForm: React.FC<NodeFormProps> = ({ nodeId, nodes, onNodesChange, setModalNodeId, edges, visible, children }) => {
   const node = nodes.find(n => n.id === nodeId) ?? null;
   const savedState = getSavedFormState(nodeId) ?? { inputNodes: node?.data?.inputNodes || [] };
   const { saveNodeFormData } = useAppStore((state) => ({ saveNodeFormData: state.saveNodeFormData }));
@@ -52,13 +52,14 @@ const NodeForm: React.FC<NodeFormProps> = ({ nodeId, nodes, onNodesChange, setMo
   const animationName = visible || isHiding ? 'slideIn' : 'slideOut';
 
   if (!visible) {
+    console.log('NodeForm not visible');
     return null;
   }
 
 
   return (
     <div className='node-form bg-white p-6 rounded-md shadow-lg space-y-4 text-xs' style={{ animationName: animationName }}>
-          
+          {children}
           {/* Generic fields and buttons */}
           <InputNodes inputNodes={inputNodes} />
           <div className='flex justify-end space-x-4'>
