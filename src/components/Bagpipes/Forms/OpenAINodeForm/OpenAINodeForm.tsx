@@ -4,7 +4,7 @@ import { OpenAINodeFormProps } from '../types';
 import '../Forms.scss';
 import { Model, Prompt, SystemMessage } from '../fields';
 
-const OpenAINodeForm: React.FC<OpenAINodeFormProps> = ({ nodeId, nodes, edges, onNodesChange, setModalNodeId, inputNodes, formState }) => {
+const OpenAINodeForm: React.FC<OpenAINodeFormProps> = ({ visible, nodeId, nodes, edges, onNodesChange, setModalNodeId, inputNodes, formState }) => {
     const richTextEditorRef = useRef();
     useEffect(() => {
         console.log('OpenAINodeForm Node ID:', nodeId);
@@ -18,6 +18,7 @@ const OpenAINodeForm: React.FC<OpenAINodeFormProps> = ({ nodeId, nodes, edges, o
     return (
         <div className="node-form main-font">
             <NodeForm
+            visible={visible}
                 nodeId={nodeId}
                 nodes={nodes}
                 edges={edges}
