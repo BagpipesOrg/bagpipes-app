@@ -13,7 +13,6 @@ const nodeNames = {
     // group: 'Group',
     // textUpdater: 'Text Updater',
     // formGroup: 'Form Group',
-    
     // openAi_Func: 'Open AI Function',
     // api: 'API',
     // gmail: 'Gmail',
@@ -166,11 +165,8 @@ const Toolbar = () => {
       IconComponent = <OpenAIIcon />;
     }
 
-
-    
-
     return (
-      <Tippy   theme="light" placement="bottom" className='tippy-node' interactive={true} content={nodeDescriptions[nodeKey]}>
+      <Tippy theme="light" placement="bottom" className='tippy-node' interactive={true} content={nodeDescriptions[nodeKey]}>
         <div className={`toolbar-icon ${theme}`} onDragStart={(event) => onDragStart(event, nodeKey)} draggable>
           {IconComponent}
           <span>{nodeNames[nodeKey]}</span>

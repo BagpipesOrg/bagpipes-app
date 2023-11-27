@@ -17,7 +17,7 @@ import Toolbar from '../Toolbar/Toolbar';
 import FormGroupNode from './FormGroupNode';
 import CustomEdge from './CustomEdges/CustomEdge';
 import { ChainNode, ActionNode, RouterNode, WebhookNode, APINode, CodeNode, ScheduleNode, DiscordNode, OpenAINode } from './CustomNodes';
-import OpenAINodeForm from './Forms/OpenAINodeForm/OpenAINodeForm';
+import RenderNodeForm from './Forms/RenderNodeForm';
 import { initialEdges, initialNodes } from './nodes.jsx';
 import PlayButton from './buttons/PlayButton';
 import StartButton from './buttons/StartButton';
@@ -41,6 +41,7 @@ import useOnEdgesChange from '../../store/reactflow/useOnEdgesChange';
 import Edges from './edges';
 import { getNodeConfig } from './nodeConfigs';
 import { EDGE_STYLES } from '../../store/reactflow/onConnect';
+import TopBar from './TopBar/TopBar';
 import './utils/getAllConnectedNodes';
 
 
@@ -787,19 +788,8 @@ const handleDraftTransactions = async () => {
 
             
 
-          <div className='top-bar'>
-
-            <CreateUiButton />
-            <CreateButton createScenario={createScenario} />
-              {shouldExecuteChainScenario ? (
-              <SendButton executeChainScenario={handleExecuteChainScenario} />
-            ) : (
-              <StartButton draftTransactions={handleDraftTransactions} />
-
-            )}
-           
-        </div>
-
+          
+            <TopBar createScenario={createScenario} handleExecuteChainScenario={handleExecuteChainScenario} handleDraftTransactions={handleDraftTransactions} shouldExecuteChainScenario={shouldExecuteChainScenario} />
             <Toolbar />
             </ReactFlowStyled>
             
@@ -812,21 +802,21 @@ const handleDraftTransactions = async () => {
       
 
             </div>
-            
+            <div className='absolute top-0 right-0 flex justify between'>
             {modalNodeId && currentScenarioNodes && currentScenarioEdges && (
-                <OpenAINodeForm
-                  nodeId={modalNodeId}
-                  nodes={currentScenarioNodes}
-                  edges={currentScenarioEdges}
-                  nodeConnections={nodeConnections}
-                  setNodes={setNodes}
-                  setEdges={setEdges}
-                  onNodesChange={onNodesChange}
-                  setModalNodeId={setModalNodeId}
-                />
-       
-              )}
+          <RenderNodeForm
+            nodeId={modalNodeId}
+            nodes={currentScenarioNodes}
+            edges={currentScenarioEdges}
+            setNodes={setNodes}
+            setEdges={setEdges}
+            onNodesChange={onNodesChange}
+            setModalNodeId={setModalNodeId}
+          />
+      )}
+              </div>
     </ThemeProvider>
+   
     
     </div>
 

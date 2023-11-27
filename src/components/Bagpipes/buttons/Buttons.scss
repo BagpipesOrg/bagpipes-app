@@ -5,7 +5,8 @@
   display: flex;
   align-items: center; /* Vertically center the items */
   justify-content: center; /* Horizontally center the items */
-  background-color: $lighter-primary-color;
+  // background-color: $lighter-primary-color;
+
   color: white;
   font-weight: 600;
   padding: 0.5rem 0.8rem;
@@ -13,7 +14,9 @@
   z-index: 1000;
   transition: background-color 0.3s;
   cursor: pointer;
-  min-width: 130px;
+  // min-width: 130px;
+    background-color: $lighter-primary-color;
+
 
   &:hover {
     background-color: darken(#007bff, 10%);
@@ -88,4 +91,9 @@
   background: linear-gradient(45deg, #a18cd1, #fbc2eb);
   background-size: 200% 200%;
   animation: movingGradient 3s ease infinite;
+}
+
+
+.tippy-inner {
+  min-width: 200px;
 }

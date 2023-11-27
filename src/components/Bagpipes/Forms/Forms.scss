@@ -1,0 +1,15 @@
+.node-form {
+    width: 250px;
+    height: 100vh;
+    background: #ffffff;
+    overflow: auto;
+    position: fixed; /* or absolute, based on your layout */
+    top: 0;
+    right: -250px; /* Start off-screen */
+    transition: right 0.5s ease-in-out !important; /* Adjust timing as needed */
+    resize: horizontal;
+  }
+  
+  .node-form.visible {
+    right: 0 !important; /* Slide in to be fully visible */
+  }

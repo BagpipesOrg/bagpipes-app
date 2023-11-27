@@ -9,7 +9,7 @@ import { buttonDescriptions}  from './buttonDescriptions';
 
 const StartButton = ({ draftTransactions }) => {
     return (
-        <Tippy theme='light' interactive={true}  content={buttonDescriptions.draft}>
+        <Tippy theme='light' placement='bottom'  interactive={true}  content={buttonDescriptions.draft}>
         <button 
       className="start-stop-create-button flex items-center" 
       onClick={draftTransactions} 
@@ -17,7 +17,7 @@ const StartButton = ({ draftTransactions }) => {
         >
           
             <PlayIcon />
-            <span className='ml-2 '>Start Draft</span>
+            {/* <span className='ml-2 '>Start Draft</span> */}
             {/* Draft */}
         </button>
         </Tippy>

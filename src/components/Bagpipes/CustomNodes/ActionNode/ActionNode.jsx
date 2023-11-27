@@ -11,6 +11,7 @@ import PriceInfo from '../PriceInfo';
 import Selector, { useOutsideAlerter } from './Selector';
 import toast from 'react-hot-toast';
 import ThemeContext from '../../../../contexts/ThemeContext';
+import { ActionIcon } from '../../../Icons/icons';
 
 import '../../../../index.css';
 import '../../node.styles.scss';
@@ -252,13 +253,17 @@ const toggleDropdown = () => {
     <>
       
     <div ref={nodeRef} className={`${theme} action-node rounded-lg shadow-lg text-xs flex flex-col justify-start primary-font`}>
- 
-      <h1 className="text-xxs text-gray-400 primary-font mb-2">{nodeId}</h1>
+      <div className='flex m-1 justify-between'>
+        <ActionIcon className='h-3 w-4' fillColor='rgb(156 163 175' />
+        {/* <div className=" text-xxs text-gray-400 "> {data.name}</div> */}
+        <div className=" text-xxs text-gray-400">{nodeId}</div>
+
+      </div>
 
       <Handle id="a" type="target" position={Position.Left} isConnectable={isConnectable} className='' />
       <Handle id="b" type="source" position={Position.Right} isConnectable={isConnectable} className=''  />
       <div  className='p-3 in-node-border rounded flex justify-center flex-col items-center mb-3'>
-        <div className="text-gray-400 mb-2 text-xxs"> {data.name}</div>
+        
 
       
       

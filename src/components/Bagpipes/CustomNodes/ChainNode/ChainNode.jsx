@@ -17,6 +17,7 @@ import BalanceTippy from './BalanceTippy';
 import ThemeContext from '../../../../contexts/ThemeContext';
 import { buildHrmp } from '../../../../Chains/Helpers/XcmHelper';
 import { mapToObject } from '../../utils/storageUtils';
+import { ChainIcon } from '../../../Icons/icons';
 import '../../node.styles.scss';
 
 import 'antd/dist/antd.css';
@@ -336,7 +337,10 @@ useEffect(() => {
 
   return (
     <div className={`${theme} custom-node shadow-lg text-xs p-4`}>
-      <h1 className="text-xxs node-input primary-font mb-1">{nodeId}</h1>
+      <div className='flex justify-between m-1'>
+        <ChainIcon className="h-4 w-4" fillColor='rgb(156 163 175' />
+        <div className="text-xxs node-input primary-font mb-1">{nodeId}</div>
+      </div>
       {selectedChainLogo && (
           <div className="chain-logo-container mb-2 mt-2 flex justify-center">
             <img src={selectedChainLogo} alt={`${formState.chain} Logo`} className="chain-logo w-12 h-12" /> 
@@ -399,13 +403,14 @@ useEffect(() => {
           <AddContacts />
         </div>
       )}
-        {formState.chain == 'polkadot' && (
+      {/* Hide delay for now until we have the side form working, and scheduler is in the pallet / parameters area.  */}
+        {/* {formState.chain == 'polkadot' && (
       <div class="mb-2 in-node-border p-2 rounded"  onChange={handleDelayChange}  value={formState.delay}>
         <h3 class="text-xxs node-input primary-font mb-1 flex items-center justify-between">Delay amount of blocks<div class="flex items-center primary-font">
           </div></h3>
           <div class="unbounded-black">
             <input class="unbounded-black text-xl text-black pl-1 in-node-border border-gray-300 rounded amount-selector" type="number" placeholder="0" min="0"/>
-        </div></div> )}
+        </div></div> )} */}
 
       {formState.chain && contacts.length > 0 && (
         <div className="mb-2 in-node-border p-2 rounded flex flex-col items-start justify-start">

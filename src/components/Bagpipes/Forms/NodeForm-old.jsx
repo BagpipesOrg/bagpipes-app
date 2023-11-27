@@ -117,7 +117,7 @@ const updateNode = () => {
   }, [nodeId]);
 
   return (
-    <div className='open-ai-form bg-white p-6 rounded-md shadow-lg space-y-4 text-xs'>
+    <div className='node-form bg-white p-6 rounded-md shadow-lg space-y-4 text-xs'>
       <h2 className='text-xl font-semibold text-gray-800'>Open AI </h2>
       <div className="">{nodeId}</div>
       <Model value={formState.model} onChange={handleModelChange} />
