@@ -8,7 +8,7 @@ const ChainNodeForm: React.FC<ChainNodeFormProps> = ({ visible, nodeId, nodes, e
 
 
 
-
+    
     useEffect(() => {
         console.log('ChainNodeForm Node ID:', nodeId);
         console.log('ChainNodeForm Form State:', formState);
@@ -32,7 +32,6 @@ const ChainNodeForm: React.FC<ChainNodeFormProps> = ({ visible, nodeId, nodes, e
                 onNodesChange={onNodesChange}
                 setModalNodeId={setModalNodeId}
                 inputNodes={inputNodes}
-            
             />
             {/* Specific fields for ChainNodeForm */}
     

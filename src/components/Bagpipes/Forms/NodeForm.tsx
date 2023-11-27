@@ -9,15 +9,12 @@ import { NodeFormProps } from './types';
 import './Forms.scss';
 
 
-const NodeForm: React.FC<NodeFormProps> = ({ visible, nodeId, nodes, onNodesChange, setModalNodeId, edges }) => {
+const NodeForm: React.FC<NodeFormProps> = ({ nodeId, nodes, onNodesChange, setModalNodeId, edges, visible }) => {
   const node = nodes.find(n => n.id === nodeId) ?? null;
   const savedState = getSavedFormState(nodeId) ?? { inputNodes: node?.data?.inputNodes || [] };
   const { saveNodeFormData } = useAppStore((state) => ({ saveNodeFormData: state.saveNodeFormData }));
-
+  const [position, setPosition] = useState('-250px'); // Initial position off-screen
   const [formState, setFormState] = useState(savedState);
-
-  const formClass = `node-form bg-white p-6 rounded-md shadow-lg space-y-4 text-xs ${visible ? 'visible' : ''}`;
-
 
   useEffect(() => {
       if (node) {
@@ -50,8 +47,17 @@ const NodeForm: React.FC<NodeFormProps> = ({ visible, nodeId, nodes, onNodesChan
       setModalNodeId(null);
   };
 
+  
+
+  const animationName = visible || isHiding ? 'slideIn' : 'slideOut';
+
+  if (!visible) {
+    return null;
+  }
+
+
   return (
-    <div className={formClass}>
+    <div className='node-form bg-white p-6 rounded-md shadow-lg space-y-4 text-xs' style={{ animationName: animationName }}>
           
           {/* Generic fields and buttons */}
           <InputNodes inputNodes={inputNodes} />

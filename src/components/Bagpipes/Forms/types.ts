@@ -8,6 +8,8 @@ export interface NodeFormProps {
     setModalNodeId: (nodeId: string | null) => void;
     edges: any[]; // Replace 'any' with a specific type if available
     inputNodes: string[];
+    data: any; // Replace 'any' with the actual type of your data
+    isConnectable: boolean;
 } 
 
 export interface OpenAINodeFormProps extends NodeFormProps {

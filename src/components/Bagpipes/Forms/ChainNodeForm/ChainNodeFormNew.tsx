@@ -4,34 +4,40 @@ import {  Handle, Position, useNodeId } from 'reactflow';
 import SocketContext from '../../../../contexts/SocketContext';
 import { useAddressBook } from '../../../../contexts/AddressBookContext';
 import useExecuteScenario from '../../hooks/useExecuteScenario';
-import AccountDropdown from './AccountDropdown';
+import AccountDropdown from '../../CustomNodes/ChainNode/AccountDropdown';
 import useAppStore from '../../../../store/useAppStore';
 import { getOrderedList } from '../../hooks/utils/scenarioExecutionUtils';
-import AddContacts from './AddContacts'
-import {  getAssetOptions } from './options';
+import AddContacts from '../../CustomNodes/ChainNode/AddContacts'
+import {  getAssetOptions } from '../../CustomNodes/ChainNode/options';
 import { listChains } from '../../../../Chains/ChainsInfo';
 import { getSavedFormState, setSavedFormState } from '../../utils/storageUtils';
 import { getAssetBalanceForChain } from '../../../../Chains/Helpers/AssetHelper';
-import BalanceTippy from './BalanceTippy';
+import BalanceTippy from '../../CustomNodes/ChainNode/BalanceTippy';
 import ThemeContext from '../../../../contexts/ThemeContext';
 import { buildHrmp } from '../../../../Chains/Helpers/XcmHelper';
 import { mapToObject } from '../../utils/storageUtils';
 import { ChainIcon } from '../../../Icons/icons';
+import { ChainNodeFormProps } from '../types';
+import NodeForm from '../NodeForm.tsx';
 import '../../node.styles.scss';
 
 import 'antd/dist/antd.css';
 import '../../../../index.css';
-import './ChainNode.scss';
+import '../../CustomNodes/ChainNode/ChainNode.scss';
 import '../../../../main.scss';
 
 import '/plus.svg'
 
-const ChainNode = ({ data, isConnectable }) => {
+const ChainNodeForm: React.FC<ChainNodeFormProps> = ({ visible, nodeId, nodes, edges, onNodesChange, setModalNodeId, inputNodes, data,  isConnectable}) => {
+  console.log('ChainNodeForm data:', data);
   const { theme } = useContext(ThemeContext);
-  const { nodeContent } = data;
+  const { nodeContent = '' } = data || {}; // Default value if data is undefined
+  if (!data) {
+    return <div>Loading...</div>; //TODO: change this to a loading component.
+  }
   const socket = useContext(SocketContext);
   const { nodeContentMap, executeScenario } = useExecuteScenario();
-  const nodeId = useNodeId();
+  // const nodeId = useNodeId();
   const [content, setContent] = useState("");
   const savedState = getSavedFormState(nodeId); 
   const { scenarios, activeScenarioId, loading, saveChainAddress, isModalVisible, setIsModalVisible, saveNodeFormData, saveHrmpChannels, hrmpChannels  } = useAppStore(state => ({ 
@@ -335,7 +341,8 @@ useEffect(() => {
 
 
   return (
-    <div className={`${theme} custom-node shadow-lg text-xs p-4`}>
+    <div className={`${theme} node-form main-font`}>test
+       
       <div className='flex justify-between m-1'>
         <ChainIcon className="h-4 w-4" fillColor='rgb(156 163 175' />
         <div className="text-xxs node-input primary-font mb-1">{nodeId}</div>
@@ -477,9 +484,20 @@ useEffect(() => {
         {nodeContent}
       </div>
     </div>
+    <NodeForm
+                visible={visible}
+                nodeId={nodeId}
+                nodes={nodes}
+                edges={edges}
+                onNodesChange={onNodesChange}
+                setModalNodeId={setModalNodeId}
+                inputNodes={inputNodes}
+                data={data}
+                isConnectable={isConnectable}
+            />
     </div>
   );
   
 };
 
-export default ChainNode;
+export default ChainNodeForm;

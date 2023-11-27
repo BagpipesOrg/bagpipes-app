@@ -1,13 +1,12 @@
 import React from 'react';
 import { OpenAINodeForm, ChainNodeForm } from './index';
 
-const RenderNodeForm = ({ nodeId, nodes, edges, setNodes, setEdges, onNodesChange, setModalNodeId }) => {
+const RenderNodeForm = ({ nodeId, nodes, edges, setNodes, setEdges, onNodesChange, setModalNodeId, data, isConnectable }) => {
   const node = nodes.find(n => n.id === nodeId);
   if (!node) return null;
   const isVisible = Boolean(nodeId); // Determines if the form should be visible
-  console.log("RenderNodeForm isVisible:", isVisible);
 
-  const commonProps = { nodeId, nodes, edges, onNodesChange, setModalNodeId, visible: isVisible };
+  const commonProps = { nodeId, nodes, edges, onNodesChange, setModalNodeId, visible: isVisible, data, isConnectable };
 
 
 

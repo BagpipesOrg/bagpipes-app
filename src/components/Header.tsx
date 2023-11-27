@@ -52,7 +52,7 @@ function Header ({ open }: Props): React.ReactElement<Props> {
             <div className={'wallet-header-content flex justify-left'}>
               <img src={logoSrc} className='bagpipe-logo' alt="Bagpipe Logo" />
   
-              <Button
+              {/* <Button
                 className='xcm-send-btn  button-header'
                 onClick={goToBagpipes}
                 type={'primary'}
@@ -72,7 +72,7 @@ function Header ({ open }: Props): React.ReactElement<Props> {
                 type={'primary'}
                 >
                 <span className='button-header-text'>Lab</span>
-              </Button>
+              </Button> */}
               <Button
                 className='xcm-send-btn-wallet xcm-send-btn-small-size'
                 onClick={selectWallet.open}

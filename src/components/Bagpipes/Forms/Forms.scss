@@ -1,14 +1,25 @@
-.node-form {
-    width: 250px;
+@keyframes slideIn {
+    from {right: -250px;}
+    to {right: 0;}
+    }
+  
+  @keyframes slideOut {
+    from { right: 0;}
+    to {right: -250px;}
+  }
+  
+  .node-form {
+    width: 300px  !important;
     height: 100vh;
     background: #ffffff;
     overflow: auto;
-    position: fixed; /* or absolute, based on your layout */
+    position: fixed;
     top: 0;
-    right: -250px; /* Start off-screen */
-    transition: right 0.5s ease-in-out !important; /* Adjust timing as needed */
-    resize: horizontal;
+    right: -300px;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards; /* This ensures the element remains in its final state */
   }
+  
   
   .node-form.visible {
     right: 0 !important; /* Slide in to be fully visible */

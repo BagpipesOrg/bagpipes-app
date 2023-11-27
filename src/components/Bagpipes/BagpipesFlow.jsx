@@ -805,6 +805,7 @@ const handleDraftTransactions = async () => {
             <div className='absolute top-0 right-0 flex justify between'>
             {modalNodeId && currentScenarioNodes && currentScenarioEdges && (
           <RenderNodeForm
+            visible={Boolean(modalNodeId)}
             nodeId={modalNodeId}
             nodes={currentScenarioNodes}
             edges={currentScenarioEdges}
