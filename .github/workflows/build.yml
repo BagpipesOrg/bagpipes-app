@@ -19,7 +19,7 @@ jobs:
           node-version: 17.8.0
 
       - name: Install dependencies
-        run: npm install
+        run: npm install -f
 
       - name: Build
         run: npm run build
