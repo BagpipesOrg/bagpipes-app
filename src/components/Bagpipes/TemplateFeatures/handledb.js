@@ -1,20 +1,28 @@
-const shortid = require('shortid');
-const low = require('lowdb');
-import FileSync from 'lowdb/adapters/FileSync';
+import axios from 'axios';
 
-const adapter = new FileSync('urls.json');
-const db = low(adapter);
+const BASE_URL = 'http://localhost:8080'; // Update with your server's URL
 
-db.defaults({ urls: [] }).write();
-
-export const saveUrl = (longUrl) => {
-  const shortUrl = shortid.generate();
-  db.get('urls').push({ shortUrl, longUrl }).write();
-  return shortUrl;
+const saveUrl = async (longUrl) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/saveUrl`, { longUrl });
+    const shortUrl = response.data.shortUrl;
+    console.log(`saveUrl:`, shortUrl);
+    return shortUrl;
+  } catch (error) {
+    console.error('Error saving URL:', error.response ? error.response.data : error.message);
+    throw error; // Re-throw the error to let the caller handle it
+  }
 };
 
-export const getUrl = (shortUrl) => {
-  const urlMapping = db.get('urls').find({ shortUrl }).value();
-  return urlMapping ? urlMapping.longUrl : null;
+const getUrl = async (shortUrl) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/getUrl/${shortUrl}`);
+    const longUrl = response.data.longUrl;
+    return longUrl;
+  } catch (error) {
+    console.error('Error getting URL:', error.response ? error.response.data : error.message);
+    throw error; // Re-throw the error to let the caller handle it
+  }
 };
 
+export { saveUrl, getUrl };

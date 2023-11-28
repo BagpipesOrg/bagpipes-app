@@ -1,51 +1,50 @@
 import { useState, useEffect } from 'react';
 import { useAppStore } from '../hooks';
 import { compressString } from './compress';
- 
-
-const shortid = require('shortid');
-const low = require('lowdb');
-const FileSync = require('lowdb/adapters/FileSync');
-
 
 const CreateTemplateLink = ({ scenarioId }) => {
   const { scenarios } = useAppStore((state) => ({
     scenarios: state.scenarios,
-  }));    
+  }));
   const [templateLink, setTemplateLink] = useState('');
-  
-  useEffect(() => {
-    if (scenarioId && scenarios && scenarios[scenarioId]) {
-      console.log(`Diagram data:`, scenarios[scenarioId].diagramData.nodes);
-      const compressed_link = compressString(JSON.stringify((scenarios[scenarioId].diagramData.nodes)));
-      console.log(`compressed:`, compressed_link);
-      const link = createLink(compressed_link);
-      console.log(`link:`, link);
-      setTemplateLink(link);
-    } else {
-      console.error('Scenarios not loaded or scenarioId is invalid.');
-    }
-  }, [scenarioId, scenarios]);
 
   const createLink = (diagramData) => {
-    const encodedData = encodeURI(diagramData);// encodeURI(diagramData);
+    const encodedData = encodeURI(diagramData);
     console.log(`creating link to: /#/create/?diagramData=`, encodedData);
     return `${window.location.origin}/#/create/?diagramData=${encodedData}`;
   };
 
-  return (
-    templateLink ? (
-      <div className=''>
-        {/* <input type="text" value={templateLink} readOnly /> */}
-        <button 
-          className='flex items-center dndnode bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' 
-          onClick={() => navigator.clipboard.writeText(templateLink)}
-        >
-          Copy Link
-        </button>
-      </div>
-    ) : null
-  );
+  const generateTemplateLink = async () => {
+    try {
+      if (scenarioId && scenarios && scenarios[scenarioId]) {
+        console.log(`Diagram data:`, scenarios[scenarioId].diagramData.nodes);
+        const compressedLink = await compressString(JSON.stringify(scenarios[scenarioId].diagramData.nodes));
+        console.log(`compressed:`, compressedLink);
+        const link = createLink(compressedLink);
+        console.log(`link:`, link);
+        setTemplateLink(link);
+      } else {
+        console.error('Scenarios not loaded or scenarioId is invalid.');
+      }
+    } catch (error) {
+      console.error('Error generating template link:', error);
+    }
+  };
+
+  useEffect(() => {
+    generateTemplateLink();
+  }, [scenarioId, scenarios]);
+
+  return templateLink ? (
+    <div className=''>
+      <button
+        className='flex items-center dndnode bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+        onClick={() => navigator.clipboard.writeText(templateLink)}
+      >
+        Copy Link
+      </button>
+    </div>
+  ) : null;
 };
 
 export default CreateTemplateLink;

@@ -5,7 +5,8 @@ import * as pako from 'pako';
 import { saveUrl, getUrl } from './handledb';
 
 
-export function compressString(input: string): string {
+export async function compressString(input: string): Promise<string> {
+  console.log(`compressing string`)
   try {
     const utf8encoded = new TextEncoder().encode(input);
     const compressed = pako.deflate(utf8encoded);
@@ -13,8 +14,9 @@ export function compressString(input: string): string {
 
     console.log('Base64 Encoded:', base64encoded);
 
-    console.log('saved link');
-    const shortUrl = saveUrl(base64encoded);
+    
+    const shortUrl = await saveUrl(base64encoded);
+    console.log('saved link: ', shortUrl);
 
     return shortUrl;
   } catch (error) {
@@ -30,7 +32,8 @@ function addPadding(base64String: string): string {
   return base64String;
 }
 
-  export function decompressString(compressedInput: string): string {
+  export async function decompressString(compressedInput: string): Promise<string> {
+    console.log(`decompressing string`);
     try {
       const in2 = addPadding(compressedInput);
       // Ensure that the base64 string is properly formatted
@@ -45,8 +48,9 @@ function addPadding(base64String: string): string {
       );
 
       const decompressed = pako.inflate(uint8Array, { to: 'string' });
-      const expandedUrl = getUrl(decompressed);
-
+      console.log(`calling get url`);
+      const expandedUrl = await getUrl(decompressed);
+      console.log(`expanded url:`, expandedUrl);
       return expandedUrl;
     } catch (error) {
       console.error('Error decoding base64 string:', error);
