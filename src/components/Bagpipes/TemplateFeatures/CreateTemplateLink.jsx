@@ -1,6 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useAppStore } from '../hooks';
 import { compressString } from './compress';
+ 
+
+const shortid = require('shortid');
+const low = require('lowdb');
+const FileSync = require('lowdb/adapters/FileSync');
+
 
 const CreateTemplateLink = ({ scenarioId }) => {
   const { scenarios } = useAppStore((state) => ({
@@ -10,8 +16,8 @@ const CreateTemplateLink = ({ scenarioId }) => {
   
   useEffect(() => {
     if (scenarioId && scenarios && scenarios[scenarioId]) {
-      console.log(`Diagram data:`, scenarios[scenarioId].diagramData);
-      const compressed_link = compressString(JSON.stringify((scenarios[scenarioId].diagramData)));
+      console.log(`Diagram data:`, scenarios[scenarioId].diagramData.nodes);
+      const compressed_link = compressString(JSON.stringify((scenarios[scenarioId].diagramData.nodes)));
       console.log(`compressed:`, compressed_link);
       const link = createLink(compressed_link);
       console.log(`link:`, link);

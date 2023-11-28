@@ -6,12 +6,18 @@
     "rootDir": "./src",
     "allowJs": true,
     "esModuleInterop": true,
+    
     "target": "ES2020",
     "moduleResolution": "node",
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true
   },
+  "ts-node": {
+		"transpileOnly": true,
+		"files": true,
+		"experimentalResolver": true
+	},
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.json",],
   "exclude": ["vite.config.js", "node_modules"]
 }

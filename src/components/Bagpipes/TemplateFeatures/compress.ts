@@ -2,6 +2,8 @@
 //var URLSafeBase64 = require('urlsafe-base64');
 import * as pako from 'pako';
 
+import { saveUrl, getUrl } from './handledb';
+
 
 export function compressString(input: string): string {
   try {
@@ -11,7 +13,10 @@ export function compressString(input: string): string {
 
     console.log('Base64 Encoded:', base64encoded);
 
-    return base64encoded;
+    console.log('saved link');
+    const shortUrl = saveUrl(base64encoded);
+
+    return shortUrl;
   } catch (error) {
     console.error('Error compressing string:', error);
     return ''; // Return an empty string or handle the error as needed
@@ -40,7 +45,9 @@ function addPadding(base64String: string): string {
       );
 
       const decompressed = pako.inflate(uint8Array, { to: 'string' });
-      return decompressed;
+      const expandedUrl = getUrl(decompressed);
+
+      return expandedUrl;
     } catch (error) {
       console.error('Error decoding base64 string:', error);
       return ''; // Return an empty string or handle the error as needed

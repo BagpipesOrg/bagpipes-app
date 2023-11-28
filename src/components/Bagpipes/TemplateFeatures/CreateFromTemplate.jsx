@@ -12,7 +12,7 @@ const CreateFromTemplate = () => {
     addScenario: state.addScenario,
     setActiveScenarioId: state.setActiveScenarioId,
 }));
-
+ 
 useEffect(() => {
   // Extract the query parameter with the diagramData
   const params = new URLSearchParams(location.search);
@@ -32,7 +32,7 @@ useEffect(() => {
     const decodedData =  JSON.parse(deco);
     const newScenarioId = uuidv4();
 
-    addScenario(newScenarioId, { diagramData: decodedData });
+    addScenario(newScenarioId, { diagramData: {nodes: decodedData, edges: []} });
 
     setActiveScenarioId(newScenarioId);
     console.log(`set active scenario id`);
