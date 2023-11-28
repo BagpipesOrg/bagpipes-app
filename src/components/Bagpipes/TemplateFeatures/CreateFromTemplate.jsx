@@ -12,32 +12,32 @@ const CreateFromTemplate = () => {
     addScenario: state.addScenario,
     setActiveScenarioId: state.setActiveScenarioId,
 }));
-
 useEffect(() => {
-  // Extract the query parameter with the diagramData
-  const params = new URLSearchParams(location.search);
- // const diagramDataString  = params.get('diagramData'); // validate me
- // const diagramDataStrings = params.get('diagramData');
-  const rawSearchString = location.search.replace(/^\?/, '');  // read it raw instead, params.get auto formats the string
- // console.log('rawSearchString:', rawSearchString);
-  const diagramDataString = rawSearchString.replace(/^diagramData=/, '');
+  const fetchData = async () => {
+    // Extract the query parameter with the diagramData
+    const params = new URLSearchParams(location.search);
+    const rawSearchString = location.search.replace(/^\?/, '');
+    const diagramDataString = rawSearchString.replace(/^diagramData=/, '');
 
- // const diagramDataString = diagramDataStrings.join('');
+    if (diagramDataString) {
+      try {
+        const deco = await decompressString(diagramDataString);
+        const decodedData = JSON.parse(deco);
+        const newScenarioId = uuidv4();
 
- // console.log(`diagramDataString:`, diagramDataString);
-  if (diagramDataString) {
-  //  console.log('CreateFromTemplate diagramDataString:', diagramDataString);
+        addScenario(newScenarioId, { diagramData: decodedData });
+        setActiveScenarioId(newScenarioId);
+        console.log(`set active scenario id`);
+        navigate('/builder'); // Navigate to the builder with the new scenario
+      } catch (error) {
+        console.error('Error decoding or processing data:', error);
+        // Handle error as needed
+      }
+    }
+  };
 
-    const deco = decompressString(diagramDataString);
-    const decodedData =  JSON.parse(deco);
-    const newScenarioId = uuidv4();
+  fetchData(); // Call the asynchronous function
 
-    addScenario(newScenarioId, { diagramData: decodedData });
-
-    setActiveScenarioId(newScenarioId);
-    console.log(`set active scenario id`);
-    navigate('/builder'); // Navigate to the builder with the new scenario
-  }
 }, [location.search, addScenario, setActiveScenarioId, navigate]);
 
   // UI to show loading or success message
