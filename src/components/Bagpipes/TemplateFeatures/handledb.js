@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8080'; // Update with your server's URL
+const BASE_URL = 'https://api.xcmsend.com'; // set API instance's URL
 
 const saveUrl = async (longUrl) => {
   try {
