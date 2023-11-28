@@ -37,9 +37,10 @@ function addPadding(base64String: string): string {
     console.log(`got input:`, compressedInput);
     try {
       const expandedUrl = await getUrl(compressedInput);
-      console.log(`0 expanded url:`, expandedUrl.url);
       console.log(`expanded url:`, expandedUrl);
-      const newinput = expandedUrl.url;
+      console.log(`0 expanded url:`, expandedUrl.longUrl.longUrl);
+   
+      const newinput = expandedUrl.longUrl.longUrl;
       console.log(`newinput:`, newinput);
       const in2 = addPadding(newinput);
       // Ensure that the base64 string is properly formatted

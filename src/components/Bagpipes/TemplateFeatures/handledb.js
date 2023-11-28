@@ -5,7 +5,7 @@ const BASE_URL = 'https://api.xcmsend.com'; // set API instance's URL
 const saveUrl = async (longUrl) => {
   try {
     const response = await axios.post(`${BASE_URL}/saveUrl`, { url: longUrl });
-    const shortUrl = response.data.shortUrl;
+    const shortUrl = response.data;
     console.log(`saveUrl:`, shortUrl);
     return shortUrl;
   } catch (error) {
