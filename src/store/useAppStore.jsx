@@ -23,6 +23,7 @@ const defaultState = {
   toastPosition: null,
   hrmpChannels: {},
   currentNodeState: 'default_connected',
+  selectedWebhook: null,
 };
 
 const useAppStore = create(
@@ -885,7 +886,40 @@ const useAppStore = create(
       // Return the updated state
       return { scenarios: { ...state.scenarios, [activeScenarioId]: updatedScenario } };
     });
-  }, 
+  },
+  
+  setSelectedWebhookInNode: (scenarioId, nodeId, webhookName) => {
+    if (!scenarioId || !nodeId) {
+      console.error("[setSelectedWebhookInNode] Missing scenarioId or nodeId.");
+      return;
+    }
+  
+    set((state) => {
+      const currentScenario = state.scenarios[scenarioId];
+      if (!currentScenario) {
+        console.error("[setSelectedWebhookInNode] Scenario not found for scenarioId:", scenarioId);
+        return;
+      }
+  
+      const updatedNodes = currentScenario.diagramData.nodes.map((node) =>
+        node.id === nodeId ? { ...node, selectedWebhook: webhookName } : node
+      );
+  
+      return {
+        scenarios: {
+          ...state.scenarios,
+          [scenarioId]: {
+            ...currentScenario,
+            diagramData: {
+              ...currentScenario.diagramData,
+              nodes: updatedNodes,
+            },
+          },
+        },
+      };
+    });
+  },
+  
   }
 )
 ),

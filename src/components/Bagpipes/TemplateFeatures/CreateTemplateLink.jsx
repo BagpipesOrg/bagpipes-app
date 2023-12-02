@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useAppStore } from '../hooks';
 import { compressString } from './compress';
+import toast from 'react-hot-toast';
+
 
 const CreateTemplateLink = ({ scenarioId }) => {
   const { scenarios } = useAppStore((state) => ({
     scenarios: state.scenarios,
   }));    
   const [templateLink, setTemplateLink] = useState('');
- 
+  const [copied, setCopied] = useState(false);
+
   useEffect(() => {
     const fetchData = async () => {
       if (scenarioId && scenarios && scenarios[scenarioId]) {
@@ -39,13 +42,32 @@ const CreateTemplateLink = ({ scenarioId }) => {
     return `${window.location.origin}/#/create/?diagramData=${encodedData}`;
   };
 
+  const handleCopyToClipboard = (e) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(templateLink)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      })
+      .catch(err => {
+        // This function is called if there was an error copying
+        toast.error('Failed to copy!');
+      });
+  };
+
+  useEffect(() => {
+    if (copied) {
+      toast.success(`Copied ${templateLink} to clipboard!}`);
+    }
+  }, [copied]);
+
   return (
     templateLink ? (
       <div className=''>
         {/* <input type="text" value={templateLink} readOnly /> */}
         <button 
           className='flex items-center dndnode bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' 
-          onClick={() => navigator.clipboard.writeText(templateLink)}
+          onClick={handleCopyToClipboard}
         >
           Copy Link
         </button>

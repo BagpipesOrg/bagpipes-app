@@ -58,7 +58,7 @@ const NodeForm: React.FC<NodeFormProps> = ({ nodeId, nodes, onNodesChange, setMo
 
 
   return (
-    <div className='node-form bg-white p-6 rounded-md shadow-lg space-y-4 text-xs' style={{ animationName: animationName }}>
+    <div className='node-form bg-white p-4 rounded-md  text-xs' style={{ animationName: animationName }}>
           {children}
           {/* Generic fields and buttons */}
           <InputNodes inputNodes={inputNodes} />

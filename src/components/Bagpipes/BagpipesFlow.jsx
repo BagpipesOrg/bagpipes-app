@@ -16,7 +16,7 @@ import TextUpdaterNode from './TextupdaterNode';
 import Toolbar from '../Toolbar/Toolbar';
 import FormGroupNode from './FormGroupNode';
 import CustomEdge from './CustomEdges/CustomEdge';
-import { ChainNode, ActionNode, RouterNode, WebhookNode, APINode, CodeNode, ScheduleNode, DiscordNode, OpenAINode } from './CustomNodes';
+import { ChainNode, ActionNode, RouterNode, WebhookNode, APINode, HttpNode, CodeNode, ScheduleNode, DiscordNode, OpenAINode } from './CustomNodes';
 import RenderNodeForm from './Forms/RenderNodeForm';
 import { initialEdges, initialNodes } from './nodes.jsx';
 import PlayButton from './buttons/PlayButton';
@@ -83,6 +83,7 @@ const nodeTypes = {
   openAi: OpenAINode,
   webhook: WebhookNode,
   api: APINode,
+  http: HttpNode,
   code: CodeNode,
   schedule: ScheduleNode,
   discord: DiscordNode,

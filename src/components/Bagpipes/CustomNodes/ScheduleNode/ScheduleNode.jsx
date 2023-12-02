@@ -20,7 +20,7 @@ export default function ScheduleNode({ data }) {
       {/* <img src={`/chains/${logo}`} alt={`${title} Logo`} className="text-slate-800 h-8 w-8" /> */}
 
       {/* Title outside the circle below the logo */}
-      <div className="absolute bottom-[-38%] text-center w-full">
+      <div className="node-title-circle absolute bottom-[-38%] text-center w-full">
         <span className="font-medium text-xl text-gray-500">Schedule</span>
       </div>
       

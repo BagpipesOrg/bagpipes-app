@@ -49,7 +49,7 @@ function AccountDropdown({ selectedChainName, onSelect, selectedAddress }: {
   };
 
   return (
-    <div className="select-container font-semibold">
+    <div className="select-container">
       <select 
         value={selectedAccount || ""}
         onChange={handleChange}

@@ -18,7 +18,7 @@ export default function CodeNode({ data }) {
       {/* Logo in the middle of the circle */}
 
       {/* Title outside the circle below the logo */}
-      <div className="absolute bottom-[-38%] text-center w-full">
+      <div className="node-title-circle absolute bottom-[-38%] text-center w-full">
         <span className="font-medium text-xl text-gray-500">Code</span>
       </div>
       

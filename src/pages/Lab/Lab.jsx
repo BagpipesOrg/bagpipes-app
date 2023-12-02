@@ -91,13 +91,14 @@ function Lab() {
 
                           <CreateTemplateLink scenarioId={scenarioId} />
 
+
                         
                           <button 
                             className="edit-button-right flex items-center"
                             onClick={(e) => { e.stopPropagation(); editScenario(scenarioId); }}
                           >
                             {EditIcon}
-                            Edit
+                            <span className='ml-2'>Edit</span>
                           </button>
                           <button 
                             className="close-button-right flex items-center"

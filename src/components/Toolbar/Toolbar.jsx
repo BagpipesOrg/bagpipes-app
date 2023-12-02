@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import Tippy from '@tippyjs/react';
 import ThemeContext from '../../contexts/ThemeContext';
-import { ActionIcon, ChainIcon, ToolsIcon, RouterIcon, WebhookIcon, ScheduleIcon, DelayIcon, APIIcon, CodeIcon, DiscordIcon, OpenAIIcon } from '../Icons/icons'; 
+import { ActionIcon, ChainIcon, ToolsIcon, RouterIcon, WebhookIcon, ScheduleIcon, DelayIcon, APIIcon, CodeIcon, DiscordIcon, OpenAIIcon, HttpIcon } from '../Icons/icons'; 
 import 'tippy.js/dist/tippy.css'; 
 import './Toolbar.scss'; 
 
@@ -24,7 +24,7 @@ const nodeNames = {
     router: 'Router',
     schedule: 'Schedule',
     delay: 'Delay',
-    api: 'API',
+    http: 'HTTP',
     code: 'Code',
     // discord: 'Discord', 
     // openAi: 'OpenAI',
@@ -68,15 +68,20 @@ delay:
   <h1 className='text-xl font-bold '>Delay (coming soon) </h1>
   <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
 </div>,
-api: 
+http: 
 <div className='m-4 tippy-node'>
-  <h1 className='text-xl font-bold '>API Call (coming soon) </h1>
+  <h1 className='text-xl font-bold '>HTTP Request (coming soon) </h1>
   <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
 </div>,
 code: 
 <div className='m-4 tippy-node'>
+  <div className='flex justify-between'>
   <h1 className='text-xl font-bold '>Custom Code (coming soon) </h1>
+  <CodeIcon className='h-6 w-6 ml-3'fillColor='black' />
+
+  </div>
   <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
+
 </div>,
 discord: 
 <div className='m-4 tippy-node'>
@@ -153,8 +158,8 @@ const Toolbar = () => {
       IconComponent = <ScheduleIcon />;
     } else if (nodeKey === 'delay') {
       IconComponent = <DelayIcon />;
-    } else if (nodeKey === 'api') {
-      IconComponent = <APIIcon />;
+    } else if (nodeKey === 'http') {
+      IconComponent = <HttpIcon />;
     } else if (nodeKey === 'code') {
       IconComponent = <CodeIcon />;
     } 

@@ -1,3 +1,6 @@
+@import '../../../variables.scss';  
+
+
 @keyframes slideIn {
     from {right: -250px;}
     to {right: 0;}
@@ -14,8 +17,9 @@
     background: #ffffff;
     overflow: auto;
     position: fixed;
-    top: 0;
+    top: 70px;
     right: -300px;
+    border: 1px solid #e5e5e5;
     animation-duration: 0.5s;
     animation-fill-mode: forwards; /* This ensures the element remains in its final state */
   }
@@ -24,3 +28,49 @@
   .node-form.visible {
     right: 0 !important; /* Slide in to be fully visible */
   }
+
+  .form-header {
+    padding: 3px 0px 3px 0px;
+    font-size: 11px;
+    font-weight: 500;
+    color: rgb(112, 112, 112);
+    display: flex;
+    justify-content: space-between;
+    align-items: top;
+    border-bottom: 1px solid rgb(235, 235, 235);
+  }
+
+  .form-header-button {
+    padding: 0px 7px;
+    border: none;
+
+    &:hover {
+      border: none;
+      color: gray;
+    }
+  }
+
+  .field-info {
+    font-size: 10px;
+    color: rgb(92, 92, 92);
+    font-weight: 400;
+  }
+
+  .collapsible-field {
+    margin: 10px;
+  }
+
+  .form-footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .toggle-container {
+    flex: 1; // This ensures that the toggle container takes up space even when empty
+  }
+  
+  .buttons-container {
+    display: flex;
+  }
+  
