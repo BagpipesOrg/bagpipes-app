@@ -69,10 +69,48 @@ const [formData, setFormData] = useState(null);
 const [formValues, setFormValues] = useState({}); // State to track form values
 const formSections = httpForm.sections;
 
-const handleFieldChange = (key, value) => {
-  setFormValues(prevState => ({ ...prevState, [key]: value }));
-  console.log("httpForm Updated formValues:", { ...prevState, [key]: value });
+const initializeFormValues = () => {
+  let initialValues = {};
+  // Iterate over form sections and fields to set initial values
+  formSections.forEach(section => {
+    section.fields.forEach(field => {
+      if (field.type === "radio" && field.default !== undefined) {
+        initialValues[field.key] = field.default ? 'yes' : 'no'; // Assuming 'yes' and 'no' are the values for your radio buttons
+      }
+      // Initialize children with defaults
+      if (field.children) {
+        field.children.forEach(childSection => {
+          childSection.fields.forEach(childField => {
+            if (childField.type === "radio" && childField.default !== undefined) {
+              initialValues[childField.key] = childField.default ? 'yes' : 'no';
+            }
+          });
+        });
+      }
+    });
+  });
+  setFormValues(initialValues);
 };
+
+
+const handleFieldChange = (key, value) => {
+  setFormValues(prevValues => {
+    let updatedValues = { ...prevValues, [key]: value };
+
+    // Reset children if radio button value changes
+    const field = findFieldByKey(key);
+    if (field.type === 'radio' && field.children) {
+      field.children.forEach(childSection => {
+        childSection.fields.forEach(childField => {
+          updatedValues[childField.key] = ''; // Reset or set to default
+        });
+      });
+    }
+
+    return updatedValues;
+  });
+};
+
 
 
 
@@ -256,6 +294,12 @@ const findOptionByKeyAndValue = (key, value) => {
     let fieldElement = renderField(field);
     let childrenElements = null;
 
+    if (field.type === 'radio' && formValues[field.key] === 'yes' && field.children) {
+      childrenElements = field.children.flatMap(childSection => 
+        childSection.fields.map(childField => renderFieldWithChildren(childField))
+      );
+    }
+
     if (field.options) {
         const selectedOption = field.options.find(option => option.value === formValues[field.key]);
         if (selectedOption && selectedOption.children) {
@@ -345,14 +389,7 @@ const findOptionByKeyAndValue = (key, value) => {
             );
             break;
         case 'radio':
-            if (formValues[field.key]) {
-                const selectedRadioOption = field.options.find(option => option.value === formValues[field.key]);
-                if (selectedRadioOption && selectedRadioOption.children) {
-                    childrenElements = selectedRadioOption.children.flatMap(childSection => 
-                        childSection.fields.map(childField => renderFieldWithChildren(childField))
-                    );
-                }
-            }
+            
             fieldElement = (
                 <CollapsibleField
                 {...commonProps}

@@ -56,22 +56,27 @@ const CollapsibleField = ({ title, info, toggleTitle, hasToggle,fieldTypes, sele
           );
       case 'radio':
         // Check if selectRadioOptions is provided, else default to Yes/No
-        if (selectRadioOptions && selectRadioOptions.length > 0) {
+        // if (selectRadioOptions && selectRadioOptions.length > 0) {
           return (
-            <Radio.Group buttonStyle="solid">
-              {selectRadioOptions.map((option, index) => (
+            <Radio.Group
+            onChange={e => onChange(e.target.value)} // Add onChange handler
+            defaultValue={selectRadioOptions && selectRadioOptions.length > 0 ? selectRadioOptions[0].value : 'no'}
+            buttonStyle="solid"
+          >
+            {selectRadioOptions && selectRadioOptions.length > 0 ? (
+              selectRadioOptions.map((option, index) => (
                 <Radio.Button key={index} value={option.value}>{option.label}</Radio.Button>
-              ))}
-            </Radio.Group>
+              ))
+            ) : (
+              <>
+                <Radio.Button value="yes">Yes</Radio.Button>
+                <Radio.Button value="no">No</Radio.Button>
+              </>
+            )}
+          </Radio.Group>
+          
           );
-        } else {
-          return (
-            <Radio.Group defaultValue="no" buttonStyle="solid">
-              <Radio.Button value="yes">Yes</Radio.Button>
-              <Radio.Button value="no">No</Radio.Button>
-            </Radio.Group>
-          );
-        }
+        
       case 'items':
         return (
           <div className='flex flex-col'>
