@@ -38,6 +38,7 @@
     justify-content: space-between;
     align-items: top;
     border-bottom: 1px solid rgb(235, 235, 235);
+    min-width: 250px
   }
 
   .form-header-button {
@@ -64,6 +65,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-top: 10px;
+    margin-bottom: 5px;
   }
   
   .toggle-container {
@@ -74,3 +77,18 @@
     display: flex;
   }
   
+
+  .custom-collapse .ant-collapse-header, .custom-collapse .ant-collapse-content {
+    background-color: #ffffff; /* Custom background color */
+    border-radius: 4px; /* Rounded corners */
+    /* Add more styling as needed */
+    border: none !important;
+  }
+  
+  .custom-collapse .ant-collapse-icon-position-left .ant-collapse-header {
+    padding-left: 30px; /* Adjust padding if necessary */
+    border: none !important;
+  }
+
+ 
+

@@ -16,7 +16,7 @@ export const CreateButton = ({createScenario}) => {
         onClick={createScenario} 
         >
              
-            {PlusIcon}
+            <PlusIcon />
             {/* <span className='ml-2 '>New Flow</span> */}
  
         </button>

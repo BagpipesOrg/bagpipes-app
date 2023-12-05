@@ -10,14 +10,11 @@ import 'tippy.js/themes/light.css';
 import WebhookForm from '../../Forms/PopupForms/Webhook/WebhookForm';
 
 export default function WebhookNode({ data }) {
-  const { logo, title, showArrow, instruction } = data;
+  const { showArrow, instruction } = data;
   const [isWebhookFormVisible, setWebhookFormVisible] = useState(false);
   const nodeId = useNodeId();
   const nodeRef = useRef();
   const webhookNodeRef = useRef();
-
-
-  console.log('nodeRef', nodeRef);
 
   const handleNodeClick = () => {
     setWebhookFormVisible(true); // Show Tippy on node click
@@ -65,12 +62,7 @@ export default function WebhookNode({ data }) {
     <div ref={nodeRef} onClick={handleNodeClick}>
 
     <div className="relative nodeBody bg-white border-2 border-gray-300 rounded-full w-20 h-20 flex items-center justify-center">
-      {showArrow && (
-        <div className="absolute -top-20 left-3/4 transform ml-4">
-          <div className='text-gray-500 font-mono ml-4'>{instruction}</div>
-          <div className='text-gray-500 font-mono text-xs left-1/4 mb-1'>⤹</div>
-        </div>
-      )}
+ 
    <WebhookNodeIcon className="h-8" fillColor='purple' />
       
       {/* Logo in the middle of the circle */}

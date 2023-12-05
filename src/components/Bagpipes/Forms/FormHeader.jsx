@@ -4,10 +4,13 @@ import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css'; // optional for styling
 import 'tippy.js/themes/light.css';
 
-const FormHeader = ({ title, onClose, onHelp, onMoreOptions }) => {
+const FormHeader = ({ title, onClose, onHelp, onMoreOptions, logo }) => {
     return (
       <div className="form-header">
-        <span className=''>{title}</span>
+        <div className="flex justify-between items-center"><span className=''>{logo}</span>
+
+        <div className='ml-2'>{title}</div></div>
+        
         <div className="flex justify-between align-top">
         <Tippy       
         interactive={true}

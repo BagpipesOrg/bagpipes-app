@@ -4,7 +4,7 @@ import useAppStore from '../../../../../store/useAppStore';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css'; // optional for styling
 import 'tippy.js/themes/light.css';
-import CollapsibleField from '../../fields/CollapsableField';
+import CollapsibleField from '../../fields/CollapsibleField';
 import FormHeader from '../../FormHeader';
 import FormFooter from '../../FormFooter';
 import { Form } from 'react-router-dom';
@@ -17,11 +17,13 @@ import WebhooksService from '../../../../../services/WebhooksService';
 
 
 
-const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, webhooks, nodeId }) => {
-  const { scenarios, activeScenarioId, saveNodeFormData, setSelectedWebhookInNode } = useAppStore(state => ({ 
+const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
+  const { scenarios, activeScenarioId, saveNodeFormData, saveWebhook, webhooks, setSelectedWebhookInNode } = useAppStore(state => ({ 
     scenarios: state.scenarios,
     activeScenarioId: state.activeScenarioId,
-    saveNodeFormData: state.saveNodeFormData,
+    // saveNodeFormData: state.saveNodeFormData,
+    saveWebhook: state.saveWebhook,
+    webhooks: state.webhooks,
     setSelectedWebhookInNode: state.setSelectedWebhookInNode,
    }));
 
@@ -37,50 +39,32 @@ const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, webhooks, nodeId }) =>
   const [forceUpdate, setForceUpdate] = useState(false);
 
   const currentScenario = scenarios[activeScenarioId];
-    // Accessing the formData from the zustand store
+    // Accessing the webhooks from the zustand store
     const scenario = scenarios[activeScenarioId];
-    const node = scenario.diagramData.nodes.find(node => node.id === nodeId);
-    const formData = node?.formData;
+  const node = scenario.diagramData.nodes.find(node => node.id === nodeId);
   const webhookNodes = currentScenario?.diagramData.nodes.filter(node => node.type === 'webhook');
   console.log('webhookNodes', webhookNodes);
   const selectedWebhookData = webhookNodes.find(webhook => webhook.selectedWebhook === selectedWebhook);
   console.log('selectedWebhookData', selectedWebhookData);
 
-  const selectedWebhookObject = formData.find(webhook => webhook.name === selectedWebhook);
+  const selectedWebhookObject = webhooks?.find(webhook => webhook.name === selectedWebhook);
+  console.log('selectedWebhookObject', selectedWebhookObject);
   const webhookURL = selectedWebhookObject ? `https://webhook.site/${selectedWebhookObject.uuid}` : '';
   
-
-  // }
-
-    // // Construct the webhook URL using the UUID
-    // const webhookURL = selectedWebhookObject
-    // ? `https://webhook.site/${selectedWebhookObject.uuid}`
-    // : '';
-  
-    // console.log('webhookURL', webhookURL);
-  
-
 
   // Callback function to handle new webhook data
   const handleNewWebhookData = (newWebhook) => {
 
     console.log('newWebhook nodeId', nodeId);
-    // Fetch the current formData for the node
-    const currentNode = scenarios[activeScenarioId]?.diagramData.nodes.find(node => node.id === nodeId);
-    const currentFormData = currentNode?.formData;
-    // Ensure currentData is an array; if not, default to an empty array
-    const currentData = Array.isArray(currentFormData) ? currentFormData : [];
-    
-    // Append new webhook to the existing data
-    const updatedData = [...currentData, newWebhook];
+    // Fetch the current webhooks for the node
 
     setSelectedWebhookInNode(activeScenarioId, nodeId, newWebhook.name);
 
     console.log('selectedWebhook', selectedWebhook )
 
     // Save updated data
-    saveNodeFormData(activeScenarioId, nodeId, updatedData);
-    console.log('currentFormData', currentFormData);
+    saveWebhook(newWebhook); // Save the webhook globally
+
     // Force component to re-render if necessary
     setForceUpdate(prev => !prev);
     setCreateFormVisible(false);
@@ -98,7 +82,6 @@ const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, webhooks, nodeId }) =>
     // event.preventDefault();
 
     // update this to be similar to handleNewWebhookData
-    saveNodeFormData(activeScenarioId, nodeId, { ...newWebhook, eventData: null });
     setCreateFormVisible(false);
     onSave();
   };
@@ -117,7 +100,7 @@ const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, webhooks, nodeId }) =>
       return;
     }
     // Find the selected webhook object
-    const webhookToEdit = formData.find(webhook => webhook.name === selectedWebhook);
+    const webhookToEdit = webhooks.find(webhook => webhook.name === selectedWebhook);
     if (webhookToEdit) {
       // Logic to open CreateWebhookForm with pre-filled data
       // You might need to modify CreateWebhookForm to accept initial data for editing
@@ -131,10 +114,15 @@ const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, webhooks, nodeId }) =>
       toast.success('Webhook event received');
 
       const webhookEvent = data.data[0];
-  
-      // save the entire webhook object (including event data) in the zustand store
-      saveNodeFormData(activeScenarioId, nodeId, { ...selectedWebhookObject, eventData: webhookEvent });
-  
+      const eventData = {
+        query: webhookEvent.query,
+        createdAt: webhookEvent.created_at,
+        method: webhookEvent.method,
+      };
+
+      // save the webhook object (including event data) in the zustand store
+      const updatedWebhook = { ...selectedWebhookObject, eventData };
+      saveWebhook(updatedWebhook);   
       setEventReceived(true);
       stopListening();
     }
@@ -219,18 +207,16 @@ const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, webhooks, nodeId }) =>
       <WebhookIcon className='h-4 w-4' fillColor='black' />
       <Select
         value={selectedWebhook}
-        onChange={value => {
-          setSelectedWebhookInNode(activeScenarioId, nodeId, value); // update zustand store
-        }} 
+        onChange={value => setSelectedWebhookInNode(activeScenarioId, nodeId, value)}
         className='webhook-selector' placeholder="Select a webhook">
-        {formData.map((webhook, index) => (
+        {webhooks?.map((webhook, index) => (
           <Select.Option key={index} value={webhook.name}>{webhook.name}</Select.Option>
         ))}
       </Select>
 
         <button className='popup-form-create' onClick={handleCreateClick}>Create</button>
       </div>
-        <div className="description ">Here be the generated webhook</div>
+        <div className="description ">Here be the generated webhook. Bagpies is listening for the data and will determine the data structure from the incoming data automatically. Please send your data sample to the webhook url provided below.</div>
 
         <div className="description ">
         { selectedWebhook && selectedWebhookData && 

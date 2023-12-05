@@ -131,3 +131,21 @@ code {
 .default_connected {
   color: var(--default_edge);
 }
+
+.custom-switch .ant-switch-handle {
+  width: 10px; /* Decrease the handle width */
+  height: 10px; 
+  top: 3px; /* Adjust vertically if needed */
+  left: 3px; /* Adjust for initial position */
+}
+
+.custom-switch {
+  min-width: 25px !important; /* Increase the switch width */
+  height: 16px !important; /* Adjust the switch height if needed */
+  border-radius: 4px !important; /* Less rounded corners */
+}
+
+.custom-switch.ant-switch-checked .ant-switch-handle {
+  left: 20px !important; /* Adjust for position when switched on */
+}
+

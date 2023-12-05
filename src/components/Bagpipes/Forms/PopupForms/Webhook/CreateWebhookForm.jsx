@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import callCreateWebhookAPI from '../../../../../webhooks/callCreateWebhookAPI';
-import CollapsibleField from "../../fields/CollapsableField";
+import CollapsibleField from "../../fields/CollapsibleField";
 import Toggle from '../../Toggle';
 import FormHeader from "../../FormHeader";
 import FormFooter from "../../FormFooter";
@@ -19,6 +19,7 @@ const CreateWebhookForm = ({ onSave, onClose }) => {
             name: webhookName,
             uuid: uuid
         };
+        console.log("CreateWebhookForm newWebhook", newWebhook);
         onSave(newWebhook); // Pass the complete webhook data back to the parent
     };
     const handleCancel = () => {

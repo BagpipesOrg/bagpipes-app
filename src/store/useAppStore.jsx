@@ -24,6 +24,7 @@ const defaultState = {
   hrmpChannels: {},
   currentNodeState: 'default_connected',
   selectedWebhook: null,
+  webhooks: [],
 };
 
 const useAppStore = create(
@@ -919,6 +920,22 @@ const useAppStore = create(
       };
     });
   },
+
+  saveWebhook: (webhook) => {
+    set((state) => {
+      const existingWebhook = state.webhooks.find(w => w.uuid === webhook.uuid);
+      if (existingWebhook) {
+        // Update existing webhook
+        return {
+          webhooks: state.webhooks.map(w => w.uuid === webhook.uuid ? webhook : w)
+        };
+      } else {
+        // Add new webhook
+        return { webhooks: [...state.webhooks, webhook] };
+      }
+    });
+  },
+  
   
   }
 )

@@ -1,0 +1,49 @@
+{
+    "type": "object",
+    "title": "HTTP Request Form",
+    "properties": {
+      "sections": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string" },
+            "fields": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": { "type": "string" },
+                  "type": { "type": "string" },
+                  "label": { "type": "string" },
+                  "hasToggle": { "type": "boolean", "default": false },
+                  "default": {},
+                  "options": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "label": { "type": "string" },
+                        "description": { "type": "string" },
+                        "value": {},
+                        "children": {
+                          "type": "array",
+                          "items": { "type": "string" }
+                        }
+                      },
+                      "required": ["label", "value"]
+                    }
+                  },
+                  "advanced": { "type": "boolean", "default": false }
+                },
+                "required": ["key", "type", "label"]
+              }
+            }
+          },
+          "required": ["title", "fields"]
+        }
+      }
+    },
+    "required": ["sections"]
+  }
+  
