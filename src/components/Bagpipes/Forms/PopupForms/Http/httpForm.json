@@ -186,6 +186,8 @@
                     {
                       "key": "contentType",
                       "type": "select",
+                      "parentKey": "bodyType",
+                      "parentValue": "raw",
                       "label": "Content Type",
                       "options": [
                         {
@@ -214,7 +216,9 @@
                                 {
                                   "key": "value",
                                   "type": "input",
-                                  "label": "Value"
+                                  "label": "Value",
+                                  "parentKey": "contentType",
+                                  "parentValue": "custom"
                                 }
                               ]
                             }
@@ -230,7 +234,9 @@
                     {
                       "key": "requestContent",
                       "type": "input",
-                      "label": "Request Content"
+                      "label": "Request Content",
+                      "parentValue": "raw",
+                      "parentKey": "bodyType"
                     }
                   ]
                 }
@@ -248,7 +254,10 @@
                       "type": "items",
                       "label": "Fields",
                       "hasToggle": true,
-                      "fieldTypes": true
+                      "fieldTypes": true,
+                      "parentValue": "form-data",
+                      "parentKey": "bodyType"
+
                     }
                   ]
                 }
@@ -265,7 +274,9 @@
                       "key": "bodyFieldsFileText",
                       "type": "items",
                       "label": "Fields",
-                      "hasToggle": true
+                      "hasToggle": true,
+                      "parentValue": "url-encoded",
+                      "parentKey": "bodyType"
                     }
                   ]
                 }
@@ -372,7 +383,9 @@
                   "type": "radio",
                   "label": "Follow all redirects",
                   "advanced": true,
-                  "default": false
+                  "default": false,
+                  "parentKey": "followRedirects",
+                  "parentValue": true
                 }
               ]
             }

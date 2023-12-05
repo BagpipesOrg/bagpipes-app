@@ -97,9 +97,10 @@ const handleFieldChange = (key, value) => {
   setFormValues(prevValues => {
     let updatedValues = { ...prevValues, [key]: value };
 
-    // Reset children if radio button value changes
     const field = findFieldByKey(key);
-    if (field.type === 'radio' && field.children) {
+
+    // Check if a valid field is found
+    if (field && field.type === 'radio' && field.children) {
       field.children.forEach(childSection => {
         childSection.fields.forEach(childField => {
           updatedValues[childField.key] = ''; // Reset or set to default
@@ -110,6 +111,7 @@ const handleFieldChange = (key, value) => {
     return updatedValues;
   });
 };
+
 
 
 
@@ -270,10 +272,10 @@ const handleFieldChange = (key, value) => {
   };
   
 
-const findOptionByKeyAndValue = (key, value) => {
-  const field = findFieldByKey(key);
-  return field?.options.find(option => option.value === value);
-};
+  const findOptionByKeyAndValue = (key, value) => {
+    const field = findFieldByKey(key);
+    return field?.options.find(option => option.value === value);
+  };
 
 
   
@@ -289,12 +291,17 @@ const findOptionByKeyAndValue = (key, value) => {
 
 
   const renderFieldWithChildren = (field) => {
-    if (!isFieldVisible(field)) return null;
+    // if (!isFieldVisible(field)) return null;
 
+    if (!field || typeof field !== 'object') return null;
+
+    if (!isFieldVisible(field)) return null;
+  
     let fieldElement = renderField(field);
     let childrenElements = null;
-
+    console.log('formValues in render', formValues);
     if (field.type === 'radio' && formValues[field.key] === 'yes' && field.children) {
+      console.log('formValues Rendering children for field:', field.key);
       childrenElements = field.children.flatMap(childSection => 
         childSection.fields.map(childField => renderFieldWithChildren(childField))
       );
@@ -332,20 +339,33 @@ const findOptionByKeyAndValue = (key, value) => {
   
     if (field.advanced && !showAdvancedSettings) return false;
   
-    // Check if the field is a child and if its parent's value meets the condition
+    // Check visibility for child fields
     if (field.parentKey) {
-      const parentValue = formValues[field.parentKey];
-      return field.parentValues.includes(parentValue);
+      const parentFieldValue = formValues[field.parentKey];
+  
+      // For radio buttons, match 'yes'/'no' with true/false
+      if (typeof field.parentValue === 'boolean') {
+        if (field.parentValue === true) {
+          return parentFieldValue === 'yes' || parentFieldValue === true;
+        } else if (field.parentValue === false) {
+          return parentFieldValue === 'no' || parentFieldValue === false;
+        }
+      } else {
+        // For select fields or other cases, perform a direct string comparison
+        return parentFieldValue === field.parentValue;
+      }
     }
   
     return true;
   };
+  
   
 
   const renderField = (field) => {
     console.log("httpForm Rendering field: ", field.key, "; Visible: ", isFieldVisible(field));
     // Safety check to ensure field is valid and visible
     if (!field || typeof field !== 'object' || !isFieldVisible(field)) return null;
+    // if (!field || typeof field !== 'object') return null; 
 
     // Pass the necessary props based on field type
     const commonProps = {
@@ -413,6 +433,13 @@ const findOptionByKeyAndValue = (key, value) => {
         default:
             return null;
     }
+
+    // Outside the switch case
+if (field.children) {
+  childrenElements = field.children.flatMap(childSection => 
+    childSection.fields.map(childField => renderFieldWithChildren(childField))
+  );
+}
 
     return (
         <>

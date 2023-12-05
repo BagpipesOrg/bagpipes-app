@@ -28,7 +28,9 @@
                         "value": {},
                         "children": {
                           "type": "array",
-                          "items": { "type": "string" }
+                          "items": { "type": "string" },
+                          "parentKey": { "type": "string" },
+                          "parentValue": { "type": "string" }
                         }
                       },
                       "required": ["label", "value"]
