@@ -98,7 +98,7 @@ const CollapsibleField = ({ title, info, toggleTitle, hasToggle,fieldTypes, sele
 
 
   const header = (
-    <div className='font-semibold text-sm text-gray-600'>
+    <div className='font-semibold text-sm text-gray-600 mt-1'>
       <div>{title}</div>
       
     </div>

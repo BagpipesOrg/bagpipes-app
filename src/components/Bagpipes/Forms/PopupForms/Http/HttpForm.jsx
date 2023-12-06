@@ -501,7 +501,7 @@ if (field.children) {
         </div>
       )}
       
-      <FormHeader title='Http' logo={<HttpIcon className='h4 w-4' fillColor='black' />} />  
+      <FormHeader title='Http' logo={<HttpIcon className='h-4 w-4' fillColor='black' />} />  
     
 
       <div className='http-form'>
