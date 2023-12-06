@@ -4,26 +4,27 @@ import useAppStore from '../../../../../store/useAppStore';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css'; // optional for styling
 import 'tippy.js/themes/light.css';
-import { CollapsibleField, ItemField }  from '../../fields';
+import toast from 'react-hot-toast';
+
+import { CollapsibleField }  from '../../fields';
 import FormHeader from '../../FormHeader';
 import FormFooter from '../../FormFooter';
+import { HttpIcon } from '../../../../Icons/icons';
+
 import { Form } from 'react-router-dom';
 import { Select, Input } from 'antd';
-import toast from 'react-hot-toast';
+import httpForm from './HttpForm.json';
+
 import '../Popup.scss';
 import '../../../../../index.css';
-import { HttpIcon } from '../../../../Icons/icons';
 // import HttpsService from '../../../../../services/HttpsService';
 import './types';
-import httpForm from './HttpForm.json';
 
 const HttpForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
   const { scenarios, activeScenarioId, saveNodeFormData } = useAppStore(state => ({ 
     scenarios: state.scenarios,
     activeScenarioId: state.activeScenarioId,
     saveNodeFormData: state.saveNodeFormData,
-
-   
    }));
 
    const selectedHttp = scenarios[activeScenarioId]?.diagramData.nodes.find(node => node.id === nodeId)?.selectedHttp || '';
@@ -71,26 +72,45 @@ const formSections = httpForm.sections;
 
 const initializeFormValues = () => {
   let initialValues = {};
-  // Iterate over form sections and fields to set initial values
-  formSections.forEach(section => {
-    section.fields.forEach(field => {
-      if (field.type === "radio" && field.default !== undefined) {
-        initialValues[field.key] = field.default ? 'yes' : 'no'; // Assuming 'yes' and 'no' are the values for your radio buttons
+
+  const setDefaultValues = (fields) => {
+    fields.forEach(field => {
+      // Handle default value for radio buttons
+      if (field.type === "radio") {
+        if (field.default !== undefined) {
+          // If default is a boolean, convert it to 'yes' or 'no'
+          if (typeof field.default === 'boolean') {
+            initialValues[field.key] = field.default ? 'yes' : 'no';
+          } else {
+            // If default is not a boolean, use it as is
+            initialValues[field.key] = field.default;
+          }
+        }
       }
+      // Handle other field types...
+
       // Initialize children with defaults
       if (field.children) {
         field.children.forEach(childSection => {
-          childSection.fields.forEach(childField => {
-            if (childField.type === "radio" && childField.default !== undefined) {
-              initialValues[childField.key] = childField.default ? 'yes' : 'no';
-            }
-          });
+          setDefaultValues(childSection.fields);
         });
       }
     });
+  };
+
+  formSections.forEach(section => {
+    setDefaultValues(section.fields);
   });
+
   setFormValues(initialValues);
 };
+
+
+
+
+useEffect(() => {
+  initializeFormValues();
+}, []);
 
 
 const handleFieldChange = (key, value) => {
@@ -355,6 +375,8 @@ const handleFieldChange = (key, value) => {
         return parentFieldValue === field.parentValue;
       }
     }
+
+    
   
     return true;
   };
@@ -386,6 +408,7 @@ const handleFieldChange = (key, value) => {
                 fieldTypes='input'
                 {...commonProps}
                 placeholder={field.label}
+                info={field.description}
                 value={formValues[field.key] || ''}
                 onChange={(value) => handleFieldChange(field.key, value)}
                 />
@@ -402,6 +425,7 @@ const handleFieldChange = (key, value) => {
                 <CollapsibleField
                 {...commonProps}
                 fieldTypes='select'
+                info={field.description}
                 selectOptions={field.options}
                 defaultValue={formValues[field.key] || field.default}
                 onChange={(value) => handleSelectChange(field.key, value)}
@@ -414,8 +438,9 @@ const handleFieldChange = (key, value) => {
                 <CollapsibleField
                 {...commonProps}
                 fieldTypes='radio'
+                info={field.description}
                 selectRadioOptions={field.options}
-                defaultValue={formValues[field.key] || field.default}
+                value={formValues[field.key]}
                 onChange={(value) => handleFieldChange(field.key, value)}
                 />
             );
@@ -425,6 +450,7 @@ const handleFieldChange = (key, value) => {
                 <CollapsibleField
                 {...commonProps}
                 fieldTypes='items'
+                info={field.description}
                 items={formValues[field.key] || []}
                 onChange={(value) => handleFieldChange(field.key, value)}
                 />
@@ -455,7 +481,7 @@ if (field.children) {
 
 
   return (
-    <div onScroll={handleScroll} className='http-form'>
+    <div onScroll={handleScroll} className=''>
 
     {isCreateFormVisible && (
       <div className='relative'>

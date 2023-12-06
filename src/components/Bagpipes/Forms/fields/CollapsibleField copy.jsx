@@ -39,8 +39,8 @@ const CollapsibleField = ({ title, info, toggleTitle, hasToggle, selectOptions, 
       return (
         <Select 
         className='w-full'
-        value={selectOptions[0].value}
-        onChange={(value) => console.log(`selected ${value}`)}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
         placeholder="Select option">
           {selectOptions.map((option, index) => (
             <Option className='collapsable-select-option w-full' key={index} value={option.value}>{option.label}</Option>

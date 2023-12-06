@@ -2,74 +2,78 @@
   "sections": [
     {
       "title": "Connection Type",
+      "sectionStatus": "master",
       "fields": [
         {
           "key": "connectionType",
           "type": "select",
           "label": "Connection Type",
-          "default": "httpRequest",
           "options": [
             {
               "label": "HTTP Request",
+              "default": true,
               "description": "Make a basic HTTP request to a URL with no authentication.",
               "value": "httpRequest",
-              "children": [
-                "standardHttpParams",
-                "advancedSettings"
+              "filters": [
+                {"pointerFieldGroup":"standardHttpParams"},
+                {"pointerFieldGroup":"advancedSettings"}
               ]
             },
             {
               "label": "Make a Basic Auth Request",
               "description": "Make a basic HTTP request with basic authentication.",
               "value": "basicAuthHttpRequest",
-              "children": [
-                "basicAuth",
-                "standardHttpParams",
-                "advancedSettings"
+              "filters": [
+                {"pointerKey": "basicAuth" },
+                {"pointerFieldGroup":"standardHttpParams"},
+                {"pointerFieldGroup":"advancedSettings"}
               ]
             },
             {
               "label": "Make a Request with a Client Certificate",
               "description": "Make a basic HTTP request with a client certificate.",
               "value": "clientCertHttpRequest",
-              "children": [
-                "clientAuthCert",
-                "standardHttpParams",
-                "advancedSettings"
+              "filters": [
+                {"pointerKey": "clientAuthCert"
+                },
+                {"pointerFieldGroup":"standardHttpParams"},
+                {"pointerFieldGroup":"advancedSettings"}
               ]
             },
             {
               "label": "Make an API key Auth Request",
               "description": "Make a basic HTTP request with an API key.",
               "value": "apiKeyAuthHttpRequest",
-              "children": [
-                "apiKeyAuth",
-                "standardHttpParams",
-                "advancedSettings"
+              "filters": [
+                {"pointerFieldGroup":"standardHttpParams"},
+                {"pointerFieldGroup":"advancedSettings"},
+                {"pointerKey":"apiKeyAuth"}
+                
               ]
             },
             {
               "label": "Retrieve a Resource from a URL",
               "description": "Retrieve a resource from a URL, such as donwloading a file.",
               "value": "urlResourceRequest",
-              "children": [
-                "url"
+              "filters": [
+                {"pointerKey": "url" }
               ]
             },
             {
               "label": "Resolve a URL target",
               "description": "Resolve a URL to its final destination.",
               "value": "urlResolveRequest",
-              "children": [
-                "url"
+              "filters": [
+                {"pointerKey": "url" }
+                
               ]
             },
             {
               "label": "Retrieve headers",
               "description": "Retrieve just the headers from a URL.",
               "value": "headersRequest",
-              "children": [
-                "sourceModule"
+              "filters": [
+                {"pointerKey": "sourceModule" }
               ]
             }
           ]
@@ -84,8 +88,8 @@
           "type": "input",
           "label": "URL",
           "hasToggle": false,
-          "description": "Enter a URL endpoing to make an HTTP request."
-        }
+          "fieldGroup": "standardHttpParams",
+          "description": "Enter a URL endpoing to make an HTTP request."        }
       ]
     },
     {
@@ -107,7 +111,7 @@
           "key": "method",
           "type": "select",
           "label": "Method",
-          "advanced": false,
+          "fieldGroup": "standardHttpParams",
           "hasToggle": true,
           "options": [
             {
@@ -149,7 +153,8 @@
           "key": "headers",
           "type": "items",
           "label": "Headers",
-          "hasToggle": true
+          "hasToggle": true,
+          "fieldGroup": "standardHttpParams"
         }
       ]
     },
@@ -160,7 +165,8 @@
           "key": "queryParameters",
           "type": "items",
           "label": "Query Parameters",
-          "hasToggle": true
+          "hasToggle": true,
+          "fieldGroup": "standardHttpParams"
         }
       ]
     },
@@ -171,6 +177,7 @@
           "key": "bodyType",
           "type": "select",
           "label": "Body Type",
+          "fieldGroup": "standardHttpParams",
           "options": [
             {
               "label": "Empty",
@@ -189,6 +196,7 @@
                       "parentKey": "bodyType",
                       "parentValue": "raw",
                       "label": "Content Type",
+                      "fieldGroup": "standardHttpParams",
                       "options": [
                         {
                           "label": "Text (text/plain)",
@@ -218,7 +226,8 @@
                                   "type": "input",
                                   "label": "Value",
                                   "parentKey": "contentType",
-                                  "parentValue": "custom"
+                                  "parentValue": "custom",
+                                  "fieldGroup": "standardHttpParams"
                                 }
                               ]
                             }
@@ -236,7 +245,8 @@
                       "type": "input",
                       "label": "Request Content",
                       "parentValue": "raw",
-                      "parentKey": "bodyType"
+                      "parentKey": "bodyType",
+                      "fieldGroup": "standardHttpParams"
                     }
                   ]
                 }
@@ -256,7 +266,8 @@
                       "hasToggle": true,
                       "fieldTypes": true,
                       "parentValue": "form-data",
-                      "parentKey": "bodyType"
+                      "parentKey": "bodyType",
+                      "fieldGroup": "standardHttpParams"
 
                     }
                   ]
@@ -276,7 +287,8 @@
                       "label": "Fields",
                       "hasToggle": true,
                       "parentValue": "url-encoded",
-                      "parentKey": "bodyType"
+                      "parentKey": "bodyType",
+                      "fieldGroup": "standardHttpParams"
                     }
                   ]
                 }
@@ -293,7 +305,9 @@
           "key": "parseResponse",
           "type": "radio",
           "label": "Parse response",
-          "defualt": false
+          "description": "Automatically converts and parses JSON and XML responses so you don't need to use a parser. Before you can use parsed JSON or XML content, you need to run the http module once manually.",
+          "default": false,
+          "fieldGroup": "standardHttpParams"
         }
       ]
     },

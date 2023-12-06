@@ -11,7 +11,7 @@ import './Fields.scss';
 const { Option } = Select;
 
 
-const CollapsibleField = ({ title, info, toggleTitle, hasToggle,fieldTypes, selectOptions=[], selectRadioOptions=[], children, onChange }) => {
+const CollapsibleField = ({ title, info, toggleTitle, hasToggle,fieldTypes, selectOptions=[], selectRadioOptions=[],description, children, value, onChange }) => {
   const [isToggled, setIsToggled] = useState(false);
   const [items, setItems] = useState([]);
 
@@ -60,17 +60,18 @@ const CollapsibleField = ({ title, info, toggleTitle, hasToggle,fieldTypes, sele
           return (
             <Radio.Group
             onChange={e => onChange(e.target.value)} // Add onChange handler
-            defaultValue={selectRadioOptions && selectRadioOptions.length > 0 ? selectRadioOptions[0].value : 'no'}
+            value={value}
             buttonStyle="solid"
+           
           >
             {selectRadioOptions && selectRadioOptions.length > 0 ? (
               selectRadioOptions.map((option, index) => (
-                <Radio.Button key={index} value={option.value}>{option.label}</Radio.Button>
+                <Radio key={index} value={option.value}>{option.label}</Radio>
               ))
             ) : (
               <>
-                <Radio.Button value="yes">Yes</Radio.Button>
-                <Radio.Button value="no">No</Radio.Button>
+                <Radio value="yes">Yes</Radio>
+                <Radio value="no">No</Radio>
               </>
             )}
           </Radio.Group>
@@ -83,10 +84,10 @@ const CollapsibleField = ({ title, info, toggleTitle, hasToggle,fieldTypes, sele
             {items.map((item, index) => (
               <ItemField key={index} title={`Item ${index + 1}`} item={item} onDelete={() => deleteItem(item)} onItemChange={onChange} />
             ))}
-            <Button onClick={addItem} type="primary">
-              <PlusIcon className='bg-blue-500 mr-1' />
+            <button className='flex items-center text-gray-700 text-sm 'onClick={addItem}>
+              <PlusIcon className='add-item-icon' />
               Add item
-            </Button>
+            </button>
           </div>
         );
       default:
@@ -97,7 +98,7 @@ const CollapsibleField = ({ title, info, toggleTitle, hasToggle,fieldTypes, sele
 
 
   const header = (
-    <div className='flex justify-between items-center'>
+    <div className='font-semibold text-sm text-gray-600'>
       <div>{title}</div>
       
     </div>
@@ -117,10 +118,12 @@ const CollapsibleField = ({ title, info, toggleTitle, hasToggle,fieldTypes, sele
       <Collapse.Panel header={header} key="1">
       {children}
       <div className='flex justify-between'>
+       
   
         {renderContent()}
         
         </div>
+        <div className='text-xxs text-gray-500 mt-3'>{info}</div>
       </Collapse.Panel>
     </Collapse>
     </div>
