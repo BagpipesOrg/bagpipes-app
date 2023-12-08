@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Collapse, Button, Input } from 'antd';
 import { CustomExpandIcon } from './CustomExpandIcon';
 import 'antd/dist/antd.css';
 import './Fields.scss';
 import { CloseIcon } from '../../../Icons/icons';
+import { on } from 'events';
 
 const ItemField = ({ title, item, onItemChange, onDelete, fieldTypes }) => {
   const [selectedFieldType, setSelectedFieldType] = useState('text');
@@ -11,6 +12,11 @@ const ItemField = ({ title, item, onItemChange, onDelete, fieldTypes }) => {
   const handleFieldTypeChange = (value) => {
     setSelectedFieldType(value);
   };
+
+  useEffect(() => {
+    console.log('item', item);
+
+  }, [onItemChange]);
 
   const header = (
     <div className='flex justify-between'>
@@ -35,10 +41,20 @@ return (
         {(!fieldTypes || selectedFieldType === 'text') && (
           <div className='flex flex-col'>
             <div className='mb-2'>
-              <Input className='custom-input' placeholder="Key" value={item.key} onChange={(e) => onItemChange(e.target.value, item.value)} />
-            </div>
+            <Input
+                className='custom-input'
+                placeholder="Key"
+                value={item.key}
+                onChange={(e) => onItemChange({ ...item, key: e.target.value })}
+              />            
+              </div>
             <div>
-              <Input className='custom-input' placeholder="Value" value={item.value} onChange={(e) => onItemChange(item.key, e.target.value)} />
+            <Input
+              className='custom-input'
+              placeholder="Value"
+              value={item.value}
+              onChange={(e) => onItemChange({ ...item, value: e.target.value })}
+            />            
             </div>
           </div>
         )}

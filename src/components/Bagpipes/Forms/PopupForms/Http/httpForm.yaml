@@ -1,60 +1,62 @@
 ---
 sections:
 - title: Connection Type
+  sectionStatus: master
   fields:
   - key: connectionType
     type: select
     label: Connection Type
-    default: httpRequest
     options:
     - label: HTTP Request
+      default: true
       description: Make a basic HTTP request to a URL with no authentication.
       value: httpRequest
-      children:
-      - standardHttpParams
-      - advancedSettings
+      filters:
+      - pointerFieldGroup: standardHttpParams
+      - pointerFieldGroup: advancedSettings
     - label: Make a Basic Auth Request
       description: Make a basic HTTP request with basic authentication.
       value: basicAuthHttpRequest
-      children:
-      - basicAuth
-      - standardHttpParams
-      - advancedSettings
+      filters:
+      - pointerKey: basicAuth
+      - pointerFieldGroup: standardHttpParams
+      - pointerFieldGroup: advancedSettings
     - label: Make a Request with a Client Certificate
       description: Make a basic HTTP request with a client certificate.
       value: clientCertHttpRequest
-      children:
-      - clientAuthCert
-      - standardHttpParams
-      - advancedSettings
+      filters:
+      - pointerKey: clientAuthCert
+      - pointerFieldGroup: standardHttpParams
+      - pointerFieldGroup: advancedSettings
     - label: Make an API key Auth Request
       description: Make a basic HTTP request with an API key.
       value: apiKeyAuthHttpRequest
-      children:
-      - apiKeyAuth
-      - standardHttpParams
-      - advancedSettings
+      filters:
+      - pointerFieldGroup: standardHttpParams
+      - pointerFieldGroup: advancedSettings
+      - pointerKey: apiKeyAuth
     - label: Retrieve a Resource from a URL
       description: Retrieve a resource from a URL, such as donwloading a file.
       value: urlResourceRequest
-      children:
-      - url
+      filters:
+      - pointerKey: url
     - label: Resolve a URL target
       description: Resolve a URL to its final destination.
       value: urlResolveRequest
-      children:
-      - url
+      filters:
+      - pointerKey: url
     - label: Retrieve headers
       description: Retrieve just the headers from a URL.
       value: headersRequest
-      children:
-      - sourceModule
+      filters:
+      - pointerKey: sourceModule
 - title: URL
   fields:
   - key: url
     type: input
     label: URL
     hasToggle: false
+    fieldGroup: standardHttpParams
     description: Enter a URL endpoing to make an HTTP request.
 - title: Serialize URL
   fields:
@@ -68,7 +70,7 @@ sections:
   - key: method
     type: select
     label: Method
-    advanced: false
+    fieldGroup: standardHttpParams
     hasToggle: true
     options:
     - label: GET
@@ -91,17 +93,20 @@ sections:
     type: items
     label: Headers
     hasToggle: true
+    fieldGroup: standardHttpParams
 - title: Query Parameters
   fields:
   - key: queryParameters
     type: items
     label: Query Parameters
     hasToggle: true
+    fieldGroup: standardHttpParams
 - title: Body Type
   fields:
   - key: bodyType
     type: select
     label: Body Type
+    fieldGroup: standardHttpParams
     options:
     - label: Empty
       value: empty
@@ -111,9 +116,11 @@ sections:
       - title: Content Type
         fields:
         - key: contentType
-          dependsOn: bodyType=raw
           type: select
+          parentKey: bodyType
+          parentValue: raw
           label: Content Type
+          fieldGroup: standardHttpParams
           options:
           - label: Text (text/plain)
             value: text
@@ -129,42 +136,54 @@ sections:
             - title: Value
               fields:
               - key: value
-                dependsOn: bodyType=raw && contentType=custom
                 type: input
                 label: Value
+                parentKey: contentType
+                parentValue: custom
+                fieldGroup: standardHttpParams
       - title: Request Content
         fields:
         - key: requestContent
-          dependsOn: bodyType=raw
           type: input
           label: Request Content
+          parentValue: raw
+          parentKey: bodyType
+          fieldGroup: standardHttpParams
     - label: Multipart Form Data
       value: form-data
       children:
       - title: Body Fields Items
         fields:
         - key: bodyFieldsItems
-          dependsOn: bodyType=form-data
           type: items
           label: Fields
           hasToggle: true
           fieldTypes: true
+          parentValue: form-data
+          parentKey: bodyType
+          fieldGroup: standardHttpParams
     - label: Form URL Encoded
       value: url-encoded
       children:
       - title: Body Fields (File and Text)
         fields:
         - key: bodyFieldsFileText
-          dependsOn: bodyType=url-encoded
           type: items
           label: Fields
           hasToggle: true
+          parentValue: url-encoded
+          parentKey: bodyType
+          fieldGroup: standardHttpParams
 - title: Parse response
   fields:
   - key: parseResponse
     type: radio
     label: Parse response
-    defualt: false
+    description: Automatically converts and parses JSON and XML responses so you don't
+      need to use a parser. Before you can use parsed JSON or XML content, you need
+      to run the http module once manually.
+    default: false
+    fieldGroup: standardHttpParams
 - title: User Name
   fields:
   - key: userName
@@ -217,8 +236,9 @@ sections:
         type: radio
         label: Follow all redirects
         advanced: true
-        dependsOn: followRedirects=yes
         default: false
+        parentKey: followRedirects
+        parentValue: true
 - title: Disable Serialization of Duplicated Query Strings
   fields:
   - key: disableSerializedQuery

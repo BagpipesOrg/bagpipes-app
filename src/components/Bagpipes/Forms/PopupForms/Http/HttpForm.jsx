@@ -66,29 +66,26 @@ const HttpForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
 //   const selectedHttpObject = https?.find(http => http.name === selectedHttp);
 //   const httpURL = selectedHttpObject ? `https://http.site/${selectedHttpObject.uuid}` : '';
 
-const [formData, setFormData] = useState(null);
-const [formValues, setFormValues] = useState({}); // State to track form values
+const formData = scenarios[activeScenarioId]?.diagramData?.nodes.find(node => node.id === nodeId)?.formData || {};
 const formSections = httpForm.sections;
 
 const initializeFormValues = () => {
-  let initialValues = {};
+  const existingFormData = scenarios[activeScenarioId]?.diagramData?.nodes.find(node => node.id === nodeId)?.formData;
 
+  // Check if existing form data is available for this node
+  if (existingFormData) {
+    return; // Exit the function early
+  }
+
+  // If no existing data, initialize with default values
+  let initialValues = {};
   const setDefaultValues = (fields) => {
     fields.forEach(field => {
       // Handle default value for radio buttons
-      if (field.type === "radio") {
-        if (field.default !== undefined) {
-          // If default is a boolean, convert it to 'yes' or 'no'
-          if (typeof field.default === 'boolean') {
-            initialValues[field.key] = field.default ? 'yes' : 'no';
-          } else {
-            // If default is not a boolean, use it as is
-            initialValues[field.key] = field.default;
-          }
-        }
+      if (field.type === "radio" && field.default !== undefined) {
+        initialValues[field.key] = field.default ? 'yes' : 'no';
       }
       // Handle other field types...
-
       // Initialize children with defaults
       if (field.children) {
         field.children.forEach(childSection => {
@@ -102,23 +99,20 @@ const initializeFormValues = () => {
     setDefaultValues(section.fields);
   });
 
-  setFormValues(initialValues);
+  saveNodeFormData(activeScenarioId, nodeId, initialValues);
 };
 
 
 
 
-useEffect(() => {
-  initializeFormValues();
-}, []);
+  useEffect(() => {
+    initializeFormValues();
+  }, []);
 
 
-const handleFieldChange = (key, value) => {
-  setFormValues(prevValues => {
-    let updatedValues = { ...prevValues, [key]: value };
-
+  const handleFieldChange = (key, value) => {
+    const updatedValues = { ...formData, [key]: value };
     const field = findFieldByKey(key);
-
     // Check if a valid field is found
     if (field && field.type === 'radio' && field.children) {
       field.children.forEach(childSection => {
@@ -127,15 +121,41 @@ const handleFieldChange = (key, value) => {
         });
       });
     }
-
-    return updatedValues;
-  });
-};
+    saveNodeFormData(activeScenarioId, nodeId, updatedValues);
+  };
 
 
+  const handleSelectChange = (key, value) => {
+    const updatedValues = { ...formData, [key]: value };
+    // Find the selected option and its children
+    const selectedOption = findOptionByKeyAndValue(key, value);
+    // Initialize or reset the state for children fields
+    const initializeChildFields = (children) => {
+      children.forEach(childSection => {
+        childSection.fields.forEach(childField => {
+          updatedValues[childField.key] = ''; // Initialize with empty string or appropriate value
+          // If the child field has further nested children, initialize them as well
+          if (childField.options) {
+            childField.options.forEach(option => {
+              if (option.children) {
+                initializeChildFields(option.children);
+              }
+            });
+          }
+        });
+      });
+    };
+    if (selectedOption?.children) {
+      initializeChildFields(selectedOption.children);
+    }
+    saveNodeFormData(activeScenarioId, nodeId, updatedValues);
+  };
 
-
-
+  const handleItemsChange = (key, newItems) => {
+    console.log('handleItemsChange', key, newItems);
+    const updatedValues = { ...formData, [key]: newItems };
+    saveNodeFormData(activeScenarioId, nodeId, updatedValues);
+  };
 
 
     // Callback function to handle new http data
@@ -219,14 +239,6 @@ const handleFieldChange = (key, value) => {
     }
   };
 
-  const toggleListening = () => {
-    if (isListening) {
-      stopListening();
-    } else {
-      startListening();
-    }
-    setIsListening(!isListening);
-  };
 
   const handleCopyToClipboard = () => {
     navigator.clipboard.writeText(httpURL)
@@ -254,43 +266,12 @@ const handleFieldChange = (key, value) => {
     }
   }, [scenarios, activeScenarioId, nodeId]);
 
-  useEffect(() => {
-    console.log('formValues', formValues); // Check current state of form values
-  }, [formValues]);
+  // useEffect(() => {
+  //   console.log('formData', formData); // Check current state of form values
+  // }, [formData]);
 
 
-  const handleSelectChange = (key, value) => {
-    setFormValues(prevValues => {
-      let updatedValues = { ...prevValues, [key]: value };
-  
-      // Find the selected option and its children
-      const selectedOption = findOptionByKeyAndValue(key, value);
-  
-      // Initialize or reset the state for children fields
-      const initializeChildFields = (children) => {
-        children.forEach(childSection => {
-          childSection.fields.forEach(childField => {
-            updatedValues[childField.key] = ''; // Initialize with empty string or appropriate value
-            // If the child field has further nested children, initialize them as well
-            if (childField.options) {
-              childField.options.forEach(option => {
-                if (option.children) {
-                  initializeChildFields(option.children);
-                }
-              });
-            }
-          });
-        });
-      };
-  
-      if (selectedOption?.children) {
-        initializeChildFields(selectedOption.children);
-      }
-  
-      return updatedValues;
-    });
-  };
-  
+
 
   const findOptionByKeyAndValue = (key, value) => {
     const field = findFieldByKey(key);
@@ -319,16 +300,14 @@ const handleFieldChange = (key, value) => {
   
     let fieldElement = renderField(field);
     let childrenElements = null;
-    console.log('formValues in render', formValues);
-    if (field.type === 'radio' && formValues[field.key] === 'yes' && field.children) {
-      console.log('formValues Rendering children for field:', field.key);
+    if (field.type === 'radio' && formData[field.key] === 'yes' && field.children) {
       childrenElements = field.children.flatMap(childSection => 
         childSection.fields.map(childField => renderFieldWithChildren(childField))
       );
     }
 
     if (field.options) {
-        const selectedOption = field.options.find(option => option.value === formValues[field.key]);
+        const selectedOption = field.options.find(option => option.value === formData[field.key]);
         if (selectedOption && selectedOption.children) {
             childrenElements = selectedOption.children.flatMap(childSection => 
                 childSection.fields.map(childField => renderFieldWithChildren(childField))
@@ -361,7 +340,7 @@ const handleFieldChange = (key, value) => {
   
     // Check visibility for child fields
     if (field.parentKey) {
-      const parentFieldValue = formValues[field.parentKey];
+      const parentFieldValue = formData[field.parentKey];
   
       // For radio buttons, match 'yes'/'no' with true/false
       if (typeof field.parentValue === 'boolean') {
@@ -409,13 +388,13 @@ const handleFieldChange = (key, value) => {
                 {...commonProps}
                 placeholder={field.label}
                 info={field.description}
-                value={formValues[field.key] || ''}
+                value={formData[field.key] || ''}
                 onChange={(value) => handleFieldChange(field.key, value)}
                 />
             );
             break;
         case 'select':
-            const selectedOption = findOptionByKeyAndValue(field.key, formValues[field.key]);
+            const selectedOption = findOptionByKeyAndValue(field.key, formData[field.key]);
             if (selectedOption && selectedOption.children) {
                 childrenElements = selectedOption.children.flatMap(childSection => 
                     childSection.fields.map(childField => renderFieldWithChildren(childField))
@@ -427,33 +406,32 @@ const handleFieldChange = (key, value) => {
                 fieldTypes='select'
                 info={field.description}
                 selectOptions={field.options}
-                defaultValue={formValues[field.key] || field.default}
+                value={formData[field.key] || field.default}
                 onChange={(value) => handleSelectChange(field.key, value)}
                 />
             );
             break;
         case 'radio':
-            
             fieldElement = (
                 <CollapsibleField
-                {...commonProps}
-                fieldTypes='radio'
-                info={field.description}
-                selectRadioOptions={field.options}
-                value={formValues[field.key]}
-                onChange={(value) => handleFieldChange(field.key, value)}
+                  {...commonProps}
+                  fieldTypes='radio'
+                  info={field.description}
+                  selectRadioOptions={field.options}
+                  value={formData[field.key]}
+                  onChange={(value) => handleFieldChange(field.key, value)}
                 />
             );
             break;
         case 'items':
             fieldElement = (
                 <CollapsibleField
-                {...commonProps}
-                fieldTypes='items'
-                info={field.description}
-                items={formValues[field.key] || []}
-                onChange={(value) => handleFieldChange(field.key, value)}
-                />
+                  {...commonProps}
+                  fieldTypes='items'
+                  info={field.description}
+                  items={formData[field.key] || []}
+                  onChange={(newItems) => handleItemsChange(field.key, newItems)}
+                  />
             );
             break;
         default:
