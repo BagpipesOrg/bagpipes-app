@@ -4,7 +4,11 @@ import Toggle from '../Toggle';
 import ItemField from './ItemField'; // Assuming ItemField is in the same directory
 import { CustomExpandIcon } from './CustomExpandIcon'; // Assuming CustomExpandIcon is in the same directory
 import { PlusIcon } from '../../../Icons/icons';
+import { usePanelTippy } from '../../../../contexts/tooltips/TippyContext';
+import PanelForm from '../PopupForms/Panel/PanelForm';
 import { v4 as uuidv4 } from 'uuid';
+import { useDrop, useDrag } from 'react-dnd';
+import CustomInput from './CustomInput';
 import 'antd/dist/antd.css';
 import './Fields.scss';
 
@@ -12,8 +16,58 @@ import './Fields.scss';
 const { Option } = Select;
 
 
-const CollapsibleField = ({ title, info, toggleTitle, hasToggle,fieldTypes, items, selectOptions=[], selectRadioOptions=[], children, value, onChange }) => {
+
+
+
+
+
+const CollapsibleField = ({ nodeId, title, info, toggleTitle, hasToggle,fieldTypes, items, selectOptions=[], selectRadioOptions=[], children, value, onChange }) => {
   const [isToggled, setIsToggled] = useState(false);
+  const { showPanelTippy } = usePanelTippy();
+  const [droppedItems, setDroppedItems] = useState([]);
+  const [pills, setPills] = useState([]);
+  const [editableContent, setEditableContent] = useState("");
+ 
+  const [{ isOver }, drop] = useDrop({
+    accept: 'NODE',
+    drop: (item, monitor) => {
+      if (monitor.isOver({ shallow: true })) {
+        const newPill = { id: item.id, text: item.label, color: 'your-color' }; // Customize as needed
+        setPills(currentPills => [...currentPills, newPill]);
+      }
+    },
+    collect: monitor => ({
+      isOver: !!monitor.isOver({ shallow: true }),
+    }),
+  });
+
+  const DroppedItem = ({ item, onRemove }) => {
+    const [, drag] = useDrag({
+      type: 'NODE',
+      item: item,
+    });
+  
+    return (
+      <span 
+        ref={drag} 
+        style={{ cursor: 'pointer', backgroundColor: 'red', margin: '0 4px' }} 
+        onClick={onRemove}
+      >
+        {item.label} 
+      </span>
+    );
+  };
+
+  const handleInputClick = (event, nodeId) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const parentTippyOffset = 0; 
+    const calculatedPosition = {
+      x: rect.right + parentTippyOffset,
+      y: rect.top
+    };
+    showPanelTippy( nodeId, calculatedPosition, <PanelForm nodeId={nodeId} />);
+    event.stopPropagation();
+  };
 
   const handleToggleChange = (toggled) => {
     setIsToggled(toggled);
@@ -39,30 +93,68 @@ const CollapsibleField = ({ title, info, toggleTitle, hasToggle,fieldTypes, item
   useEffect(() => {
   }, [items]);
 
+  useEffect(() => {
+    // Update the editableContent based on the external 'value'
+    // This might involve parsing the value if it's a string combining pills and text
+    setEditableContent(value);
+  }, [value]);
+
+      // Function to insert a pill into the content editable div
+      const insertPill = (pill) => {
+        const newContent = editableContent + `<span class="pill" style="background-color: ${pill.color}">${pill.text}</span>`;
+        setEditableContent(newContent);
+        onChange(newContent);
+      };
+
+
+
+  const handleItemDropped = (item) => {
+    insertPill(item); // Add the pill representation to the editable area
+  };
+
+  const renderDroppedItems = () => {
+    return droppedItems.map((item, index) => (
+      <DroppedItem key={index} item={item} onRemove={() => removeItem(index)} />
+    ));
+  };
+
 
   const renderContent = () => {
+    let content;
+
     // Handle the toggle condition
     if (isToggled) {
-      return <Input placeholder="Enter value" />;
+      return (
+        <Input placeholder="Enter value" onClick={(e) => handleInputClick(e, nodeId)} />
+      )
     }
   
+
+
     // Dynamic field type rendering based on the fieldType prop
     switch (fieldTypes) {
         case 'input':
-          return (
-            <Input 
-              placeholder={info} 
-              className='custom-input' 
+            content = (
+              <CustomInput 
               value={value}
-              onChange={e => onChange(e.target.value)} // Updated
+              onChange={onChange}
+              onClick={(e) => handleInputClick(e, nodeId)} // If needed
+              placeholder={info}
+              className='custom-input'
+              pills={pills}
+              setPills={setPills}
             />
-          );
+            );
+
+        break;
         case 'select':
-          return (
+          content = (
             <Select
               onChange={value => onChange(value)}
+              getPopupContainer={trigger => trigger.parentNode}
+
               value={value} 
-              className='w-full'
+              className='w-full font-semibold custom-select'
               placeholder="Select option"
             >
               {selectOptions.map((option, index) => (
@@ -70,10 +162,11 @@ const CollapsibleField = ({ title, info, toggleTitle, hasToggle,fieldTypes, item
               ))}
             </Select>
           );
+          break;
       case 'radio':
         // Check if selectRadioOptions is provided, else default to Yes/No
         // if (selectRadioOptions && selectRadioOptions.length > 0) {
-          return (
+          content = (
             <Radio.Group
             onChange={e => onChange(e.target.value)} // Add onChange handler
             value={value}
@@ -93,6 +186,7 @@ const CollapsibleField = ({ title, info, toggleTitle, hasToggle,fieldTypes, item
           </Radio.Group>
           
           );
+          break;
         
       case 'items':
    
@@ -113,8 +207,8 @@ const CollapsibleField = ({ title, info, toggleTitle, hasToggle,fieldTypes, item
       };
     
 
-      return (
-        <div className='flex flex-col'>
+      content = (
+        <div className='flex flex-col '>
           {items.map((item, index) => (
             <ItemField
               key={item.id}              
@@ -122,6 +216,7 @@ const CollapsibleField = ({ title, info, toggleTitle, hasToggle,fieldTypes, item
               item={item}
               onDelete={() => deleteItem(item)}
               onItemChange={(updatedItem) => updateItem(updatedItem)}
+              handleInputClick={(e) => handleInputClick(e, nodeId)}
               />
           ))}
           <button className='flex items-center text-gray-700 text-sm' onClick={addItem}>
@@ -130,9 +225,16 @@ const CollapsibleField = ({ title, info, toggleTitle, hasToggle,fieldTypes, item
           </button>
         </div>
       );
+      break
       default:
-        return <div className="description">{info}</div>; // Render description or null if no fieldType matches
+        content = <div className="description">{info}</div>;
     }
+      return (
+    <div ref={drop} style={{ backgroundColor: isOver ? 'lightblue' : 'transparent' }}>
+      {renderDroppedItems()}
+      {content} {/* Keep the existing input field */}
+    </div>
+  );
   };
   
   const header = (
@@ -144,7 +246,7 @@ const CollapsibleField = ({ title, info, toggleTitle, hasToggle,fieldTypes, item
 
   return (
 
-    <div className="collapsible-field-container relative">
+    <div ref={drop} style={{ backgroundColor: isOver ? 'lightblue' : 'transparent' }} className="collapsible-field-container relative">
     {hasToggle && (
       <div className="toggle-container mt-3 mr-2" style={{ position: 'absolute', top: 0, right: 0, zIndex: 1 }}>
         <Toggle title={toggleTitle} isToggled={isToggled} onToggleChange={handleToggleChange} />
@@ -155,11 +257,8 @@ const CollapsibleField = ({ title, info, toggleTitle, hasToggle,fieldTypes, item
 
       <Collapse.Panel header={header} key="1">
       {children}
-      <div className='flex justify-between'>
-       
-  
-        {renderContent()}
-        
+        <div className='flex justify-between'>
+          {renderContent()}
         </div>
         <div className='text-xxs text-gray-500 mt-3'>{info}</div>
       </Collapse.Panel>
@@ -169,3 +268,9 @@ const CollapsibleField = ({ title, info, toggleTitle, hasToggle,fieldTypes, item
 };
 
 export default CollapsibleField;
+
+
+
+
+
+

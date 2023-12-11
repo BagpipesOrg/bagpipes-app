@@ -7,13 +7,16 @@ import 'tippy.js/themes/light.css';
 import CollapsibleField from '../../fields/CollapsibleField';
 import FormHeader from '../../FormHeader';
 import FormFooter from '../../FormFooter';
+import { useTippy } from '../../../../../contexts/tooltips/TippyContext';
+import { WebhookIcon } from '../../../../Icons/icons';
+import WebhooksService from '../../../../../services/WebhooksService';
+
 import { Form } from 'react-router-dom';
 import { Select } from 'antd';
 import toast from 'react-hot-toast';
 import '../Popup.scss';
+import '../../fields/Fields.scss';
 import '../../../../../index.css';
-import { WebhookIcon } from '../../../../Icons/icons';
-import WebhooksService from '../../../../../services/WebhooksService';
 
 
 
@@ -21,16 +24,17 @@ const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
   const { scenarios, activeScenarioId, saveNodeFormData, saveWebhook, webhooks, setSelectedWebhookInNode } = useAppStore(state => ({ 
     scenarios: state.scenarios,
     activeScenarioId: state.activeScenarioId,
-    // saveNodeFormData: state.saveNodeFormData,
+    saveNodeFormData: state.saveNodeFormData,
     saveWebhook: state.saveWebhook,
     webhooks: state.webhooks,
     setSelectedWebhookInNode: state.setSelectedWebhookInNode,
    }));
 
-   const selectedWebhook = scenarios[activeScenarioId]?.diagramData.nodes.find(node => node.id === nodeId)?.selectedWebhook || '';
+  const selectedWebhook = scenarios[activeScenarioId]?.diagramData.nodes.find(node => node.id === nodeId)?.selectedWebhook || '';
 
   const [isCreateFormVisible, setCreateFormVisible] = useState(false);
   const createFormRef = useRef();
+  const { hideTippy } = useTippy();
 
   const [isListening, setIsListening] = useState(false);
   const [eventReceived, setEventReceived] = useState(false);
@@ -45,17 +49,15 @@ const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
   const webhookNodes = currentScenario?.diagramData.nodes.filter(node => node.type === 'webhook');
   console.log('webhookNodes', webhookNodes);
   const selectedWebhookData = webhookNodes.find(webhook => webhook.selectedWebhook === selectedWebhook);
-  console.log('selectedWebhookData', selectedWebhookData);
 
   const selectedWebhookObject = webhooks?.find(webhook => webhook.name === selectedWebhook);
-  console.log('selectedWebhookObject', selectedWebhookObject);
   const webhookURL = selectedWebhookObject ? `https://webhook.site/${selectedWebhookObject.uuid}` : '';
   
 
   // Callback function to handle new webhook data
   const handleNewWebhookData = (newWebhook) => {
 
-    console.log('newWebhook nodeId', nodeId);
+    console.log('selectedWebhook newWebhook nodeId', nodeId);
     // Fetch the current webhooks for the node
 
     setSelectedWebhookInNode(activeScenarioId, nodeId, newWebhook.name);
@@ -64,6 +66,10 @@ const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
 
     // Save updated data
     saveWebhook(newWebhook); // Save the webhook globally
+    console.log('saved selectedWebhook newWebhook', newWebhook)
+      // Define the eventData object
+
+    console.log('saved selectedWebhookObject', selectedWebhookObject)
 
     // Force component to re-render if necessary
     setForceUpdate(prev => !prev);
@@ -84,11 +90,15 @@ const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     // update this to be similar to handleNewWebhookData
     setCreateFormVisible(false);
     onSave();
+    hideTippy();
+
   };
 
   const handleCancel = () => {
     onClose(); // Invoke the onClose function passed from the parent component
-};
+    hideTippy();
+  };
+
 
   const handleCloseCreateForm = () => {
     setCreateFormVisible(false);
@@ -122,7 +132,19 @@ const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
 
       // save the webhook object (including event data) in the zustand store
       const updatedWebhook = { ...selectedWebhookObject, eventData };
-      saveWebhook(updatedWebhook);   
+      saveWebhook(updatedWebhook);  
+      
+      // Prepare the new formData with the updated webhook object
+      const newFormData = {
+        ...node.formData,
+        ...updatedWebhook, // Spread the properties of updatedWebhook
+      };
+
+    // Save the updated formData in the node
+    saveNodeFormData(activeScenarioId, nodeId, newFormData);
+
+
+
       setEventReceived(true);
       stopListening();
     }
@@ -184,9 +206,10 @@ const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     {isCreateFormVisible && (
       <div className='relative'>
         <Tippy
-        content={<CreateWebhookForm onSave={handleNewWebhookData} onClose={handleCloseCreateForm} />
-      }
-        interactive={true}
+          appendTo={() => document.body}
+
+          content={<CreateWebhookForm onSave={handleNewWebhookData} onClose={handleCancel} />}
+          interactive={true}
           theme='light'
           placement='auto'
           visible={isCreateFormVisible}
@@ -200,15 +223,17 @@ const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
       )}
 
 
-      <FormHeader title='Webhook' />  
+      <FormHeader onClose={handleCancel} title='Webhook' />  
       <form className='popup-form' onSubmit={onSubmit}>
       <div>
       <div className="webhook-container">
       <WebhookIcon className='h-4 w-4' fillColor='black' />
       <Select
         value={selectedWebhook}
+        getPopupContainer={trigger => trigger.parentNode}
+
         onChange={value => setSelectedWebhookInNode(activeScenarioId, nodeId, value)}
-        className='webhook-selector' placeholder="Select a webhook">
+        className='webhook-selector w-full font-semibold custom-select' placeholder="Select a webhook">
         {webhooks?.map((webhook, index) => (
           <Select.Option key={index} value={webhook.name}>{webhook.name}</Select.Option>
         ))}
@@ -243,7 +268,6 @@ const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
           {isListening ? (
             <>
               <div className="small-spinner"></div>
-              {/* <LoadingSpinner /> Replace with your actual loading spinner component */}
               Stop
             </>
           ) : (

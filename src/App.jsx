@@ -18,7 +18,9 @@ import SelectWalletModal from './components/Wallet/components/SelectWalletModal'
 import { WalletContextProvider } from './components/Wallet/providers/WalletContextProvider';
 import 'tippy.js/dist/tippy.css';
 import 'antd/dist/antd.css';
-
+import { TippyProvider, PanelTippyProvider} from './contexts/tooltips/TippyContext';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 function App () {
   const [socket, setSocket] = useState(null);
@@ -55,27 +57,34 @@ function App () {
 
     return (
       <ThemeProvider value={{ theme: 'dark' }}>
-      <WalletContextProvider>
-          <SocketContext.Provider value={socket}>
-            <ConfigProvider>
-              <AddressBookProvider>
-                <div className='absolute top-0 left-0'>
-              </div>
-              <Header open={true} />
+        <DndProvider backend={HTML5Backend}>
+          <WalletContextProvider>
+            <SocketContext.Provider value={socket}>
+              <ConfigProvider>
+                <AddressBookProvider>
+                  <TippyProvider>
+                  <PanelTippyProvider>
 
-              {/* <Header open={walletContext.wallet || walletContext.evmWallet} /> */}
+                  <div className='absolute top-0 left-0'>
+                </div>
+                <Header open={true} />
 
-            <div className='main-container'>
-              <Sidebar />
-              <MainLayout theme={'dark'} />
-              </div>
-              {/* <SelectWalletModal theme={'dark'} /> */}
-              <SelectWalletModal />
-            </AddressBookProvider>
-            </ConfigProvider>
-          </SocketContext.Provider>
-        </WalletContextProvider>
-        </ThemeProvider>
+                {/* <Header open={walletContext.wallet || walletContext.evmWallet} /> */}
+
+              <div className='main-container'>
+                <Sidebar />
+                <MainLayout theme={'dark'} />
+                </div>
+                {/* <SelectWalletModal theme={'dark'} /> */}
+                <SelectWalletModal />
+                </PanelTippyProvider>
+                </TippyProvider> 
+              </AddressBookProvider>
+              </ConfigProvider>
+            </SocketContext.Provider>
+          </WalletContextProvider>
+        </DndProvider>
+      </ThemeProvider>
     );
   }
 

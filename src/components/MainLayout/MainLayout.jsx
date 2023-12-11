@@ -15,19 +15,58 @@ import Header from '../Header';
 import Lab from '../../pages/Lab/Lab';
 import Parachains from '../../pages/Parachains/Parachains';
 import ThemeContext from '../../contexts/ThemeContext';
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css';
+import { useTippy, usePanelTippy } from '../../contexts/tooltips/TippyContext';
+
 import '../toasts/toast.scss';
 // import '../index.css';
 import './MainLayout.scss';
 
 function MainLayout({ children }) {
-    const { theme } = React.useContext(ThemeContext);
+    const { tippyProps } = useTippy();
+    const { panelTippyProps, hidePanelTippy } = usePanelTippy();
 
+
+    const { theme } = React.useContext(ThemeContext);
+    console.log('document', document); // Add this line to debug'
     // const { toastPosition } = useAppStore(state => ({
     //     toastPosition: state.toastPosition,
     //   }));
   return  (
     
-            <div className={`main-layout ${theme === 'dark' ? '-dark' : '-light'}`}>
+  <div className={`main-layout ${theme === 'dark' ? '-dark' : '-light'}`}>
+
+{tippyProps.visible && (
+        <Tippy
+        appendTo={tippyProps.reference || (() => document.body)}
+        content={tippyProps.content}
+          interactive={true}
+          placement="auto"
+          visible={tippyProps.visible}
+          theme="light"
+          hideOnClick="false"
+        >
+          <div style={{ position: 'fixed', left: tippyProps.position.x, top: tippyProps.position.y }}></div>
+        </Tippy>
+      )}
+
+{panelTippyProps.visible && (
+        <Tippy
+          appendTo={panelTippyProps.reference || (() => document.body)}
+          content={panelTippyProps.content}
+          interactive={true}
+          placement="right"
+          visible={panelTippyProps.visible}
+          theme="light"
+          trigger='click'
+          hideOnClick="toggle"    
+          onClickOutside={() => hidePanelTippy()}
+        >
+          <div style={{ position: 'fixed', left: panelTippyProps.position.x, top: panelTippyProps.position.y }}></div>
+        </Tippy>
+      )}
+
 
         {/* <Toaster /> */}
         <Toaster
@@ -37,14 +76,14 @@ function MainLayout({ children }) {
             toastOptions={{
                 className: 'toast-styles',
                 style: {
-                    background: '#fff00', // This seems like an incorrect color value. Ensure it's valid.
+                    background: '#fff00', 
                     padding: 0,
                     minWidth: "200px",
                     transition: "all 0.5s ease-out",
                     zIndex: 100000,
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "space-between", // This will push the elements to the opposite ends
+                    justifyContent: "space-between", 
                 },
             }}
         > 
@@ -64,6 +103,7 @@ function MainLayout({ children }) {
             </ToastBar> 
         )}
         </Toaster>
+        
         {/* <Header /> */}
             <Routes>
                 {/* Root Route */}

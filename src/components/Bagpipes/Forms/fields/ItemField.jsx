@@ -6,7 +6,7 @@ import './Fields.scss';
 import { CloseIcon } from '../../../Icons/icons';
 import { on } from 'events';
 
-const ItemField = ({ title, item, onItemChange, onDelete, fieldTypes }) => {
+const ItemField = ({ title, item, onItemChange, onDelete, fieldTypes, handleInputClick, nodeId }) => {
   const [selectedFieldType, setSelectedFieldType] = useState('text');
 
   const handleFieldTypeChange = (value) => {
@@ -20,7 +20,7 @@ const ItemField = ({ title, item, onItemChange, onDelete, fieldTypes }) => {
 
   const header = (
     <div className='flex justify-between'>
-      <div>{title}</div>
+      <div className='text-gray-600'>{title}</div>
       <div onClick={() => onDelete(item)}>
         <CloseIcon className='h-3 w-3 m-1 hover:text-red-800' fillColor='gray' />
       </div>
@@ -46,7 +46,8 @@ return (
                 placeholder="Key"
                 value={item.key}
                 onChange={(e) => onItemChange({ ...item, key: e.target.value })}
-              />            
+                onClick={(e) => handleInputClick(e, nodeId)}
+                />            
               </div>
             <div>
             <Input
@@ -54,6 +55,8 @@ return (
               placeholder="Value"
               value={item.value}
               onChange={(e) => onItemChange({ ...item, value: e.target.value })}
+              onClick={(e) => handleInputClick(e, nodeId)}
+
             />            
             </div>
           </div>
@@ -68,6 +71,6 @@ return (
   </div>
 );
 
-    };
+};
 
 export default ItemField;

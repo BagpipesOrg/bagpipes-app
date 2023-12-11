@@ -10,7 +10,7 @@ import { CollapsibleField }  from '../../fields';
 import FormHeader from '../../FormHeader';
 import FormFooter from '../../FormFooter';
 import { HttpIcon } from '../../../../Icons/icons';
-
+import { useTippy } from '../../../../../contexts/tooltips/TippyContext';
 import { Form } from 'react-router-dom';
 import { Select, Input } from 'antd';
 import httpForm from './HttpForm.json';
@@ -31,6 +31,7 @@ const HttpForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
 
   const [isCreateFormVisible, setCreateFormVisible] = useState(false);
   const createFormRef = useRef();
+  const { hideTippy } = useTippy();
 
   const [isListening, setIsListening] = useState(false);
   const [eventReceived, setEventReceived] = useState(false);
@@ -186,10 +187,12 @@ const initializeFormValues = () => {
 
     // update this to be similar to handleNewHttpData
     setCreateFormVisible(false);
+    hideTippy();
     onSave();
   };
 
   const handleCancel = () => {
+    hideTippy();
     onClose(); // Invoke the onClose function passed from the parent component
 };
 
@@ -363,7 +366,7 @@ const initializeFormValues = () => {
   
 
   const renderField = (field) => {
-    console.log("httpForm Rendering field: ", field.key, "; Visible: ", isFieldVisible(field));
+    // console.log("httpForm Rendering field: ", field.key, "; Visible: ", isFieldVisible(field));
     // Safety check to ensure field is valid and visible
     if (!field || typeof field !== 'object' || !isFieldVisible(field)) return null;
     // if (!field || typeof field !== 'object') return null; 
@@ -374,9 +377,10 @@ const initializeFormValues = () => {
       title: field.label,
       hasToggle: field.hasToggle,
       type: field.type,
+      nodeId: nodeId
     };
 
-    console.log(`httpForm Rendering field ${field.key}`);
+    // console.log(`httpForm Rendering field ${field.key}`);
     let fieldElement;
     let childrenElements = null;
 
@@ -402,6 +406,7 @@ const initializeFormValues = () => {
             }
             fieldElement = (
                 <CollapsibleField
+                
                 {...commonProps}
                 fieldTypes='select'
                 info={field.description}
@@ -461,7 +466,7 @@ if (field.children) {
   return (
     <div onScroll={handleScroll} className=''>
 
-    {isCreateFormVisible && (
+    {/* {isCreateFormVisible && (
       <div className='relative'>
         <Tippy
         content={<CreateHttpForm onSave={handleNewHttpData} onClose={handleCloseCreateForm} />
@@ -477,9 +482,9 @@ if (field.children) {
           <div ref={createFormRef}></div>
         </Tippy>
         </div>
-      )}
+      )} */}
       
-      <FormHeader title='Http' logo={<HttpIcon className='h-4 w-4' fillColor='black' />} />  
+      <FormHeader onClose={handleCancel} title='Http' logo={<HttpIcon className='h-4 w-4' fillColor='black' />} />  
     
 
       <div className='http-form'>

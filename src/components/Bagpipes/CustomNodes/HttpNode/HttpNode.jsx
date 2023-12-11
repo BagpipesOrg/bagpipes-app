@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Handle, Position, useNodeId } from 'reactflow';
 import { HttpIcon } from '../../../Icons/icons';
+import { useTippy } from '../../../../contexts/tooltips/TippyContext';
 import './HttpNode.scss';
 import '../../node.styles.scss';
 
@@ -12,14 +13,23 @@ import HttpForm from '../../Forms/PopupForms/Http/HttpForm';
 
 
 export default function HttpNode({ data }) {
-  const { showArrow, instruction } = data;
   const [isHttpFormVisible, setHttpFormVisible] = useState(false);
+  const { showTippy } = useTippy();
   const nodeId = useNodeId();
   const nodeRef = useRef();
-  const httpNodeRef = useRef();
 
   const handleNodeClick = () => {
-    setHttpFormVisible(true); // Show Tippy on node click
+  
+    const rect = nodeRef.current.getBoundingClientRect();
+    const parentTippyOffsetX = 0; 
+    const parentTippyOffsetY = 0; 
+
+
+    const calculatedPosition = {
+      x: rect.right + parentTippyOffsetX,
+      y: rect.top + parentTippyOffsetY
+    };    
+    showTippy(null, nodeId, calculatedPosition, <HttpForm onSave={handleSubmit} onClose={handleCloseHttpForm} nodeId={nodeId} reference={nodeRef.current} />);
   };
 
   const handleSubmit = (event) => {
@@ -28,11 +38,6 @@ export default function HttpNode({ data }) {
     // Handle form submission
   };
 
-  const handleCancel = () => {
-    // Handle form cancellation
-    setHttpFormVisible(false);
-
-  };
 
   const handleCloseHttpForm = () => {
     setHttpFormVisible(false);
@@ -44,32 +49,13 @@ export default function HttpNode({ data }) {
 
 
   return (
-    <div onScroll={handleScroll}>
-{isHttpFormVisible && (
-  <div className='relative'>
-    <Tippy
-      content={<HttpForm onSave={handleSubmit} onClose={handleCloseHttpForm} nodeId={nodeId} />}
-      interactive={true}
-      trigger="click"
-      placement="auto"
-      reference={httpNodeRef}
-      theme="light"
-      hideOnClick={false}
-      visible={isHttpFormVisible}
-
-    >
-      <div ref={httpNodeRef}></div>
-    </Tippy>
-    </div>
-    )}
- 
-    
+    <div onScroll={handleScroll}>    
     
     <div ref={nodeRef} onClick={handleNodeClick}>
 
     <div className="relative nodeBody border-4 border-gray-300 rounded-full w-20 h-20 flex items-center justify-center">
       
-<HttpIcon className='h-7 w-7' fillColor='white' />
+      <HttpIcon className='h-7 w-7' fillColor='white' />
       {/* Logo in the middle of the circle */}
 
       {/* Title outside the circle below the logo */}

@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Handle, Position, useNodeId } from 'reactflow';
 import { WebhookNodeIcon }  from '../../../Icons/icons';
+import { useTippy } from '../../../../contexts/tooltips/TippyContext';
 import './WebhookNode.scss';
 import '../../node.styles.scss';
 
@@ -9,15 +10,26 @@ import 'tippy.js/dist/tippy.css'; // optional for styling
 import 'tippy.js/themes/light.css';
 import WebhookForm from '../../Forms/PopupForms/Webhook/WebhookForm';
 
-export default function WebhookNode({ data }) {
-  const { showArrow, instruction } = data;
+export default function WebhookNode({ }) {
+  const { showTippy } = useTippy();
   const [isWebhookFormVisible, setWebhookFormVisible] = useState(false);
   const nodeId = useNodeId();
   const nodeRef = useRef();
   const webhookNodeRef = useRef();
 
   const handleNodeClick = () => {
-    setWebhookFormVisible(true); // Show Tippy on node click
+    
+    const rect = nodeRef.current.getBoundingClientRect();
+    const scrollLeft = window.scrollX || document.documentElement.scrollLeft;
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+  
+    // Adjusting position based on scrolling and potential transformations
+    const calculatedPosition = {
+      x: rect.right + scrollLeft,
+      y: rect.top + scrollTop
+    };
+  
+    showTippy(null, nodeId, calculatedPosition, <WebhookForm onSave={handleSubmit} onClose={handleCloseWebhookForm} nodeId={nodeId} reference={nodeRef.current} />);
   };
 
   const handleSubmit = (event) => {
@@ -26,38 +38,13 @@ export default function WebhookNode({ data }) {
     // Handle form submission
   };
 
-  const handleCancel = () => {
-    // Handle form cancellation
-    setWebhookFormVisible(false);
-
-  };
-
   const handleCloseWebhookForm = () => {
     setWebhookFormVisible(false);
   };
 
 
   return (
-    <>
-{isWebhookFormVisible && (
-  <div className='relative'>
-    <Tippy
-      content={<WebhookForm onSave={handleSubmit} onClose={handleCloseWebhookForm} nodeId={nodeId} />}
-      interactive={true}
-      trigger="click"
-      placement="auto"
-      reference={webhookNodeRef}
-      theme="light"
-      hideOnClick={false}
-      visible={isWebhookFormVisible}
 
-    >
-      <div ref={webhookNodeRef}></div>
-    </Tippy>
-    </div>
-    )}
- 
-    
     
     <div ref={nodeRef} onClick={handleNodeClick}>
 
@@ -79,7 +66,7 @@ export default function WebhookNode({ data }) {
     </div>
     
     
-    </>
+
   );
 }
 

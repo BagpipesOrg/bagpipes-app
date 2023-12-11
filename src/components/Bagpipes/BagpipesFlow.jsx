@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
-import React, { useState, useRef, useCallback , useEffect, memo, useContext } from 'react';
+import React, { useState, useRef, useCallback , useEffect, memo, useContext,  } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ReactFlow, { useReactFlow, Panel, MiniMap, Controls, Background, BackgroundVariant, applyNodeChanges, useStoreApi, EdgeLabelRenderer } from 'reactflow';
 // import AuthService from '../../services/AuthService';
@@ -24,11 +24,13 @@ import StartButton from './buttons/StartButton';
 import SendButton from './buttons/SendButton';
 import CreateUiButton from './buttons/CreateUiButton';
 import { startDraftingProcess } from './utils/startDraftingProcess';
+import { calculateTippyPosition } from './utils/canvasUtils';
 import { MarkerType } from 'reactflow';
 import { useCreateScenario } from './hooks/useCreateScenario';
 import CreateTemplateLink from './TemplateFeatures/CreateTemplateLink';
 import { v4 as uuidv4 } from 'uuid';
 import styled, { ThemeProvider } from 'styled-components';
+import { useTippy } from '../../contexts/tooltips/TippyContext';
 import ThemeContext from '../../contexts/ThemeContext';
 import { lightTheme, darkTheme } from './theme';
 import { CreateButton } from './buttons/CreateButton';
@@ -100,6 +102,7 @@ const getId = (nodeType) => `${nodeType}_${uuidv4().substr(0, 6)}`;
 const BagpipesFlow = () => {
 
   const reactFlowWrapper = useRef(null);
+  const { showTippy, tippyProps } = useTippy();
 
     const { scenarios, activeScenarioId, addScenario, setActiveScenarioId, saveScenario, saveDiagramData, addNodeToScenario, addEdgeToScenario, deleteNodeFromScenario, deleteEdgeFromScenario, updateNodePositionInScenario, updateNodesInScenario, setSelectedNodeInScenario, setSelectedEdgeInScenario, nodeConnections, setNodes, setEdges, setNodeConnections, tempEdge, setTempEdge, loading, transactions, setTransactions, shouldExecuteChainScenario, toggleExecuteChainScenario, executionId, setExecutionState, setToastPosition } = useAppStore(state => ({
       scenarios: state.scenarios,
@@ -149,6 +152,7 @@ const BagpipesFlow = () => {
     // const [nodeConnections, setNodeConnections] = useState({});
     // const [nodes, setNodes] = useNodesState([]);
     // const [edges, setEdges] = useEdgesState([]);
+
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
     const [inputVariablesByEdgeId, setInputVariablesByEdgeId] = useState({});
     const [maxNodeId, setMaxNodeId] = useState(0);
@@ -394,14 +398,30 @@ const BagpipesFlow = () => {
             setTempEdge(closeEdge);
             // console.log("Added temp edge:", closeEdge);
           } 
+
+          // Update Tippy position if it's visible and associated with the current node
+          if (tippyProps.visible && tippyProps.nodeId === node.id) {
+            const newTippyPosition = calculateTippyPosition(node, reactFlowInstance);
+            showTippy(null, node.id, newTippyPosition, tippyProps.content);
+                }
       
           // Existing logic for updating node position in the scenario
           updateNodePositionInScenario(activeScenarioId, node.id, node.position);
           // console.log("Updating node position:", activeScenarioId, node.id, node.position);
         },
-        [getClosestEdge, currentScenarioEdges,   updateNodePositionInScenario, activeScenarioId]
+        [getClosestEdge, currentScenarioEdges,   updateNodePositionInScenario, activeScenarioId, tippyProps, showTippy]
       );
       
+
+      const onZoomOrPan = useCallback(() => {
+        if (reactFlowInstance && tippyProps.visible && tippyProps.nodeId) {
+          const node = reactFlowInstance.getNode(tippyProps.nodeId);
+          if (node) {
+            const newTippyPosition = calculateTippyPosition(node, reactFlowInstance);
+            showTippy(null, node.id, newTippyPosition, tippyProps.content);
+          }
+        }
+      }, [reactFlowInstance, tippyProps, showTippy]);
       
       
   
@@ -751,6 +771,8 @@ const handleDraftTransactions = async () => {
                   onNodesChange={onNodesChange}
                   onEdgesChange={handleEdgesChange}
                   onConnect={handleConnect}
+                  onMoveEnd={onZoomOrPan}
+                  onZoomEnd={onZoomOrPan}
                   onInit={setReactFlowInstance}
                   onDrop={onDrop}
                   onDragOver={onDragOver}
