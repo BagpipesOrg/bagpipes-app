@@ -13,7 +13,7 @@ import { HttpIcon } from '../../../../Icons/icons';
 import { useTippy } from '../../../../../contexts/tooltips/TippyContext';
 import { Form } from 'react-router-dom';
 import { Select, Input } from 'antd';
-import httpForm from './HttpForm.json';
+import httpForm from './httpForm.json';
 
 import '../Popup.scss';
 import '../../../../../index.css';
