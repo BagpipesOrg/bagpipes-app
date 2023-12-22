@@ -28,10 +28,6 @@ function App () {
   const walletContext = useContext(WalletContext);
   const navigate = useNavigate();
   
-
-
-
-
     async function setupKeyring() {
       try {
         await initializeKeyring();
