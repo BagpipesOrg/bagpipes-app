@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import CustomInput from './CustomInput';
 import { Collapse, Button, Input } from 'antd';
 import { CustomExpandIcon } from './CustomExpandIcon';
 import 'antd/dist/antd.css';
@@ -6,7 +7,7 @@ import './Fields.scss';
 import { CloseIcon } from '../../../Icons/icons';
 import { on } from 'events';
 
-const ItemField = ({ title, item, onItemChange, onDelete, fieldTypes, handleInputClick, nodeId }) => {
+const ItemField = ({ title, item, onItemChange, onDelete, fieldTypes, handleInputClick, nodeId, pills, setPills }) => {
   const [selectedFieldType, setSelectedFieldType] = useState('text');
 
   const handleFieldTypeChange = (value) => {
@@ -41,23 +42,28 @@ return (
         {(!fieldTypes || selectedFieldType === 'text') && (
           <div className='flex flex-col'>
             <div className='mb-2'>
-            <Input
-                className='custom-input'
-                placeholder="Key"
-                value={item.key}
-                onChange={(e) => onItemChange({ ...item, key: e.target.value })}
-                onClick={(e) => handleInputClick(e, nodeId)}
-                />            
+            <CustomInput 
+              value={item.key}
+              onChange={(e) => onItemChange({ ...item, key: e.target.value })}
+              onClick={(e) => handleInputClick(e, nodeId)} // If needed
+              placeholder="Key"
+              className='custom-input'
+              pills={pills}
+              setPills={setPills}
+            />
+                     
               </div>
             <div>
-            <Input
-              className='custom-input'
-              placeholder="Value"
+            <CustomInput 
               value={item.value}
               onChange={(e) => onItemChange({ ...item, value: e.target.value })}
-              onClick={(e) => handleInputClick(e, nodeId)}
-
-            />            
+              onClick={(e) => handleInputClick(e, nodeId)} // If needed
+              placeholder="Value"
+              className='custom-input'
+              pills={pills}
+              setPills={setPills}
+            />
+                       
             </div>
           </div>
         )}

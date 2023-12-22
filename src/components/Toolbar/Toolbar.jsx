@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import Tippy from '@tippyjs/react';
 import ThemeContext from '../../contexts/ThemeContext';
-import { ActionIcon, ChainIcon, ToolsIcon, RouterIcon, WebhookIcon, ScheduleIcon, DelayIcon, APIIcon, CodeIcon, DiscordIcon, OpenAIIcon, HttpIcon } from '../Icons/icons'; 
+import { ActionIcon, ChainIcon, ToolsIcon, RouterIcon, WebhookIcon, WebsocketIcon, ScheduleIcon, DelayIcon, APIIcon, CodeIcon, DiscordIcon, OpenAIIcon, HttpIcon } from '../Icons/icons'; 
 import 'tippy.js/dist/tippy.css'; 
 import './Toolbar.scss'; 
 
@@ -20,14 +20,16 @@ const nodeNames = {
     chain: 'Chain',
     action: 'Action',
     tools: 'Tools',
-    webhook: 'Webhook',
+    webhook: 'Hook',
+    websocket: 'Socket',
     router: 'Router',
     schedule: 'Schedule',
     delay: 'Delay',
     http: 'HTTP',
     code: 'Code',
     // discord: 'Discord', 
-    // openAi: 'OpenAI',
+    openAi: 'GPT',
+    
 };
 
 const nodeDescriptions = {
@@ -51,6 +53,11 @@ const nodeDescriptions = {
   webhook: 
     <div className='m-4 tippy-node'>
       <h1 className='text-xl font-bold '>Webhook (coming soon) </h1>
+      <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
+  </div>,
+    websocket: 
+    <div className='m-4 tippy-node'>
+      <h1 className='text-xl font-bold '>Websocket (coming soon) </h1>
       <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
   </div>,
   router: 
@@ -154,7 +161,9 @@ const Toolbar = () => {
       IconComponent = <RouterIcon />;
     } else if (nodeKey === 'webhook') {
       IconComponent = <WebhookIcon />;
-    } else if (nodeKey === 'schedule') {
+    } else if (nodeKey === 'websocket') {
+      IconComponent = <WebsocketIcon />;
+    }else if (nodeKey === 'schedule') {
       IconComponent = <ScheduleIcon />;
     } else if (nodeKey === 'delay') {
       IconComponent = <DelayIcon />;

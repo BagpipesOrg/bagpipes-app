@@ -1,13 +1,13 @@
 // @ts-nocheck
 import React, { useState, useContext, useEffect } from 'react';
 import { useNodeId, } from 'reactflow';
-import SocketContext from '../../../contexts/SocketContext';
-import CustomNode from './CustomNode';
-import OpenAINodeFields from './OpenAINodeFields';
-import useExecuteScenario from '../hooks/useExecuteScenario';
-import useAppStore from '../../../store/useAppStore';
-import '../../../index.css';
-import '../node.styles.scss';
+import SocketContext from '../../../../contexts/SocketContext';
+import CustomNode from '../CustomNode';
+import OpenAINodeFields from '../OpenAINodeFields';
+import useExecuteScenario from '../../hooks/useExecuteScenario';
+import useAppStore from '../../../../store/useAppStore';
+import '../../../../index.css';
+import '../../node.styles.scss';
 
 
 const OpenAINode = ({ data, isConnectable }) => {

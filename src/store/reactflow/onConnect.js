@@ -4,7 +4,9 @@ import 'reactflow/dist/style.css';
 // onConnect.js
 import { addEdge } from 'reactflow';
 
-let edgeLabel = "Default Label";
+// let edgeLabel = "Default Label";
+let edgeLabel = "";
+
 
 export const EDGE_STYLES = {
   default: {

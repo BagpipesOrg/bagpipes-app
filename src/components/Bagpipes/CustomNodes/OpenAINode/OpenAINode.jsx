@@ -1,19 +1,19 @@
 import React, { useState, useRef } from 'react';
 import { Handle, Position, useNodeId } from 'reactflow';
-import { HttpIcon } from '../../../Icons/icons';
+import { OpenAIIcon } from '../../../Icons/icons';
 import { useTippy } from '../../../../contexts/tooltips/TippyContext';
-import './HttpNode.scss';
+import './OpenAI.scss';
 import '../../node.styles.scss';
 
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css'; // optional for styling
 import 'tippy.js/themes/light.css';
 
-import HttpForm from '../../Forms/PopupForms/Http/HttpForm';
+// import OpenAIForm from '../../Forms/PopupForms/OpenAI/OpenAINodeForm';
 
 
-export default function HttpNode({ data }) {
-  const [isHttpFormVisible, setHttpFormVisible] = useState(false);
+export default function OpenAINode({ data }) {
+  const [isOpenAIFormVisible, setOpenAIFormVisible] = useState(false);
   const { showTippy } = useTippy();
   const nodeId = useNodeId();
   const nodeRef = useRef();
@@ -29,18 +29,18 @@ export default function HttpNode({ data }) {
       x: rect.right + parentTippyOffsetX,
       y: rect.top + parentTippyOffsetY
     };    
-    showTippy(null, nodeId, calculatedPosition, <HttpForm onSave={handleSubmit} onClose={handleCloseHttpForm} nodeId={nodeId} reference={nodeRef.current} />);
+    // showTippy(null, nodeId, calculatedPosition, <OpenAIForm onSave={handleSubmit} onClose={handleCloseOpenAIForm} nodeId={nodeId} reference={nodeRef.current} />);
   };
 
   const handleSubmit = (event) => {
     // event.preventDefault();
-    setHttpFormVisible(false);
+    setOpenAIFormVisible(false);
     // Handle form submission
   };
 
 
-  const handleCloseHttpForm = () => {
-    setHttpFormVisible(false);
+  const handleCloseOpenAIForm = () => {
+    setOpenAIFormVisible(false);
   };
 
   const handleScroll = (e) => {
@@ -55,14 +55,15 @@ export default function HttpNode({ data }) {
 
     <div className="relative nodeBody border-4 border-gray-300 rounded-full w-20 h-20 flex items-center justify-center">
       
-      <HttpIcon className='h-7 w-7' fillColor='white' />
+      <OpenAIIcon className='h-7 w-7' fillColor='black' />
       {/* Logo in the middle of the circle */}
 
       {/* Title outside the circle below the logo */}
       <div className="node-title-circle absolute bottom-[-38%] text-center">
-      <div className="http-name font-medium text-xl flex-col text-gray-500">HTTP Request
-      {/* <div className=" font-medium text-xs absolute top-8 right-16 text-gray-500">Get proposal</div> */}
-      </div>
+      <div className="font-medium open-ai-name text-gray-500">GPT Assistant</div>
+      {/* <div className="text-xs font-medium text-gray-500">GPT Assistant</div> */}
+
+
       </div>
 
   

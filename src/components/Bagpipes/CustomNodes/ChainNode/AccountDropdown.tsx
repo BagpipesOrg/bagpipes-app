@@ -53,7 +53,7 @@ function AccountDropdown({ selectedChainName, onSelect, selectedAddress }: {
       <select 
         value={selectedAccount || ""}
         onChange={handleChange}
-        className='border border-gray-300 p-2 rounded-md w-full'
+        className='border border-gray-300 p-2 rounded-md w-full font-semibold'
       >
         <option className="" value="">Select Address</option>
         {walletContext.accounts.map(acc => (

@@ -125,12 +125,18 @@ const CollapsibleField = ({ nodeId, title, info, toggleTitle, hasToggle,fieldTyp
     // Handle the toggle condition
     if (isToggled) {
       return (
-        <Input placeholder="Enter value" onClick={(e) => handleInputClick(e, nodeId)} />
+         <CustomInput 
+              value={value}
+              onChange={onChange}
+              onClick={(e) => handleInputClick(e, nodeId)} // If needed
+              placeholder={info}
+              className='custom-input'
+              pills={pills}
+              setPills={setPills}
+            />
       )
     }
   
-
-
     // Dynamic field type rendering based on the fieldType prop
     switch (fieldTypes) {
         case 'input':
@@ -217,6 +223,8 @@ const CollapsibleField = ({ nodeId, title, info, toggleTitle, hasToggle,fieldTyp
               onDelete={() => deleteItem(item)}
               onItemChange={(updatedItem) => updateItem(updatedItem)}
               handleInputClick={(e) => handleInputClick(e, nodeId)}
+              pills={pills}
+              setPills={setPills}
               />
           ))}
           <button className='flex items-center text-gray-700 text-sm' onClick={addItem}>

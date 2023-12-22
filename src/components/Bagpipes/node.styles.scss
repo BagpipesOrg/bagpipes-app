@@ -5,20 +5,8 @@
   height: 100%;
 }
 
-.react-flow__node-openAi.selectable, .react-flow__node-openAi.selectable:focus {
-    border: 3px solid #ffffff !important;
-    box-shadow: -7px 15px 10px 3px #7c7c7c18 !important;
-  }
   
-  .react-flow__node-openAi {
-    background-color: var(--node-bg);
-    border-color: #e2e2e2;
-    color: #333;
-    border-radius :10px !important;
-    font-family: $primary-font, sans-serif;
-    font-size: xx-small;
-    min-width:200px !important;
-  }
+
 
   .react-flow__node-chain {
     background-color: var(--button-bg) !important;
@@ -84,7 +72,7 @@
     outline: 15px solid rgba(198, 213, 38, 0.418) !important;
   }
 
-  .react-flow__node-webhook.selected, .react-flow__node-router.selected, .react-flow__node-api.selected,  .react-flow__node-http.selected,  .react-flow__node-code.selected, .react-flow__node-schedule.selected, .react-flow__node-discord.selected, .react-flow__node-action.selected, .react-flow__node-openAi.selected, .react-flow__node-telegram.selected, .react-flow__node-slack.selected, .react-flow__node-twitter.selected, .react-flow__node-github.selected, .react-flow__node-google.selected {
+  .react-flow__node-webhook.selected,.react-flow__node-websocket.selected, .react-flow__node-router.selected, .react-flow__node-api.selected,  .react-flow__node-http.selected,  .react-flow__node-code.selected, .react-flow__node-schedule.selected, .react-flow__node-discord.selected, .react-flow__node-openAi.selected, .react-flow__node-telegram.selected, .react-flow__node-slack.selected, .react-flow__node-twitter.selected, .react-flow__node-github.selected, .react-flow__node-google.selected{
     outline: 20px solid rgba(1, 179, 24, 0.203) !important;
     border-radius: 50px !important;
   }

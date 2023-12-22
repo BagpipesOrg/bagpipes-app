@@ -29,7 +29,11 @@ export const getNodeConfig = (type, position, getId) => {
         label: 'Webhook',
         image: './webhook.svg',
         name: "Webhook",
-        
+      },
+      websocket: {
+        label: 'Websocket',
+        image: './websocket.svg',
+        name: "Websocket",
       },
       router: {
         label: 'Router',

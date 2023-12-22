@@ -1,5 +1,5 @@
 // @ts-nocheck
-// Copyright 2019-2022 @bagpipes/xcm-send authors & contributors
+// Copyright 2019-2022 @bagpipes/xcm-send author Ramsey Ajram (https://decentration.org)
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
@@ -16,7 +16,7 @@ import TextUpdaterNode from './TextupdaterNode';
 import Toolbar from '../Toolbar/Toolbar';
 import FormGroupNode from './FormGroupNode';
 import CustomEdge from './CustomEdges/CustomEdge';
-import { ChainNode, ActionNode, RouterNode, WebhookNode, APINode, HttpNode, CodeNode, ScheduleNode, DiscordNode, OpenAINode } from './CustomNodes';
+import { ChainNode, ActionNode, RouterNode, WebhookNode,WebsocketNode, APINode, HttpNode, CodeNode, ScheduleNode, DiscordNode, OpenAINode } from './CustomNodes';
 import RenderNodeForm from './Forms/RenderNodeForm';
 import { initialEdges, initialNodes } from './nodes.jsx';
 import PlayButton from './buttons/PlayButton';
@@ -82,14 +82,15 @@ const nodeTypes = {
   chain: ChainNode,
   action: ActionNode,
   router: RouterNode,
-  openAi: OpenAINode,
   webhook: WebhookNode,
+  websocket: WebsocketNode,
   api: APINode,
   http: HttpNode,
   code: CodeNode,
   schedule: ScheduleNode,
   discord: DiscordNode,
   delay: DelayNode,
+  openAi: OpenAINode,
 };
 
 const edgeTypes = {
@@ -826,7 +827,7 @@ const handleDraftTransactions = async () => {
 
             </div>
             <div className='absolute top-0 right-0 flex justify between'>
-            {modalNodeId && currentScenarioNodes && currentScenarioEdges && (
+            {/* {modalNodeId && currentScenarioNodes && currentScenarioEdges && (
           <RenderNodeForm
             visible={Boolean(modalNodeId)}
             nodeId={modalNodeId}
@@ -837,7 +838,7 @@ const handleDraftTransactions = async () => {
             onNodesChange={onNodesChange}
             setModalNodeId={setModalNodeId}
           />
-      )}
+      )} */}
               </div>
     </ThemeProvider>
    

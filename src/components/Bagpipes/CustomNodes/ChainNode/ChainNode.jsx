@@ -86,6 +86,7 @@ const ChainNode = ({ data, isConnectable }) => {
     const chainInfo = ChainInfoList.find(info => info.name === chainName);
     return chainInfo ? chainInfo.paraid : null;
   }
+  
 
   const sourceChainName = scenarios[activeScenarioId]?.diagramData?.nodes[previousNodeIndex]?.formData?.chain;
   const sourceChainId = chainNameToId(sourceChainName);
@@ -358,7 +359,7 @@ useEffect(() => {
                 value={formState.chain}  // sets the value for the dropdown from the state
             >
                 <option value="" selected>Select chain</option>
-                {filteredChainInfoList.map((ChainInfo, index) => (
+                {ChainInfoList.map((ChainInfo, index) => (
                   <option key={ChainInfo.name} value={ChainInfo.name}>
                     {ChainInfo.display}
                   </option>

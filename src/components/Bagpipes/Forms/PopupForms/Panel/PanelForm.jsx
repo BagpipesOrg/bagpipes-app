@@ -3,6 +3,7 @@ import useAppStore from '../../../../../store/useAppStore';
 
 import CollapsibleField from '../../fields/CollapsibleField';
 import FormHeader from '../../FormHeader';
+import { getOrderedList, findUpstreamNodes, extractEventDataFromNodes } from '../../../hooks/utils/scenarioExecutionUtils';
 import { useTippy } from '../../../../../contexts/tooltips/TippyContext';
 import { getSavedFormState, setSavedFormState } from '../../../utils/storageUtils';
 import { useDrag, useDrop } from 'react-dnd';
@@ -22,36 +23,31 @@ const PanelForm = ({ nodeId }) => {
         // saveNodeFormData: state.saveNodeFormData,
     
     }));
+    const [pills, setPills ]  = useState([]);
 
     const currentScenario = scenarios[activeScenarioId];
     const node = currentScenario.diagramData.nodes.find(node => node.id === nodeId);
     const savedState = getSavedFormState(nodeId) ?? { inputNodes: node?.data?.inputNodes || [] };
     const [inputNodes, setInputNodes] = useState(node?.data?.inputNodes || []);
-    const [droppedItems, setDroppedItems] = useState([]);
-    const [combinedValue, setCombinedValue] = useState(""); // This will store text and pills combined as HTML
-    const [pills, setPills] = useState([]);
   
-    // // In your input field or drop target
-    const [{ isOver }, drop] = useDrop(() => ({
-      accept: 'NODE',
-      drop: (item, monitor) => {
-        if (monitor.isOver({ shallow: true })) {
-          setDroppedItems(currentItems => [...currentItems, item]);
-        }
-      },
-      collect: monitor => ({
-        isOver: !!monitor.isOver(),
-      }),
-    }));
+    useEffect(() => {
+      // Get the ordered list of nodes
+      const orderedList = getOrderedList(currentScenario.diagramData.edges);
+  
+      // Find upstream nodes
+      const upstreamNodes = findUpstreamNodes(orderedList, nodeId);
+  
+      // Extract event data from upstream nodes and convert them to pills
+      const newPills = extractEventDataFromNodes(upstreamNodes);
+  
+      // Update the pills state
+      setPills(newPills);
+  
+    }, [currentScenario.diagramData.edges, nodeId]); // Add dependencies that trigger the update
+  
+  
+    
 
-    const Pill = ({ id, text, onDelete }) => {
-      return (
-        <span className="pill" style={{ backgroundColor: 'green' }}>
-          {text}
-          <button onClick={() => onDelete(id)}>x</button>
-        </span>
-      );
-    };
     
     const DraggableNode = ({ nodeId, type, label }) => {
       const [{ isDragging }, drag, preview] = useDrag(() => ({
@@ -66,7 +62,7 @@ const PanelForm = ({ nodeId }) => {
       useEffect(() => {
         if (preview) {
           const dragPreview = document.createElement('div');
-          dragPreview.innerHTML = "➕"; // Plus symbol
+          dragPreview.innerHTML = `➕<span class="bg-green-500 w-full text-white mt-1 p-1 border-green-500 rounded">${type}</span>`; 
           dragPreview.style.position = "absolute";
           dragPreview.style.top = "-1000px";
           document.body.appendChild(dragPreview);
@@ -75,122 +71,24 @@ const PanelForm = ({ nodeId }) => {
       }, [preview]);
     
       return (
-        <div ref={drag} style={{ opacity: isDragging ? 0.5 : 1 }}>
+        <div ref={drag} className='mt-3 mb-2'style={{ opacity: isDragging ? 0.5 : 1 }}>
           {/* Content of your draggable element */}
-          Draggable {type}
+          <span className="bg-green-500 w-full text-white mt-1 p-1 border-green-500 rounded cursor-pointer">{type}</span>
         </div>
       );
     };
 
-    const DropArea = ({ onItemDropped }) => {
-      const [dropPosition, setDropPosition] = useState(null);
-      const [, drop] = useDrop({
-        accept: 'NODE', // Make sure this matches the type in useDrag
-        hover: (item, monitor) => {
-          const clientOffset = monitor.getClientOffset();
-          if (clientOffset && dropPositionRef.current) {
-            const dropTargetRect = dropPositionRef.current.getBoundingClientRect();
-      
-            // Calculate cursor position relative to the drop area
-            const xPosition = clientOffset.x - dropTargetRect.left;
-            const yPosition = clientOffset.y - dropTargetRect.top;
-      
-            // Update dropPosition state to reflect this
-            setDropPosition({ x: xPosition, y: yPosition });
-          }
-        },
-        drop: (item, monitor) => {
-          if (monitor.canDrop()) {
-            console.log("Dropping item:", item); // Debug statement
 
-            onItemDropped(item, dropPosition);
-          }
-        },
-        leave: () => {
-          // Reset dropPosition when drag leaves
-          setDropPosition(null);
-        },
-        collect: monitor => ({
-          isOver: !!monitor.isOver(),
-          canDrop: !!monitor.canDrop(),
-        }),
-
-
-      });
-      
-      const combinedRef = node => {
-        drop(node);
-        dropPositionRef.current = node;
-      };
-
-
-      return (
-        <div 
-          ref={combinedRef} 
-          style={{ 
-            height: '100px', 
-            width: '100%', 
-            backgroundColor: isOver ? 'lightblue' : 'lightgrey',
-            border: '1px dashed black',
-            margin: '10px 0'
-          }}>
-          {droppedItems.length === 0
-            ? "Drop items here"
-            : droppedItems.map((item, index) => (
-                <div key={index}>
-                  Dropped: {item.type} (ID: {item.id})
-                </div>
-              ))
-          }
-        {dropPosition && <div style={{ position: 'absolute', left: dropPosition.x, top: dropPosition.y }}>|</div>}
-
-        </div>
-      );
-    };
-
-    const handleItemDropped = (item) => {
-      const newPillHtml = `<span class='pill' style='background-color: green;'>${item.label}</span>`;
-
-    };
-    
-
-         // Handler for changes in CustomInput
-const handleCombinedValueChange = (newContent) => {
-  setCombinedValue(newContent);
-  // Here you can also parse newContent to update other states or perform other actions
-};
-
-const updateCombinedValue = () => {
-  const pillHtml = pills.map(pill => `<span class='pill' style='background-color: ${pill.color};'>${pill.text}</span>`).join("");
-  const newCombinedValue = pillHtml;
-  setCombinedValue(newCombinedValue);
-};
-    
-const handleDeletePill = (pillId) => {
-  setPills(pills.filter(pill => pill.id !== pillId));
-};
 
 
 
   return (
     <div>
-      <FormHeader title='Panel' />  
+      <FormHeader title='Control Panel' />  
 
-      <DraggableNode nodeId="node1" type="TypeA" label="test_1" />
-      <DraggableNode nodeId="node2" type="TypeB" label=" test_2" />
-
-      {/* Drop area */}
-      <DropArea onItemDropped={handleItemDropped} />
-
-      <CustomInput
-        value={combinedValue}
-        onChange={handleCombinedValueChange}
-        className='custom-input'
-        pills={pills}
-        setPills={setPills}
-        onItemDropped={handleItemDropped}
-        // Add other necessary props like placeholder, etc.
-      />
+      <DraggableNode nodeId="node1" type="1. referendum_hash" label="referendum_hash" />
+      <DraggableNode nodeId="node2" type="1. proposal_hash" label=" test_2" />
+  
       
     </div>
   );
