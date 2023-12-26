@@ -5,6 +5,11 @@ import useAppStore from '../../../../store/useAppStore';
 import { getHydraDxSellPrice } from '../../../../Chains/Helpers/PriceHelper';
 import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
+
+// $DED animation
+import DEDPNG from './../../../../assets/DED.png';
+//import FloatingImage from './FloatingImage';
+
 import { getOrderedList } from '../../hooks/utils/scenarioExecutionUtils';
 import { convertFormStateToActionType } from './actionUtils';
 import PriceInfo from '../PriceInfo';
@@ -328,6 +333,23 @@ const toggleDropdown = () => {
           <div className="w-1/3 text-xxs text-gray-400">From:</div>
           <div className="w-2/3 font-semibold text-left ">{currentActionData.source.chain}</div>
         </div>
+
+          { currentActionData.source.chain == 'rococo' && (
+           
+           <div 
+           style={{
+            position: 'fixed',
+            top: '90%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 9999, 
+            animation: 'oscillate 2s linear infinite',
+          }}
+           >
+
+             <img src="/dist/assets/DED-b1635179.png" />
+         </div>
+          )}
 
         <div className="flex justify-between">
           <div className="w-1/3 text-xxs text-gray-400">To:</div>

@@ -70,7 +70,7 @@ export const CHAIN_METADATA = {
         endpoints: [
             "wss://rococo-asset-hub-rpc.polkadot.io"
         ],
-        queryAssetPaths: ["assets.metadata"],  
+    //    queryAssetPaths: ["assets.metadata"],  
         queryBalancePaths: ["system.account"],
         nativeAccount: true,
     },
