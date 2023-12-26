@@ -135,6 +135,20 @@ export function listChains() {
         parachain: true
       };
       chainList[2011] = Sora;
+      // only rococo > rococo assethub transfers is supported 
+      const RococoAssethub: ChainInfo = {
+        name: 'rococo_assethub',
+        display: 'Rococo Assethub',
+        paraid: 3000, // fake
+        prefix: 42, 
+        token_decimals: 12,
+        logo: '/chains/assethub.svg',
+        relayParent: 'rococo',
+        parachain: true 
+      };
+
+      chainList[3000] = RococoAssethub;// fake paraid
+
 
     return chainList;
 }
