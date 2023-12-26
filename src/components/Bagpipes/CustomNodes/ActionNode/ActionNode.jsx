@@ -347,7 +347,7 @@ const toggleDropdown = () => {
           }}
            >
 
-             <img alt="DED logo" title="DED logo" src="/dist/assets/DED-b1635179.png" />
+             <img alt="DED logo" title="DED logo" src="https://xcmsend.github.io/img/DED.png" /> 
          </div>
           )}
 
