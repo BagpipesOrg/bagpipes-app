@@ -65,6 +65,15 @@ export const CHAIN_METADATA = {
         queryBalancePaths: ["system.account"],
         nativeAccount: true,
     },
+    rococo_assethub: {
+        chain: "Rococo Assethub",
+        endpoints: [
+            "wss://rococo-asset-hub-rpc.polkadot.io"
+        ],
+    //    queryAssetPaths: ["assets.metadata"],  
+        queryBalancePaths: ["system.account"],
+        nativeAccount: true,
+    },
     sora: {
         chain: "Sora",
         endpoints: [

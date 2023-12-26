@@ -81,6 +81,56 @@ export async function polkadot_to_assethub(amount: number, address: string, dela
 	return tx;
 }
 
+
+
+/// ref: https://rococo.subscan.io/extrinsic/8452803-2?event=8452803-30
+/// send ROC from rococo to rococo assethub using XCM
+export async function roc2assethub(amount: number, accountdest: string){
+	const api = await getApiInstance('rococo');;
+	const accountid = getRawAddress(accountdest); // make sure its accountid32 pubkey
+		const destination = {
+			interior: { X1: {Parachain: 1000}},
+			parents: 0
+		};
+		const account = {
+			interior: {
+				X1: { 
+					Accountid32: {
+						id: accountid, 
+						network: null, 
+					}
+				}
+			}
+		};
+		const asset = {
+			fun: {
+				Fungible: amount,
+			},
+			id: {
+				Concrete: {
+					parents: 0,
+					interior: {
+						Here: null
+					},
+				},
+			},
+
+		};
+
+
+	const tx = api.tx.xcmPallet.limitedTeleportAssets(
+		{ V3: destination },
+		{ V3: account },
+		{ V3: [asset] },
+		0,
+		{ Unlimited: null }
+		);
+	return tx; 
+}
+
+
+
+
 export async function assethub_to_polkadot(amount: number, address: string) {
 	console.log(`[assethub_to_polkadot] connecting`);
 	const api = await getApiInstance('assetHub'); // Assuming 'connectToWsEndpoint' connects to the parachain

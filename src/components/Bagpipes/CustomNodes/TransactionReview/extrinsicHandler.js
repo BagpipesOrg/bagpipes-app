@@ -1,4 +1,4 @@
-import { dotToHydraDx, hydraDxToParachain, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
+import { dotToHydraDx, hydraDxToParachain, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
 import { getTokenDecimalsByChainName } from "../../../../Chains/Helpers/AssetHelper";
 import toast from "react-hot-toast";
 
@@ -86,6 +86,14 @@ function handlexTransfer(formData) {
                 // 'interlay:assethub': () => {
                 //     return interlay2assethub(source.assetId, submittableAmount, target.address);
                 //    },
+
+        // ROC transfer, todo add transfer logo
+        'rococo:rococo_assethub': () => {
+            console.log(`rococo to rococo assethub transfer`);
+            const amount = submittableAmount;
+            const dest = target.address;
+            return roc2assethub(amount, dest);
+        },
 
         'assetHub:hydraDx': () => {
             console.log("handlexTransfer forAssetHub to HydraDx...");
