@@ -347,7 +347,7 @@ const toggleDropdown = () => {
           }}
            >
 
-             <img src="/dist/assets/DED-b1635179.png" />
+             <img alt="DED logo" title="DED logo" src="/dist/assets/DED-b1635179.png" />
          </div>
           )}
 
