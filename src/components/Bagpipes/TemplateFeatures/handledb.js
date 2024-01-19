@@ -17,7 +17,9 @@ const saveUrl = async (longUrl) => {
 const getUrl = async (shortUrl) => {
   try {
     const response = await axios.get(`${BASE_URL}/getUrl/${shortUrl}`);
+    console.log(`got response data:`, response);
     const longUrl = response.data.longUrl;
+    console.log(`geturl longurl: `,longUrl);
     return longUrl;
   } catch (error) {
     console.error('Error getting URL:', error.response ? error.response.data : error.message);
