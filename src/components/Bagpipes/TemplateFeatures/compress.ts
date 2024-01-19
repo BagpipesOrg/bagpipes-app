@@ -16,9 +16,9 @@ export async function compressString(input: string): Promise<string> {
 
     
     const shortUrl = await saveUrl(base64encoded);
-    console.log('saved link: ', shortUrl);
+    console.log('saved link: ', shortUrl.shortUrl);
 
-    return shortUrl;
+    return shortUrl.shortUrl;
   } catch (error) {
     console.error('Error compressing string:', error);
     return ''; // Return an empty string or handle the error as needed
