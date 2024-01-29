@@ -9,7 +9,7 @@ const CustomInput = ({ value, onChange, onClick, placeholder, className, pills, 
   const [editableContent, setEditableContent] = useState("");
   const [dropPosition, setDropPosition] = useState({ x: 0, y: 0 });
   const [{ isOver }, drop] = useDrop({
-    accept: 'NODE',
+    accept: ['NODE', 'PILL'], // Accept both types
      hover: (item, monitor) => {
       const dropPosition = monitor.getClientOffset();
       const clientOffset = monitor.getClientOffset();
@@ -27,13 +27,13 @@ const CustomInput = ({ value, onChange, onClick, placeholder, className, pills, 
     drop: (item, monitor) => {
       if (monitor.isOver({ shallow: true })) {
         const newPill = {
-          id: item.id,  // Ensure unique ID for each pill
-          text: item.label,  // Text to display on the pill
+          id: item.id,  
+          text: item.label,  
           color: 'green',
           contentEditable: false, // Color or other styling for the pill
           draggable: true,
         };
-        console.log("CustomInput Dropping item:", item); // Debug statement
+        console.log("CustomInput Dropping item:", item); 
         insertPillAtPosition(editableInputRef, newPill, dropPosition, onChange, handleDragStart, handleDragEnd, removePill);
 
         setPills(currentPills => [...currentPills, newPill]);

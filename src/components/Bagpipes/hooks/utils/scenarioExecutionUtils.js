@@ -21,9 +21,9 @@ export function replacePlaceholders(text, nodeContents, validNodeIds=[]) {
     return newText;
 }
 
-export const findUpstreamNodes = (orderedList, currentNodeId) => {
-    const currentNodeIndex = orderedList.findIndex(node => node.id === currentNodeId);
-  
+export const findUpstreamNodes = (orderedList, nodeId) => {
+    const currentNodeIndex = orderedList.findIndex(nodeIdInList => nodeIdInList === nodeId);
+
     if (currentNodeIndex === -1) {
       console.error("Current node not found in the ordered list.");
       return [];

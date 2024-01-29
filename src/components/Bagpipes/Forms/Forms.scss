@@ -91,4 +91,16 @@
   }
 
  
-
+.pill-style {
+  border-radius: 10px;
+  padding: 0px 5px;
+  margin: 5px 5px;
+  font-size: 10px;
+  font-weight: 500;
+  color: rgb(112, 112, 112);
+  background-color: rgb(235, 235, 235);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 20px;
+} 

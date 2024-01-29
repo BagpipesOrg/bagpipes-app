@@ -16,11 +16,6 @@ import './Fields.scss';
 const { Option } = Select;
 
 
-
-
-
-
-
 const CollapsibleField = ({ nodeId, title, info, toggleTitle, hasToggle,fieldTypes, items, selectOptions=[], selectRadioOptions=[], children, value, onChange }) => {
   const [isToggled, setIsToggled] = useState(false);
   const { showPanelTippy } = usePanelTippy();
@@ -29,10 +24,10 @@ const CollapsibleField = ({ nodeId, title, info, toggleTitle, hasToggle,fieldTyp
   const [editableContent, setEditableContent] = useState("");
  
   const [{ isOver }, drop] = useDrop({
-    accept: 'NODE',
+    accept: ['NODE', 'PIll'], 
     drop: (item, monitor) => {
       if (monitor.isOver({ shallow: true })) {
-        const newPill = { id: item.id, text: item.label, color: 'your-color' }; // Customize as needed
+        const newPill = { id: item.id, text: item.label, color: 'red' }; 
         setPills(currentPills => [...currentPills, newPill]);
       }
     },
