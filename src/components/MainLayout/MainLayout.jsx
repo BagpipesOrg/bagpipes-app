@@ -39,8 +39,8 @@ function MainLayout({ children }) {
 
 {tippyProps.visible && (
         <Tippy
-        appendTo={tippyProps.reference || (() => document.body)}
-        content={tippyProps.content}
+          appendTo={tippyProps.reference || (() => document.body)}
+          content={tippyProps.content}
           interactive={true}
           placement="auto"
           visible={tippyProps.visible}
@@ -74,7 +74,7 @@ function MainLayout({ children }) {
 
             containerStyle={{ position: 'absolute' }} 
             toastOptions={{
-                className: 'toast-styles',
+              className: 'toast-styles',
                 style: {
                     background: '#fff00', 
                     padding: 0,
@@ -129,5 +129,4 @@ function MainLayout({ children }) {
   );
 }
   
-
-  export default MainLayout;
+export default MainLayout;

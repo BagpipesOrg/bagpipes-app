@@ -37,28 +37,25 @@ const PanelForm = ({ nodeId }) => {
     };
 
     useEffect(() => {
-        console.log('PanelForm useEffect triggered');
-
-      // Get the ordered list of nodes
-      const orderedList = getOrderedList(currentScenario.diagramData.edges);
-      console.log('PanelForm orderedList', orderedList);
-      
-      // Find upstream nodes
-      console.log('PanelForm nodeId', nodeId);
-      const upstreamNodes = findUpstreamNodes(orderedList, nodeId);
-      console.log('PanelForm upstreamNodes', upstreamNodes);
+     
       const allNodes = currentScenario.diagramData.nodes;
+      const orderedList = getOrderedList(currentScenario.diagramData.edges);
+      console.log('orderedList', orderedList);
+      const upstreamNodes = findUpstreamNodes(orderedList, nodeId);
 
-      // Extract event data from upstream nodes and convert them to pills
-      const newPills = extractEventDataFromNodes(upstreamNodes, allNodes);
-      console.log('PanelForm newPills', newPills);
-      // Update the pills state
-      setPills(newPills);
+      if (orderedList) {
+        const newPills = extractEventDataFromNodes(upstreamNodes, allNodes, orderedList);
+        setPills(newPills);
+      } else {
+        console.error('orderedList is undefined');
+      }
   
     }, [currentScenario.diagramData.edges, nodeId, currentScenario.diagramData.nodes]);
   
-    const extractEventDataFromNodes = (nodes, allNodes) => {
-      const createPillsFromObject = (obj, prefix = '', depth = 0) => {
+    const extractEventDataFromNodes = (nodes, allNodes, orderedList) => {
+      
+      
+      const createPillsFromObject = (obj, nodeIndex, prefix = '', depth = 0) => {
         return Object.entries(obj).flatMap(([key, value]) => {
           const pillId = `${prefix}${key}`;
           const isNested = typeof value === 'object' && value !== null;
@@ -69,15 +66,21 @@ const PanelForm = ({ nodeId }) => {
             value: isNested ? null : value,
             depth: depth,
             children: isNested ? createPillsFromObject(value, `${pillId}.`, depth + 1) : [],
+            nodeIndex: nodeIndex + 1, 
+
           };
+          console.log('pill', pill);
     
           return pill;
         });
       };
     
       return nodes.flatMap(nodeId => {
-        // Retrieve the actual node object using nodeId
         const node = allNodes.find(n => n.id === nodeId);
+        const nodeIndex = orderedList.indexOf(nodeId);
+        console.log('nodeIndex for', nodeId, ':', nodeIndex);
+
+
     
         if (!node) {
           console.error(`Node with ID ${nodeId} not found.`);
@@ -91,11 +94,13 @@ const PanelForm = ({ nodeId }) => {
           return [];
         }
     
-        return createPillsFromObject(queryData);
+        return createPillsFromObject(queryData, nodeIndex);
       });
     };
     
     const DraggablePill = ({ pill, depth, onRemovePill, onToggleExpand }) => {
+      console.log('Rendering pill:', pill.id, 'with nodeIndex:', pill.nodeIndex);
+
       const [isExpanded, setIsExpanded] = useState(false);
       const [{ isDragging }, drag, preview] = useDrag(() => ({
         type: 'PILL',
@@ -119,7 +124,7 @@ const PanelForm = ({ nodeId }) => {
             <button onClick={toggleExpand}>{isExpanded ? '-' : '+'}</button>
           )}
           <span className="bg-green-500 w-full text-white mt-1 p-1 border-green-500 rounded cursor-pointer">
-            {pill.label}
+          {pill.nodeIndex}. {pill.label}
             {/* : {pill.value} */}
           </span>
           {isExpanded && pill.children.map(child => (
