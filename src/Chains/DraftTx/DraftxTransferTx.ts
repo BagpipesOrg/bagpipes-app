@@ -151,7 +151,7 @@ export async function assethub_to_polkadot(amount: number, address: string) {
   
 	const asset = [
 	  {
-		id: { Concrete: { parents: 0, interior: "Here" } }, // The asset is on the parachain (origin)
+		id: { Concrete: { parents: 1, interior: "Here" } }, // The asset is on the parachain (origin)
 		fun: { Fungible: amount },
 	  },
 	];
