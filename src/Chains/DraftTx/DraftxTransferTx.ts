@@ -181,6 +181,47 @@ function number_to_string(input: number): number {
 	return integerNumber;
 }
 
+
+
+// ref: https://hydradx.subscan.io/extrinsic/3330338-2?event=3330338-7
+// dry run results: https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc.hydradx.cloud#/extrinsics/decode and input this: 0x640489010300000300a10f00000000002801010200a10f000000
+// HYDRADX > parachain
+export async function hydradx_to_assethub(amount: number, assetid: number, destaccount: string) {
+	const api = await getApiInstance('hydraDx');;
+
+	const parachainid = 1000;
+	//	cons
+	const asset = {
+		fun: {
+		  Fungible: 10, // Replace '10' with your actual value
+		},
+		id: {
+		  Concrete: {
+			interior: {
+			  X3: [
+				{ Parachain: parachainid, PalletInstance: 50, GeneralIndex: assetid }],
+			  parents: 1, // Replace '1' with your actual value
+			},
+		  },
+		},
+	  };
+
+	const destination = {
+		parents: 1,
+		interior: { X2: [{ Parachain: parachainid, AccountId32: destaccount, network: null }] },
+	};
+
+	const tx = await api.tx.xTokens.transferMultiasset(
+		{ V3: asset },
+		{ V2: destination },
+		{ Unlimited: 0 },
+
+	);
+
+	return tx;
+}
+
+
 // https://assethub-polkadot.subscan.io/extrinsic/4929110-2
 export async function assethub2interlay(assetid: number, amount: number, destaccount: string){
 	const paraid = 2032;
@@ -420,7 +461,7 @@ export async function dotToParachain(amount: number,  targetAddress: string){
 
 
 
-
+ 
 // ref: https://hydradx.subscan.io/extrinsic/3330338-2?event=3330338-7
 // dry run results: https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc.hydradx.cloud#/extrinsics/decode and input this: 0x640489010300000300a10f00000000002801010200a10f000000
 // HYDRADX > parachain
@@ -487,9 +528,10 @@ export async function assethub_to_hydra(assetid: number, amount: number, account
 		parents: 1,
 	};
 
+
 	const account = {
 		parents: 0,
-		interior: { X1: { AccountId32: { id: accountid } } },
+		interior: { X1: { AccountId32: { id: accountid, network: "Any" } } },
 	};
 
 	const asset = {
@@ -498,21 +540,25 @@ export async function assethub_to_hydra(assetid: number, amount: number, account
 				parents: 0,
 				interior: {
 					X2: [
-						{ PalletInstance: 50 },
-						{ GeneralIndex: assetid },
+					  {
+						PalletInstance: 50,
+					  },
+					  {
+						GeneralIndex: assetid.toString(),
+					  },
 					],
-				},
+				  },
 			},
 		},
 		fun: { Fungible: amount },
-		parents: 0,
+	//	parents: 0,
 	};
 	//];
 
 	const tx = api.tx.polkadotXcm.limitedReserveTransferAssets(
-		{ V3: destination },
-		{ V3: account },
-		{ V3: [asset] },
+		{ V2: destination },
+		{ V2: account },
+		{ V2: [asset] },
 		0,
 		{ Unlimited: 0 }
 	);
