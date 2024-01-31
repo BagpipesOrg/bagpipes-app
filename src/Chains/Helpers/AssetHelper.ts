@@ -452,7 +452,7 @@ console.log(`processChainSpecificBalances tokenDecimals`, tokenDecimals);
   let totalInUnits: number;
   let balanceInfo: any;
 
-
+  console.log(`going to switch`);
   switch (chain) {
     case "polkadot":
       // Processing logic specific to Polkadot (if different from default)
@@ -486,7 +486,7 @@ console.log(`processChainSpecificBalances tokenDecimals`, tokenDecimals);
       reservedInUnits = toUnit(balances.reserved, assetDecimals || tokenDecimals);
       totalInUnits = freeInUnits + reservedInUnits;
   }
-
+  console.log(`okayy`);
   const adjustedBalances = {
     free: formatToFourDecimals(freeInUnits.toString()),
     reserved: formatToFourDecimals(reservedInUnits.toString()),

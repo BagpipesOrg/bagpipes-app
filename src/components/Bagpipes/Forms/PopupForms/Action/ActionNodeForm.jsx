@@ -103,6 +103,9 @@ export default function ActionNodeForm({ children, data, isConnectable }) {
         
         if(selectedAction.action === 'swap' && assetInFormData.chain === 'hydraDx' && assetOutFormData.chain === 'hydraDx') {
           console.log('fetchActionInfo Fetching for swap');
+          console.log('fetchActionInfo Fetching for swap');
+          console.log('assetInId, assetOutId, amount:', assetInId, assetOutId, amount);
+          console.log(`getting price`);
             const fetchedPriceInfo = await getHydraDxSellPrice(assetInId, assetOutId, amount);
             setPriceInfoMap(prevMap => ({
                 ...prevMap,
