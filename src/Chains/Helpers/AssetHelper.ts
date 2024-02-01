@@ -283,7 +283,7 @@ assetRegistry.assetMetadataMap(5)
   decimals: 10
 }
 */
-async function getHydradxAssetSymbolDecimals(assetid: number){
+export async function getHydradxAssetSymbolDecimals(assetid: number){
     const api = await getApiInstance('hydraDx');
     const resp = (await api.query.assetRegistry.assetMetadataMap(assetid)).toHuman();
     return resp;

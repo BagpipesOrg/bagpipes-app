@@ -2,7 +2,7 @@ import { dotToHydraDx, hydraDxToParachain, assethub_to_hydra, hydradx_to_assethu
 import { getTokenDecimalsByChainName } from "../../../../Chains/Helpers/AssetHelper";
 import toast from "react-hot-toast";
 
-// import { hydradx_omnipool_sell } from "../../../Chains/DraftTx/DraftSwapTx";
+import { hydradx_omnipool_sell } from "../../../../Chains/DraftTx/DraftSwapTx";
 import { listChains } from "../../../../Chains/ChainsInfo";
 import { account } from "@polkadot/api-derive/balances";
 
@@ -120,18 +120,24 @@ function handlexTransfer(formData) {
 function handleSwap(formData) {
     const source = formData.source;
     const target = formData.target;
-
+    console.log(`handle swap form data:`, formData);
       // Retrieve token decimals for the source chain
       const tokenDecimals = getTokenDecimalsByChainName(source.chain);
 
-      // Adjust the source amount according to the token decimals
+           // Adjust the source amount according to the token decimals
       const submittableAmount = source.amount * (10 ** tokenDecimals);
-
-
+        const assetin = source.assetId;
+        const assetout = target.assetId;
+        const amount = submittableAmount;
+        //const minBuyAmount = set as recieve amount ;
+      /// assetin = asset you have on your account
+/// assetout = asset you want to swap to
+/// amount = amount of assetin you want to swap to assetout
+/// minBuyAmount = minimum amount to buy, note: tx will fail if this is set to 0 or to low
       // TODO: handle swaps
     if (source.chain === 'hydraDx' && target.chain === 'hydraDx') {
-        // hydradx_omnipool_sell hydradx_omnipool_sell(assetin: string, assetout: string, amount: number, minBuyAmount: number)
-        return true;
+        return hydradx_omnipool_sell(assetin, assetout, source.amount, submittableAmount);  //hydradx_omnipool_sell(assetin: string, assetout: string, amount: number, minBuyAmount: number)
+       //  true;
     }
     throw new Error("You can only swap from hydradx to hydradx");
 }
