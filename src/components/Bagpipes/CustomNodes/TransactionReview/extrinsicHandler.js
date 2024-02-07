@@ -1,4 +1,4 @@
-import { dotToHydraDx, hydraDxToParachain, assethub_to_hydra, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
+import { dotToHydraDx, hydraDxToParachain, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
 import { getTokenDecimalsByChainName, get_hydradx_asset_symbol_decimals } from "../../../../Chains/Helpers/AssetHelper";
 import toast from "react-hot-toast";
 
@@ -74,7 +74,9 @@ function handlexTransfer(formData) {
         'hydraDx:polkadot': () => {
             console.log("handlexTransfer for HydraDx to Polkadot...");
             const paraid = 0;
-            return hydraDxToParachain(submittableAmount, source.assetId, target.chain, paraid);
+            const hamount = source.amount * (10 ** 10); // DOT asset on hydra has 10 decimals
+            return hydradx_to_polkadot(hamount, target.address);
+            //return hydraDxToParachain(submittableAmount, source.assetId, target.chain, paraid);
         },
 
         'assetHub:interlay': () => {

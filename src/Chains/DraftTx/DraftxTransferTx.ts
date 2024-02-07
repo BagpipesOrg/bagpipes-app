@@ -180,22 +180,29 @@ function number_to_string(input: number): number {
 // works: https://hydradx.subscan.io/extrinsic/4426243-2?tab=xcm_transfer
 export async function hydradx_to_assethub(
   amount: number,
-  destassetid: number, 
+  destassetid: number,
   sourceassetid: number,
   destaccount: string
 ) {
   const api = await getApiInstance("hydraDx");
   console.log(`hydradx to assethub called`);
   const assetid = destassetid;
-  console.log(`input: `, amount, assetid, destaccount, destassetid, sourceassetid);
+  console.log(
+    `input: `,
+    amount,
+    assetid,
+    destaccount,
+    destassetid,
+    sourceassetid
+  );
   const parachainid = 1000;
   const accountido = raw_address_now(destaccount);
   const nr_dec = await get_hydradx_asset_symbol_decimals(sourceassetid);
-  console.log(`nr_dec: `, nr_dec.decimals); 
+  console.log(`nr_dec: `, nr_dec.decimals);
   const convertedNumber: number = amount * Math.pow(10, nr_dec.decimals);
   console.log(`nr is:`, convertedNumber);
 
-  //	cons 
+  //	cons
   const asset = {
     id: {
       Concrete: {
@@ -482,6 +489,31 @@ export async function dotToParachain(amount: number, targetAddress: string) {
   );
   //	console.log(`tx created!`);
   //	console.log(tx.toHex());
+  return tx;
+}
+
+// tested and works: https://hydradx.subscan.io/extrinsic/4426487-2
+// hydradx > polkadot DOT transfers
+export async function hydradx_to_polkadot(
+  amount: number,
+  dest_account: string
+) {
+  const api = await getApiInstance("hydraDx");
+  const rawTargetAddress = getRawAddress(dest_account);
+
+  const asset = {};
+
+  const dest = {
+    interior: { X1: { AccountId32: { id: rawTargetAddress, network: null } } },
+    parents: 1,
+  };
+
+  const tx = await api.tx.xTokens.transfer(
+    { currencyId: 5 }, // DOT assetid
+    { amount: amount.toString() },
+    { V3: dest },
+    { unlimited: null }
+  );
   return tx;
 }
 
