@@ -122,13 +122,24 @@ const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     if (data && data.data.length > 0) {
       console.log('Webhook event received:', data.data);
       toast.success('Webhook event received');
-
+  
       const webhookEvent = data.data[0];
+      // Attempt to parse the content field if it exists and is a JSON string
+      let parsedContent = null;
+      try {
+        parsedContent = webhookEvent.content ? JSON.parse(webhookEvent.content) : null;
+      } catch (error) {
+        console.error('Error parsing webhook event content:', error);
+      }
+  
       const eventData = {
         query: webhookEvent.query,
+        body: webhookEvent.request || parsedContent, // Use request or parsed content
+        headers: webhookEvent.headers, 
         createdAt: webhookEvent.created_at,
         method: webhookEvent.method,
       };
+  
 
       // save the webhook object (including event data) in the zustand store
       const updatedWebhook = { ...selectedWebhookObject, eventData };

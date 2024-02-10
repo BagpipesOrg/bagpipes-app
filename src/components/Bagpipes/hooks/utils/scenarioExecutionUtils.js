@@ -33,19 +33,19 @@ export const findUpstreamNodes = (orderedList, nodeId) => {
     return orderedList.slice(0, currentNodeIndex);
   };
 
-  export const extractEventDataFromNodes = (nodes) => {
-    return nodes.flatMap(node => {
-      // Focus on the 'query' object inside 'eventData'
-      const queryData = node.formData?.eventData?.query || {};
-      return Object.entries(queryData).map(([key, value]) => ({
-        // Define the structure of your pills here
-        id: `${node.id}_${key}`, // Unique ID combining node ID and key
-        label: key, // The key is used as the label of the pill
-        value: value, // The value of the query parameter
-        // other properties as needed
-      }));
-    });
-  };
+//   export const extractEventDataFromNodes = (nodes) => {
+//     return nodes.flatMap(node => {
+//       // Focus on the 'query' object inside 'eventData'
+//       const queryData = node.formData?.eventData?.query || {};
+//       return Object.entries(queryData).map(([key, value]) => ({
+//         // Define the structure of your pills here
+//         id: `${node.id}_${key}`, // Unique ID combining node ID and key
+//         label: key, // The key is used as the label of the pill
+//         value: value, // The value of the query parameter
+//         // other properties as needed
+//       }));
+//     });
+//   };
   
   
 
