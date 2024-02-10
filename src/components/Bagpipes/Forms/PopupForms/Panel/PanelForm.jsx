@@ -2,19 +2,21 @@ import React, { useState, useRef, useEffect } from 'react';
 import useAppStore from '../../../../../store/useAppStore';
 import CollapsibleField from '../../fields/CollapsibleField';
 import FormHeader from '../../FormHeader';
-import { getOrderedList, findUpstreamNodes, extractEventDataFromNodes } from '../../../hooks/utils/scenarioExecutionUtils';
+import { getOrderedList, findUpstreamNodes } from '../../../hooks/utils/scenarioExecutionUtils';
 import { useTippy } from '../../../../../contexts/tooltips/TippyContext';
 import { getSavedFormState, setSavedFormState } from '../../../utils/storageUtils';
 import { useDrag, useDrop } from 'react-dnd';
 import CustomInput from '../../fields/CustomInput';
 import toast from 'react-hot-toast';
+import { nodeTypeColorMapping } from './nodeColorMapping';
+import { extractEventDataFromNodes } from './Pills/pillUtils';
 import '../Popup.scss';
 import '../../Forms.scss';
 import '../../../../../index.css';
 // import { PanelIcon } from '../../../../Icons/icons';
 
 
-const PanelForm = ({ nodeId }) => {
+const PanelForm = ({ nodeId, onClose }) => {
   const dropPositionRef = useRef(null);    
   const { scenarios, activeScenarioId, saveNodeFormData, savePanel, panels, setSelectedPanelInNode } = useAppStore(state => ({ 
         scenarios: state.scenarios,
@@ -29,7 +31,11 @@ const PanelForm = ({ nodeId }) => {
     const savedState = getSavedFormState(nodeId) ?? { inputNodes: node?.data?.inputNodes || [] };
     const [inputNodes, setInputNodes] = useState(node?.data?.inputNodes || []);
  
+    const handleCancel = () => {
     
+      onClose(); // Invoke the onClose function passed from the parent component
+  };
+
     // Function to remove a pill
     const removePill = (pillId) => {
       setPills(currentPills => currentPills.filter(pill => pill.id !== pillId));
@@ -52,59 +58,16 @@ const PanelForm = ({ nodeId }) => {
   
     }, [currentScenario.diagramData.edges, nodeId, currentScenario.diagramData.nodes]);
   
-    const extractEventDataFromNodes = (nodes, allNodes, orderedList) => {
-      
-      
-      const createPillsFromObject = (obj, nodeIndex, prefix = '', depth = 0) => {
-        return Object.entries(obj).flatMap(([key, value]) => {
-          const pillId = `${prefix}${key}`;
-          const isNested = typeof value === 'object' && value !== null;
-          
-          let pill = {
-            id: pillId,
-            label: key,
-            value: isNested ? null : value,
-            depth: depth,
-            children: isNested ? createPillsFromObject(value, `${pillId}.`, depth + 1) : [],
-            nodeIndex: nodeIndex + 1, 
 
-          };
-          console.log('pill', pill);
-    
-          return pill;
-        });
-      };
-    
-      return nodes.flatMap(nodeId => {
-        const node = allNodes.find(n => n.id === nodeId);
-        const nodeIndex = orderedList.indexOf(nodeId);
-        console.log('nodeIndex for', nodeId, ':', nodeIndex);
-
-
-    
-        if (!node) {
-          console.error(`Node with ID ${nodeId} not found.`);
-          return [];
-        }
-    
-        const queryData = node.formData?.eventData?.query;
-        console.log('extractEventDataFromNodes queryData for node', node.id, queryData);
-    
-        if (!queryData || typeof queryData !== 'object') {
-          return [];
-        }
-    
-        return createPillsFromObject(queryData, nodeIndex);
-      });
-    };
     
     const DraggablePill = ({ pill, depth, onRemovePill, onToggleExpand }) => {
-      console.log('Rendering pill:', pill.id, 'with nodeIndex:', pill.nodeIndex);
+      const pillColor = nodeTypeColorMapping[pill.nodeType] || nodeTypeColorMapping.defaultColor;
+      console.log(`Node type draggable: ${pill.nodeType}, Color: ${pillColor}`);
 
       const [isExpanded, setIsExpanded] = useState(false);
       const [{ isDragging }, drag, preview] = useDrag(() => ({
         type: 'PILL',
-        item: { id: pill.id, label: pill.label },
+        item: { id: pill.id, label: pill.label, nodeIndex: pill.nodeIndex, nodeType: pill.nodeType },
         collect: (monitor) => ({
           isDragging: !!monitor.isDragging(),
         }),
@@ -119,17 +82,21 @@ const PanelForm = ({ nodeId }) => {
 
     
       return (
-        <div ref={drag} style={{ opacity: isDragging ? 0.5 : 1, marginLeft: `${depth * 20}px` }}>
+        <div className='flex m-2'>
+          <div ref={drag} style={{ opacity: isDragging ? 0.5 : 1, marginLeft: `${depth * 20}px`}}>
           {pill.children.length > 0 && (
-            <button onClick={toggleExpand}>{isExpanded ? '-' : '+'}</button>
+            <span className='p-1 m-1 cursor-pointer' onClick={toggleExpand}>{isExpanded ? '-' : '+'}</span>
           )}
-          <span className="bg-green-500 w-full text-white mt-1 p-1 border-green-500 rounded cursor-pointer">
-          {pill.nodeIndex}. {pill.label}
-            {/* : {pill.value} */}
-          </span>
+          <span style={{backgroundColor: pillColor}} className={`w-full text-white mt-2 p-1 border-green-500 rounded cursor-pointer`}>
+          {/* {pill.nodeIndex}. {pill.label} */}
+          {pill.label}
+            
+          </span> 
           {isExpanded && pill.children.map(child => (
             <DraggablePill key={child.id} pill={child} depth={depth + 1} onRemovePill={onRemovePill} />
           ))}
+        </div>
+        <span  className='ml-2 text-gray-500'>{pill.value}</span>
         </div>
       );
     };
@@ -169,16 +136,20 @@ const PanelForm = ({ nodeId }) => {
 
 
   return (
-    <div>
-      <FormHeader title='Control Panel' />  
+    <div className="form-container" style={{ maxHeight: '80vh', overflowY: 'auto' }}>
+      <FormHeader onClose={handleCancel}  title='Control Panel' />  
+
 
       {/* <DraggableNode nodeId="node1" type="1. referendum_hash" label="referendum_hash" />
       <DraggableNode nodeId="node2" type="1. proposal_hash" label=" test_2" /> */}
       
-      {pills.map(pill => (
-        <DraggablePill key={pill.id} pill={pill} depth={0} onRemovePill={removePill} />
-      ))}
+      <div className="content">
+
+        {pills.map(pill => (
+          <DraggablePill key={pill.id} pill={pill} depth={0} onRemovePill={removePill} />
+        ))}
       
+      </div>
     </div>
   );
 };

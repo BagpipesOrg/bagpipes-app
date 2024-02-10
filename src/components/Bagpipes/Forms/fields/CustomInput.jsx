@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './Fields.scss';
 import { useDrop } from 'react-dnd';
 import { setCaretPosition, getCaretPosition, updateCombinedValue, insertPillAtPosition  } from './utils';
+import { nodeTypeColorMapping } from '../PopupForms/Panel/nodeColorMapping';
 
 const CustomInput = ({ value, onChange, onClick, placeholder, className, pills, setPills, }) => {
   const editableInputRef = useRef(null);
@@ -9,7 +10,7 @@ const CustomInput = ({ value, onChange, onClick, placeholder, className, pills, 
   const [editableContent, setEditableContent] = useState("");
   const [dropPosition, setDropPosition] = useState({ x: 0, y: 0 });
   const [{ isOver }, drop] = useDrop({
-    accept: ['NODE', 'PILL'], // Accept both types
+    accept: ['NODE', 'PILL'], 
      hover: (item, monitor) => {
       const dropPosition = monitor.getClientOffset();
       const clientOffset = monitor.getClientOffset();
@@ -20,24 +21,28 @@ const CustomInput = ({ value, onChange, onClick, placeholder, className, pills, 
         const yPosition = clientOffset.y - dropTargetRect.top;
       
         setDropPosition({ x: xPosition, y: yPosition });
-        console.log("CustomInput Drop position:", xPosition, yPosition);  // Debug log
+        console.log("CustomInput Drop position:", xPosition, yPosition);  
 
       }
     },
     drop: (item, monitor) => {
       if (monitor.isOver({ shallow: true })) {
+
+        const color = nodeTypeColorMapping[item.nodeType] || 'defaultColor'; 
+
         const newPill = {
           id: item.id,  
           text: item.label,  
-          color: 'green',
-          contentEditable: false, // Color or other styling for the pill
+          color: color,
+          contentEditable: false, 
           draggable: true,
+          nodeIndex: item.nodeIndex, 
         };
-        console.log("CustomInput Dropping item:", item); 
+        console.log("CustomInput Dropping item with nodeIndex:", item.nodeIndex); 
         insertPillAtPosition(editableInputRef, newPill, dropPosition, onChange, handleDragStart, handleDragEnd, removePill);
 
-        setPills(currentPills => [...currentPills, newPill]);
-        updateCombinedValue(editableInputRef.current, onChange);
+        // setPills(currentPills => [...currentPills, newPill]);
+        // updateCombinedValue(editableInputRef.current, onChange);
       }
     },
     collect: monitor => ({
@@ -55,10 +60,10 @@ const refCallback = useCallback(
     // Assigns the node to the drop ref
     drop(node);
 
-    // Also keeps your own reference to the node
+    // Also keeps reference to the node
     editableInputRef.current = node;
   },
-  [drop], // Recreate this callback if 'drop' changes
+  [drop], 
 );
 
 
@@ -68,13 +73,13 @@ const refCallback = useCallback(
     setEditableContent(value);
   }, [value]);
 
-  const insertPill = (pill) => {
-    const pillHtml = `<span class="pill" contenteditable="false" style="background-color: ${pill.color};">${pill.text}</span>`;
-    setEditableContent(prev => prev + pillHtml);
-    // onChange(editableContent + pillHtml);
-    updateCombinedValue(editableInputRef.current, onChange);
+  // const insertPill = (pill) => {
+  //   const pillHtml = `<span class="pill" contenteditable="false" style="background-color: ${pill.color};">${pill.nodeIndex} ${pill.text}</span>`;
+  //   setEditableContent(prev => prev + pillHtml);
+  //   // onChange(editableContent + pillHtml);
+  //   updateCombinedValue(editableInputRef.current, onChange);
 
-  };
+  // };
   
 
 

@@ -1,3 +1,4 @@
+
 export const getCaretPosition = (editableDivRef) => {
     const editableDiv = editableDivRef.current;
     if (!editableDiv) {
@@ -77,13 +78,13 @@ export const getCaretPosition = (editableDivRef) => {
         const pillId = node.getAttribute('data-id');
         const pillText = node.textContent;
         const pillColor = node.style.backgroundColor;
-        combinedValue += `<span draggable="true" contenteditable="false" class="pill" data-id="${pillId}" style="background-color: ${pillColor};">${pillText}</span>`;
+        const nodeIndex = node.getAttribute('data-nodeindex');
+        // combinedValue += `<span draggable="true" contenteditable="false" class="pill" data-id="${pillId}" data-text="${pillText}" data-nodeindex="${nodeIndex}" style="background-color: ${pillColor};">${nodeIndex} ${pillText}</span>`;
       }
     });
     console.log("CustomInput 4. combinedValue:", combinedValue);
   
     // Update the state or prop that tracks the combined value
-    // Assuming 'onChange' is a prop function to update the parent component
     onChange(combinedValue);
   };
 
@@ -157,12 +158,12 @@ const calculateIndexFromPosition = (editableDiv, position) => {
   const createPillElement = (pill, onDragStart, onDragEnd, onRemovePill) => {
     let pillElement = document.createElement('span');
     pillElement.setAttribute('data-id', pill.id);
-    pillElement.textContent = pill.text;
+    pillElement.textContent = `${pill.nodeIndex}. ${pill.text}`;    
     console.log("CustomInput 1. text content:", pill.text);
     pillElement.className = 'pill';
     pillElement.style.backgroundColor = pill.color;
     pillElement.setAttribute('contenteditable', 'false');
-  
+    pillElement.setAttribute('data-nodeindex', pill.nodeIndex);
     pillElement.draggable = true;
     pillElement.addEventListener('click', () => onRemovePill(pill.id));
     pillElement.addEventListener('dragstart', (event) => onDragStart(event, pill));
@@ -173,27 +174,27 @@ const calculateIndexFromPosition = (editableDiv, position) => {
   };
   
   export const insertPillAtPosition = (editableInputRef, pill, dropCoordinates, onChange, handleDragStart, handleDragEnd, removePill) => {
-    const editableDiv = editableInputRef.current;
-    if (!editableDiv) return;
-  
-    let index;
-    if (dropCoordinates) {
-      index = calculateIndexFromPosition(editableDiv, dropCoordinates);
-  } else {
-  // If dropCoordinates aren't provided, use the caret position
-  const caretPos = getCaretPosition(editableInputRef);
-  index = calculateIndexFromCaretPosition(editableDiv, caretPos);
+      const editableDiv = editableInputRef.current;
+      if (!editableDiv) return;
+    
+      let index;
+      if (dropCoordinates) {
+        index = calculateIndexFromPosition(editableDiv, dropCoordinates);
+      } else {
+      // If dropCoordinates aren't provided, use the caret position
+      const caretPos = getCaretPosition(editableInputRef);
+      index = calculateIndexFromCaretPosition(editableDiv, caretPos);
+    }
+    
+    let pillElement = createPillElement(pill, handleDragStart, handleDragEnd, removePill);
+    
+    if (editableDiv.childNodes[index]) {
+      editableDiv.insertBefore(pillElement, editableDiv.childNodes[index]);
+    } else {
+      editableDiv.appendChild(pillElement);
   }
   
-  let pillElement = createPillElement(pill, handleDragStart, handleDragEnd, removePill);
-  
-  if (editableDiv.childNodes[index]) {
-  editableDiv.insertBefore(pillElement, editableDiv.childNodes[index]);
-  } else {
-  editableDiv.appendChild(pillElement);
-  }
-  
-  updateCombinedValue(editableDiv, onChange); // Update the combined value
+    updateCombinedValue(editableDiv, onChange); // Update the combined value
   };
   
   export const insertPillAtCursorPosition = (editableInputRef, pill, handleDragStart, handleDragEnd) => {

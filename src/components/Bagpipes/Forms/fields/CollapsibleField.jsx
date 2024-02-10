@@ -18,7 +18,7 @@ const { Option } = Select;
 
 const CollapsibleField = ({ nodeId, title, info, toggleTitle, hasToggle,fieldTypes, items, selectOptions=[], selectRadioOptions=[], children, value, onChange }) => {
   const [isToggled, setIsToggled] = useState(false);
-  const { showPanelTippy } = usePanelTippy();
+  const { showPanelTippy, hidePanelTippy } = usePanelTippy();
   const [droppedItems, setDroppedItems] = useState([]);
   const [pills, setPills] = useState([]);
   const [editableContent, setEditableContent] = useState("");
@@ -60,7 +60,7 @@ const CollapsibleField = ({ nodeId, title, info, toggleTitle, hasToggle,fieldTyp
       x: rect.right + parentTippyOffset,
       y: rect.top
     };
-    showPanelTippy( nodeId, calculatedPosition, <PanelForm nodeId={nodeId} />);
+    showPanelTippy( nodeId, calculatedPosition, <PanelForm nodeId={nodeId} onClose={hidePanelTippy} />);
     event.stopPropagation();
   };
 
@@ -123,7 +123,7 @@ const CollapsibleField = ({ nodeId, title, info, toggleTitle, hasToggle,fieldTyp
          <CustomInput 
               value={value}
               onChange={onChange}
-              onClick={(e) => handleInputClick(e, nodeId)} // If needed
+              onClick={(e) => handleInputClick(e, nodeId)} 
               placeholder={info}
               className='custom-input'
               pills={pills}
@@ -187,48 +187,50 @@ const CollapsibleField = ({ nodeId, title, info, toggleTitle, hasToggle,fieldTyp
           </Radio.Group>
           
           );
-          break;
-        
+          break; 
       case 'items':
    
-      const addItem = () => {
-        const newItems = [...items, { key: '', value: '', id: generateUniqueId() }]; 
-        onChange(newItems);
-      };
-    
-    
-      const deleteItem = (itemToDelete) => {
-        const newItems = items.filter(item => item !== itemToDelete);
-        onChange(newItems); // Update the parent component
-      };
-    
-      const updateItem = (updatedItem) => {
-        const newItems = items.map(item => item.id === updatedItem.id ? updatedItem : item);
-        onChange(newItems);
-      };
-    
+        const addItem = () => {
+          const newItems = [...items, { key: '', value: '', id: generateUniqueId() }]; 
+          onChange(newItems);
+        };
+      
+      
+        const deleteItem = (itemToDelete) => {
+          const newItems = items.filter(item => item !== itemToDelete);
+          onChange(newItems); // Update the parent component
+        };
+      
+        const updateItem = (updatedItem) => {
+          const newItems = items.map(item => item.id === updatedItem.id ? updatedItem : item);
+          onChange(newItems);
+        };
+      
 
-      content = (
-        <div className='flex flex-col '>
-          {items.map((item, index) => (
-            <ItemField
-              key={item.id}              
-              title={`${item.id}`}
-              item={item}
-              onDelete={() => deleteItem(item)}
-              onItemChange={(updatedItem) => updateItem(updatedItem)}
-              handleInputClick={(e) => handleInputClick(e, nodeId)}
-              pills={pills}
-              setPills={setPills}
-              />
-          ))}
-          <button className='flex items-center text-gray-700 text-sm' onClick={addItem}>
-            <PlusIcon className='add-item-icon' />
-            Add item
-          </button>
-        </div>
-      );
+        content = (
+          <div className='flex flex-col '>
+            {items.map((item, index) => (
+              <ItemField
+                key={item.id}              
+                title={`${item.id}`}
+                item={item}
+                onDelete={() => deleteItem(item)}
+                onItemChange={(updatedItem) => updateItem(updatedItem)}
+                handleInputClick={(e) => handleInputClick(e, nodeId)}
+                pills={pills}
+                setPills={setPills}
+                />
+            ))}
+            <button className='flex items-center text-gray-700 text-sm' onClick={addItem}>
+              <PlusIcon className='add-item-icon' />
+              Add item
+            </button>
+          </div>
+        );
       break
+    case 'accordion':
+      
+    break;
       default:
         content = <div className="description">{info}</div>;
     }
