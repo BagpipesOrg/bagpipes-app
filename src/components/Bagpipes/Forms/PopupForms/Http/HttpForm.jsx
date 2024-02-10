@@ -215,6 +215,8 @@ const initializeFormValues = () => {
       const httpEvent = data.data[0];
       const eventData = {
         query: httpEvent.query,
+        body: httpEvent.request || parsedContent, // Use request or parsed content
+        headers: httpEvent.headers, 
         createdAt: httpEvent.created_at,
         method: httpEvent.method,
       };

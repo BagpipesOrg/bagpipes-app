@@ -1,7 +1,7 @@
 @import "variables";
 body {
   margin: 0;
-  font-family: $primary-font;
+  font-family: $primary-font !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #020412;
@@ -24,19 +24,27 @@ code {
 
 .xcm-send-btn-wallet {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #0059ff;
-  border: none;
+  align-items: center; /* Vertically center the items */
+  justify-content: center; /* Horizontally center the items */
+  // background-color: $lighter-primary-color;
+  color: white;
+  font-weight: 500;
+  padding: 0.5rem 0.8rem;
   border-radius: 8px;
-  height: auto;
-  outline: 0;
-  box-shadow: none;
-
-  &:hover, &:focus, &:active {
-    background-color: #226fff;
+  z-index: 1000;
+  transition: background-color 0.3s;
+  cursor: pointer;
+  // min-width: 130px;
+    background-color: $lighter-primary-color;
+  
+  
+  &:hover {
+    background-color: darken(#007bff, 10%);
+    color: white !important;
   }
-}
+  }
+
+
 
 .xcm-send-btn {
   color: rgb(0, 0, 0) !important;
@@ -149,3 +157,11 @@ code {
   left: 20px !important; /* Adjust for position when switched on */
 }
 
+.lab-buttons {
+  background-color: $primary-color;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
