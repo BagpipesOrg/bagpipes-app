@@ -73,22 +73,17 @@ function Header ({ open }: Props): React.ReactElement<Props> {
                 >
                 <span className='button-header-text'>Lab</span>
               </Button> */}
-              <Button
-                className='xcm-send-btn-wallet xcm-send-btn-small-size'
+              <button
+                className='xcm-send-btn-wallet'
                 onClick={selectWallet.open}
-                type={'primary'}
+                // type={'primary'}
               >
-                <WalletIcon />Select Wallet
-              </Button> 
+                <span className='mr-2'><WalletIcon /></span>Select Wallet
+             </button>
               <div className="absolute top-0 right-0">
               <ThemeToggleButton />
         </div> 
-              
-
-          
           </div>
-          
-         
             </div>
         </header>
       );

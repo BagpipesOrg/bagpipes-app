@@ -13,6 +13,7 @@ import ReactTestFlow from '../../ReactTestFlow';
 import Sidebar from '../Bagpipes/Sidebar/Sidebar';
 import Header from '../Header';
 import Lab from '../../pages/Lab/Lab';
+import ScenarioInfo from '../../pages/Lab/Scenario';
 import Parachains from '../../pages/Parachains/Parachains';
 import ThemeContext from '../../contexts/ThemeContext';
 import Tippy from '@tippyjs/react';
@@ -38,6 +39,7 @@ function MainLayout({ children }) {
   <div className={`main-layout ${theme === 'dark' ? '-dark' : '-light'}`}>
 
 {tippyProps.visible && (
+
         <Tippy
           appendTo={tippyProps.reference || (() => document.body)}
           content={tippyProps.content}
@@ -49,22 +51,25 @@ function MainLayout({ children }) {
         >
           <div style={{ position: 'fixed', left: tippyProps.position.x, top: tippyProps.position.y }}></div>
         </Tippy>
+
       )}
 
-{panelTippyProps.visible && (
+      {panelTippyProps.visible && (
         <Tippy
-          appendTo={panelTippyProps.reference || (() => document.body)}
-          content={panelTippyProps.content}
-          interactive={true}
-          placement="right"
-          visible={panelTippyProps.visible}
-          theme="light"
-          trigger='click'
-          hideOnClick="toggle"    
-          onClickOutside={() => hidePanelTippy()}
-        >
-          <div style={{ position: 'fixed', left: panelTippyProps.position.x, top: panelTippyProps.position.y }}></div>
-        </Tippy>
+      appendTo={() => document.body}
+      content={panelTippyProps.content}
+      interactive={true}
+      placement={panelTippyProps.placement}
+      visible={panelTippyProps.visible}
+      theme="light"
+      trigger='click'
+      hideOnClick="toggle"
+      onClickOutside={() => hidePanelTippy()}
+      flip={true}
+      boundary="viewport"
+    >
+      <div style={{ position: 'fixed', left: panelTippyProps.position.x, top: panelTippyProps.position.y }}></div>
+    </Tippy>
       )}
 
 
@@ -114,6 +119,7 @@ function MainLayout({ children }) {
                     <Route path="builder" element={<BagpipesFlowRoute />} />
 
                     <Route path="lab" element={<Lab />} />
+                    <Route path="/scenario/:scenarioId" element={<ScenarioInfo />} />
                     <Route path="wallet-info" element={<WalletInfo />} />
                     <Route path="transaction/review" element={<TransactionMain />} />
                     <Route path="parachains" element={<Parachains />} />

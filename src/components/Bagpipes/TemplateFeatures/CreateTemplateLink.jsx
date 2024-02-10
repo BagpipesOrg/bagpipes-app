@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useAppStore } from '../hooks';
 import { compressString } from './compress';
+import { CopyIcon } from '../../Icons/icons'
 import toast from 'react-hot-toast';
-
+import '../../../index.scss'; 
 
 const CreateTemplateLink = ({ scenarioId }) => {
   const { scenarios } = useAppStore((state) => ({
@@ -66,9 +67,10 @@ const CreateTemplateLink = ({ scenarioId }) => {
       <div className=''>
         {/* <input type="text" value={templateLink} readOnly /> */}
         <button 
-          className='flex items-center dndnode bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' 
+          className='lab-buttons flex items-center hover:bg-blue-700 text-white font-semibold rounded' 
           onClick={handleCopyToClipboard}
         >
+          <CopyIcon className='h-4 w-4 mr-1' />
           Copy Link
         </button>
       </div>

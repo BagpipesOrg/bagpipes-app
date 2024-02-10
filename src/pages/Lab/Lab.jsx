@@ -94,7 +94,7 @@ function Lab() {
 
                         
                           <button 
-                            className="edit-button-right flex items-center"
+                            className="lab-buttons flex items-center"
                             onClick={(e) => { e.stopPropagation(); editScenario(scenarioId); }}
                           >
                             {EditIcon}

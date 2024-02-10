@@ -310,7 +310,8 @@ const useAppStore = create(
             nodeId: node.id,
             timestamp: new Date().toISOString(), // You can modify this if needed
             nodeContent: node.data?.nodeContent || '', // Safely fetching nodeContent
-            nodeType: node.type
+            nodeType: node.type,
+            executionStatus: {}
           };
         });
     
@@ -425,6 +426,45 @@ const useAppStore = create(
             console.log("[saveNodeFormData] Updated scenarios:", updatedScenarios, scenarioId);
             return { scenarios: updatedScenarios };
         });
+    },
+
+    // Assuming this function is updated to accept a scenarioId as well
+    updateNodeExecutionStatus: (scenarioId, executionId, nodeId, statusUpdate) => {
+      set((state) => {
+        const scenario = state.scenarios[scenarioId];
+        if (!scenario || !scenario.executions || !scenario.executions[executionId]) {
+          console.error(`[updateNodeExecutionStatus] Execution with ID ${executionId} not found in scenario ${scenarioId}.`);
+          return;
+        }
+
+        if (!scenario.executions[executionId][nodeId]) {
+          console.error(`[updateNodeExecutionStatus] Node with ID ${nodeId} not found in execution ${executionId}.`);
+          return;
+        }
+
+        // Using a more immutable approach to update the state
+        return {
+          scenarios: {
+            ...state.scenarios,
+            [scenarioId]: {
+              ...scenario,
+              executions: {
+                ...scenario.executions,
+                [executionId]: {
+                  ...scenario.executions[executionId],
+                  [nodeId]: {
+                    ...scenario.executions[executionId][nodeId],
+                    executionStatus: {
+                      ...scenario.executions[executionId][nodeId].executionStatus,
+                      ...statusUpdate,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        };
+      });
     },
 
     saveTriggerNodeToast: (scenarioId, nodeId, shouldTrigger) => {
