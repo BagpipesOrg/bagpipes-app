@@ -1,5 +1,5 @@
 // Copyright 2019-2023 @bagpipes/xcm-send authors & contributors
-// SPDX-License-Identifier: Apache-2.0
+// Bagpipes license, read license.md 
 import React, { useState, useEffect, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
