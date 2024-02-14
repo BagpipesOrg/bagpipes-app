@@ -38,7 +38,7 @@ const createPillsFromNode = (node, orderedList) => {
         value: isNested ? null : value,
         color: nodeTypeColorMapping[nodeType] || defaultColor,
         depth: depth,
-        children: isNested ? createPillsFromObject(value, `${pillId}.`, depth + 1, nodeType) : [],
+        children: isNested ? createPillsFromObject(value, `${pillId}.`, depth + 1, nodeType, nodeIndex) : [],
         nodeIndex: nodeIndex + 1,
         nodeType: nodeType,
       };

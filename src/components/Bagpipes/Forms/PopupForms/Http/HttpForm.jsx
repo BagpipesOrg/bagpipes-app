@@ -27,8 +27,7 @@ const HttpForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     saveNodeFormData: state.saveNodeFormData,
    }));
 
-   const selectedHttp = scenarios[activeScenarioId]?.diagramData.nodes.find(node => node.id === nodeId)?.selectedHttp || '';
-
+  const selectedHttp = scenarios[activeScenarioId]?.diagramData.nodes.find(node => node.id === nodeId)?.selectedHttp || '';
   const [isCreateFormVisible, setCreateFormVisible] = useState(false);
   const createFormRef = useRef();
   const { hideTippy } = useTippy();
@@ -360,8 +359,6 @@ const initializeFormValues = () => {
       }
     }
 
-    
-  
     return true;
   };
   
@@ -390,12 +387,12 @@ const initializeFormValues = () => {
         case 'input':
             fieldElement = (
                 <CollapsibleField
-                fieldTypes='input'
-                {...commonProps}
-                placeholder={field.label}
-                info={field.description}
-                value={formData[field.key] || ''}
-                onChange={(value) => handleFieldChange(field.key, value)}
+                  fieldTypes='input'
+                  {...commonProps}
+                  placeholder={field.label}
+                  info={field.description}
+                  value={formData[field.key] || ''}
+                  onChange={(value) => handleFieldChange(field.key, value)}
                 />
             );
             break;
@@ -408,13 +405,12 @@ const initializeFormValues = () => {
             }
             fieldElement = (
                 <CollapsibleField
-                
-                {...commonProps}
-                fieldTypes='select'
-                info={field.description}
-                selectOptions={field.options}
-                value={formData[field.key] || field.default}
-                onChange={(value) => handleSelectChange(field.key, value)}
+                  {...commonProps}
+                  fieldTypes='select'
+                  info={field.description}
+                  selectOptions={field.options}
+                  value={formData[field.key] || field.default}
+                  onChange={(value) => handleSelectChange(field.key, value)}
                 />
             );
             break;
