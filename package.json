@@ -11,7 +11,7 @@
   "scripts": {
     "gen-gitinfo": "echo export default \"\\\"$(git rev-parse HEAD)\\\"\"  > src/components/Bagpipes/_git_commit.js",
     "build:tailwind": "npx tailwindcss -c ./tailwind.config.js -i ./src/index.css -o dist/output.css",
-    "dev": "yarn build:tailwind && vite",
+    "dev": "yarn build:tailwind && vite --force",
     "build": "tsc && yarn build:tailwind && vite build ",
     "test": "npx tsx src/run_tests.ts",
     "format": "npx prettier --write 'src/*/*/*.ts'",
@@ -53,7 +53,7 @@
     "@polkadot/ui-keyring": "^3.1.4",
     "@polkadot/util": "^12.4.2",
     "@polkadot/util-crypto": "^12.4.2",
-    "@polkadot/wasm-crypto": "^7.2.2",
+    "@polkadot/wasm-crypto": "^7.3.2",
     "@sub-wallet/wallet-connect": "./src/components/Wallet/wallet-connect",
     "@subwallet/wallet-connect": "^0.2.3",
     "@testing-library/jest-dom": "^5.14.1",

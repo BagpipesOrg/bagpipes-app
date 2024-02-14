@@ -14,6 +14,7 @@ export default defineConfig({
     })  
   ],
 optimizeDeps: {
+  include: ['wasm-crypto'],
         esbuildOptions: {
             // Node.js global to browser globalThis
             define: {

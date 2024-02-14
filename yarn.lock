@@ -1774,18 +1774,24 @@
   resolved "https://registry.yarnpkg.com/@galacticcouncil/math-omnipool/-/math-omnipool-0.2.0.tgz#f7337dbb2e608a50970fb9c0c2d96124fa7c71f6"
   integrity sha512-D8p1XzA4zrdMQjWY5Ldha/a+CjEAkjwO3yTM3JjtbHLb3ImXTNuWLSUdfCWYpmBzFc/NGXPvTWPfnWb9q3SS7Q==
 
+"@galacticcouncil/math-stableswap@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@galacticcouncil/math-stableswap/-/math-stableswap-0.2.1.tgz#a204c24f83f649f271f983630295607867e0c0a1"
+  integrity sha512-GYd7ILIp6H33+M/3dhHOiO4Oqx8qfbuz7r5f0Q+gDn/nfvb8EyrFJhdSVLJ97KA6+z3PEJmzQNa1MpJlZR7WYQ==
+
 "@galacticcouncil/math-xyk@^0.2.0":
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@galacticcouncil/math-xyk/-/math-xyk-0.2.0.tgz#74feacdf94d4846f1a148835f25936b2ddc7bdfd"
   integrity sha512-mznedOeA8d9BQ8kUQ/4O/P6trqTC4FGwvTDGCHJ0O/bgA9iFb+suctbFtyFT3qfNnngR7FSF2Pls1O/SvtNn8g==
 
-"@galacticcouncil/sdk@^0.6.5":
-  version "0.6.5"
-  resolved "https://registry.yarnpkg.com/@galacticcouncil/sdk/-/sdk-0.6.5.tgz#dfc3807ab2176948a74e64f20ef9aa23a07baf60"
-  integrity sha512-SshGOVJcvDJB92VqgKzq6lwIC3iG+WqlSMiK/DmU3B2ookfWKNY0lVnWrH4xl2yw0zlRb+8mFKrrKrEQRK1Jkg==
+"@galacticcouncil/sdk@^1.1.6":
+  version "1.1.8"
+  resolved "https://registry.yarnpkg.com/@galacticcouncil/sdk/-/sdk-1.1.8.tgz#0364c80d9ea3beb7c6c2f3be949d49a10ae46a36"
+  integrity sha512-4xRZWim6L7vdAweBwXqTsfg3VVPfBKv8sWZwNItprF3ekv7O4S9zKYCA7uNuO43M3KsvFZTswxmHu72aUThM/Q==
   dependencies:
     "@galacticcouncil/math-lbp" "^0.2.1"
     "@galacticcouncil/math-omnipool" "^0.2.0"
+    "@galacticcouncil/math-stableswap" "^0.2.1"
     "@galacticcouncil/math-xyk" "^0.2.0"
     "@thi.ng/cache" "^2.1.35"
     bignumber.js "^9.1.0"
@@ -3038,7 +3044,7 @@
     "@polkadot/wasm-util" "7.3.2"
     tslib "^2.6.2"
 
-"@polkadot/wasm-crypto@^7.2.2", "@polkadot/wasm-crypto@^7.3.2":
+"@polkadot/wasm-crypto@^7.3.2":
   version "7.3.2"
   resolved "https://registry.yarnpkg.com/@polkadot/wasm-crypto/-/wasm-crypto-7.3.2.tgz#61bbcd9e591500705c8c591e6aff7654bdc8afc9"
   integrity sha512-+neIDLSJ6jjVXsjyZ5oLSv16oIpwp+PxFqTUaZdZDoA2EyFRQB8pP7+qLsMNk+WJuhuJ4qXil/7XiOnZYZ+wxw==
@@ -7031,11 +7037,6 @@ clone@^2.1.1:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/clone/-/clone-2.1.2.tgz#1b7f4b9f591f1e8f83670401600345a02887435f"
   integrity sha512-3Pe/CF1Nn94hyhIYpjtiLhdCoEoz0DqQ+988E9gmeEdQZlojxnOb74wctFyuwWQHzqyf9X7C7MG8juUpqBJT8w==
-
-clsx@^1.1.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.2.1.tgz#0ddc4a20a549b59c93a4116bb26f5294ca17dc12"
-  integrity sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==
 
 co@^4.6.0:
   version "4.6.0"
@@ -15415,14 +15416,6 @@ react-dom@^18.2.0:
   dependencies:
     loose-envify "^1.1.0"
     scheduler "^0.23.0"
-
-react-draggable@^4.4.6:
-  version "4.4.6"
-  resolved "https://registry.yarnpkg.com/react-draggable/-/react-draggable-4.4.6.tgz#63343ee945770881ca1256a5b6fa5c9f5983fe1e"
-  integrity sha512-LtY5Xw1zTPqHkVmtM3X8MUOxNDOUhv/khTgBgrUvwaS064bwVvxT+q5El0uUFNx5IEPKXuRejr7UqLwBIg5pdw==
-  dependencies:
-    clsx "^1.1.1"
-    prop-types "^15.8.1"
 
 react-error-overlay@6.0.9:
   version "6.0.9"
