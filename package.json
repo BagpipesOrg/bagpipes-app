@@ -7,6 +7,7 @@
   ],
   "private": true,
   "version": "0.0.8",
+  "license": "Bagpipes License",
   "type": "module",
   "scripts": {
     "gen-gitinfo": "echo export default \"\\\"$(git rev-parse HEAD)\\\"\"  > src/components/Bagpipes/_git_commit.js",
