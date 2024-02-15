@@ -1,6 +1,6 @@
 // @ts-nocheck
-// Copyright 2019-2022 @bagpipes/xcm-send author Ramsey Ajram (https://decentration.org)
-// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024 Bagpipes license, see LICENSE.md 
+
 // @ts-nocheck
 
 import React, { useState, useRef, useCallback , useEffect, memo, useContext,  } from 'react';

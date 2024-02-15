@@ -1,3 +1,5 @@
+// Copyright 2024 Bagpipes license, see LICENSE.md 
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
