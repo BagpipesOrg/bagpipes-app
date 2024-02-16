@@ -9,10 +9,8 @@ function ScenarioInfo() {
   const [openExecutions, setOpenExecutions] = useState({});
   const [openNodeDetails, setOpenNodeDetails] = useState({});
 
-  const { scenarios, loadScenario, deleteExecution } = useAppStore((state) => ({
+  const { scenarios } = useAppStore((state) => ({
     scenarios: state.scenarios,
-    loadScenario: state.loadScenario,
-    deleteExecution: state.deleteExecution,
   }));
 
   const scenario = scenarios ? scenarios[scenarioId] : null;
@@ -31,6 +29,54 @@ function ScenarioInfo() {
       [key]: !prev[key],
     }));
   };
+
+  // Function to render node-specific details based on nodeType
+  const renderNodeDetails = (nodeData) => {
+    switch (nodeData.nodeType) {
+      case 'action':
+        return (
+          <table>
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Block Hash</th>
+                <th>Timestamp</th>
+              </tr>
+            </thead>
+            <tbody>
+              {nodeData.responseData?.updates?.map((update, index) => (
+                <React.Fragment key={index}>
+                  {update.inBlock && (
+                    <tr>
+                      <td>In Block</td>
+                      <td>{update.inBlock}</td>
+                      <td>{update.timestamp}</td>
+                    </tr>
+                  )}
+                  {update.finalized && (
+                    <tr>
+                      <td>Finalized</td>
+                      <td>{update.finalized}</td>
+                      <td>{update.timestamp}</td>
+                    </tr>
+                  )}
+                  {update.error && (
+                    <tr>
+                      <td>Error</td>
+                      <td colSpan="2">{update.error}</td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              ))}
+            </tbody>
+          </table>
+        );
+      // Add cases for other node types with different data structures
+      default:
+        return <p>No execution details available for this node type.</p>;
+    }
+  };
+  
 
   return (
     <div className="scenario-container main-font">
@@ -75,24 +121,13 @@ function ScenarioInfo() {
                           <tr className="node-execution-details-row">
                             <td colSpan="4">
                               <div className="node-execution-details">
-                                {/* Dynamically render execution status data here */}
-                                {nodeData.executionStatus?.inBlock && (
-                                  <p>Transaction included at blockHash {nodeData.executionStatus.inBlock}</p>
-                                )}
-                                {nodeData.executionStatus?.finalized && (
-                                  <p>Transaction finalized at blockHash {nodeData.executionStatus.finalized}</p>
-                                )}
-                                {nodeData.executionStatus?.error && (
-                                  <p>Error: {nodeData.executionStatus.error}</p>
-                                )}
-                                {/* You can add more details based on what you store in your execution status */}
+                                {renderNodeDetails(nodeData)}
                               </div>
                             </td>
                           </tr>
                         )}
                       </React.Fragment>
                     ))}
-
                   </tbody>
                 </table>
               </div>
