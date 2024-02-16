@@ -108,3 +108,37 @@ export function processScenarioData(diagramData) {
 }
 
 
+export function parseAndReplacePillsInFormData(formData, executions) {
+    const pillRegex = /<span[^>]*data-id="([^"]+)"[^>]*data-nodeindex="(\d+)"[^>]*>([^<]+)<\/span>/g;
+
+    // Clone formData to avoid mutating the original object
+    const parsedFormData = { ...formData };
+
+    // Iterate over each field in formData
+    for (const [key, value] of Object.entries(parsedFormData)) {
+        if (typeof value === 'string') {
+            parsedFormData[key] = value.replace(pillRegex, (match, dataId, nodeIndexStr, defaultValue) => {
+                const nodeIndex = parseInt(nodeIndexStr, 10) - 1; // Adjust if your indexing is different
+                const upstreamNodeIds = Object.keys(executions); // Assuming executions is an object keyed by node IDs
+                if (nodeIndex < 0 || nodeIndex >= upstreamNodeIds.length) return defaultValue; // Out of bounds check
+                
+                const upstreamNodeId = upstreamNodeIds[nodeIndex];
+                const upstreamNodeData = executions[upstreamNodeId];
+                if (!upstreamNodeData || !upstreamNodeData.responseData) return defaultValue; 
+                
+                // Attempt to traverse the responseData based on dataId
+                let actualValue = upstreamNodeData.responseData;
+                for (const part of dataId.split('.')) {
+                    actualValue = actualValue?.[part];
+                    if (actualValue === undefined) return defaultValue; 
+                }
+                
+                return typeof actualValue === 'object' ? JSON.stringify(actualValue) : actualValue;
+            });
+        }
+        // For non-string fields, might need additional handling depending on your data structure
+    }
+
+    return parsedFormData;
+}
+

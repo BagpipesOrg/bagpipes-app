@@ -165,3 +165,4 @@ export async function smoothZoom(instance, targetZoomLevel, duration = 500) {
         requestAnimationFrame(animateZoom);
     });
 };
+

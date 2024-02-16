@@ -110,6 +110,7 @@ const initializeFormValues = () => {
   }, []);
 
 
+
   const handleFieldChange = (key, value) => {
     const updatedValues = { ...formData, [key]: value };
     const field = findFieldByKey(key);
@@ -156,6 +157,19 @@ const initializeFormValues = () => {
     const updatedValues = { ...formData, [key]: newItems };
     saveNodeFormData(activeScenarioId, nodeId, updatedValues);
   };
+
+  const handlePillsChange = (updatedPills, fieldKey) => {
+    console.log(`Received updated pills for field: ${fieldKey}`, updatedPills);
+    // Update formData accordingly
+    saveNodeFormData(activeScenarioId, nodeId, previousData => ({
+      ...previousData,
+      [fieldKey]: { ...previousData[fieldKey], pills: updatedPills }
+    }));
+  };
+  
+
+  
+  
 
 
     // Callback function to handle new http data
@@ -389,11 +403,14 @@ const initializeFormValues = () => {
                 <CollapsibleField
                   fieldTypes='input'
                   {...commonProps}
+                  fieldKey={field.key}
                   placeholder={field.label}
                   info={field.description}
                   value={formData[field.key] || ''}
                   onChange={(value) => handleFieldChange(field.key, value)}
+                  onPillsChange={(updatedPills) => handlePillsChange(updatedPills, field.key)}
                 />
+                
             );
             break;
         case 'select':
@@ -429,12 +446,16 @@ const initializeFormValues = () => {
         case 'items':
             fieldElement = (
                 <CollapsibleField
+                  fieldTypes='items'                  
                   {...commonProps}
-                  fieldTypes='items'
+                  fieldKey={field.key}
+                  placeholder={field.label}
                   info={field.description}
                   items={formData[field.key] || []}
                   onChange={(newItems) => handleItemsChange(field.key, newItems)}
-                  />
+                  onPillsChange={(updatedPills) => handlePillsChange(updatedPills, field.key)}
+
+                />
             );
             break;
         default:

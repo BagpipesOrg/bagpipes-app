@@ -7,7 +7,7 @@ import React, { useState, useRef, useCallback , useEffect, memo, useContext,  } 
 import { useNavigate, useLocation } from 'react-router-dom';
 import ReactFlow, { useReactFlow, Panel, MiniMap, Controls, Background, BackgroundVariant, applyNodeChanges, useStoreApi, EdgeLabelRenderer } from 'reactflow';
 // import AuthService from '../../services/AuthService';
-import { useExecuteChainScenario, useSaveDiagramState } from './hooks';
+import { useExecuteFlowScenario, useSaveDiagramState } from './hooks';
 import useAppStore from '../../store/useAppStore';
 import { generateEdgeId } from './utils/storageUtils';
 import GitInfo from './git_tag';
@@ -161,7 +161,7 @@ const BagpipesFlow = () => {
     const [selectedEdgeId, setSelectedEdgeId] = useState(null);
     const instance = useReactFlow();
 
-    const { executeChainScenario, nodeContentMap, stopExecution } = useExecuteChainScenario(currentScenarioNodes, setNodes, instance);
+    const { executeChainScenario, nodeContentMap, stopExecution } = useExecuteFlowScenario(currentScenarioNodes, setNodes, instance);
 
     const createScenario = useCreateScenario();
 

@@ -168,7 +168,6 @@ const useAppStore = create(
     
         
     saveScenario: (scenarioId, diagramData) => {
-      console.log("[saveScenario] Called with:", { scenarioId, diagramData });
 
       if (!scenarioId) {
           console.error('[saveScenario] Scenario ID is missing or incorrect. Cannot save scenario.');
@@ -187,8 +186,6 @@ const useAppStore = create(
                   version
               }
           };
-          console.log("[saveScenario] Updated scenarios:", updatedScenarios);
-          console.log("[saveScenario] Updated scenario:", updatedScenarios[scenarioId].version);
           return { scenarios: updatedScenarios };
       });
     },
@@ -311,7 +308,7 @@ const useAppStore = create(
             timestamp: new Date().toISOString(), // You can modify this if needed
             nodeContent: node.data?.nodeContent || '', // Safely fetching nodeContent
             nodeType: node.type,
-            executionStatus: {}
+            responseData: {}
           };
         });
     
@@ -423,25 +420,75 @@ const useAppStore = create(
                 [scenarioId]: { ...scenario, diagramData: { ...scenario.diagramData, nodes } },
             };
 
-            console.log("[saveNodeFormData] Updated scenarios:", updatedScenarios, scenarioId);
+            console.log("[saveNodeFormData] Updated scenarios:", nodes, scenarioId);
             return { scenarios: updatedScenarios };
         });
     },
 
+    saveNodeEventData: (scenarioId, nodeId, eventData) => {
+      console.log("[saveNodeEventData] Called with:", { scenarioId, nodeId, eventData });
+
+      // Checking for potential issues
+      if (!scenarioId || !nodeId) {
+          console.error("[saveNodeEventData] Scenario ID or Node ID is missing. Cannot save node form data.");
+          return;
+      }
+
+      set((state) => {
+        const scenario = state.scenarios[scenarioId];
+        if (!scenario) {
+          console.error(`[saveNodeEventData] Scenario with ID ${scenarioId} not found.`);
+          return;
+        }
+    
+        // Update the specific node with new eventData
+        const updatedNodes = scenario.diagramData.nodes.map((node) =>
+          node.id === nodeId ? { ...node, eventData: { ...node.eventData, ...eventData } } : node
+        );
+    
+        return {
+          scenarios: {
+            ...state.scenarios,
+            [scenarioId]: {
+              ...scenario,
+              diagramData: {
+                ...scenario.diagramData,
+                nodes: updatedNodes,
+              },
+            },
+          },
+        };
+      });
+    },
+
+
     // Assuming this function is updated to accept a scenarioId as well
-    updateNodeExecutionStatus: (scenarioId, executionId, nodeId, statusUpdate) => {
+    updateNodeResponseData: (scenarioId, executionId, nodeId, statusUpdate) => {
       set((state) => {
         const scenario = state.scenarios[scenarioId];
         if (!scenario || !scenario.executions || !scenario.executions[executionId]) {
-          console.error(`[updateNodeExecutionStatus] Execution with ID ${executionId} not found in scenario ${scenarioId}.`);
+          console.error(`[updateNodeResponseData] Execution with ID ${executionId} not found in scenario ${scenarioId}.`);
           return;
         }
-
-        if (!scenario.executions[executionId][nodeId]) {
-          console.error(`[updateNodeExecutionStatus] Node with ID ${nodeId} not found in execution ${executionId}.`);
+    
+        const node = scenario.executions[executionId][nodeId];
+        if (!node) {
+          console.error(`[updateNodeResponseData] Node with ID ${nodeId} not found in execution ${executionId}.`);
           return;
         }
-
+    
+        // Append new status updates without overwriting previous ones
+        const updateExecutionResponseData = {
+          ...node.responseData,
+          updates: [
+            ...(node.responseData.updates || []), // Ensure there's a default array to append to
+            {
+              timestamp: new Date().toISOString(),
+              ...statusUpdate,
+            },
+          ],
+        };
+    
         // Using a more immutable approach to update the state
         return {
           scenarios: {
@@ -453,11 +500,8 @@ const useAppStore = create(
                 [executionId]: {
                   ...scenario.executions[executionId],
                   [nodeId]: {
-                    ...scenario.executions[executionId][nodeId],
-                    executionStatus: {
-                      ...scenario.executions[executionId][nodeId].executionStatus,
-                      ...statusUpdate,
-                    },
+                    ...node,
+                    responseData: updateExecutionResponseData,
                   },
                 },
               },
@@ -466,6 +510,7 @@ const useAppStore = create(
         };
       });
     },
+    
 
     saveTriggerNodeToast: (scenarioId, nodeId, shouldTrigger) => {
       console.log("[triggerNodeToast] Called with:", { scenarioId, nodeId, shouldTrigger });

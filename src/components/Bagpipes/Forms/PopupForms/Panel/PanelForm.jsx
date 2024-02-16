@@ -51,6 +51,7 @@ const PanelForm = ({ nodeId, onClose }) => {
 
       if (orderedList) {
         const newPills = extractEventDataFromNodes(upstreamNodes, allNodes, orderedList);
+        console.log('newPills', newPills);  
         setPills(newPills);
       } else {
         console.error('orderedList is undefined');

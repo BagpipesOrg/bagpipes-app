@@ -14,9 +14,9 @@ const createPillsFromNode = (node, orderedList) => {
     };
   
     // Dynamically process eventData and potentially other parts of the node
-    const partsToProcess = ['query', 'body']; // extend as needed
+    const partsToProcess = ['query', 'body']; 
     partsToProcess.forEach(part => {
-      const eventDataPart = node.formData?.eventData?.[part];
+      const eventDataPart = node.eventData?.[part];
       if (eventDataPart && typeof eventDataPart === 'object') {
         nodePill.children = nodePill.children.concat(
           createPillsFromObject(eventDataPart, `${part}.`, 1, node.type, nodeIndex)

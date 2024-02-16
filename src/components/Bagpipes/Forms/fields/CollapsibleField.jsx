@@ -16,7 +16,8 @@ import './Fields.scss';
 const { Option } = Select;
 
 
-const CollapsibleField = ({ nodeId, title, info, toggleTitle, hasToggle,fieldTypes, items, selectOptions=[], selectRadioOptions=[], children, value, onChange }) => {
+const CollapsibleField = ({ fieldKey, nodeId, title, info, toggleTitle, hasToggle,fieldTypes, items=[], selectOptions=[], selectRadioOptions=[], children, value, onChange, onPillsChange }) => {
+  console.log('CollapsibleField - fieldKey:', fieldKey);  
   const [isToggled, setIsToggled] = useState(false);
   const { showPanelTippy, hidePanelTippy } = usePanelTippy();
   const [droppedItems, setDroppedItems] = useState([]);
@@ -64,9 +65,30 @@ const CollapsibleField = ({ nodeId, title, info, toggleTitle, hasToggle,fieldTyp
     event.stopPropagation();
   };
 
-  const handleToggleChange = (toggled) => {
+const handleToggleChange = (toggled) => {
     setIsToggled(toggled);
-  };
+    const fieldData = formData[fieldKey];
+
+    if (toggled) {
+        // Toggling to input view
+        if (fieldData && fieldData.mode === 'items' && Array.isArray(fieldData.data)) {
+            // Convert item data to a single string representation
+            const inputValue = fieldData.data.map(item => `${item.key}: ${item.value}`).join(", ");
+            // Update using the unified structure
+            handleFieldChange(fieldKey, { mode: 'input', data: inputValue });
+        }
+    } else {
+        // Toggling to item view
+        if (fieldData && fieldData.mode === 'input' && typeof fieldData.data === 'string') {
+            // Simplistic conversion, might need adjustments based on actual string format
+            const itemsFromString = [{ key: 'New Item', value: fieldData.data, id: generateUniqueId() }];
+            // Update using the unified structure
+            handleItemsChange(fieldKey, { mode: 'items', data: itemsFromString });
+        }
+    }
+};
+
+  
 
   const deleteItem = (itemToDelete) => {
     setItems(items.filter(item => item !== itemToDelete));
@@ -81,18 +103,18 @@ const CollapsibleField = ({ nodeId, title, info, toggleTitle, hasToggle,fieldTyp
   
  
 
-  useEffect(() => {
-    console.log('Toggled state is now:', isToggled);
-  }, [isToggled]);
+    useEffect(() => {
+      console.log('Toggled state is now:', isToggled);
+    }, [isToggled]);
 
-  useEffect(() => {
-  }, [items]);
+    useEffect(() => {
+    }, [items]);
 
-  useEffect(() => {
-    // Update the editableContent based on the external 'value'
-    // This might involve parsing the value if it's a string combining pills and text
-    setEditableContent(value);
-  }, [value]);
+    useEffect(() => {
+      // Update the editableContent based on the external 'value'
+      // This might involve parsing the value if it's a string combining pills and text
+      setEditableContent(value);
+    }, [value]);
 
       // Function to insert a pill into the content editable div
       const insertPill = (pill) => {
@@ -123,27 +145,35 @@ const CollapsibleField = ({ nodeId, title, info, toggleTitle, hasToggle,fieldTyp
          <CustomInput 
               value={value}
               onChange={onChange}
+              fieldKey={fieldKey}
+              onPillsChange={onPillsChange}
               onClick={(e) => handleInputClick(e, nodeId)} 
               placeholder={info}
               className='custom-input'
               pills={pills}
               setPills={setPills}
+              nodeId={nodeId}
             />
       )
+
     }
+
   
     // Dynamic field type rendering based on the fieldType prop
     switch (fieldTypes) {
         case 'input':
             content = (
               <CustomInput 
-              value={value}
-              onChange={onChange}
-              onClick={(e) => handleInputClick(e, nodeId)} // If needed
-              placeholder={info}
-              className='custom-input'
-              pills={pills}
-              setPills={setPills}
+                value={value}
+                onChange={onChange}
+                fieldKey={fieldKey}
+                onPillsChange={onPillsChange}
+                onClick={(e) => handleInputClick(e, nodeId)} 
+                placeholder={info}
+                className='custom-input'
+                pills={pills}
+                setPills={setPills}
+                nodeId={nodeId}
             />
             );
 
@@ -209,16 +239,23 @@ const CollapsibleField = ({ nodeId, title, info, toggleTitle, hasToggle,fieldTyp
 
         content = (
           <div className='flex flex-col '>
-            {items.map((item, index) => (
+            {Array.isArray(items) && items.map((item, index) => (
               <ItemField
                 key={item.id}              
                 title={`${item.id}`}
                 item={item}
+                fieldKey={fieldKey}
+
                 onDelete={() => deleteItem(item)}
                 onItemChange={(updatedItem) => updateItem(updatedItem)}
                 handleInputClick={(e) => handleInputClick(e, nodeId)}
                 pills={pills}
                 setPills={setPills}
+                onPillsChange={onPillsChange}
+                value={value}
+                onChange={onChange}
+                nodeId={nodeId}
+
                 />
             ))}
             <button className='flex items-center text-gray-700 text-sm' onClick={addItem}>

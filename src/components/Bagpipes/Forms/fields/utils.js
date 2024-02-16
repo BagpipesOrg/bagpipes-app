@@ -79,7 +79,7 @@ export const getCaretPosition = (editableDivRef) => {
         const pillText = node.textContent;
         const pillColor = node.style.backgroundColor;
         const nodeIndex = node.getAttribute('data-nodeindex');
-        // combinedValue += `<span draggable="true" contenteditable="false" class="pill" data-id="${pillId}" data-text="${pillText}" data-nodeindex="${nodeIndex}" style="background-color: ${pillColor};">${nodeIndex} ${pillText}</span>`;
+        combinedValue += `<span draggable="true" contenteditable="false" class="pill" data-id="${pillId}" data-text="${pillText}" data-nodeindex="${nodeIndex}" style="background-color: ${pillColor};"> ${pillText}</span>`;
       }
     });
     console.log("CustomInput 4. combinedValue:", combinedValue);
@@ -207,7 +207,7 @@ const calculateIndexFromPosition = (editableDiv, position) => {
     range.insertNode(pillNode);
   
     const textNode = document.createTextNode(' '); // Create a spacer text node
-    range.insertNode(textNode); // Insert it after the pill
+    range.insertNode(textNode);
   
     // Update cursor position
     range.setStartAfter(textNode);
@@ -217,3 +217,49 @@ const calculateIndexFromPosition = (editableDiv, position) => {
     updateCombinedValue(editableDiv); // Update combined value
   };
   
+
+  export function parseInputField(html) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const textNodes = [];
+    const pills = [];
+  
+    // Extract text nodes
+    doc.body.childNodes.forEach(node => {
+      if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+        textNodes.push(node.textContent.trim());
+      }
+    });
+  
+    // Extract pill elements
+    const pillElements = doc.querySelectorAll('.pill');
+    pillElements.forEach(pill => {
+      const id = pill.getAttribute('data-id');
+      const nodeIndex = pill.getAttribute('data-nodeindex');
+      const text = pill.textContent.trim().replace(/^\d+\.\s*/, ''); // Remove the nodeIndex prefix
+      const color = pill.style.backgroundColor; // Assuming you want to capture the color as well
+  
+      pills.push({ id, nodeIndex, text, color });
+    });
+  
+    return {
+      text: textNodes.join(' '), // Combine all text nodes into a single string
+      pills
+    };
+  }
+
+  
+
+  function parseValueToVisualPills(value, pills, setEditableContent) {
+    let visualContent = ''; // Initialize the visual content as an empty string
+  
+    // Logic to parse and transform pills into visual HTML elements
+    pills.forEach((pill) => {
+      // For each pill, create a visual representation
+      const pillHtml = `<span class="pill" contenteditable="false" style="background-color: ${pill.color};" data-id="${pill.id}" data-nodeindex="${pill.nodeIndex}">${pill.nodeIndex}. ${pill.text}</span>`;
+      visualContent += pillHtml; // Append the pill HTML to the visual content
+    });
+  
+    // Set the editable content with the newly formed visual representation
+    setEditableContent(visualContent);
+  }

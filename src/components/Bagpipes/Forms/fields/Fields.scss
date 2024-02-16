@@ -71,8 +71,8 @@
 .collapsible-field-container {
 
     .ant-collapse-item {
-  padding: none !important; /* Add padding */
-    border: none !important; /* Remove borders */
+        padding: none !important; /* Add padding */
+        border: none !important; /* Remove borders */
 
 
 }
@@ -83,16 +83,15 @@
     
     }
 
-.ant-collapse-content-box {
+   .ant-collapse-content-box {
     border: none !important;
-    }
+   }
     
     
     
     .ant-input {
-    
-        border-radius: 5px !important; /* Slightly rounded borders */
-    padding: 10px !important; /* Add some padding */
+       border-radius: 5px !important; 
+       padding: 10px !important;
         &:focus {
             border-color: rgb(18, 0, 0);
         }
@@ -112,12 +111,12 @@
         width: 200px !important;
     }
        
-}
+  }
     .ant-select-selection-item {
         font-weight:500 !important;
     }
 
-.custom-input, .custom-input-container {
+  .custom-input, .custom-input-container {
     border: 1px solid #ccc;
     padding: 5px;
     min-height: 30px;
@@ -125,11 +124,11 @@
     flex-wrap: wrap;
     align-items: center;
     width: 100%;
-}
+  }
   
   .pill {
     padding: 3px 5px;
-    margin-right: 5px;
+    margin-right: 2px;
     border-radius: 5px;
     color: white;
     cursor: pointer;
@@ -142,3 +141,6 @@
     padding: 10px 5px   !important;
   }
   
+.custom-select {
+    min-width: 250px;
+}

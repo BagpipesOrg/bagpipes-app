@@ -46,13 +46,13 @@ export const PanelTippyProvider = ({ children }) => {
 
   const showPanelTippy = (nodeId, position, content) => {
     const parentPosition = { x: 100, y: 300 }; // Example: Get this from the parent element's bounding box
-    const bestPlacement = calculateBestPlacement(parentPosition, 150); // Use a 15px offset
+    const bestPlacement = calculateBestPlacement(parentPosition, -200); // Use a 15px offset
     
     setPanelTippyProps({ 
       visible: true, 
       position,
       content, 
-      placement: 'bottom', 
+      placement: bestPlacement, 
     });
   };
 
@@ -89,9 +89,9 @@ function calculateBestPlacement(position, offset = 10) {
   // Determine where we have more space and place the element accordingly
   // The offsets can help ensure there's a gap between the parent and the panel
   if (horizontalSpaceLeft > horizontalSpaceRight) {
-    return verticalSpaceTop > verticalSpaceBottom ? 'top-end' : 'bottom-end';
+    return verticalSpaceTop > verticalSpaceBottom ? 'right' : 'left';
   } else {
-    return verticalSpaceTop > verticalSpaceBottom ? 'top-start' : 'bottom-start';
+    return verticalSpaceTop > verticalSpaceBottom ? 'right' : 'left';
   }
 }
 

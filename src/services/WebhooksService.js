@@ -39,7 +39,10 @@ class WebhooksService {
         console.error('Error fetching latest webhook data:', error);
         throw error; // Rethrow the error for handling in the calling function
     }
+  
 }
+
+
 }
 
   export default new WebhooksService();

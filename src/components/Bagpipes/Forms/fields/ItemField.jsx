@@ -7,9 +7,29 @@ import './Fields.scss';
 import { CloseIcon } from '../../../Icons/icons';
 import { on } from 'events';
 
-const ItemField = ({ title, item, onItemChange, onDelete, fieldTypes, handleInputClick, nodeId, pills, setPills }) => {
+const ItemField = ({ title, item, onItemChange, onDelete, fieldTypes, handleInputClick, nodeId, pills, setPills, onPillsChange, value, fieldKey, onChange}) => {
+  console.log('ItemField - item:', item);
   const [selectedFieldType, setSelectedFieldType] = useState('text');
 
+
+  const handleChange = (e) => {
+    // Check if 'e' is an event object
+    if (e && e.target) {
+      onItemChange({ ...item, key: e.target.value });
+    } else {
+      // Handle the case where 'e' is directly the value (for programmatically called changes)
+      onItemChange({ ...item, key: e });
+    }
+  };
+
+  const handleKeyChange = (newValue) => {
+    onItemChange({ ...item, key: newValue });
+  };
+  
+  const handleValueChange = (newValue) => {
+    onItemChange({ ...item, value: newValue });
+  };
+  
   const handleFieldTypeChange = (value) => {
     setSelectedFieldType(value);
   };
@@ -44,24 +64,31 @@ return (
             <div className='mb-2'>
             <CustomInput 
               value={item.key}
-              onChange={(e) => onItemChange({ ...item, key: e.target.value })}
+              onChange={(newValue) => handleKeyChange(newValue)}               fieldKey={fieldKey}
+
+              item={item.key}
               onClick={(e) => handleInputClick(e, nodeId)} // If needed
               placeholder="Key"
               className='custom-input'
               pills={pills}
               setPills={setPills}
+              onPillsChange={onPillsChange}
+
             />
                      
               </div>
             <div>
             <CustomInput 
               value={item.value}
-              onChange={(e) => onItemChange({ ...item, value: e.target.value })}
-              onClick={(e) => handleInputClick(e, nodeId)} // If needed
+              item={item.value}
+              fieldKey={fieldKey}
+              onChange={(newValue) => handleValueChange(newValue)}               onClick={(e) => handleInputClick(e, nodeId)} // If needed
               placeholder="Value"
               className='custom-input'
               pills={pills}
               setPills={setPills}
+              onPillsChange={onPillsChange}
+              
             />
                        
             </div>

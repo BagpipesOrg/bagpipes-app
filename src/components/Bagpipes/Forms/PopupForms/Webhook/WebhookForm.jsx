@@ -21,10 +21,10 @@ import '../../../../../index.css';
 
 
 const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
-  const { scenarios, activeScenarioId, saveNodeFormData, saveWebhook, webhooks, setSelectedWebhookInNode } = useAppStore(state => ({ 
+  const { scenarios, activeScenarioId, saveNodeEventData, saveWebhook, webhooks, setSelectedWebhookInNode } = useAppStore(state => ({ 
     scenarios: state.scenarios,
     activeScenarioId: state.activeScenarioId,
-    saveNodeFormData: state.saveNodeFormData,
+    saveNodeEventData: state.saveNodeEventData,
     saveWebhook: state.saveWebhook,
     webhooks: state.webhooks,
     setSelectedWebhookInNode: state.setSelectedWebhookInNode,
@@ -139,21 +139,9 @@ const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
         createdAt: webhookEvent.created_at,
         method: webhookEvent.method,
       };
-  
-
-      // save the webhook object (including event data) in the zustand store
-      const updatedWebhook = { ...selectedWebhookObject, eventData };
-      saveWebhook(updatedWebhook);  
-      
-      // Prepare the new formData with the updated webhook object
-      const newFormData = {
-        ...node.formData,
-        ...updatedWebhook, // Spread the properties of updatedWebhook
-      };
 
     // Save the updated formData in the node
-    saveNodeFormData(activeScenarioId, nodeId, newFormData);
-
+    saveNodeEventData(activeScenarioId, nodeId, eventData);
 
 
       setEventReceived(true);
