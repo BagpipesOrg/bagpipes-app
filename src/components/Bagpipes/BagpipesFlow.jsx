@@ -21,9 +21,9 @@ import RenderNodeForm from './Forms/RenderNodeForm';
 import { initialEdges, initialNodes } from './nodes.jsx';
 import PlayButton from './buttons/PlayButton';
 import StartButton from './buttons/StartButton';
-import SendButton from './buttons/SendButton';
+import ExecuteButton from './buttons/ExecuteButton';
 import CreateUiButton from './buttons/CreateUiButton';
-import { startDraftingProcess } from './utils/startDraftingProcess';
+import { startDraftingProcess, preProcessDraftTransactions } from './utils/startDraftingProcess';
 import { calculateTippyPosition } from './utils/canvasUtils';
 import { MarkerType } from 'reactflow';
 import { useCreateScenario } from './hooks/useCreateScenario';
@@ -105,7 +105,7 @@ const BagpipesFlow = () => {
   const reactFlowWrapper = useRef(null);
   const { showTippy, tippyProps } = useTippy();
 
-    const { scenarios, activeScenarioId, addScenario, setActiveScenarioId, saveScenario, saveDiagramData, addNodeToScenario, addEdgeToScenario, deleteNodeFromScenario, deleteEdgeFromScenario, updateNodePositionInScenario, updateNodesInScenario, setSelectedNodeInScenario, setSelectedEdgeInScenario, nodeConnections, setNodes, setEdges, setNodeConnections, tempEdge, setTempEdge, loading, transactions, setTransactions, shouldExecuteChainScenario, toggleExecuteChainScenario, executionId, setExecutionState, setToastPosition } = useAppStore(state => ({
+    const { scenarios, activeScenarioId, addScenario, setActiveScenarioId, saveScenario, saveDiagramData, addNodeToScenario, addEdgeToScenario, deleteNodeFromScenario, deleteEdgeFromScenario, updateNodePositionInScenario, updateNodesInScenario, setSelectedNodeInScenario, setSelectedEdgeInScenario, nodeConnections, setNodes, setEdges, setNodeConnections, tempEdge, setTempEdge, loading, transactions, setTransactions, shouldExecuteFlowScenario, toggleExecuteFlowScenario, executionId, setExecutionState, setToastPosition } = useAppStore(state => ({
       scenarios: state.scenarios,
       activeScenarioId: state.activeScenarioId,
       addScenario: state.addScenario,
@@ -129,8 +129,8 @@ const BagpipesFlow = () => {
       loading: state.loading,
       transactions: state.transactions,
       setTransactions: state.setTransactions,
-      shouldExecuteChainScenario: state.shouldExecuteChainScenario,
-      toggleExecuteChainScenario: state.toggleExecuteChainScenario,
+      shouldExecuteFlowScenario: state.shouldExecuteFlowScenario,
+      toggleExecuteFlowScenario: state.toggleExecuteFlowScenario,
       executionId: state.executionId,
       setExecutionState: state.setExecutionState,
       setToastPosition: state.setToastPosition,
@@ -161,7 +161,7 @@ const BagpipesFlow = () => {
     const [selectedEdgeId, setSelectedEdgeId] = useState(null);
     const instance = useReactFlow();
 
-    const { executeChainScenario, nodeContentMap, stopExecution } = useExecuteFlowScenario(currentScenarioNodes, setNodes, instance);
+    const { executeFlowScenario, nodeContentMap, stopExecution } = useExecuteFlowScenario(currentScenarioNodes, setNodes, instance);
 
     const createScenario = useCreateScenario();
 
@@ -609,42 +609,17 @@ const BagpipesFlow = () => {
 const diagramData = scenarios[activeScenarioId].diagramData;
 const orderedList = getOrderedList(diagramData.edges);
 const transformedList = transformOrderedList(orderedList, scenarios[activeScenarioId]?.diagramData?.nodes);
-
-const processDraftTransactions = async () => {
-  const actionNodes = scenarios[activeScenarioId]?.diagramData?.nodes?.filter(node => node.type === 'action');
-  
-  if (!actionNodes || actionNodes.length === 0) {
-      throw new Error('No action nodes found.');
-  }
-
-  if (actionNodes.some(node => !isActionDataComplete(node))) {
-      throw new Error('Incomplete data in some action nodes. Please review and complete all fields.');
-  }
-
-  // Start the drafting process and return a promise that either resolves with the transactions
-  // or rejects after a timeout.
-  return new Promise(async (resolve, reject) => {
-     const timeoutId = setTimeout(() => {
-           reject(new Error('Drafting is taking longer than expected. Please refresh the page and try again.'));
-       }, 10000); // 10 seconds timeout
-
-      try {
-          const result = await startDraftingProcess(activeScenarioId, scenarios);
-          clearTimeout(timeoutId); // Clear the timeout if drafting succeeds in time
-          resolve(result);
-      } catch (error) {
-          clearTimeout(timeoutId); // Clear the timeout if there's an error
-          reject(error);
-      }
-  });
-};
+const containsActionNodes = (nodes) => nodes.some(node => node.type === 'action');
+const actionNodesPresent = containsActionNodes(transformedList);
 
 
-const handleDraftTransactions = async () => {
+
+const handleStartScenario = async (instance) => {
   toast(<OrderedListContent list={transformedList} />);
 
-  try {
-      const promise = processDraftTransactions();
+  if (actionNodesPresent) {
+    try {
+      const promise = preProcessDraftTransactions(activeScenarioId, scenarios, isActionDataComplete);
 
       toast.promise(
           promise,
@@ -683,74 +658,38 @@ const handleDraftTransactions = async () => {
           }
       );
 
-      const draftedTransactions = await promise;
-      setTransactions(draftedTransactions);
-      navigate('/transaction/review');
-  } catch (error) {
-      console.error("Error during transaction drafting:", error);
+        const draftedTransactions = await promise;
+        setTransactions(draftedTransactions);
+        navigate('/transaction/review');
+    } catch (error) {
+        console.error("Error during transaction drafting:", error);
+    }
+  } else {
+    // If no action nodes, directly execute the scenario
+    try {
+      await handleExecuteFlowScenario(instance);
+      toast.success('Scenario executed successfully');
+    } catch (error) {
+      console.error("Error executing scenario:", error);
+      toast.error(`Error executing scenario: ${error.message}`);
+    }
   }
 };
 
 
-  
-   
 
-  // useEffect(() => {
-  //   console.log('useEffect running due to location change');
 
-  //   if (debouncedLocationState && debouncedLocationState.executeScenario) {
-  //     const executeMyScenario = executeChainScenario();
-
-  //     toast.promise(executeMyScenario,
-  //        {
-  //          loading: 'Processing workflow...',
-  //          success: <b>Workflow success!</b>,
-  //          error: <b>Could not execute.</b>,
-  //        },
-         
-  //        {
-  //        success: {
-  //         duration: 30000,
-  //         icon: '🔥',
-  //       },
-  //       loading: {
-  //         duration: 50000,
-  //         icon: '⏳',
-  //       }
-  //     }
-  //      );
-      
-  //     // Reset the executeScenario flag in the location state
-  //     // navigate('/builder', { state: { ...location.state, executeScenario: false } });
-
-  //   }
-  // }, [debouncedLocationState]);
-
-  // useEffect(() => {
-  //   if (shouldExecuteChainScenario) {
-  //     console.log("Running executeChainScenario due to shouldExecuteChainScenario being true");
-
-  //     executeChainScenario();
-  //     toggleExecuteChainScenario(); 
-  //   }
-  // }, []);
-
-  async function handleExecuteChainScenario(instance) {
-    console.log("Running executeChainScenario due to executionState being 'idle'");
-    setExecutionState('sending');
+  async function handleExecuteFlowScenario(instance) {
+    console.log("Running executeFlowScenario due to executionState being 'idle'");
+    setExecutionState('executing');
     try {
-        await executeChainScenario(instance);
+        await executeFlowScenario(instance);
     } catch (error) {
         console.error("An error occurred during scenario execution:", error);
     } finally {
         setExecutionState('idle');
     }
 }
-
-// const MAX_TIME = 10
-// setTimeout(() => {
-//   setExecutionState('idle');
-// }, MAX_TIME);
 
 
         
@@ -813,13 +752,13 @@ const handleDraftTransactions = async () => {
             
 
           
-            <TopBar createScenario={createScenario} handleExecuteChainScenario={handleExecuteChainScenario} handleDraftTransactions={handleDraftTransactions} shouldExecuteChainScenario={shouldExecuteChainScenario} />
+            <TopBar createScenario={createScenario} handleExecuteFlowScenario={handleExecuteFlowScenario} handleStartScenario={handleStartScenario} shouldExecuteFlowScenario={shouldExecuteFlowScenario} actionNodesPresent={actionNodesPresent} />
             <Toolbar />
             </ReactFlowStyled>
             
            
         
-            {/* <PlayButton executeScenario={executeChainScenario} stopExecution={stopExecution} disabled={loading} /> */}
+            {/* <PlayButton executeScenario={executeFlowScenario} stopExecution={stopExecution} disabled={loading} /> */}
              
             {/* <GitInfo /> */}
 

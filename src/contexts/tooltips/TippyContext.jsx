@@ -52,7 +52,7 @@ export const PanelTippyProvider = ({ children }) => {
       visible: true, 
       position,
       content, 
-      placement: bestPlacement, 
+      placement: 'right', 
     });
   };
 

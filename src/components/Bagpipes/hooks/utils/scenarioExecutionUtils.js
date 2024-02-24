@@ -166,3 +166,71 @@ export async function smoothZoom(instance, targetZoomLevel, duration = 500) {
     });
 };
 
+
+
+/**
+ * Fetches the execution data for a given node within the active scenario.
+ * 
+ * @param {Object} scenarios - The scenarios object containing all scenario data.
+ * @param {string} activeScenarioId - The ID of the currently active scenario.
+ * @param {string} nodeId - The ID of the node for which to fetch execution data.
+ * @returns {Object|null} The execution data for the given node, or null if not found.
+ */
+export function fetchNodeExecutionData(scenarios, activeScenarioId, nodeId) {
+    // Ensure the active scenario exists
+    const activeScenario = scenarios[activeScenarioId];
+    if (!activeScenario || !activeScenario.executions) {
+        console.error(`Active scenario with ID ${activeScenarioId} not found or does not contain executions.`);
+        return null;
+    }
+
+    // Loop through each execution within the active scenario to find the node's execution data
+    for (const executionId of Object.keys(activeScenario.executions)) {
+        const execution = activeScenario.executions[executionId];
+        if (execution && execution[nodeId]) {
+            return execution[nodeId]; // Return the execution data for the node
+        }
+    }
+
+    // If the function reaches this point, no execution data was found for the node
+    console.error(`Execution data for node with ID ${nodeId} not found in active scenario.`);
+    return null;
+}
+
+
+export function fetchAllExecutionsForScenario(scenarios, activeScenarioId) {
+    const activeScenario = scenarios[activeScenarioId];
+    if (!activeScenario || !activeScenario.executions) {
+        console.error(`Active scenario with ID ${activeScenarioId} not found or does not contain executions.`);
+        return null;
+    }
+
+    // Return the executions object for the active scenario
+    console.log('activeScenario.executions:', activeScenario.executions);
+    return activeScenario.executions;
+}
+
+export const processWebhookEvent = (webhookEventData) => {
+    const webhookEvent = webhookEventData.data[0];
+
+
+    const processedEventData = {
+        query: webhookEvent.query, 
+        content: parseWebhookContent(webhookEvent.content), 
+        headers: webhookEvent.headers,
+        method: webhookEvent.method,
+        createdAt: webhookEvent.created_at,
+    };
+
+    return processedEventData;
+};
+
+const parseWebhookContent = (content) => {
+    try {
+        return JSON.parse(content);
+    } catch (error) {
+        console.error('Error parsing webhook content:', error);
+        return {}; 
+    }
+};
+

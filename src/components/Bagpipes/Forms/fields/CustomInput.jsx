@@ -84,6 +84,13 @@ const CustomInput = ({ fieldKey, value, onChange, onClick, placeholder, classNam
     }, 0);
   };
 
+  const handleDivClick = (e) => {
+    if (e.target.classList.contains('pill')) {
+      const pillId = e.target.getAttribute('data-id');
+      removePill(pillId);
+    }
+  };
+
   
 
   const handlePillClick = (pillId) => {
@@ -146,6 +153,8 @@ const removePill = (pillId) => {
         contentEditable="true"
         dangerouslySetInnerHTML={{ __html: editableContent }}
         onInput={handleContentChange}
+        onClick={handleDivClick}
+
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
       >

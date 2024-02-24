@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import callCreateWebhookAPI from '../../../../../webhooks/callCreateWebhookAPI';
+import WebhooksService from '../../../../../services/WebhooksService';
 import CollapsibleField from "../../fields/CollapsibleField";
 import Toggle from '../../Toggle';
 import FormHeader from "../../FormHeader";
@@ -13,7 +13,7 @@ const CreateWebhookForm = ({ onSave, onClose }) => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         console.log("awaiting webhook uuid");
-        const uuid = await callCreateWebhookAPI(); // Call the async function to generate UUID
+        const uuid = await WebhooksService.callCreateWebhookAPI(); // Call the async function to generate UUID
         console.log("createWebhook response", uuid);
         const newWebhook = {
             name: webhookName,

@@ -14,7 +14,7 @@ const createPillsFromNode = (node, orderedList) => {
     };
   
     // Dynamically process eventData and potentially other parts of the node
-    const partsToProcess = ['query', 'body']; 
+    const partsToProcess = ['query', 'content']; 
     partsToProcess.forEach(part => {
       const eventDataPart = node.eventData?.[part];
       if (eventDataPart && typeof eventDataPart === 'object') {
@@ -55,7 +55,7 @@ const createPillsFromNode = (node, orderedList) => {
         console.error(`Node with ID ${nodeId} not found.`);
         return [];
       }
-  
+  console.log("extractEventDataFromNodes - node:", node);
       return createPillsFromNode(node, orderedList);
     });
   };

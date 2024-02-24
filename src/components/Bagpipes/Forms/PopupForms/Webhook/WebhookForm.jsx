@@ -21,10 +21,11 @@ import '../../../../../index.css';
 
 
 const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
-  const { scenarios, activeScenarioId, saveNodeEventData, saveWebhook, webhooks, setSelectedWebhookInNode } = useAppStore(state => ({ 
+  const { scenarios, activeScenarioId, saveNodeEventData, saveNodeFormData, saveWebhook, webhooks, setSelectedWebhookInNode } = useAppStore(state => ({ 
     scenarios: state.scenarios,
     activeScenarioId: state.activeScenarioId,
     saveNodeEventData: state.saveNodeEventData,
+    saveNodeFormData: state.saveNodeFormData,
     saveWebhook: state.saveWebhook,
     webhooks: state.webhooks,
     setSelectedWebhookInNode: state.setSelectedWebhookInNode,
@@ -70,6 +71,8 @@ const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
       // Define the eventData object
 
     console.log('saved selectedWebhookObject', selectedWebhookObject)
+
+    saveNodeFormData(activeScenarioId, nodeId, { webhookName: newWebhook.name, uuid: selectedWebhookObject.uuid});
 
     // Force component to re-render if necessary
     setForceUpdate(prev => !prev);
@@ -131,10 +134,13 @@ const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
       } catch (error) {
         console.error('Error parsing webhook event content:', error);
       }
+      // const formData = {
+      //   uuid: webhookEvent.query,
+      // }
   
       const eventData = {
         query: webhookEvent.query,
-        body: webhookEvent.request || parsedContent, // Use request or parsed content
+        content: webhookEvent.request || parsedContent, // Use request or parsed content
         headers: webhookEvent.headers, 
         createdAt: webhookEvent.created_at,
         method: webhookEvent.method,

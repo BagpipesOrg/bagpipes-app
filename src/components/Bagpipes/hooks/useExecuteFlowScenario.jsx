@@ -4,8 +4,10 @@ import { useStoreApi } from 'reactflow';
 import { getSavedFormState } from '../utils/storageUtils'; 
 import ScenarioService from '../../../services/ScenarioService';
 import NodeExecutionService from '../../../services/NodeExecutionService';
-import { processScenarioData, validateDiagramData, parseAndReplacePillsInFormData } from '../utils/scenarioUtils';
+import { processScenarioData, validateDiagramData, processAndSanitizeFormData, parseAndReplacePillsInFormData, sanitizeFormData, getUpstreamNodeIds } from '../utils/scenarioUtils';
+import { fetchNodeExecutionData, fetchAllExecutionsForScenario, processWebhookEvent } from './utils/scenarioExecutionUtils';
 import SocketContext from '../../../contexts/SocketContext';
+import WebhooksService from '../../../services/WebhooksService';
 import useAppStore from '../../../store/useAppStore';
 import { v4 as uuidv4 } from 'uuid';
 import toast  from 'react-hot-toast';
@@ -19,7 +21,7 @@ import { ChainToastContent, ActionToastContent } from '../../toasts/CustomToastC
 const useExecuteFlowScenario = (nodes, setNodes, instance) => {
     const socket = useContext(SocketContext);
     const store = useStoreApi();
-    const { scenarios, activeScenarioId, saveExecution, executionId, setActiveExecutionId, setExecutionId, updateNodeContent, setLoading, loading, toggleExecuteChainScenario, executionState, setExecutionState, saveTriggerNodeToast, updateEdgeStyleForNode, updateNodeResponseData } = useAppStore(state => ({
+    const { scenarios, activeScenarioId, saveExecution, executionId, setActiveExecutionId, setExecutionId, updateNodeContent, setLoading, loading, toggleExecuteFlowScenario, executionState, setExecutionState, saveTriggerNodeToast, updateEdgeStyleForNode, updateNodeResponseData } = useAppStore(state => ({
       scenarios: state.scenarios,
       activeScenarioId: state.activeScenarioId,
       saveExecution: state.saveExecution,
@@ -29,7 +31,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
       updateNodeContent: state.updateNodeContent,
       setLoading: state.setLoading,
       loading: state.loading,
-      toggleExecuteChainScenario: state.toggleExecuteChainScenario,
+      toggleExecuteFlowScenario: state.toggleExecuteFlowScenario,
       executionState: state.executionState,
       setExecutionState: state.setExecutionState,
       saveTriggerNodeToast: state.saveTriggerNodeToast,
@@ -80,7 +82,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
       }
   }
 
-  async function executeChainScenario() {
+  async function executeFlowScenario() {
     if (executedIds.has(executionId)) {
         console.log(`Already executed scenario for executionId: ${executionId}. Skipping...`);
         return;
@@ -88,8 +90,10 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
 
     // Check if executionId and activeScenarioId are already set
     if (!executionId || !activeScenarioId) {
-        console.error('Execution ID or Active Scenario ID not set. Cannot proceed with execution.');
-        return;
+        const executionId = uuidv4();
+        setExecutionId(executionId);   
+        console.log('Setting executionId:', executionId);    
+    return;
     }
 
     // Prepare initial executionData
@@ -110,7 +114,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
         duration: 5000,
     });
 
-    console.log('[executeChainScenario] Starting Workflow Execution...');
+    console.log('[exece] Starting Workflow Execution...');
     // setLoading(true);
 
     // Clear the nodeContentMap before starting a new execution
@@ -119,7 +123,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
     try {
 
         const rawDiagramData = store.getState();
-        console.log('[executeChainScenario] rawDiagramData:', rawDiagramData);
+        console.log('[executeFlowScenario] rawDiagramData:', rawDiagramData);
 
         // Simplify the diagramData
         let diagramData = {
@@ -128,6 +132,8 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                 type: node.type, 
                 data: node.data, 
                 position: node.position,
+                formData: node.formData,
+                eventData: node.eventData,
                 formState: getSavedFormState(node.id) || {}, 
                 height: node.height,
                 width: node.width,   
@@ -135,7 +141,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
             edges: rawDiagramData.edges.map(edge => ({ ...edge })),
         };
         
-        console.log('[executeChainScenario] Retrieved diagramData from state:', diagramData);
+        console.log('[executeFlowScenario] Retrieved diagramData from state:', diagramData);
 
         // const executionId = uuidv4();
         // setExecutionId(executionId);
@@ -143,7 +149,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
         
         // Get the ordered list of nodes
         const orderedList = getOrderedList(diagramData.edges);
-        console.log('[executeChainScenario] Ordered List of Nodes:', orderedList);
+        console.log('[executeFlowScenario] Ordered List of Nodes:', orderedList);
 
 
         if (!orderedList) {
@@ -159,7 +165,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
         // Validate the diagramData
         diagramData = validateDiagramData(diagramData);
                 
-        console.log("[executeChainScenario] About to run the scenario with the following data:", { diagramData: diagramData, scenario: activeScenarioId });
+        console.log("[executeFlowScenario] About to run the scenario with the following data:", { diagramData: diagramData, scenario: activeScenarioId });
         toast.success('Running Scenario...', { id: 'running-scenario' });
 
         let nodeContents = {};
@@ -196,7 +202,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                 break;
 
             case 'action':
-                console.log('executeChainScenario currentNode position:', currentNode.position);
+                console.log('executeFlowScenario currentNode position:', currentNode.position);
                 updateEdgeStyleForNode(currentNode.id, 'executing');
             
                 toast('Executing action!', {
@@ -215,7 +221,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                 // Zoom into the current node
                 await handleNodeViewport(instance, currentNode, 'zoomIn', orderedList);
             
-                console.log('executeChainScenario currentNode:', executionState, currentNode.id);
+                console.log('executeFlowScenario currentNode:', executionState, currentNode.id);
             
                 // Retrieve the signedExtrinsic and other necessary data
                 const formData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData || null;
@@ -264,31 +270,52 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
 
             case 'webhook':
                 updateEdgeStyleForNode(currentNode.id, 'executing');
-                console.log('Waiting for webhook event...', currentNode.id);
+                console.log('executeFlowScenario for webhook event...', currentNode);
                 try {
                     const webhookData = await WebhooksService.fetchLatestFromWebhookSite(currentNode.formData.uuid);
-                    console.log('Webhook data received:', webhookData);
-                    updateNodeResponseData(activeScenarioId, executionId, currentNode.id, { data: webhookData });
+                    console.log('executeFlowScenario Webhook data received:', webhookData);
+                    const processedEventData = processWebhookEvent(webhookData);
+
+                    updateNodeResponseData(activeScenarioId, executionId, currentNode.id, { eventData: processedEventData });
                 } catch (error) {
                     console.error('Error waiting for webhook data:', error);
                     updateNodeResponseData(activeScenarioId, executionId, currentNode.id, { error: error.message });
                 }
                 updateEdgeStyleForNode(currentNode.id, 'default_connected');
+                // Check if it's the last iteration to set executionCycleFinished accordingly
+                executionCycleFinished = index === orderedList.length - 1;
                 break;
             
                 
             case 'http':
                 updateEdgeStyleForNode(currentNode.id, 'executing');
-            
-                // Parse all fields in formData for pills and replace them with actual data
-                const parsedFormData = parseAndReplacePillsInFormData(currentNode.formData, executions[activeScenarioId]);
-                console.log('Parsed Form Data:', parsedFormData);
+                console.log('executeFlowScenario for http event...', currentNode.id, currentNode);
+                // assuming we have the scenarios object and the activeScenarioId available
+                const executions = fetchAllExecutionsForScenario(scenarios, activeScenarioId);
+                console.log('All Executions:', executions);
+                let parsedFormData;
+                if (executions) {
+                    const upstreamNodeIds = getUpstreamNodeIds(orderedList, currentNode.id);
+
+                    const activeExecutionData = scenarios[activeScenarioId]?.executions[executionId];
+                    console.log('Active Execution Data:', activeExecutionData);
+
+                    // Assuming currentNode.formData contains the data to be parsed
+                    parsedFormData = processAndSanitizeFormData(currentNode.formData, activeExecutionData, upstreamNodeIds);
+                    console.log('Parsed Form Data:', parsedFormData);
+                    // parsedFormData should contain the formData with pills replaced by actual data
+                } else {
+                    // Handle the case where there are no executions or if fetching them failed
+                    console.error('No executions found for the scenario');
+                    return; // Exit from the case or handle this scenario appropriately
+                }
+
                 // Extract URL, method, and other necessary fields from parsedFormData
-                const { url: parsedUrl, method, ...otherParams } = parsedFormData;
+                // const { url: parsedUrl, method, ...otherParams } = parsedFormData;
             
                 try {
                     // Execute the HTTP request with the parsed URL and formData
-                    const httpResponse = await NodeExecutionService.executeHttpRequest(parsedUrl, method, otherParams);
+                    const httpResponse = await NodeExecutionService.executeHttpRequest(parsedFormData);
             
                     // Update node response data with the HTTP response
                     updateNodeResponseData(activeScenarioId, executionId, currentNode.id, { response: httpResponse });
@@ -298,6 +325,8 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                 }
             
                 updateEdgeStyleForNode(currentNode.id, 'default_connected');
+                // Check if it's the last iteration to set executionCycleFinished accordingly
+                executionCycleFinished = index === orderedList.length - 1;
                 break;
             }
 
@@ -307,6 +336,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
 
                 // Zoom out
                 await handleNodeViewport(instance, currentNode, 'zoomOut', orderedList);
+
 
         }
 
@@ -322,12 +352,12 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
             console.log('Workflow Execution Prepared and Sent to Server...');
             setNodes([...nodes]);
             executedIds.add(executionId);
-            toggleExecuteChainScenario();
+            toggleExecuteFlowScenario();
             setExecutionState('idle');
-            console.log('Workflow Execution Prepared and set to idle and toggled...', executionState, toggleExecuteChainScenario);
+            console.log('Workflow Execution Prepared and set to idle and toggled...', executionState, toggleExecuteFlowScenario);
         }
     };
-    return { nodeContentMap, executeChainScenario, stopExecution };
+    return { nodeContentMap, executeFlowScenario, stopExecution };
 };
 
 export default useExecuteFlowScenario;

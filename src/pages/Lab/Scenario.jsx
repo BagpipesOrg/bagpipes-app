@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppStore } from '../../components/Bagpipes/hooks';
+import { renderNodeDetails } from './utils/renderNodeDetails';
 import './Lab.scss';
 
 function ScenarioInfo() {
@@ -28,53 +29,6 @@ function ScenarioInfo() {
       ...prev,
       [key]: !prev[key],
     }));
-  };
-
-  // Function to render node-specific details based on nodeType
-  const renderNodeDetails = (nodeData) => {
-    switch (nodeData.nodeType) {
-      case 'action':
-        return (
-          <table>
-            <thead>
-              <tr>
-                <th>Status</th>
-                <th>Block Hash</th>
-                <th>Timestamp</th>
-              </tr>
-            </thead>
-            <tbody>
-              {nodeData.responseData?.updates?.map((update, index) => (
-                <React.Fragment key={index}>
-                  {update.inBlock && (
-                    <tr>
-                      <td>In Block</td>
-                      <td>{update.inBlock}</td>
-                      <td>{update.timestamp}</td>
-                    </tr>
-                  )}
-                  {update.finalized && (
-                    <tr>
-                      <td>Finalized</td>
-                      <td>{update.finalized}</td>
-                      <td>{update.timestamp}</td>
-                    </tr>
-                  )}
-                  {update.error && (
-                    <tr>
-                      <td>Error</td>
-                      <td colSpan="2">{update.error}</td>
-                    </tr>
-                  )}
-                </React.Fragment>
-              ))}
-            </tbody>
-          </table>
-        );
-      // Add cases for other node types with different data structures
-      default:
-        return <p>No execution details available for this node type.</p>;
-    }
   };
   
 

@@ -89,7 +89,7 @@
           "label": "URL",
           "hasToggle": false,
           "fieldGroup": "standardHttpParams",
-          "description": "Enter a URL endpoing to make an HTTP request."        }
+          "description": "Enter a URL endpoint to make an HTTP request."        }
       ]
     },
     {

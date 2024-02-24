@@ -1,6 +1,7 @@
 // import axios from './AxiosService';
 import useAppStore from '../store/useAppStore';
 import toast from 'react-hot-toast';
+import axios from 'axios';
 
 class NodeExecutionService {
     constructor() {
@@ -26,34 +27,41 @@ class NodeExecutionService {
         }
     }
 
-    async executeHttpRequest(url, method, body = null, headers = {}) {
+    static proxyUrl = `http://localhost:5005/api/http/executeHttpRequest`;
+
+    async executeHttpRequest(parsedFormData) {
+        console.log('executeHttpRequest Parsed form data:', parsedFormData);
+        const { url, method, ...otherParams } = parsedFormData;
+        console.log('executeHttpRequest URL:', url);
+
+        // Headers and body should be extracted from otherParams based on your needs
+        // For example, assuming otherParams contains headers and body directly
+        const headers = otherParams.headers || {};
+        let body = otherParams.body || {};
+
+        // If body is a string, try parsing it to JSON, or leave as is if parsing fails
+        if (typeof body === 'string') {
+            try {
+                body = JSON.parse(body);
+            } catch (error) {
+                // Body remains a string if it cannot be parsed to JSON
+            }
+        }
+        console.log('Body method url', body, method, url)
         try {
-            // Include CSRF token in headers if available
-            if (this.csrfToken) {
-                headers['X-CSRF-TOKEN'] = this.csrfToken;
-            }
+            console.log('Executing HTTP request through proxy:', body);
+            const response = await axios.post(NodeExecutionService.proxyUrl, {
+                url, // The actual URL to request
+                method,
+                headers,
+                body, // Body parsed from form data, if applicable
+            });
 
-            const config = {
-                method: method,
-                url: url,
-                headers: headers,
-                withCredentials: true,
-            };
-
-            // Include body in the request if it's a POST/PUT/PATCH method
-            if (body && (method === 'POST' || method === 'PUT' || method === 'PATCH')) {
-                config.data = body;
-            }
-
-            const response = await axios(config);
-
-            // Log and return the response data
-            console.log(`[executeHttpRequest] Request successful with response data:`, response.data);
+            console.log('HTTP request successful:', response.data);
             return response.data;
-
         } catch (error) {
-            console.error(`[executeHttpRequest] Error executing HTTP request to ${url}:`, error);
-            throw error; // Rethrow the error for handling in the calling function
+            console.error('Error executing HTTP request through proxy:', error);
+            throw error;
         }
     }
 }

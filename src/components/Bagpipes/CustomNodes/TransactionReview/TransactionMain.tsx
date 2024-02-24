@@ -20,7 +20,7 @@ import './TransactionMain.scss';
 
 export default function TransactionMain() {
   const { theme } = useContext(ThemeContext);
-  const { scenarios, activeScenarioId, transactions, setTransactions, saveSignedExtrinsic, setNodes, nodes, toggleExecuteChainScenario, setExecutionId, executionId } = useAppStore(state => ({
+  const { scenarios, activeScenarioId, transactions, setTransactions, saveSignedExtrinsic, setNodes, nodes, toggleExecuteFlowScenario, setExecutionId, executionId } = useAppStore(state => ({
     scenarios: state.scenarios,
     activeScenarioId: state.activeScenarioId,
     transactions: state.transactions,
@@ -28,7 +28,7 @@ export default function TransactionMain() {
     saveSignedExtrinsic: state.saveSignedExtrinsic,
     setNodes: state.setNodes,
     nodes: state.nodes,
-    toggleExecuteChainScenario: state.toggleExecuteChainScenario,
+    toggleExecuteFlowScenario: state.toggleExecuteFlowScenario,
     setExecutionId: state.setExecutionId,
     executionId: state.executionId
   }));
@@ -145,7 +145,7 @@ const handleAcceptTransactions = async () => {
       setExecutionId(executionId);
 
       // Signal that we should execute the scenario
-      toggleExecuteChainScenario();
+      toggleExecuteFlowScenario();
 
   
       // Once all are signed, proceed to the execution phase

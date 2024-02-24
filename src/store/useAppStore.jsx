@@ -18,8 +18,8 @@ const defaultState = {
   chainAddresses: [],
   isModaVisible: false,
   transactions: [],
-  shouldExecuteChainScenario: false,
-  executionState: 'idle', // can be 'idle', 'sending', 'stopped'
+  shouldExecuteFlowScenario: false,
+  executionState: 'idle', // can be 'idle', 'executing', 'stopped'
   toastPosition: null,
   hrmpChannels: {},
   currentNodeState: 'default_connected',
@@ -126,7 +126,7 @@ const useAppStore = create(
     },
         
     // setNodeConnections: (newConnections) => set({ nodeConnections: newConnections }),
-    toggleExecuteChainScenario: () => set((state) => ({ shouldExecuteChainScenario: !state.shouldExecuteChainScenario })),
+    toggleExecuteFlowScenario: () => set((state) => ({ shouldExecuteFlowScenario: !state.shouldExecuteFlowScenario })),
     setExecutionState: (newState) => set((state) => ({ executionState: newState })),
 
 
@@ -477,11 +477,11 @@ const useAppStore = create(
           return;
         }
     
-        // Append new status updates without overwriting previous ones
+        // Append new status event updates without overwriting previous ones
         const updateExecutionResponseData = {
           ...node.responseData,
-          updates: [
-            ...(node.responseData.updates || []), // Ensure there's a default array to append to
+          eventUpdates: [
+            ...(node.responseData.eventUpdates || []), // Ensure there's a default array to append to
             {
               timestamp: new Date().toISOString(),
               ...statusUpdate,

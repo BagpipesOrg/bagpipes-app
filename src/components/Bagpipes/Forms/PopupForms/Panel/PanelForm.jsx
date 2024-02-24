@@ -32,12 +32,11 @@ const PanelForm = ({ nodeId, onClose }) => {
     const [inputNodes, setInputNodes] = useState(node?.data?.inputNodes || []);
  
     const handleCancel = () => {
-    
       onClose(); // Invoke the onClose function passed from the parent component
-  };
+    };
 
     // Function to remove a pill
-    const removePill = (pillId) => {
+    const onRemovePill = (pillId) => {
       setPills(currentPills => currentPills.filter(pill => pill.id !== pillId));
       // Additional logic if needed, like updating the combined value or other states
     };
@@ -59,8 +58,6 @@ const PanelForm = ({ nodeId, onClose }) => {
   
     }, [currentScenario.diagramData.edges, nodeId, currentScenario.diagramData.nodes]);
   
-
-    
     const DraggablePill = ({ pill, depth, onRemovePill, onToggleExpand }) => {
       const pillColor = nodeTypeColorMapping[pill.nodeType] || nodeTypeColorMapping.defaultColor;
       console.log(`Node type draggable: ${pill.nodeType}, Color: ${pillColor}`);
@@ -81,7 +78,6 @@ const PanelForm = ({ nodeId, onClose }) => {
         }
       };
 
-    
       return (
         <div className='flex m-2'>
           <div ref={drag} style={{ opacity: isDragging ? 0.5 : 1, marginLeft: `${depth * 20}px`}}>
@@ -101,7 +97,6 @@ const PanelForm = ({ nodeId, onClose }) => {
         </div>
       );
     };
-    
     
     const DraggableNode = ({ nodeId, type, label }) => {
       const [{ isDragging }, drag, preview] = useDrag(() => ({
@@ -132,10 +127,6 @@ const PanelForm = ({ nodeId, onClose }) => {
       );
     };
 
-
-
-
-
   return (
     <div className="form-container" style={{ maxHeight: '80vh', overflowY: 'auto' }}>
       <FormHeader onClose={handleCancel}  title='Control Panel' />  
@@ -147,7 +138,7 @@ const PanelForm = ({ nodeId, onClose }) => {
       <div className="content">
 
         {pills.map(pill => (
-          <DraggablePill key={pill.id} pill={pill} depth={0} onRemovePill={removePill} />
+          <DraggablePill key={pill.id} pill={pill} depth={0} onRemovePill={onRemovePill} />
         ))}
       
       </div>
