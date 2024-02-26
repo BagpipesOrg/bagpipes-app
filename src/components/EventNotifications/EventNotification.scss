@@ -1,0 +1,23 @@
+.eventNotification {
+    position: absolute;
+    top: -10px;
+    right: -3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: rgb(23, 226, 16);
+    outline: solid 1px rgba(172, 172, 172, 0.307);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10; // Ensure it appears above other node elements
+    box-shadow: 0px 3px 5px 0px rgba(0, 0, 0, 0.467);
+  }
+
+  .eventData {
+    overflow: scroll;
+    max-height: 700px;
+    min-width: 300px;
+}

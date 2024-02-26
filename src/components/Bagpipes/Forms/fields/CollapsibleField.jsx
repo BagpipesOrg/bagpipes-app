@@ -17,7 +17,6 @@ const { Option } = Select;
 
 
 const CollapsibleField = ({ fieldKey, nodeId, title, info, toggleTitle, hasToggle,fieldTypes, items=[], selectOptions=[], selectRadioOptions=[], children, value, onChange, onPillsChange }) => {
-  console.log('CollapsibleField - fieldKey:', fieldKey);  
   const [isToggled, setIsToggled] = useState(false);
   const { showPanelTippy, hidePanelTippy } = usePanelTippy();
   const [droppedItems, setDroppedItems] = useState([]);
@@ -54,16 +53,23 @@ const CollapsibleField = ({ fieldKey, nodeId, title, info, toggleTitle, hasToggl
     );
   };
 
-  const handleInputClick = (event, nodeId) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const parentTippyOffset = 0; 
-    const calculatedPosition = {
-      x: rect.right + parentTippyOffset,
-      y: rect.top
-    };
-    showPanelTippy( nodeId, calculatedPosition, <PanelForm nodeId={nodeId} onClose={hidePanelTippy} />);
-    event.stopPropagation();
+const handleInputClick = (event, nodeId) => {
+  const rect = event.currentTarget.getBoundingClientRect();
+  const viewportWidth = window.innerWidth;
+
+  // Determine if there's enough space to the right; if not, use the left position.
+  const spaceOnRight = viewportWidth - rect.right;
+  const tooltipWidth = 300; // Approximate or dynamically determine your tooltip's width.
+  const shouldFlipToLeft = spaceOnRight < tooltipWidth;
+
+  const calculatedPosition = {
+    x: shouldFlipToLeft ? rect.left : rect.right,
+    y: rect.top
   };
+
+  showPanelTippy(nodeId, calculatedPosition, <PanelForm nodeId={nodeId} onClose={hidePanelTippy} />, shouldFlipToLeft ? 'left-start' : 'right-start');
+  event.stopPropagation();
+};
 
 const handleToggleChange = (toggled) => {
     setIsToggled(toggled);

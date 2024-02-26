@@ -8,15 +8,14 @@ export const TippyProvider = ({ children }) => {
   const [tippyProps, setTippyProps] = useState({
     visible: false,
     position: { x: 100, y: 300 },
-    nodeId: null
+    nodeId: null,
+    placement: 'bottom',
   });
 
-  const showTippy = (contentType, nodeId, position, content) => {
+  const showTippy = (contentType, nodeId, position, content, placement = 'bottom') => {
     console.log('showTippy called with nodeId:', nodeId);
 
-
-  
-    setTippyProps({ visible: true, position, nodeId, content }); // Include the content
+    setTippyProps({ visible: true, position, nodeId, content, placement }); // Include the content
   };
 
 
@@ -41,10 +40,10 @@ export const PanelTippyProvider = ({ children }) => {
     visible: false,
     position: { x: 0, y: 0 },
     content: null,
-    // placement: 'right',
+    placement: 'bottom',
   });
 
-  const showPanelTippy = (nodeId, position, content) => {
+  const showPanelTippy = (nodeId, position, content, placement ='top-start') => {
     const parentPosition = { x: 100, y: 300 }; // Example: Get this from the parent element's bounding box
     const bestPlacement = calculateBestPlacement(parentPosition, -200); // Use a 15px offset
     
@@ -52,7 +51,7 @@ export const PanelTippyProvider = ({ children }) => {
       visible: true, 
       position,
       content, 
-      placement: 'right', 
+      placement, 
     });
   };
 

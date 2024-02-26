@@ -52,7 +52,7 @@
             {nodeData.responseData?.eventUpdates?.map((event, index) => (
               <tr key={index}>
                 <td>{event.timestamp}</td>
-                <td>{event.response}</td>
+                <td>{event.eventData}</td>
               </tr>
             ))}
           </tbody>

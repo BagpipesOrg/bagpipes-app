@@ -44,7 +44,7 @@ function MainLayout({ children }) {
           appendTo={tippyProps.reference || (() => document.body)}
           content={tippyProps.content}
           interactive={true}
-          placement="auto"
+          placement={tippyProps.placement}
           visible={tippyProps.visible}
           theme="light"
           hideOnClick="false"

@@ -14,7 +14,7 @@ import toast  from 'react-hot-toast';
 import { getOrderedList } from './utils/scenarioExecutionUtils';
 import { handleNodeViewport } from '../handlers/handleNodeViewport';
 import { broadcastToChain } from '../../../Chains/api/broadcast';
-import { ChainToastContent, ActionToastContent } from '../../toasts/CustomToastContext'
+import { ChainToastContent, ActionToastContent, CustomToastContext } from '../../toasts/CustomToastContext'
 
 
 
@@ -294,10 +294,12 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                 const executions = fetchAllExecutionsForScenario(scenarios, activeScenarioId);
                 console.log('All Executions:', executions);
                 let parsedFormData;
+                let activeExecutionData;
+
                 if (executions) {
                     const upstreamNodeIds = getUpstreamNodeIds(orderedList, currentNode.id);
 
-                    const activeExecutionData = scenarios[activeScenarioId]?.executions[executionId];
+                    activeExecutionData = scenarios[activeScenarioId]?.executions[executionId];
                     console.log('Active Execution Data:', activeExecutionData);
 
                     // Assuming currentNode.formData contains the data to be parsed
@@ -316,9 +318,20 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                 try {
                     // Execute the HTTP request with the parsed URL and formData
                     const httpResponse = await NodeExecutionService.executeHttpRequest(parsedFormData);
-            
+                    console.log('HTTP Response:', httpResponse);
+
+                    const currentEventUpdates = activeExecutionData[currentNode.id].responseData.eventUpdates;
+
+                    const eventUpdatesCount = activeExecutionData[currentNode.id].responseData.eventUpdates.length;
+
+
+                    // Show toast notification for HTTP request execution
+                    // Ensure we are correctly passing the 'eventUpdates' for the current node
+                    toast(<CustomToastContext nodeType="http" eventUpdates={currentEventUpdates} />);
+
+
                     // Update node response data with the HTTP response
-                    updateNodeResponseData(activeScenarioId, executionId, currentNode.id, { response: httpResponse });
+                    updateNodeResponseData(activeScenarioId, executionId, currentNode.id, { eventData: httpResponse, hasNotification: true, eventUpdatesCount  });
                 } catch (error) {
                     console.error('Error executing HTTP request:', error);
                     updateNodeResponseData(activeScenarioId, executionId, currentNode.id, { error: error.message });

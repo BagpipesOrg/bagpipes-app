@@ -17,19 +17,23 @@ export default function WebhookNode({ }) {
   const nodeRef = useRef();
   const webhookNodeRef = useRef();
 
+
   const handleNodeClick = () => {
-    
+  
     const rect = nodeRef.current.getBoundingClientRect();
-    const scrollLeft = window.scrollX || document.documentElement.scrollLeft;
-    const scrollTop = window.scrollY || document.documentElement.scrollTop;
-  
-    // Adjusting position based on scrolling and potential transformations
+    const viewportWidth = window.innerWidth;
+
+    // Determine if there's enough space to the right; if not, use the left position.
+    const spaceOnRight = viewportWidth - rect.right;
+    const tooltipWidth = 300; // Approximate or dynamically determine your tooltip's width.
+    const shouldFlipToLeft = spaceOnRight < tooltipWidth;
+
     const calculatedPosition = {
-      x: rect.right + scrollLeft,
-      y: rect.top + scrollTop
-    };
+      x: shouldFlipToLeft ? rect.left : rect.right,
+      y: rect.top
+    }; 
   
-    showTippy(null, nodeId, calculatedPosition, <WebhookForm onSave={handleSubmit} onClose={handleCloseWebhookForm} nodeId={nodeId} reference={nodeRef.current} />);
+    showTippy(null, nodeId, calculatedPosition, <WebhookForm onSave={handleSubmit} onClose={handleCloseWebhookForm} nodeId={nodeId} reference={nodeRef.current} />, shouldFlipToLeft ? 'left-start' : 'right-start');
   };
 
   const handleSubmit = (event) => {
