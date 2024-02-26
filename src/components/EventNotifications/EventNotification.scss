@@ -21,3 +21,17 @@
     max-height: 700px;
     min-width: 300px;
 }
+
+.eventDataPopup .eventUpdateSection {
+    // margin-bottom: 1rem;
+  }
+  
+  .eventDataPopup .content pre, .eventDataPopup .content span {
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    overflow-x: auto; /* Ensure content does not overflow the popup */
+  }
+
+  .content {
+    margin-left: 20px;
+  }

@@ -4,30 +4,53 @@ import FormHeader from '../Bagpipes/Forms/FormHeader';
 import FormFooter from '../Bagpipes/Forms/FormFooter';
 import './EventNotification.scss';
 
-// Assuming EventData is a component you've defined to format and display your event updates
-const EventDataPopup = ({ eventUpdates, onClose }) => {
+const CollapsibleSection = ({ title, content }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+  
+    const toggleExpand = () => setIsExpanded(!isExpanded);
+  
+    return (
+      <div>
+        <div className="flex items-center">
+        <span onClick={toggleExpand} className="p-1  cursor-pointer">{isExpanded ? '-' : '+'}</span>
+          <strong>{title}</strong>
+        </div>
+        {isExpanded && (
+          <div className="content">
+            {typeof content === 'object' ? <pre>{JSON.stringify(content, null, 2)}</pre> : <span>{content}</span>}
+          </div>
+        )}
+      </div>
+    );
+  };
+  
+  const EventDataPopup = ({ eventUpdates, onClose }) => {
     const { hideTippy } = useTippy();
-    
+  
     const handleCancel = () => {
-        hideTippy();
-        onClose(); // Invoke the onClose function passed from the parent component
+      hideTippy();
+      onClose();
     };
   
-    return(
-    <div className=''>
-        <FormHeader onClose={handleCancel} title='Event Data'  />  
-        <div className='eventData'>
-        {eventUpdates.map((update, index) => (
-            <div className='w-full' key={index}>
-            <strong>Timestamp:</strong> {update.timestamp}
-            <pre>{JSON.stringify(update.eventData, null, 2)}</pre>
+    return (
+      <div className="eventDataPopup">
+        <FormHeader onClose={handleCancel} title="Event Data" />
+        <div className="eventData">
+          {eventUpdates.map((update, index) => (
+            <div className="eventUpdateSection" key={index}>
+                 {/* <CollapsibleSection title="Event" content={update}> */}
+              <CollapsibleSection title="Timestamp" content={update.timestamp} />
+              <CollapsibleSection title="Status" content={`${update.status} ${update.statusText}`} />
+              <CollapsibleSection title="Headers" content={update.headers} />
+              <CollapsibleSection title="Cookies" content={update.cookies} />
+              <CollapsibleSection title="Data" content={update.eventData} />
+              {/* </CollapsibleSection> */}
             </div>
-        ))}
+          ))}
         </div>
-    </div>
-  );
-};
-
+      </div>
+    );
+  };
 const EventNotification = ({ nodeId, eventUpdates }) => {
     const notificationRef = useRef();
     const { showTippy } = useTippy();

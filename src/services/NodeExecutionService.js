@@ -58,7 +58,7 @@ class NodeExecutionService {
             });
 
             console.log('HTTP request successful:', response.data);
-            return response.data;
+            return response;
         } catch (error) {
             console.error('Error executing HTTP request through proxy:', error);
             throw error;

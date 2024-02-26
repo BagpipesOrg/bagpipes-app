@@ -331,7 +331,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
 
 
                     // Update node response data with the HTTP response
-                    updateNodeResponseData(activeScenarioId, executionId, currentNode.id, { eventData: httpResponse, hasNotification: true, eventUpdatesCount  });
+                    updateNodeResponseData(activeScenarioId, executionId, currentNode.id, { eventData: httpResponse.data, status: httpResponse.status, statusText: httpResponse.statusText, headers: httpResponse.headers, cookies: httpResponse.cookies, hasNotification: true, eventUpdatesCount });
                 } catch (error) {
                     console.error('Error executing HTTP request:', error);
                     updateNodeResponseData(activeScenarioId, executionId, currentNode.id, { error: error.message });
