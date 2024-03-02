@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import CreateWebhookForm from './CreateWebhookForm';
 import useAppStore from '../../../../../store/useAppStore';
 import Tippy from '@tippyjs/react';
-import 'tippy.js/dist/tippy.css'; // optional for styling
+import 'tippy.js/dist/tippy.css'; 
 import 'tippy.js/themes/light.css';
 import CollapsibleField from '../../fields/CollapsibleField';
 import FormHeader from '../../FormHeader';
@@ -35,7 +35,7 @@ const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
 
   const [isCreateFormVisible, setCreateFormVisible] = useState(false);
   const createFormRef = useRef();
-  const { hideTippy } = useTippy();
+  const { hideTippy, showTippy } = useTippy();
 
   const [isListening, setIsListening] = useState(false);
   const [eventReceived, setEventReceived] = useState(false);
@@ -45,44 +45,30 @@ const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
 
   const currentScenario = scenarios[activeScenarioId];
     // Accessing the webhooks from the zustand store
-    const scenario = scenarios[activeScenarioId];
+  const scenario = scenarios[activeScenarioId];
   const node = scenario.diagramData.nodes.find(node => node.id === nodeId);
   const webhookNodes = currentScenario?.diagramData.nodes.filter(node => node.type === 'webhook');
   console.log('webhookNodes', webhookNodes);
   const selectedWebhookData = webhookNodes.find(webhook => webhook.selectedWebhook === selectedWebhook);
-
   const selectedWebhookObject = webhooks?.find(webhook => webhook.name === selectedWebhook);
+  console.log('selectedWebhookObject outside:', selectedWebhookObject);
   const webhookURL = selectedWebhookObject ? `https://webhook.site/${selectedWebhookObject.uuid}` : '';
   
 
   // Callback function to handle new webhook data
   const handleNewWebhookData = (newWebhook) => {
-
-    console.log('selectedWebhook newWebhook nodeId', nodeId);
-    // Fetch the current webhooks for the node
-
-    setSelectedWebhookInNode(activeScenarioId, nodeId, newWebhook.name);
-
-    console.log('selectedWebhook', selectedWebhook )
-
-    // Save updated data
-    saveWebhook(newWebhook); // Save the webhook globally
-    console.log('saved selectedWebhook newWebhook', newWebhook)
-      // Define the eventData object
-
-    console.log('saved selectedWebhookObject', selectedWebhookObject)
-
-    saveNodeFormData(activeScenarioId, nodeId, { webhookName: newWebhook.name, uuid: selectedWebhookObject.uuid});
-
+    console.log('New webhook data:', newWebhook);
+    // Use newWebhook.uuid directly since selectedWebhookObject might be undefined
+    setSelectedWebhookInNode(activeScenarioId, nodeId, newWebhook.name, newWebhook.uuid);
+    saveWebhook(newWebhook); // Save the new webhook globally
+    saveNodeFormData(activeScenarioId, nodeId, { webhookName: newWebhook.name, uuid: newWebhook.uuid});
+  
     // Force component to re-render if necessary
     setForceUpdate(prev => !prev);
     setCreateFormVisible(false);
-};
+  };
   
-
-
-
-
+  
   const handleCreateClick = () => {
     setCreateFormVisible(true);
   };
@@ -92,7 +78,7 @@ const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
 
     // update this to be similar to handleNewWebhookData
     setCreateFormVisible(false);
-    onSave();
+    onSave(newWebhook);
     hideTippy();
 
   };
@@ -121,6 +107,7 @@ const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
   };
 
   const fetchAndProcessEvents = async () => {
+    console.log('Fetching webhook events... uuid:', selectedWebhookObject.uuid);  
     const data = await WebhooksService.fetchLatestFromWebhookSite(selectedWebhookObject.uuid);
     if (data && data.data.length > 0) {
       console.log('Webhook event received:', data.data);
@@ -146,18 +133,19 @@ const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
         method: webhookEvent.method,
       };
 
-    // Save the updated formData in the node
-    saveNodeEventData(activeScenarioId, nodeId, eventData);
-
-
+      // Save the updated formData in the node
+      saveNodeEventData(activeScenarioId, nodeId, eventData);
+      
       setEventReceived(true);
       stopListening();
     }
   };
 
   const startListening = () => {
+    console.log('Starting to listen for webhook events...');
     if (!pollingIntervalRef.current && !eventReceived) {
-      fetchAndProcessEvents(); // Fetch immediately
+      console.log('Starting to listen for webhook events in if...');
+      fetchAndProcessEvents(); 
       pollingIntervalRef.current = setInterval(fetchAndProcessEvents, 5000); // Poll every 5 seconds
     }
   };
@@ -263,9 +251,7 @@ const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
         }
       </div>
     </div>
-    
-
-        </form>
+  </form>
       
 
       <div className="event-listening-area">

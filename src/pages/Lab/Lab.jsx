@@ -16,7 +16,7 @@ import { useCreateScenario } from '../../components/Bagpipes/hooks/useCreateScen
 import ThemeContext from '../../contexts/ThemeContext';
 
 function Lab() {
-    const { scenarios, addScenario, setActiveScenarioId, activeScenarioId, setNodeContentMap, activeExecutionId, setActiveExecutionId, loadScenario } = useAppStore((state) => ({
+    const { scenarios, addScenario, setActiveScenarioId, activeScenarioId, setNodeContentMap, loadScenario } = useAppStore((state) => ({
         scenarios: state.scenarios,
         addScenario: state.addScenario,
         setActiveScenarioId: state.setActiveScenarioId,

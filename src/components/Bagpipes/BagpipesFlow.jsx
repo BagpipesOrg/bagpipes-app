@@ -42,6 +42,7 @@ import { onConnect, onEdgesChange, onNodesChange } from '../../store/reactflow/'
 import useOnEdgesChange from '../../store/reactflow/useOnEdgesChange';
 import Edges from './edges';
 import { getNodeConfig } from './nodeConfigs';
+import EdgeForm from './forms/EdgeForm'
 import { EDGE_STYLES } from '../../store/reactflow/onConnect';
 import TopBar from './TopBar/TopBar';
 import './utils/getAllConnectedNodes';
@@ -103,7 +104,7 @@ const getId = (nodeType) => `${nodeType}_${uuidv4().substr(0, 6)}`;
 const BagpipesFlow = () => {
 
   const reactFlowWrapper = useRef(null);
-  const { showTippy, tippyProps } = useTippy();
+  const { showTippy, hideTippy, tippyProps } = useTippy();
 
     const { scenarios, activeScenarioId, addScenario, setActiveScenarioId, saveScenario, saveDiagramData, addNodeToScenario, addEdgeToScenario, deleteNodeFromScenario, deleteEdgeFromScenario, updateNodePositionInScenario, updateNodesInScenario, setSelectedNodeInScenario, setSelectedEdgeInScenario, nodeConnections, setNodes, setEdges, setNodeConnections, tempEdge, setTempEdge, loading, transactions, setTransactions, shouldExecuteFlowScenario, toggleExecuteFlowScenario, executionId, setExecutionState, setToastPosition } = useAppStore(state => ({
       scenarios: state.scenarios,
@@ -159,6 +160,7 @@ const BagpipesFlow = () => {
     const [maxNodeId, setMaxNodeId] = useState(0);
     const [selectedNodeId, setSelectedNodeId] = useState(null);
     const [selectedEdgeId, setSelectedEdgeId] = useState(null);
+    const [isEdgeFormVisible, setIsEdgeFormVisible] = useState(false);
     const instance = useReactFlow();
 
     const { executeFlowScenario, nodeContentMap, stopExecution } = useExecuteFlowScenario(currentScenarioNodes, setNodes, instance);
@@ -404,7 +406,7 @@ const BagpipesFlow = () => {
           if (tippyProps.visible && tippyProps.nodeId === node.id) {
             const newTippyPosition = calculateTippyPosition(node, reactFlowInstance);
             showTippy(null, node.id, newTippyPosition, tippyProps.content);
-                }
+          }
       
           // Existing logic for updating node position in the scenario
           updateNodePositionInScenario(activeScenarioId, node.id, node.position);
@@ -548,6 +550,18 @@ const BagpipesFlow = () => {
       setSelectedEdgeId(null);
   }, [  setSelectedEdgeId, deleteEdgeFromScenario, activeScenarioId, selectedEdgeId]);
   
+
+  const handleEdgeFormSave = (formData) => {
+    console.log("Form data:", formData);
+    // Process the formData to update the edge information
+    hideTippy(); 
+  };
+
+  const handleEdgeFormClose = () => {
+    hideTippy(); 
+  };
+
+
     const onEdgeClick = useCallback((event, edge) => {
       if (selectedEdgeId === edge.id) {
           setSelectedEdgeId(null); // deselect if the same edge is clicked again
@@ -555,10 +569,21 @@ const BagpipesFlow = () => {
       } else {
           setSelectedEdgeId(edge.id); // select the edge
           setSelectedEdgeInScenario(activeScenarioId, edge.id); // update scenario state
-      }
+          // setIsEdgeFormVisible(true);
+          const edgePositionRef = {
+            getBoundingClientRect: () => ({
+              top: event.clientY,
+              left: event.clientX,
+              right: event.clientX,
+              bottom: event.clientY,
+              width: 0,
+              height: 0,
+            }),
+          };
+          showTippy('edge', edge.id, edgePositionRef, <EdgeForm onSave={handleEdgeFormSave} onClose={handleEdgeFormClose} edge={edge} />, 'right-start');
 
-      
-    }, [selectedEdgeId, setSelectedEdgeInScenario, activeScenarioId]);
+      }
+    }, [selectedEdgeId, setSelectedEdgeId, showTippy, handleEdgeFormSave, handleEdgeFormClose]);
     
     const onNodeClick = useCallback((event, node) => {
       console.log("onNodeClick Clicked on:", node);
@@ -748,6 +773,16 @@ const handleStartScenario = async (instance) => {
                 </div>
 
             </Panel> */}
+            {isEdgeFormVisible && selectedEdgeId && (
+      <EdgeForm
+        edge={selectedEdgeId}
+        onSubmit={(data) => {
+          console.log(data); // Handle form submission
+          setIsEdgeFormVisible(false); // Close the form
+        }}
+        onClose={() => setIsEdgeFormVisible(false)}
+      />
+    )}
 
             
 

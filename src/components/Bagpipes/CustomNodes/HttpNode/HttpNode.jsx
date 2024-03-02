@@ -8,7 +8,7 @@ import './HttpNode.scss';
 import '../../node.styles.scss';
 
 import Tippy from '@tippyjs/react';
-import 'tippy.js/dist/tippy.css'; // optional for styling
+import 'tippy.js/dist/tippy.css'; 
 import 'tippy.js/themes/light.css';
 
 import HttpForm from '../../Forms/PopupForms/Http/HttpForm';
@@ -45,7 +45,7 @@ export default function HttpNode({ data }) {
       x: shouldFlipToLeft ? rect.left : rect.right,
       y: rect.top
     }; 
-    showTippy(null, nodeId, calculatedPosition, <HttpForm onSave={handleSubmit} onClose={handleCloseHttpForm} nodeId={nodeId} reference={nodeRef.current} />, shouldFlipToLeft ? 'left-start' : 'right-start');
+    showTippy(null, nodeId, nodeRef.current, <HttpForm onSave={handleSubmit} onClose={handleCloseHttpForm} nodeId={nodeId} reference={nodeRef.current} />, shouldFlipToLeft ? 'left-start' : 'right-start');
   };
 
   const handleSubmit = (event) => {

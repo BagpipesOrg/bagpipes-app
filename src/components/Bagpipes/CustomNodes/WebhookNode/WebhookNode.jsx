@@ -1,21 +1,65 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Handle, Position, useNodeId } from 'reactflow';
 import { WebhookNodeIcon }  from '../../../Icons/icons';
 import { useTippy } from '../../../../contexts/tooltips/TippyContext';
+import EventNotification from '../../../EventNotifications/EventNotification';
+import useAppStore from '../../../../store/useAppStore';
+import DecisionPrompt from './DecisionPrompt';
 import './WebhookNode.scss';
 import '../../node.styles.scss';
 
-import Tippy from '@tippyjs/react';
-import 'tippy.js/dist/tippy.css'; // optional for styling
+// import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css'; 
 import 'tippy.js/themes/light.css';
 import WebhookForm from '../../Forms/PopupForms/Webhook/WebhookForm';
 
 export default function WebhookNode({ }) {
-  const { showTippy } = useTippy();
-  const [isWebhookFormVisible, setWebhookFormVisible] = useState(false);
+  const { scenarios, activeScenarioId, executionId, setWebhookDecisionPending, setWebhookUserDecision, webhookDecision } = useAppStore(state => ({
+    scenarios: state.scenarios,
+    activeScenarioId: state.activeScenarioId,
+    executionId: state.executionId,
+    setWebhookDecisionPending: state.setWebhookDecisionPending,
+    setWebhookUserDecision: state.setWebhookUserDecision,
+    webhookDecision: state.webhookDecision,
+
+  }));
   const nodeId = useNodeId();
   const nodeRef = useRef();
+  const [isWebhookFormVisible, setWebhookFormVisible] = useState(false);
   const webhookNodeRef = useRef();
+  const { showTippy } = useTippy();
+
+  const { webhookEventStatus } = useAppStore(state => state.scenarios[activeScenarioId]?.executions[executionId]?.[nodeId]?.webhookEventStatus || {});
+
+
+  // const shouldShowDecisionPrompt = webhookDecision.isPending && webhookDecision.nodeId === nodeId;
+
+  const nodeExecutionData = scenarios[activeScenarioId]?.executions[executionId]?.[nodeId];
+  const eventUpdates = nodeExecutionData?.responseData?.eventUpdates || [];
+  const hasNotification = eventUpdates.length > 0;
+
+
+  useEffect(() => {
+    // Trigger the decision prompt based on the webhook event status
+    if (webhookEventStatus?.hasPreviousEvents && webhookEventStatus.userDecision === null) {
+      showDecisionPrompt();
+    }
+    // This useEffect no longer directly depends on the global state but on the destructured and memoized value
+  }, [webhookEventStatus, nodeId, showTippy]);
+  
+  useEffect(() => {
+    // Handle the decision
+    if (webhookEventStatus?.userDecision) {
+      if (webhookEventStatus.userDecision === 'processNow') {
+        // Logic to immediately process the existing event
+      } else if (webhookEventStatus.userDecision === 'waitForNew') {
+        // Logic to wait for a new event
+      }
+      // Optionally, reset the decision status after handling it
+      useAppStore.getState().updateNodeWebhookEventStatus(activeScenarioId, executionId, nodeId, { hasPreviousEvents: webhookEventStatus.hasPreviousEvents, userDecision: null });
+    }
+  }, [webhookEventStatus?.userDecision, nodeId]);
+
 
 
   const handleNodeClick = () => {
@@ -28,12 +72,30 @@ export default function WebhookNode({ }) {
     const tooltipWidth = 300; // Approximate or dynamically determine your tooltip's width.
     const shouldFlipToLeft = spaceOnRight < tooltipWidth;
 
-    const calculatedPosition = {
-      x: shouldFlipToLeft ? rect.left : rect.right,
-      y: rect.top
-    }; 
+
   
-    showTippy(null, nodeId, calculatedPosition, <WebhookForm onSave={handleSubmit} onClose={handleCloseWebhookForm} nodeId={nodeId} reference={nodeRef.current} />, shouldFlipToLeft ? 'left-start' : 'right-start');
+    showTippy(null, nodeId, nodeRef.current, <WebhookForm onSave={handleSubmit} onClose={handleCloseWebhookForm} nodeId={nodeId} reference={nodeRef.current} />, shouldFlipToLeft ? 'left-start' : 'right-start');
+  };
+
+
+
+  const showDecisionPrompt = () => {
+    if (!nodeRef.current) return;
+
+    const rect = nodeRef.current.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const spaceOnRight = viewportWidth - rect.right;
+    const tooltipWidth = 300;
+    const shouldFlipToLeft = spaceOnRight < tooltipWidth;
+
+    // Assuming `showTippy` is a function you've defined to show Tippy programmatically
+    showTippy(
+      null, 
+      nodeId, 
+      nodeRef.current, 
+      <DecisionPrompt nodeId={nodeId} onClose={() => setWebhookDecisionPending(false, null)} />, 
+      shouldFlipToLeft ? 'left-start' : 'right-start'
+    );
   };
 
   const handleSubmit = (event) => {
@@ -51,6 +113,8 @@ export default function WebhookNode({ }) {
 
     
     <div ref={nodeRef} onClick={handleNodeClick}>
+      {hasNotification && <EventNotification nodeId={nodeId} eventUpdates={eventUpdates} />}
+      {/* {shouldShowDecisionPrompt && <DecisionPrompt nodeId={nodeId} onClose={() => console.log('Prompt closed')} />} */}
 
     <div className="relative nodeBody bg-white border-2 border-gray-300 rounded-full w-20 h-20 flex items-center justify-center">
  
@@ -63,6 +127,7 @@ export default function WebhookNode({ }) {
       <div className="node-title-circle absolute bottom-[-38%] text-center w-full">
         <span className="font-medium text-xl text-gray-500">Webhook</span>
       </div>
+
       
       <Handle position={Position.Right} type="source" className="z-10" />
       {/* <Handle position={Position.Left} type="target" className="hidden z-10" /> */}

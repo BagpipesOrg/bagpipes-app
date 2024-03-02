@@ -5,7 +5,7 @@ import { getSavedFormState } from '../utils/storageUtils';
 import ScenarioService from '../../../services/ScenarioService';
 import NodeExecutionService from '../../../services/NodeExecutionService';
 import { processScenarioData, validateDiagramData, processAndSanitizeFormData, parseAndReplacePillsInFormData, sanitizeFormData, getUpstreamNodeIds } from '../utils/scenarioUtils';
-import { fetchNodeExecutionData, processWebhookEvent, waitForNewWebhookEvent } from './utils/scenarioExecutionUtils';
+import { fetchNodeExecutionData, fetchAllExecutionsForScenario, processWebhookEvent } from './utils/scenarioExecutionUtils';
 import SocketContext from '../../../contexts/SocketContext';
 import WebhooksService from '../../../services/WebhooksService';
 import useAppStore from '../../../store/useAppStore';
@@ -21,10 +21,11 @@ import { ChainToastContent, ActionToastContent, CustomToastContext } from '../..
 const useExecuteFlowScenario = (nodes, setNodes, instance) => {
     const socket = useContext(SocketContext);
     const store = useStoreApi();
-    const { scenarios, activeScenarioId, saveExecution, executionId, setExecutionId, updateNodeContent, setLoading, loading, toggleExecuteFlowScenario, executionState, setExecutionState, saveTriggerNodeToast, updateEdgeStyleForNode, updateNodeResponseData, updateNodeWebhookEventStatus } = useAppStore(state => ({
+    const { scenarios, activeScenarioId, saveExecution, executionId, setExecutionId, updateNodeContent, setLoading, loading, toggleExecuteFlowScenario, executionState, setExecutionState, saveTriggerNodeToast, updateEdgeStyleForNode, updateNodeResponseData } = useAppStore(state => ({
       scenarios: state.scenarios,
       activeScenarioId: state.activeScenarioId,
       saveExecution: state.saveExecution,
+      executionId: state.executionId,
       setExecutionId: state.setExecutionId,
       updateNodeContent: state.updateNodeContent,
       setLoading: state.setLoading,
@@ -35,7 +36,6 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
       saveTriggerNodeToast: state.saveTriggerNodeToast,
       updateEdgeStyleForNode: state.updateEdgeStyleForNode,
       updateNodeResponseData: state.updateNodeResponseData,
-      updateNodeWebhookEventStatus: state.updateNodeWebhookEventStatus,
     }));
     const [nodeContentMap, setNodeContentMap] = useState({}); 
     const [nodeContentHistory, setNodeContentHistory] = useState({});
@@ -46,12 +46,8 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
 
     async function executeFlowScenario() {
       const newExecutionId = uuidv4(); 
-      console.log('New Execution Id:', newExecutionId);
+      console.log('executeFlowScenario newExecutionId:', newExecutionId);
       saveExecution(newExecutionId);
-
-      const updatedExecutionId = useAppStore.getState().executionId;
-      console.log('Updated Execution Id:', updatedExecutionId);
-
 
       toast('Starting Workflow Execution...', { id: 'workflow-start',duration: 5000 });
       setLoading(true);
@@ -79,7 +75,12 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
         };
         
         console.log('[executeFlowScenario] Retrieved diagramData from state:', diagramData);
+
+        // const executionId = uuidv4();
+        // setExecutionId(executionId);
+       
         
+        // Get the ordered list of nodes
         const orderedList = getOrderedList(diagramData.edges);
         console.log('[executeFlowScenario] Ordered List of Nodes:', orderedList);
 
@@ -88,6 +89,11 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
             toast.error('Error during ordering of nodes. Check the scenario.');
             return;
         }
+
+        // Initialize execution data in the store with nodes
+        // console.log(`Initializing execution for ID: ${executionId} with initial node data`);
+        // saveExecution(executionId);
+
 
         // Validate the diagramData
         diagramData = validateDiagramData(diagramData);
@@ -98,6 +104,8 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
         let nodeContents = {};
         let executionCycleFinished = false;
 
+
+        // Iterate over the nodes based on the order from orderedList
         for(let index = 0; index < orderedList.length; index++) {
             let nodeId = orderedList[index];
             let currentNode = diagramData.nodes.find(node => node.id === nodeId);
@@ -157,17 +165,24 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                     await broadcastToChain(sourceChain, signedExtrinsic, {
                         onInBlock: (blockHash) => {
                             console.log(`Transaction included at blockHash: ${blockHash}`);
+
                             toast.success(`Transaction included at blockHash: ${blockHash}`);
-                            updateNodeResponseData(activeScenarioId, updatedExecutionId, nodeId, { inBlock: blockHash });
+                            // Update global state in Zustand store
+
+
+                            updateNodeResponseData(activeScenarioId, executionId, nodeId, { inBlock: blockHash });
+
                         },
                         onFinalized: (blockHash) => {
                             toast.success(`Transaction finalized at blockHash: ${blockHash}`);
-                            updateNodeResponseData(activeScenarioId, updatedExecutionId, nodeId, { finalized: blockHash });
+                            // Update global state in Zustand store
+                            updateNodeResponseData(activeScenarioId, executionId, nodeId, { finalized: blockHash });
                         },
                         onError: (error) => {
                             toast.error(`Action execution failed: ${error.message}`);
                             setLoading(false);
-                            updateNodeResponseData(activeScenarioId, updatedExecutionId, nodeId, { error: error.message });
+                            // Update global state in Zustand store
+                            updateNodeResponseData(activeScenarioId, executionId, nodeId, { error: error.message });
                         },
                     });
                 } catch (error) {
@@ -188,65 +203,37 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
 
             case 'webhook':
                 updateEdgeStyleForNode(currentNode.id, 'executing');
-                const webhookFetchStartTime = new Date();
                 console.log('executeFlowScenario for webhook event...', currentNode);
                 try {
-                    console.log('executeFlowScenario currentNode formData uuid:', currentNode.formData.uuid);
                     const webhookData = await WebhooksService.fetchLatestFromWebhookSite(currentNode.formData.uuid);
                     console.log('executeFlowScenario Webhook data received:', webhookData);
-                    const { processedEventData, isNewEvent } = processWebhookEvent(webhookData, webhookFetchStartTime);
-                    console.log('executeFlowScenario for webhook event...processedEventData:', processedEventData);
-                    // const webhookEventStatus = scenarios[activeScenarioId]?.executions[updatedExecutionId]?.[currentNode.id] || {};
-                    if (!isNewEvent) {
-                        // There are previous events, prompt the user for a decision
-                        console.log('executeFlowScenario for webhook event...hasPreviousEvents:', currentNode.id);
-                        // temporarily set the decision to wait for new.
-                        updateNodeWebhookEventStatus(activeScenarioId, updatedExecutionId, currentNode.id, { hasPreviousEvents: true, userDecision: 'waitForNew' });
-                        const { webhookEventStatus } = useAppStore.getState().scenarios[activeScenarioId]?.executions[updatedExecutionId]?.[currentNode.id] || {};
-                        console.log('executeFlowScenario for webhook event...webhookEventStatus:', webhookEventStatus);
-
-                        // const userDecision = await promptUserForDecision(currentNode.id); // This function needs to be implemented
-                        if (webhookEventStatus?.userDecision === 'waitForNew') {
-                            console.log('executeFlowScenario for webhook event...waitForNew:', currentNode.id);
-
-                            const newEventData = await waitForNewWebhookEvent(currentNode.formData.uuid, webhookFetchStartTime);
-                            if (newEventData) {
-                              // Process the new event
-                              updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, { eventData: newEventData });
-                            }
-                           
-                        } else if (webhookEventStatus?.userDecision === 'processNow') {
-                            console.log('executeFlowScenario for webhook event...processPrevious:', currentNode.id);
-                            // Process the most recent previous event
-                            updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, { eventData: processedEventData });
-                        }
-                    } else {
-                        // No previous events, process the new event immediately
-                        updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, { eventData: processedEventData });
-                    }
+                    const processedEventData = processWebhookEvent(webhookData);
+                    console.log('[webhook] executionId:', executionId);
+                    updateNodeResponseData(activeScenarioId, executionId, currentNode.id, { eventData: processedEventData });
+                    console.log('Updated Node Response Data:', processedEventData);
                 } catch (error) {
                     console.error('Error waiting for webhook data:', error);
-                    updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, { error: error.message });
+                    updateNodeResponseData(activeScenarioId, executionId, currentNode.id, { error: error.message });
                 }
                 updateEdgeStyleForNode(currentNode.id, 'default_connected');
+                // Check if it's the last iteration to set executionCycleFinished accordingly
                 executionCycleFinished = index === orderedList.length - 1;
                 break;
-                  
             
                 
             case 'http':
                 updateEdgeStyleForNode(currentNode.id, 'executing');
                 console.log('executeFlowScenario for http event...', currentNode.id, currentNode);
                 // assuming we have the scenarios object and the activeScenarioId available
-                const executions = useAppStore.getState().scenarios[activeScenarioId]?.executions;
-                console.log('All Executions:', executions, updatedExecutionId);
+                const executions = fetchAllExecutionsForScenario(scenarios, activeScenarioId);
+                console.log('All Executions:', executions, executionId);
                 let parsedFormData;
                 let activeExecutionData = {};
 
                 if (executions) {
                     const upstreamNodeIds = getUpstreamNodeIds(orderedList, currentNode.id);
-                    console.log('executionId:', updatedExecutionId);
-                    activeExecutionData = executions[updatedExecutionId];
+                    console.log('executionId:', executionId);
+                    activeExecutionData = executions[executionId];
                     console.log('Active Execution Data:', activeExecutionData);
 
 
@@ -264,29 +251,26 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                 // const { url: parsedUrl, method, ...otherParams } = parsedFormData;
             
                 try {
+                    // Execute the HTTP request with the parsed URL and formData
                     const httpResponse = await NodeExecutionService.executeHttpRequest(parsedFormData);
-                    // Assuming httpResponse contains the data you need
-                    console.log('http HTTP Response:', httpResponse);
-                    const statusUpdate = {
-                        eventData: httpResponse.data,
-                        status: httpResponse.status,
-                        statusText: httpResponse.statusText,
-                        headers: httpResponse.headers,
-                        // Any other relevant information from the response
-                    };
-                
-                    // Update the node response data with the new status update
-                    updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, statusUpdate);
-                
-                    // toast(<CustomToastContext nodeType="http" eventUpdates={statusUpdate.eventData} />);
+                    console.log('HTTP Response:', httpResponse);
 
+                    const currentEventUpdates = activeExecutionData[currentNode.id].responseData.eventUpdates;
+                    const eventUpdatesCount = activeExecutionData[currentNode.id].responseData.eventUpdates.length;
+
+
+                    // Show toast notification for HTTP request execution
+                    // Ensure we are correctly passing the 'eventUpdates' for the current node
+                    toast(<CustomToastContext nodeType="http" eventUpdates={currentEventUpdates} />);
+
+
+                    // Update node response data with the HTTP response
+                    updateNodeResponseData(activeScenarioId, executionId, currentNode.id, { eventData: httpResponse.data, status: httpResponse.status, statusText: httpResponse.statusText, headers: httpResponse.headers, cookies: httpResponse.cookies, hasNotification: true, eventUpdatesCount });
                 } catch (error) {
                     console.error('Error executing HTTP request:', error);
-                    // Optionally, update the node response data to reflect the error
-                    const errorStatusUpdate = { error: error.message };
-                    updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, errorStatusUpdate);
+                    updateNodeResponseData(activeScenarioId, executionId, currentNode.id, { error: error.message });
                 }
-                
+            
                 updateEdgeStyleForNode(currentNode.id, 'default_connected');
                 // Check if it's the last iteration to set executionCycleFinished accordingly
                 executionCycleFinished = index === orderedList.length - 1;
@@ -308,6 +292,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
             toast.success('Workflow Execution Completed! The execution cycle has finished.', { id: 'execution-finished' });
             setLoading(false); 
             setExecutionState('idle');
+            updateEdgeStyleForNode(currentNode.id, 'default_connected');
 
         }
         } catch (error) {
@@ -315,7 +300,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
         } finally {
             console.log('Workflow Execution Prepared and Sent to Server...');
             setNodes([...nodes]);
-            executedIds.add(updatedExecutionId);
+            executedIds.add(executionId);
             toggleExecuteFlowScenario();
             setExecutionState('idle');
             console.log('Workflow Execution Prepared and set to idle and toggled...', executionState, toggleExecuteFlowScenario);

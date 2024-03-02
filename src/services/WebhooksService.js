@@ -59,7 +59,7 @@ class WebhooksService {
 
   async fetchLatestFromWebhookSite(uuid) {
     try {
-        console.log('Fetching latest webhook data with UUID:', uuid);   
+        console.log('Fetching the latest webhook data with webhook id UUID:', uuid);   
         const response = await axios.get(`http://localhost:5005/api/webhook/fetchWebhookData/${uuid}`); // Replace with your actual API endpoint
         console.log('Latest Webhook Data:', response.data); // Log the data
         console.log('Webhook event received:', response.data.data);

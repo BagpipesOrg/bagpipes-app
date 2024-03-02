@@ -31,39 +31,16 @@ class NodeExecutionService {
 
     async executeHttpRequest(parsedFormData) {
         console.log('executeHttpRequest Parsed form data:', parsedFormData);
-        const { url, method, ...otherParams } = parsedFormData;
-        console.log('executeHttpRequest URL:', url);
-
-        // Headers and body should be extracted from otherParams based on your needs
-        // For example, assuming otherParams contains headers and body directly
-        const headers = otherParams.headers || {};
-        let body = otherParams.body || {};
-
-        // If body is a string, try parsing it to JSON, or leave as is if parsing fails
-        if (typeof body === 'string') {
-            try {
-                body = JSON.parse(body);
-            } catch (error) {
-                // Body remains a string if it cannot be parsed to JSON
-            }
-        }
-        console.log('Body method url', body, method, url)
         try {
-            console.log('Executing HTTP request through proxy:', body);
-            const response = await axios.post(NodeExecutionService.proxyUrl, {
-                url, // The actual URL to request
-                method,
-                headers,
-                body, // Body parsed from form data, if applicable
-            });
-
+            const response = await axios.post(NodeExecutionService.proxyUrl, parsedFormData);
             console.log('HTTP request successful:', response.data);
-            return response;
+            return response.data;
         } catch (error) {
             console.error('Error executing HTTP request through proxy:', error);
             throw error;
         }
     }
+    
 }
 
 export default new NodeExecutionService();

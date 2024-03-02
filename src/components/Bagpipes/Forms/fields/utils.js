@@ -155,7 +155,7 @@ const calculateIndexFromPosition = (editableDiv, position) => {
   };
   
   
-  const createPillElement = (pill, onDragStart, onDragEnd, onRemovePill) => {
+  const createPillElement = (pill, handleDragStart, handleDragEnd,removePill) => {
     let pillElement = document.createElement('span');
     pillElement.setAttribute('data-id', pill.id);
     pillElement.textContent = `${pill.nodeIndex}. ${pill.text}`;    
@@ -165,9 +165,10 @@ const calculateIndexFromPosition = (editableDiv, position) => {
     pillElement.setAttribute('contenteditable', 'false');
     pillElement.setAttribute('data-nodeindex', pill.nodeIndex);
     pillElement.draggable = true;
-    pillElement.addEventListener('click', () => onRemovePill(pill.id));
-    pillElement.addEventListener('dragstart', (event) => onDragStart(event, pill));
-    pillElement.addEventListener('dragend', onDragEnd);
+    pillElement.addEventListener('click', () => removePill(pill.id));
+    pillElement.draggable = true;
+    pillElement.addEventListener('dragstart', handleDragStart);
+    pillElement.addEventListener('dragend', handleDragEnd);
     console.log("CustomInput 1. created pill element", pillElement);
 
     return pillElement;
@@ -193,28 +194,8 @@ const calculateIndexFromPosition = (editableDiv, position) => {
     } else {
       editableDiv.appendChild(pillElement);
   }
-  
+  console.log("CustomInput 1. inserted pill element", pillElement);
     updateCombinedValue(editableDiv, onChange); // Update the combined value
-  };
-  
-  export const insertPillAtCursorPosition = (editableInputRef, pill, handleDragStart, handleDragEnd) => {
-    const editableDiv = editableInputRef.current;
-    const selection = window.getSelection();
-    if (!selection.rangeCount) return;
-  
-    const range = selection.getRangeAt(0);
-    const pillNode = createPillElement(pill, handleDragStart, handleDragEnd, removePill);
-    range.insertNode(pillNode);
-  
-    const textNode = document.createTextNode(' '); // Create a spacer text node
-    range.insertNode(textNode);
-  
-    // Update cursor position
-    range.setStartAfter(textNode);
-    selection.removeAllRanges();
-    selection.addRange(range);
-  
-    updateCombinedValue(editableDiv); // Update combined value
   };
   
 

@@ -10,17 +10,48 @@ export const TippyProvider = ({ children }) => {
     position: { x: 100, y: 300 },
     nodeId: null,
     placement: 'bottom',
+    content: null
   });
 
-  const showTippy = (contentType, nodeId, position, content, placement = 'bottom') => {
-    console.log('showTippy called with nodeId:', nodeId);
+  const calculatePosition = (referenceElement, placement) => {
+    const rect = referenceElement.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const tooltipWidth = 300; // Adjust based on your tooltip size or make it dynamic
+    const spaceOnRight = viewportWidth - rect.right;
+    const shouldFlipToLeft = spaceOnRight < tooltipWidth && placement.startsWith('right');
 
-    setTippyProps({ visible: true, position, nodeId, content, placement }); // Include the content
+    let calculatedPosition;
+    switch (placement) {
+      case 'right-start':
+      case 'right':
+        calculatedPosition = shouldFlipToLeft ? { x: rect.left - tooltipWidth, y: rect.top } : { x: rect.right, y: rect.top };
+        break;
+      // Implement other placements as needed
+      default:
+        calculatedPosition = { x: rect.left, y: rect.top + window.scrollY }; // Fallback or default position
+    }
+
+    return { calculatedPosition, placement: shouldFlipToLeft && placement.startsWith('right') ? 'left-start' : placement };
+  };
+
+
+  const showTippy = (contentType, nodeId, referenceElement, content, placement = 'bottom') => {
+    console.log('showTippy called with nodeId:', nodeId);
+  
+    const { calculatedPosition, placement: finalPlacement } = calculatePosition(referenceElement, placement);
+  
+    setTippyProps({
+      visible: true,
+      position: calculatedPosition,
+      nodeId,
+      content,
+      placement: finalPlacement,
+    });
   };
 
 
   const hideTippy = () => {
-    setTippyProps({ visible: false, position: { x: 0, y: 0 }, nodeId: null, reference: null });
+    setTippyProps({ visible: false, position: { x: 0, y: 0 }, nodeId: null, content: null, placement: 'bottom' });
   };
 
   return (

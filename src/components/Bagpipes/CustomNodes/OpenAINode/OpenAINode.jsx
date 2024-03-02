@@ -24,12 +24,7 @@ export default function OpenAINode({ data }) {
     const parentTippyOffsetX = 0; 
     const parentTippyOffsetY = 0; 
 
-
-    const calculatedPosition = {
-      x: rect.right + parentTippyOffsetX,
-      y: rect.top + parentTippyOffsetY
-    };    
-    // showTippy(null, nodeId, calculatedPosition, <OpenAIForm onSave={handleSubmit} onClose={handleCloseOpenAIForm} nodeId={nodeId} reference={nodeRef.current} />);
+    showTippy(null, nodeId, nodeRef.current, <OpenAIForm onSave={handleSubmit} onClose={handleCloseOpenAIForm} nodeId={nodeId} reference={nodeRef.current} />);
   };
 
   const handleSubmit = (event) => {

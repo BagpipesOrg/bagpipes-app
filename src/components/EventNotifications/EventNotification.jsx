@@ -51,17 +51,14 @@ const CollapsibleSection = ({ title, content }) => {
       </div>
     );
   };
+
+
 const EventNotification = ({ nodeId, eventUpdates }) => {
     const notificationRef = useRef();
     const { showTippy } = useTippy();
     const [isEventDataPoppedUp, setEventDataPopup] = useState(false);
-
-  
-  
     const handleNotificationClick = (e) => {
-
-        e.stopPropagation();
-        
+        e.stopPropagation();  
       const rect = notificationRef.current.getBoundingClientRect();
       const calculatedPosition = {
         x: rect.right,
@@ -69,7 +66,7 @@ const EventNotification = ({ nodeId, eventUpdates }) => {
       };
   
       // Show the Tippy with event data on click
-      showTippy('eventData', nodeId, calculatedPosition, <EventDataPopup eventUpdates={eventUpdates} onClose={handleCloseEventDataPopup} />, 'top-start');
+      showTippy('eventData', nodeId, notificationRef.current, <EventDataPopup eventUpdates={eventUpdates} onClose={handleCloseEventDataPopup} />, 'top-start');
     };
 
     const handleCloseEventDataPopup = () => {

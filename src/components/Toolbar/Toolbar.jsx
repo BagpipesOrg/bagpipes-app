@@ -39,7 +39,6 @@ const AppsSubMenu = ({ onDragStart, theme }) => {
       case 'delay': return <DelayIcon fillColor='black' />;
       case 'code': return <CodeIcon fillColor='black' />;
       case 'openAi': return <OpenAIIcon fillColor='black' />;
-      // Add more cases for other icons
       default: return null;
     }
   };
@@ -51,7 +50,6 @@ const AppsSubMenu = ({ onDragStart, theme }) => {
           <div className={`submenu-icon ${theme}`} onDragStart={(event) => onDragStart(event, nodeKey)} draggable>
             {getNodeIcon(nodeKey)}
             <span className='text-slate-800'>{appsNodes[nodeKey]}</span>
-
           </div>
         </Tippy>
       )}

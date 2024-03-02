@@ -22,6 +22,7 @@ const CreateWebhookForm = ({ onSave, onClose }) => {
         console.log("CreateWebhookForm newWebhook", newWebhook);
         onSave(newWebhook); // Pass the complete webhook data back to the parent
     };
+    
     const handleCancel = () => {
         onClose(); // Invoke the onClose function passed from the parent component
     };

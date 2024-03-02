@@ -1,3 +1,7 @@
+
+import WebhooksService from '../../../../services/WebhooksService';
+
+
 export function replacePlaceholders(text, nodeContents, validNodeIds=[]) {
     let newText = text;
 
@@ -198,32 +202,66 @@ export function fetchNodeExecutionData(scenarios, activeScenarioId, nodeId) {
 }
 
 
-export function fetchAllExecutionsForScenario(scenarios, activeScenarioId) {
-    const activeScenario = scenarios[activeScenarioId];
-    if (!activeScenario || !activeScenario.executions) {
-        console.error(`Active scenario with ID ${activeScenarioId} not found or does not contain executions.`);
-        return null;
+export const processWebhookEvent = (webhookEventData, webhookFetchStartTime) => {
+    const fetchStartTime = new Date(webhookFetchStartTime);
+
+    // Find the first event that was created after the webhook started fetching
+    const newWebhookEvent = webhookEventData.data.find(event => {
+        const eventCreatedAt = new Date(event.created_at);
+        return eventCreatedAt > fetchStartTime;
+    });
+
+    // If a new event is found, process it
+    if (newWebhookEvent) {
+        const processedEventData = {
+            query: newWebhookEvent.query, 
+            content: parseWebhookContent(newWebhookEvent.content), 
+            headers: newWebhookEvent.headers,
+            method: newWebhookEvent.method,
+            createdAt: newWebhookEvent.created_at,
+        };
+        return { processedEventData, isNewEvent: true };
     }
-
-    // Return the executions object for the active scenario
-    console.log('activeScenario.executions:', activeScenario.executions);
-    return activeScenario.executions;
-}
-
-export const processWebhookEvent = (webhookEventData) => {
-    const webhookEvent = webhookEventData.data[0];
-
-
-    const processedEventData = {
-        query: webhookEvent.query, 
-        content: parseWebhookContent(webhookEvent.content), 
-        headers: webhookEvent.headers,
-        method: webhookEvent.method,
-        createdAt: webhookEvent.created_at,
+    // Return the most recent event but indicate it's not new
+    const mostRecentEvent = webhookEventData.data[0]; // Assuming data is sorted by created_at
+    const processedMostRecentEventData = {
+        query: mostRecentEvent.query, 
+        content: parseWebhookContent(mostRecentEvent.content), 
+        headers: mostRecentEvent.headers,
+        method: mostRecentEvent.method,
+        createdAt: mostRecentEvent.created_at,
     };
-
-    return processedEventData;
+    return { processedEventData: processedMostRecentEventData, isNewEvent: false };
 };
+
+
+export async function waitForNewWebhookEvent(uuid, webhookFetchStartTime) {
+    let foundNewEvent = false;
+    let processedEventData = null;
+  
+    while (!foundNewEvent) {
+      try {
+        const webhookData = await WebhooksService.fetchLatestFromWebhookSite(uuid);
+        const { processedEventData: newEventData, isNewEvent } = processWebhookEvent(webhookData, webhookFetchStartTime);
+  
+        if (isNewEvent) {
+          foundNewEvent = true;
+          processedEventData = newEventData;
+          break; // Exit the loop as we've found a new event
+        }
+  
+        // Wait for a specified time before the next check
+        await new Promise(resolve => setTimeout(resolve, 5000)); // Poll every 5 seconds
+      } catch (error) {
+        console.error('Error polling for new webhook data:', error);
+        // Decide how to handle errors - retry, exit, etc.
+        await new Promise(resolve => setTimeout(resolve, 5000)); // Wait before retrying
+      }
+    }
+  
+    return processedEventData;
+  }
+
 
 const parseWebhookContent = (content) => {
     try {
@@ -233,4 +271,27 @@ const parseWebhookContent = (content) => {
         return {}; 
     }
 };
+
+
+// export async function waitForNewWebhookEvent(uuid, startTime, attempt = 0) {
+//     const MAX_ATTEMPTS = 10; 
+//     const RETRY_DELAY = 60000; 
+
+//     if (attempt >= MAX_ATTEMPTS) {
+//         console.log('Max attempts to fetch new webhook event reached.');
+//         return null; 
+//     }
+
+//     const webhookData = await WebhooksService.fetchLatestFromWebhookSite(uuid);
+//     const { processedEventData, isNewEvent } = processWebhookEvent(webhookData, startTime);
+
+//     if (isNewEvent) {
+//         return processedEventData; 
+//     } else {
+//         console.log(`Attempt ${attempt + 1}: Waiting for new webhook event...`);
+//         await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+//         return waitForNewWebhookEvent(uuid, startTime, attempt + 1);
+//     }
+// }
+
 

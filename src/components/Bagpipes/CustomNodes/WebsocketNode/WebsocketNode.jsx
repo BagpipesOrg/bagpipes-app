@@ -15,7 +15,6 @@ export default function WebsocketNode({ }) {
   const [isWebsocketFormVisible, setWebsocketFormVisible] = useState(false);
   const nodeId = useNodeId();
   const nodeRef = useRef();
-  const WebsocketNodeRef = useRef();
 
   const handleNodeClick = () => {
     
@@ -23,13 +22,7 @@ export default function WebsocketNode({ }) {
     const scrollLeft = window.scrollX || document.documentElement.scrollLeft;
     const scrollTop = window.scrollY || document.documentElement.scrollTop;
   
-    // Adjusting position based on scrolling and potential transformations
-    const calculatedPosition = {
-      x: rect.right + scrollLeft,
-      y: rect.top + scrollTop
-    };
-  
-    // showTippy(null, nodeId, calculatedPosition, <WebsocketForm onSave={handleSubmit} onClose={handleCloseWebsocketForm} nodeId={nodeId} reference={nodeRef.current} />);
+    showTippy(null, nodeId, nodeRef.current, <WebsocketForm onSave={handleSubmit} onClose={handleCloseWebsocketForm} nodeId={nodeId} reference={nodeRef.current} />);
   };
 
   const handleSubmit = (event) => {

@@ -36,7 +36,7 @@ const CustomInput = ({ fieldKey, value, onChange, onClick, placeholder, classNam
             color: color,
             contentEditable: false, 
             draggable: true,
-            nodeIndex: item.nodeIndex, 
+            nodeIndex: item.nodeIndex,
           };
           const updatedPills = [...pills, newPill]; 
           console.log("CustomInput - Updated pills before calling onPillsChange:", updatedPills);
