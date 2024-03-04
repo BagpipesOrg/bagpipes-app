@@ -42,7 +42,7 @@ import { onConnect, onEdgesChange, onNodesChange } from '../../store/reactflow/'
 import useOnEdgesChange from '../../store/reactflow/useOnEdgesChange';
 import Edges from './edges';
 import { getNodeConfig } from './nodeConfigs';
-import EdgeForm from './forms/EdgeForm'
+import EdgeForm from './Forms/EdgeForm'
 import { EDGE_STYLES } from '../../store/reactflow/onConnect';
 import TopBar from './TopBar/TopBar';
 import './utils/getAllConnectedNodes';
