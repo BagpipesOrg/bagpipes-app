@@ -12,7 +12,7 @@ const Toggle = ({ title, isToggled, onToggleChange }) => {
 
   
   return (
-    <div className=' flex items-center'>
+    <div className=' flex items-center' >
       <Switch className="custom-switch" checked={isToggled} onChange={handleToggle} />
       <label className='ml-2 text-xxs text-gray-500'>{title}</label>
     </div>
