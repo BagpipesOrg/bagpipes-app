@@ -1,24 +1,23 @@
 @import "./variables";
 
 .button {
-    background-color: var(--button-bg);
-    color: white;
-    border: none;
-    border-radius: 7px;
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    font-family: $primary-font !important;
+  background-color: var(--button-bg);
+  color: white;
+  border: none;
+  border-radius: 7px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-family: $primary-font !important;
     
-    // &:hover {
-    //   background-color: darken($primary-color, 10%);
-    // }
-  
-    &:active {
-      background-color: darken($primary-color, 20%);
-    }
+  &:hover {
+      background-color: darken($primary-color, 10%);
   }
-
+  
+  &:active {
+      background-color: darken($primary-color, 20%);
+  }
+}
 
   .table {
     width: 100%;

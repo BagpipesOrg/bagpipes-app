@@ -259,42 +259,36 @@ const toggleDropdown = () => {
 
   return (
     <div>
-      
       <FormHeader title = 'Chain Action' />
-
-  
       <div  className='p-3 in-node-border rounded flex justify-center flex-col items-center mb-3'>
-        
 
-      
+        {/* Custom dropdown */}
+        <div className="relative">
+          <div className="action-type flex justify-between items-center in-node-border rounded cursor-pointer text-xs ml-2 mr-2 font-semibold bg-white" onClick={toggleDropdown}>
+            {selectedAction.action ? (
+              <img src={getActionImage()} alt={selectedAction.action} className="w-12 h-12 p-1 mx-auto" />
+            ) : (
+              <div className="text-gray-500 mx-auto text-xs font-semibold">Select Action</div>
+            )}
 
-      {/* Custom dropdown */}
-      <div className="relative">
-        <div className="action-type flex justify-between items-center in-node-border rounded cursor-pointer text-xs ml-2 mr-2 font-semibold bg-white" onClick={toggleDropdown}>
-          {selectedAction.action ? (
-            <img src={getActionImage()} alt={selectedAction.action} className="w-12 h-12 p-1 mx-auto" />
-          ) : (
-            <div className="text-gray-500 mx-auto text-xs font-semibold">Select Action</div>
-          )}
+            <div className="pl-2 dropdown">⌄</div>
+          </div>
+          
+          {/* Absolute positioning for the dropdown */}
+          <div className={`absolute z-10 ${dropdownVisible ? '' : 'hidden'}`} style={{ width: 'max-content', top: '100%' }}>
+          <Selector
+            handleDropdownClick={handleDropdownClick}
+            SwapSVG={SwapSVG}
+            xTransferSVG={xTransferSVG}
+            dropdownVisible={dropdownVisible}
+            ref={dropdownRef}
+            handleOnClick={true}
+          />
 
-          <div className="pl-2 dropdown">⌄</div>
+          </div> 
         </div>
-        
-        {/* Absolute positioning for the dropdown */}
-        <div className={`absolute z-10 ${dropdownVisible ? '' : 'hidden'}`} style={{ width: 'max-content', top: '100%' }}>
-        <Selector
-          handleDropdownClick={handleDropdownClick}
-          SwapSVG={SwapSVG}
-          xTransferSVG={xTransferSVG}
-          dropdownVisible={dropdownVisible}
-          ref={dropdownRef}
-          handleOnClick={true}
-        />
 
-        </div> 
-      </div>
-
-      <AntdSelector />
+        <AntdSelector />
 
 
       {selectedAction && selectedAction.action === 'swap' && (
@@ -305,7 +299,7 @@ const toggleDropdown = () => {
             <PriceInfo sourceInfo={assetInFormData} targetInfo={assetOutFormData} priceInfo={sellPriceInfoMap[nodeId]} />
           ) : (
             // Placeholder for when no price info is available
-            <div className="in-node-border rounded m-2 p-2 ">Swaps coming soon...</div>
+            <div className="in-node-border rounded m-2 p-2 ">Swaps</div>
           )
         )
       )}

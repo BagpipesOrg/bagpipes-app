@@ -78,7 +78,7 @@ function Header ({ open }: Props): React.ReactElement<Props> {
                 onClick={selectWallet.open}
                 // type={'primary'}
               >
-                <span className='mr-2'><WalletIcon /></span>Select Wallet
+                <span className='mr-2'><WalletIcon /></span>Wallet
              </button>
               <div className="absolute top-0 right-0">
               <ThemeToggleButton />

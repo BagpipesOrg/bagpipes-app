@@ -28,7 +28,6 @@ function MainLayout({ children }) {
     const { tippyProps } = useTippy();
     const { panelTippyProps, hidePanelTippy } = usePanelTippy();
 
-
     const { theme } = React.useContext(ThemeContext);
     console.log('document', document); // Add this line to debug'
     // const { toastPosition } = useAppStore(state => ({
@@ -96,13 +95,13 @@ function MainLayout({ children }) {
             <ToastBar toast={t}>
                 {({ icon, message }) => (
                     <div className={` toast-container ${theme}`}>
-                        <div className="toast-content">
-                            {icon}
-                            {message}
-                        </div>
-                        {t.type !== 'loading' && (
-                            <button className='toast-button' onClick={() => toast.dismiss(t.id)}>x</button>
-                        )}
+                      <div className="toast-content">
+                          {icon}
+                          {message}
+                      </div>
+                      {t.type !== 'loading' && (
+                          <button className='toast-button' onClick={() => toast.dismiss(t.id)}>x</button>
+                      )}
                     </div>
                 )}
             </ToastBar> 

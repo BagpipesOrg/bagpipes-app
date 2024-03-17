@@ -108,6 +108,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
             }
 
             switch(currentNode.type) {
+                
             case 'openAi':
                 // Handle the openAi node execution
 
@@ -231,9 +232,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                 updateEdgeStyleForNode(currentNode.id, 'default_connected');
                 executionCycleFinished = index === orderedList.length - 1;
                 break;
-                  
-            
-                
+                     
             case 'http':
                 updateEdgeStyleForNode(currentNode.id, 'executing');
                 console.log('executeFlowScenario for http event...', currentNode.id, currentNode);

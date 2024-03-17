@@ -15,9 +15,9 @@ const actions = [
       information: 'Transfer allows you to move assets within a single chain.'
     },
     {
-      name: 'Query',
+      name: 'System Remark',
       logo: '',
-      information: 'Query allows you to retrieve information or data.'
+      information: 'System Remark lets you add some data to the chain via the system.remark method.'
     }
   ];
   export default actions;

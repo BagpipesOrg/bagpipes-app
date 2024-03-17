@@ -15,6 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useCreateScenario } from '../../components/Bagpipes/hooks/useCreateScenario';
 import ThemeContext from '../../contexts/ThemeContext';
 import Toggle from '../../components/Bagpipes/Forms/Toggle';
+import { Button } from 'antd';
 
 function Lab() {
     const { scenarios, addScenario, setActiveScenarioId, activeScenarioId, setNodeContentMap, loadScenario } = useAppStore((state) => ({
@@ -80,11 +81,10 @@ function Lab() {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-semibold">Lab</h1>
           <button 
-            className="button flex items-center"
+            className="button bg-blue-500 flex items-center"
             onClick={createScenario}
           >
-              <span className='mr-2'>{PlusIcon}</span>
-            Create New Scenario
+            <span className='mr-2'><PlusIcon className='' fillColor='white' /></span>Create New Scenario
           </button>
         </div>
         {templateScenarioId && <CreateTemplateLink scenarioId={templateScenarioId} />}
@@ -100,11 +100,11 @@ function Lab() {
                     <div className="">Scenario {scenarioId} </div>
                     <CreateTemplateLink scenarioId={scenarioId} />
                     <button 
-                      className="lab-buttons flex items-center"
+                      className="lab-buttons  hover:bg-blue-700 flex items-center"
                       onClick={(e) => { e.stopPropagation(); editScenario(scenarioId); }}
                     >
                       {EditIcon}
-                    <span className='ml-2'>Edit</span>
+                    <span className='ml-2 '>Edit</span>
                     </button>
                     <button 
                       className="close-button-right flex items-center"
