@@ -253,7 +253,7 @@ export async function checkHydraDxAssetBalance(
 
   try {
     // Get the asset's metadata
-    const metadata = await api.query.assetRegistry.assetMetadataMap(assetid);
+    const metadata = await api.query.assetRegistry.assets(assetid);
 
     if (
       metadata &&
@@ -337,9 +337,10 @@ assetRegistry.assetMetadataMap(5)
 }
 */
 export async function getHydradxAssetSymbolDecimals(assetid: number) {
+  console.log(`getHydradxAssetSymbolDecimals assetid`, assetid);
   const api = await getApiInstance("hydraDx");
   const resp = (
-    await api.query.assetRegistry.assetMetadataMap(assetid)
+    await api.query.assetRegistry.assets(assetid)
   ).toHuman();
   return resp;
 }
@@ -452,7 +453,7 @@ assetRegistry.assetMetadataMap(5)
 export async function get_hydradx_asset_symbol_decimals(assetid: number) {
   const api = await getApiInstance("hydraDx");
   const resp: any = (
-    await api.query.assetRegistry.assetMetadataMap(assetid)
+    await api.query.assetRegistry.assets(assetid)
   ).toHuman();
   return resp;
 }

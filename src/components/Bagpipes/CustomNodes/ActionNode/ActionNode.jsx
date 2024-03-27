@@ -261,14 +261,14 @@ const toggleDropdown = () => {
 
   return (
     <>
-    <Tippy
+    {/* <Tippy
     content={<ActionNodeForm />}
     interactive={true}
     trigger="click"
     placement="auto"
     reference={nodeRef}
     theme="light"
-  >
+  > */}
       
     <div ref={nodeRef} className={`${theme} action-node rounded-lg shadow-lg text-xs flex flex-col justify-start primary-font`}>
       <div className='flex m-1 justify-between'>
@@ -393,7 +393,7 @@ const toggleDropdown = () => {
         {data.children}
       </div>
     </div>
-    </Tippy>
+    {/* </Tippy> */}
     </>
   );
 }

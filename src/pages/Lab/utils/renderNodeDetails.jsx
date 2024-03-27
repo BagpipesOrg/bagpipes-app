@@ -1,4 +1,6 @@
-  // Function to render node-specific details based on nodeType
+ import React from 'react'; 
+ 
+ // Function to render node-specific details based on nodeType
   export const renderNodeDetails = (nodeData) => {
     switch (nodeData.nodeType) {
       case 'action':

@@ -701,6 +701,13 @@ const handleStartScenario = async (instance) => {
   }
 };
 
+const handleStopScenario = () => {
+
+  // Stop the scenario execution
+  stopExecution();
+  // Reset the execution state
+  setExecutionState('idle');
+};
 
 
 
@@ -787,7 +794,7 @@ const handleStartScenario = async (instance) => {
             
 
           
-            <TopBar createScenario={createScenario} handleExecuteFlowScenario={handleExecuteFlowScenario} handleStartScenario={handleStartScenario} shouldExecuteFlowScenario={shouldExecuteFlowScenario} actionNodesPresent={actionNodesPresent} />
+            <TopBar createScenario={createScenario} handleExecuteFlowScenario={handleExecuteFlowScenario} handleStartScenario={handleStartScenario} handleStopScenario={handleStopScenario} shouldExecuteFlowScenario={shouldExecuteFlowScenario} actionNodesPresent={actionNodesPresent} activeScenarioId={activeScenarioId} />
             <Toolbar />
             </ReactFlowStyled>
             

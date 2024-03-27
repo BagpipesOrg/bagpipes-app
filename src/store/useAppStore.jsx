@@ -684,7 +684,6 @@ const useAppStore = create(
       });
   },
 
-
     addNodeToScenario: (scenarioId, newNode) => {
       console.log("[addNodeToScenario] Called with:", { scenarioId, newNode });
 
@@ -1105,6 +1104,47 @@ const useAppStore = create(
       }
     });
   },
+
+  clearSignedExtrinsic: (scenarioId, nodeId) => {
+    console.log("[clearSignedExtrinsic] Called with:", { scenarioId, nodeId });
+    set(state => {
+      const scenarios = { ...state.scenarios };
+      const scenario = scenarios[scenarioId];
+      
+      if (!scenario) {
+        console.error(`[clearSignedExtrinsic] Scenario with ID ${scenarioId} not found.`);
+        return state; // Early return with unchanged state
+      }
+      
+      const nodes = scenario.diagramData.nodes.map(node => {
+        if (node.id === nodeId && node.type === 'action') {
+          console.log(`[clearSignedExtrinsic Before] Node formData:`, node.formData);
+          const { signedExtrinsic, ...restFormData } = node.formData;
+          console.log(`[clearSignedExtrinsic After] Node formData without signedExtrinsic:`, restFormData);
+          return { ...node, formData: restFormData };
+        }
+        return node;
+      });
+      
+      // Logging for inspection
+      console.log(`clearSignedExtrinsic Nodes after attempting to clear signedExtrinsic:`, nodes);
+
+      return { 
+        ...state, 
+        scenarios: { 
+          ...scenarios, 
+          [scenarioId]: {
+            ...scenario,
+            diagramData: { ...scenario.diagramData, nodes }
+          } 
+        } 
+      };
+    });
+},
+
+
+
+
   
   
   }

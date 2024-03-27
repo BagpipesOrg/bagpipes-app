@@ -21,7 +21,7 @@ import { ChainToastContent, ActionToastContent, CustomToastContext } from '../..
 const useExecuteFlowScenario = (nodes, setNodes, instance) => {
     const socket = useContext(SocketContext);
     const store = useStoreApi();
-    const { scenarios, activeScenarioId, saveExecution, executionId, setExecutionId, updateNodeContent, setLoading, loading, toggleExecuteFlowScenario, executionState, setExecutionState, saveTriggerNodeToast, updateEdgeStyleForNode, updateNodeResponseData, updateNodeWebhookEventStatus } = useAppStore(state => ({
+    const { scenarios, activeScenarioId, saveExecution, executionId, setExecutionId, updateNodeContent, setLoading, loading, toggleExecuteFlowScenario, executionState, setExecutionState, saveTriggerNodeToast, updateEdgeStyleForNode, updateNodeResponseData, updateNodeWebhookEventStatus, clearSignedExtrinsic } = useAppStore(state => ({
       scenarios: state.scenarios,
       activeScenarioId: state.activeScenarioId,
       saveExecution: state.saveExecution,
@@ -36,6 +36,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
       updateEdgeStyleForNode: state.updateEdgeStyleForNode,
       updateNodeResponseData: state.updateNodeResponseData,
       updateNodeWebhookEventStatus: state.updateNodeWebhookEventStatus,
+      clearSignedExtrinsic: state.clearSignedExtrinsic,
     }));
     const [nodeContentMap, setNodeContentMap] = useState({}); 
     const [nodeContentHistory, setNodeContentHistory] = useState({});
@@ -155,28 +156,40 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                 const sourceChain = formData?.actionData?.source?.chain || null;
             
                 try {
+                    console.log('clearing signed extrinsic...');
+                    clearSignedExtrinsic(activeScenarioId, nodeId);
                     await broadcastToChain(sourceChain, signedExtrinsic, {
                         onInBlock: (blockHash) => {
                             console.log(`Transaction included at blockHash: ${blockHash}`);
                             toast.success(`Transaction included at blockHash: ${blockHash}`);
                             updateNodeResponseData(activeScenarioId, updatedExecutionId, nodeId, { inBlock: blockHash });
+                            console.log('first attempt to clear signed extrinsic...');
+                            clearSignedExtrinsic(activeScenarioId, nodeId);
+
                         },
                         onFinalized: (blockHash) => {
                             toast.success(`Transaction finalized at blockHash: ${blockHash}`);
                             updateNodeResponseData(activeScenarioId, updatedExecutionId, nodeId, { finalized: blockHash });
+                            clearSignedExtrinsic(activeScenarioId, nodeId);
                         },
                         onError: (error) => {
                             toast.error(`Action execution failed: ${error.message}`);
                             setLoading(false);
                             updateNodeResponseData(activeScenarioId, updatedExecutionId, nodeId, { error: error.message });
+                            console.log('second attempt to clear signed extrinsic...');
+
+                            clearSignedExtrinsic(activeScenarioId, nodeId);
                         },
                     });
+
                 } catch (error) {
                     // This catch block is for handling errors not caught by the onError callback, e.g., network issues
                     toast.error(`Error broadcasting transaction: ${error.message}`);
                     setLoading(false);
                 }
-            
+                console.log('third attempt to clear signed extrinsic...');
+
+                clearSignedExtrinsic(activeScenarioId, currentNode.id);
                 toast(<ActionToastContent type={formData?.actionData?.actionType} message={`Broadcasted to Chain: ${sourceChain}`} signedExtrinsic={signedExtrinsic} />);
             
                 console.log('Broadcasted to Chain:', signedExtrinsic);
