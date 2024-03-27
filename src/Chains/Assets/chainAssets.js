@@ -362,6 +362,16 @@ export const CHAIN_ASSETS = {
         "assets": [
             {
                 "asset": {
+                    "deposit": "2,007,400,000",
+                    "name": "DED Token",
+                    "symbol": "DED",
+                    "decimals": "10",
+                    "isFrozen": false
+                },
+                "assetId": "30",
+            },
+            {
+                "asset": {
                     "deposit": "20,085,000,000",
                     "name": "Wrapped Ether",
                     "symbol": "WETH",
