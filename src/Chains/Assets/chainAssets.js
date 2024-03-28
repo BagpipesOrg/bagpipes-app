@@ -3,6 +3,16 @@ export const CHAIN_ASSETS = {
         "assets": [
             {
                 "asset": {
+                    "name": "DED Token",
+                    "assetType": "Token",
+                    "existentialDeposit": "10,000",
+                    "xcmRateLimit": null,
+                    "symbol": "DED"
+                },
+                "assetId": "1000019"
+            },
+            {
+                "asset": {
                     "name": "USD Coin (Acala Wormhole)",
                     "assetType": "Token",
                     "existentialDeposit": "10,000",

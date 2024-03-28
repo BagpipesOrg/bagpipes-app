@@ -794,7 +794,7 @@ const handleStopScenario = () => {
             
 
           
-            <TopBar createScenario={createScenario} handleExecuteFlowScenario={handleExecuteFlowScenario} handleStartScenario={handleStartScenario} handleStopScenario={handleStopScenario} shouldExecuteFlowScenario={shouldExecuteFlowScenario} actionNodesPresent={actionNodesPresent} activeScenarioId={activeScenarioId} />
+            <TopBar createScenario={createScenario} handleExecuteFlowScenario={handleExecuteFlowScenario} handleStartScenario={handleStartScenario} handleStopScenario={handleStopScenario} shouldExecuteFlowScenario={shouldExecuteFlowScenario} actionNodesPresent={actionNodesPresent}  />
             <Toolbar />
             </ReactFlowStyled>
             
