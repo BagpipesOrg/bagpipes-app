@@ -106,7 +106,7 @@ const BagpipesFlow = () => {
   const reactFlowWrapper = useRef(null);
   const { showTippy, hideTippy, tippyProps } = useTippy();
 
-    const { scenarios, activeScenarioId, addScenario, setActiveScenarioId, saveScenario, saveDiagramData, addNodeToScenario, addEdgeToScenario, deleteNodeFromScenario, deleteEdgeFromScenario, updateNodePositionInScenario, updateNodesInScenario, setSelectedNodeInScenario, setSelectedEdgeInScenario, nodeConnections, setNodes, setEdges, setNodeConnections, tempEdge, setTempEdge, loading, transactions, setTransactions, shouldExecuteFlowScenario, toggleExecuteFlowScenario, executionId, setExecutionState, setToastPosition } = useAppStore(state => ({
+    const { scenarios, activeScenarioId, addScenario, setActiveScenarioId, saveScenario, saveDiagramData, addNodeToScenario, addEdgeToScenario, deleteNodeFromScenario, deleteEdgeFromScenario, updateNodePositionInScenario, updateNodesInScenario, setSelectedNodeInScenario, setSelectedEdgeInScenario, nodeConnections, setNodes, setEdges, setNodeConnections, tempEdge, setTempEdge, loading, transactions, setTransactions, shouldExecuteFlowScenario, toggleExecuteFlowScenario, executionId, setExecutionState, setToastPosition, clearSignedExtrinsic, markExtrinsicAsUsed } = useAppStore(state => ({
       scenarios: state.scenarios,
       activeScenarioId: state.activeScenarioId,
       addScenario: state.addScenario,
@@ -135,6 +135,8 @@ const BagpipesFlow = () => {
       executionId: state.executionId,
       setExecutionState: state.setExecutionState,
       setToastPosition: state.setToastPosition,
+      clearSignedExtrinsic: state.clearSignedExtrinsic,
+      markExtrinsicAsUsed: state.markExtrinsicAsUsed,
 
     }));
     const store = useStoreApi();
@@ -708,6 +710,7 @@ const handleStopScenario = () => {
   // Reset the execution state
   setExecutionState('idle');
 };
+
 
 
 

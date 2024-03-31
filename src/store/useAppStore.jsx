@@ -659,23 +659,29 @@ const useAppStore = create(
       }
   
       set((state) => {
-          const scenario = state.scenarios[scenarioId];
-          
+        const scenarios = { ...state.scenarios };
+        const scenario = scenarios[scenarioId];
+
           if (!scenario) {
               console.error(`[saveSignedExtrinsic] Scenario with ID ${scenarioId} not found.`);
               return;
           }
   
           const nodes = scenario.diagramData.nodes.map((node) => {
-              if (node.id === nodeId) {
-                  const updatedFormData = { ...node.formData, signedExtrinsic };
-                  return { ...node, formData: updatedFormData };
-              }
-              return node;
+            if (node.id === nodeId) {
+              return {
+                ...node,
+                extrinsics: { 
+                  signedExtrinsic, 
+                  isUsed: false 
+                }
+              };
+            }
+            return node;
           });
   
           const updatedScenarios = {
-              ...state.scenarios,
+              ...scenarios,
               [scenarioId]: { ...scenario, diagramData: { ...scenario.diagramData, nodes } },
           };
   
@@ -684,6 +690,34 @@ const useAppStore = create(
       });
   },
 
+  markExtrinsicAsUsed: (scenarioId, nodeId) => {
+    set((state) => {
+      const scenarios = { ...state.scenarios };
+      const scenario = scenarios[scenarioId];
+      
+      if (!scenario) {
+        console.error(`[markExtrinsicAsUsed] Scenario with ID ${scenarioId} not found.`);
+        return;
+      }
+      
+      const nodes = scenario.diagramData.nodes.map((node) => {
+        if (node.id === nodeId && node.extrinsics?.signedExtrinsic) {
+          return {
+            ...node,
+            extrinsics: { 
+              ...node.extrinsics, 
+              isUsed: true 
+            }
+          };
+        }
+        return node;
+      });
+  
+      return { scenarios: { ...scenarios, [scenarioId]: { ...scenario, diagramData: { ...scenario.diagramData, nodes } } } };
+    });
+  },
+
+  
     addNodeToScenario: (scenarioId, newNode) => {
       console.log("[addNodeToScenario] Called with:", { scenarioId, newNode });
 
@@ -1106,41 +1140,45 @@ const useAppStore = create(
   },
 
   clearSignedExtrinsic: (scenarioId, nodeId) => {
-    console.log("[clearSignedExtrinsic] Called with:", { scenarioId, nodeId });
-    set(state => {
+    set((state) => {
       const scenarios = { ...state.scenarios };
       const scenario = scenarios[scenarioId];
-      
+  
       if (!scenario) {
-        console.error(`[clearSignedExtrinsic] Scenario with ID ${scenarioId} not found.`);
-        return state; // Early return with unchanged state
+        console.error(`[clearUsedSignedExtrinsic] Scenario with ID ${scenarioId} not found.`);
+        return state; // Early return with unchanged state if the scenario is not found.
       }
-      
+  
+      // Map through the nodes, removing signedExtrinsic for those where isUsed === true
       const nodes = scenario.diagramData.nodes.map(node => {
-        if (node.id === nodeId && node.type === 'action') {
-          console.log(`[clearSignedExtrinsic Before] Node formData:`, node.formData);
-          const { signedExtrinsic, ...restFormData } = node.formData;
-          console.log(`[clearSignedExtrinsic After] Node formData without signedExtrinsic:`, restFormData);
-          return { ...node, formData: restFormData };
-        }
-        return node;
-      });
-      
-      // Logging for inspection
-      console.log(`clearSignedExtrinsic Nodes after attempting to clear signedExtrinsic:`, nodes);
+        console.log(`[clearUsedSignedExtrinsic] Clearing signedExtrinsic for node ${nodeId} as it's marked as used.`);
 
-      return { 
-        ...state, 
-        scenarios: { 
-          ...scenarios, 
-          [scenarioId]: {
-            ...scenario,
-            diagramData: { ...scenario.diagramData, nodes }
-          } 
-        } 
+        if (node.id === nodeId && node.extrinsics?.isUsed) {
+          // If isUsed is true, we remove the signedExtrinsic
+          const { signedExtrinsic, ...restExtrinsics } = node.extrinsics;
+          console.log(`[clearUsedSignedExtrinsic] Clearing signedExtrinsic for node ${node.id} as it's marked as used.`);
+          return { ...node, extrinsics: { ...restExtrinsics, isUsed: null } }; // Optionally reset isUsed
+        }
+        return node; // Return the node unchanged if isUsed is not true
+      });
+  
+      // Update the scenario with the modified list of nodes
+      const updatedScenario = {
+        ...scenario,
+        diagramData: { ...scenario.diagramData, nodes }
+      };
+  
+      return {
+        ...state,
+        scenarios: {
+          ...scenarios,
+          [scenarioId]: updatedScenario
+        }
       };
     });
-},
+  },
+  
+  
 
 
 

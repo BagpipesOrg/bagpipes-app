@@ -99,7 +99,15 @@ function Lab() {
                     <div className=''>{scenario.name}</div>
                     <div className="">Scenario {scenarioId} </div>
                     <CreateTemplateLink scenarioId={scenarioId} />
-                    <button 
+
+                    <div onClick={(e) => e.stopPropagation()}>
+                    <Toggle
+                      title="Persist Scenario"
+                      isToggled={!!persistedScenarios[scenarioId]}
+                      onToggleChange={(checked) => handleToggleChange(scenarioId, checked)}
+                    />
+                    </div>
+                                        <button 
                       className="lab-buttons  hover:bg-blue-700 flex items-center"
                       onClick={(e) => { e.stopPropagation(); editScenario(scenarioId); }}
                     >
@@ -112,13 +120,6 @@ function Lab() {
                     >
                     <CloseIcon />
                     </button>
-                    <div onClick={(e) => e.stopPropagation()}>
-                    <Toggle
-                      title="Persist Scenario"
-                      isToggled={!!persistedScenarios[scenarioId]}
-                      onToggleChange={(checked) => handleToggleChange(scenarioId, checked)}
-                    />
-                    </div>
                   </div>
                 </div>
               ) : null

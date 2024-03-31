@@ -1,29 +1,47 @@
 import React, { useEffect } from "react";
-import { CreateUiButton, CreateButton, ExecuteButton, StartButton, CopyButton } from "../buttons";
+import { CreateUiButton, ClearButton,  CreateButton, ExecuteButton, StartButton, CopyButton } from "../buttons";
 import './TopBar.scss';  
 import { useAppStore } from '../hooks';
 
 const TopBar = ({ createScenario, handleExecuteFlowScenario, handleStartScenario, handleStopScenario, actionNodesPresent }) => {
 
-    const { scenarios, activeScenarioId } = useAppStore(state => ({
+    const { scenarios, activeScenarioId, clearSignedExtrinsic, markExtrinsicAsUsed } = useAppStore(state => ({
         scenarios: state.scenarios,
         activeScenarioId: state.activeScenarioId,
+        clearSignedExtrinsic: state.clearSignedExtrinsic,
+        markExtrinsicAsUsed: state.markExtrinsicAsUsed,
     }));
     const extrinsicsSigned = checkAllExtrinsicsSigned(scenarios, activeScenarioId);
 
     const showExecuteButton = actionNodesPresent && extrinsicsSigned;
- 
+    
+    const selectedNodeId = scenarios[activeScenarioId]?.selectedNodeId;
+
+    const handleClearExtrinsic = () => {
+        console.log("[handleClearExtrinsic] Clearing extrinsic for scenario and nodeId:", activeScenarioId, selectedNodeId);
+        clearSignedExtrinsic(activeScenarioId, selectedNodeId); 
+        markExtrinsicAsUsed(activeScenarioId, selectedNodeId);
+    
+    }
+
     return (
         <div className='top-bar'>
+
             <CopyButton scenarioId={activeScenarioId} />
             <CreateUiButton />
             <CreateButton createScenario={createScenario} />
             {showExecuteButton ? (
+                <>
                 <ExecuteButton 
                     executeFlowScenario={handleExecuteFlowScenario} 
                     stopExecution={handleStopScenario}
                     actionNodesPresent={actionNodesPresent}
                 />
+                <ClearButton clearExtrinsic={handleClearExtrinsic} />
+
+               
+               
+                </>
             ) : (
                 <StartButton startScenario={handleStartScenario} />
             )}
@@ -36,31 +54,28 @@ export default TopBar;
 
 
 const checkAllExtrinsicsSigned = (scenarios, scenId) => {
-    console.log(`[checkAllExtrinsicsSigned] Checking ta scenario: ${scenId}`);
     const scenario = scenarios[scenId];
-    console.log(`[checkAllExtrinsicsSigned] Scenario:`, scenario);
     if (!scenario) {
-        console.error(`[checkAllExtrinsicsSigned] Scenario with ID ${scenId} not found.`);
-        return false;
+      console.error(`[checkAllExtrinsicsSigned] Scenario with ID ${scenId} not found.`);
+      return false;
     }
-console.log(`[checkAllExtrinsicsSigned] about to check each node:`, scenId);
+  
     for (const node of scenario.diagramData.nodes) {
-        console.log(`[checkAllExtrinsicsSigned] inside a node:`, node);
-        if (node.type === "action") {
-            const signedExtrinsicExists = node.formData?.signedExtrinsic !== undefined && node.formData?.signedExtrinsic !== null;
-            console.log(`[checkAllExtrinsicsSigned Node ID: ${node.id}, Type: ${node.type}] Signed Extrinsic Exists: ${signedExtrinsicExists}`, node.formData);
-
-            if (!signedExtrinsicExists) {
-                // Log for debugging
-                console.log(`[checkAllExtrinsicsSigned Node ID: ${node.id}] needs signing but no valid signedExtrinsic found.`);
-                return false; // An action node that needs signing does not have a valid signedExtrinsic
-            }
+      if (node.type === "action") {
+        // Check both existence and usage status of signedExtrinsic
+        const isExtrinsicSignedAndUnused = node?.extrinsics?.signedExtrinsic !== undefined && 
+                                            node?.extrinsics?.signedExtrinsic !== null && 
+                                            !node?.extrinsics?.isUsed; // Ensure it's not used
+  
+        if (!isExtrinsicSignedAndUnused) {
+          return false; // An action node lacks a valid, unused signedExtrinsic
         }
+      }
     }
-
-    console.log(`[checkAllExtrinsicsSigned] All action extrinsics signed for scenario ${scenId}: true`);
-    return true; // If the function reaches this point, all required extrinsics are considered signed
-};
+  
+    return true; // All action nodes have valid, unused signedExtrinsics
+  };
+  
 
 
 

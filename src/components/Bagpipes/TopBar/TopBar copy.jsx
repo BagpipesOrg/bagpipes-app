@@ -60,7 +60,7 @@ const checkAllExtrinsicsSigned = (scenarios, scenId) => {
         if (node.type === "action") {
             console.log(`[checkAllExtrinsicsSigned] inside a node:`, node);
             // Ensure 'signedExtrinsic' is not only present but also not null or an empty string
-            const signedExtrinsicExists = node.formData?.signedExtrinsic !== undefined && node.formData?.signedExtrinsic !== null && node.formData?.signedExtrinsic !== '';
+            const signedExtrinsicExists = node?.signedExtrinsic !== undefined && node.formData?.signedExtrinsic !== null && node.formData?.signedExtrinsic !== '';
 
             console.log(`[Node ID: ${node.id}, Type: ${node.type}] Signed Extrinsic Exists: ${signedExtrinsicExists}`, node.formData);
 

@@ -33,7 +33,7 @@ const ExecuteButton = ({ executeFlowScenario, stopExecution, actionNodesPresent 
         if (executionState === 'executing') {
             return <> Stop</>;
         } else if (actionNodesPresent) {
-            return <><PlayIcon /><span className='ml-1'>Execute</span> </>;
+            return <><PlayIcon /><span className='ml-1'>Broadcast</span> </>;
         } else {
             return <><PlayIcon /><span className='ml-1'>Run Once</span> </>;
         }
@@ -48,10 +48,9 @@ const ExecuteButton = ({ executeFlowScenario, stopExecution, actionNodesPresent 
     };
 
     return (
-        <Tippy theme='light' interactive={true} content={getTooltipContent()}>
+        <Tippy theme='light'placement='bottom' interactive={true} content={getTooltipContent()}>
             <button 
-                className={buttonClass} 
-                style={{ zIndex: 1000 }}
+                className={`${buttonClass}`}
                 onClick={handleButtonClick}
             >
                 {getButtonContent()}

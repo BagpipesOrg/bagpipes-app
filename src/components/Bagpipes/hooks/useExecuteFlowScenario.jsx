@@ -21,7 +21,7 @@ import { ChainToastContent, ActionToastContent, CustomToastContext } from '../..
 const useExecuteFlowScenario = (nodes, setNodes, instance) => {
     const socket = useContext(SocketContext);
     const store = useStoreApi();
-    const { scenarios, activeScenarioId, saveExecution, executionId, setExecutionId, updateNodeContent, setLoading, loading, toggleExecuteFlowScenario, executionState, setExecutionState, saveTriggerNodeToast, updateEdgeStyleForNode, updateNodeResponseData, updateNodeWebhookEventStatus, clearSignedExtrinsic } = useAppStore(state => ({
+    const { scenarios, activeScenarioId, saveExecution, executionId, setExecutionId, updateNodeContent, setLoading, loading, toggleExecuteFlowScenario, executionState, setExecutionState, saveTriggerNodeToast, updateEdgeStyleForNode, updateNodeResponseData, updateNodeWebhookEventStatus, clearSignedExtrinsic, markExtrinsicAsUsed } = useAppStore(state => ({
       scenarios: state.scenarios,
       activeScenarioId: state.activeScenarioId,
       saveExecution: state.saveExecution,
@@ -37,6 +37,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
       updateNodeResponseData: state.updateNodeResponseData,
       updateNodeWebhookEventStatus: state.updateNodeWebhookEventStatus,
       clearSignedExtrinsic: state.clearSignedExtrinsic,
+      markExtrinsicAsUsed: state.markExtrinsicAsUsed,
     }));
     const [nodeContentMap, setNodeContentMap] = useState({}); 
     const [nodeContentHistory, setNodeContentHistory] = useState({});
@@ -152,7 +153,8 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
             
                 // Retrieve the signedExtrinsic and other necessary data
                 const formData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData || null;
-                const signedExtrinsic = formData?.signedExtrinsic || null;
+                const node = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId) || null;
+                const signedExtrinsic = node?.extrinsics?.signedExtrinsic || null;
                 const sourceChain = formData?.actionData?.source?.chain || null;
             
                 try {
@@ -163,14 +165,14 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                             console.log(`Transaction included at blockHash: ${blockHash}`);
                             toast.success(`Transaction included at blockHash: ${blockHash}`);
                             updateNodeResponseData(activeScenarioId, updatedExecutionId, nodeId, { inBlock: blockHash });
-                            console.log('first attempt to clear signed extrinsic...');
-                            clearSignedExtrinsic(activeScenarioId, nodeId);
+                            console.log('[markExtrinsicAsUsed] first attempt to clear signed extrinsic...');
+                            markExtrinsicAsUsed(activeScenarioId, nodeId);
+
 
                         },
                         onFinalized: (blockHash) => {
                             toast.success(`Transaction finalized at blockHash: ${blockHash}`);
                             updateNodeResponseData(activeScenarioId, updatedExecutionId, nodeId, { finalized: blockHash });
-                            clearSignedExtrinsic(activeScenarioId, nodeId);
                         },
                         onError: (error) => {
                             toast.error(`Action execution failed: ${error.message}`);
@@ -178,7 +180,6 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                             updateNodeResponseData(activeScenarioId, updatedExecutionId, nodeId, { error: error.message });
                             console.log('second attempt to clear signed extrinsic...');
 
-                            clearSignedExtrinsic(activeScenarioId, nodeId);
                         },
                     });
 
@@ -188,11 +189,9 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                     setLoading(false);
                 }
                 console.log('third attempt to clear signed extrinsic...');
-
-                clearSignedExtrinsic(activeScenarioId, currentNode.id);
+                console.log('Broadcasted to Chain:', signedExtrinsic);
                 toast(<ActionToastContent type={formData?.actionData?.actionType} message={`Broadcasted to Chain: ${sourceChain}`} signedExtrinsic={signedExtrinsic} />);
             
-                console.log('Broadcasted to Chain:', signedExtrinsic);
                 // Check if it's the last iteration to set executionCycleFinished accordingly
                 executionCycleFinished = index === orderedList.length - 1;
             
@@ -326,7 +325,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
             console.error('An error occurred while executing the workflow:', error);
         } finally {
             console.log('Workflow Execution Prepared and Sent to Server...');
-            setNodes([...nodes]);
+            // setNodes([...nodes]);
             executedIds.add(updatedExecutionId);
             toggleExecuteFlowScenario();
             setExecutionState('idle');

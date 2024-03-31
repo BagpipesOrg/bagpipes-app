@@ -73,6 +73,8 @@ export const CopyButton = ({scenarioId}) => {
       }, [copied]);
 
     return (
+        templateLink ? (
+
         <Tippy  theme='light' placement='bottom'  interactive={true}  content={buttonDescriptions.copyLink}>
         <button 
         className="start-stop-create-button" 
@@ -84,6 +86,7 @@ export const CopyButton = ({scenarioId}) => {
  
         </button>
         </Tippy>
+    ): null
     );
 }
 

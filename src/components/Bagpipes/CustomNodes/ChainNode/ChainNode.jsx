@@ -449,7 +449,7 @@ useEffect(() => {
               <div className="small-spinner"></div>
             ) : (
               balance !== null && (
-                <BalanceTippy balance={balance} symbol={formState.asset.symbol} />
+                <BalanceTippy balance={balance} symbol={formState?.asset?.symbol} />
               )
             )}
             <span onClick={fetchBalance} className="text-xs m-1 p-0 rounded refresh-button">

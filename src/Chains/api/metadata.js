@@ -36,8 +36,8 @@ export const CHAIN_METADATA = {
     polkadot: {
         chain: "Polkadot",
         endpoints: [
-              "wss://polkadot-rpc.dwellir.com",
             "wss://rpc.polkadot.io",
+            "wss://polkadot-rpc.dwellir.com",
             "wss://polkadot.api.onfinality.io/public-ws",
 
 
