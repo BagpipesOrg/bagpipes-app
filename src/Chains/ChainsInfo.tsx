@@ -66,14 +66,14 @@ export function listChains() {
       const Kabocha: ChainInfo = {
         name: 'kabocha',
         display: 'Kabocha',
-        paraid: 27,
+        paraid: 2113,
         prefix: 27,
         token_decimals: 12,
         logo: '/chains/kabocha.svg',
         parachain: true,
         relay: false,
       };
-      chainList[27] = Kabocha;
+      chainList[2113] = Kabocha;
 
       const Kusama: ChainInfo = {
         name: 'kusama',
@@ -98,6 +98,18 @@ export function listChains() {
         relay: false,
       };
       chainList[2004] = Moonbeam;
+
+      const Turing: ChainInfo = {
+        name: 'turing',
+        display: 'Turing (Kusama)',
+        paraid: 2114,
+        prefix: 51,
+        token_decimals: 10,
+        logo: '/chains/turing.png',
+        relayParent: 'kusama',
+        parachain: true
+      };
+      chainList[2114] = Turing;
 
       const Polkadot: ChainInfo = {
         name: 'polkadot',
@@ -138,7 +150,7 @@ export function listChains() {
       // only rococo > rococo assethub transfers is supported 
       const RococoAssethub: ChainInfo = {
         name: 'rococo_assethub',
-        display: 'Rococo Assethub',
+        display: 'Assethub (Rococo)',
         paraid: 3000, // fake
         prefix: 42, 
         token_decimals: 12,

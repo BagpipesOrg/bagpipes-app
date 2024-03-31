@@ -8,7 +8,7 @@ import '../../Forms/PopupForms/Popup.scss';
 
 const { Option } = Select;
 
-const AntdSelector = () => {
+const ActionSelector = () => {
   const [selectedAction, setSelectedAction] = useState('');
 
   const handleDropdownClick = value => {
@@ -57,4 +57,4 @@ const AntdSelector = () => {
   );
 };
 
-export default AntdSelector;
+export default ActionSelector;

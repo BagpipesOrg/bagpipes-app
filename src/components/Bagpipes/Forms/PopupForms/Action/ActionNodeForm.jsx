@@ -20,7 +20,7 @@ import 'tippy.js/themes/light.css';
 import '../../../../../index.css';
 import '../../../node.styles.scss';
 import '../../../../../main.scss';
-import AntdSelector from '../ActionSelector';
+import ActionSelector from '../ActionSelector';
 
 const formatTime = (date) => {
   const hours = String(date.getHours()).padStart(2, '0');
@@ -288,7 +288,7 @@ const toggleDropdown = () => {
           </div> 
         </div>
 
-        <AntdSelector />
+        <ActionSelector />
 
 
       {selectedAction && selectedAction.action === 'swap' && (

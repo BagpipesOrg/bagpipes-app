@@ -22,6 +22,10 @@ const endpoints = {
     kabocha: "wss://kabocha.jelliedowl.net",
     mangata: "wss://kusama-rpc.mangata.online",
   },
+  turing: {
+    default: "wss://rpc.turing.oak.tech",
+  
+  },
   hydradx: {},
   assetHub: {},
 };
