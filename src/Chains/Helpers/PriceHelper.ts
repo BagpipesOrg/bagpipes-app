@@ -3,6 +3,7 @@ import {
   TradeRouter,
   CachingPoolService,
   PoolType,
+  StableSwap,
 } from "@galacticcouncil/sdk";
 
 import { getApiInstance } from "../api/connect";
@@ -19,9 +20,7 @@ async function initializeTradeRouter() {
   const poolService = new CachingPoolService(api);
 
   console.log(`getHydraDx Initializing TradeRouter...`);
-  tradeRouter = await new TradeRouter(poolService, {
-    includeOnly: [PoolType.Omni],
-  });
+  tradeRouter = await new TradeRouter(poolService);
   console.log(`getHydraDx TradeRouter:`, tradeRouter);
   console.log(`getting results..`);
   const result = await tradeRouter.getAllAssets();
@@ -66,4 +65,33 @@ export async function getHydraDxSellPrice(
   console.log(`getHydraDx trade details:`, tradeDetails.toHuman());
 
   return tradeDetails.toHuman();
+}
+
+// simplified route interface for hydradx
+interface MyRoute {
+  pool: PoolType | { Stableswap: number };
+  assetIn: string;
+  assetOut: string;
+}
+
+/// get the swap routes for hdx 
+export async function hdx_get_routes(assetin: string, assetout: string, amountin: number): Promise<MyRoute[]> {
+  const routes: MyRoute[] = [];
+  if (!tradeRouter) {
+    await initializeTradeRouter();
+  }
+  console.log(`got trade router`);
+  console.log(`calling getBestBuy`);
+  const bestBuy = await tradeRouter.getBestBuy(assetin, assetout, amountin);
+ 
+  for (const swap of bestBuy.swaps) {
+
+    const routeObject: MyRoute = {
+      pool: swap.pool === PoolType.Stable ? { Stableswap: swap.assetIn } : swap.pool,
+        assetIn: swap.assetIn,
+        assetOut: swap.assetOut
+    };
+    routes.push(routeObject);
+}
+  return routes;
 }
