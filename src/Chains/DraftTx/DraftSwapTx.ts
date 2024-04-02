@@ -41,10 +41,12 @@ export async function hydradx_omnipool_sell(
   );
 
 // two options for swaps, omnipool sell or router sell
-
+    console.log(`sorting out the route`);
 // get the swap routes 
-  const route = await hdx_get_routes(assetin, assetin, rawamount);
-    var tx;
+  const route = await hdx_get_routes(assetin, assetout, rawamount);
+    var tx: any;
+
+  console.log(`got route back: `, route);
   if (route.length == 1) {
     console.log(`route log`);
     console.log(route[0]);
@@ -59,6 +61,9 @@ export async function hydradx_omnipool_sell(
         console.log(`omnipool tx drafted`);
         console.log(tx.toHex());
     }
+
+
+
 } else {
     tx = await api.tx.router.sell(
         assetin.toString(),
