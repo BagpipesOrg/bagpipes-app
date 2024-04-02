@@ -14,13 +14,14 @@ import 'tippy.js/themes/light.css';
 import WebhookForm from '../../Forms/PopupForms/Webhook/WebhookForm';
 
 export default function WebhookNode({ }) {
-  const { scenarios, activeScenarioId, executionId, setWebhookDecisionPending, setWebhookUserDecision, webhookDecision } = useAppStore(state => ({
+  const { scenarios, activeScenarioId, executionId, setWebhookDecisionPending, setWebhookUserDecision, webhookDecision, isLoadingNode} = useAppStore(state => ({
     scenarios: state.scenarios,
     activeScenarioId: state.activeScenarioId,
     executionId: state.executionId,
     setWebhookDecisionPending: state.setWebhookDecisionPending,
     setWebhookUserDecision: state.setWebhookUserDecision,
     webhookDecision: state.webhookDecision,
+    isLoadingNode: state.isLoadingNode,
 
   }));
   const nodeId = useNodeId();
@@ -108,17 +109,25 @@ export default function WebhookNode({ }) {
     setWebhookFormVisible(false);
   };
 
+  const fillColor = "purple";
 
   return (
 
-    
     <div ref={nodeRef} onClick={handleNodeClick}>
-      {hasNotification && <EventNotification nodeId={nodeId} eventUpdates={eventUpdates} />}
-      {/* {shouldShowDecisionPrompt && <DecisionPrompt nodeId={nodeId} onClose={() => console.log('Prompt closed')} />} */}
+          {/* {showDecisionPrompt && <DecisionPrompt nodeId={nodeId} onClose={() => console.log('Prompt closed')} />} */}
 
-    <div className="relative nodeBody bg-white border-2 border-gray-300 rounded-full w-20 h-20 flex items-center justify-center">
+      {hasNotification && <EventNotification nodeId={nodeId} eventUpdates={eventUpdates} />}
+
+      <div className="relative nodeBody bg-white border-2 border-gray-300 rounded-full w-20 h-20 flex items-center justify-center">
  
-   <WebhookNodeIcon className="h-8" fillColor='purple' />
+      {isLoadingNode ? (
+          <div className="spinner-container">
+              {/* Simple CSS spinner */}
+              <div className="node-spinner" style={{ borderColor: '#f3f3f3', borderTopColor: fillColor }}></div>
+          </div>
+      ) : (
+          <WebhookNodeIcon className="h-8" fillColor={fillColor} />
+      )}
       
       {/* Logo in the middle of the circle */}
       {/* <img src={`/chains/${logo}`} alt={`${title} Logo`} className="text-slate-800 h-8 w-8" /> */}
@@ -131,10 +140,10 @@ export default function WebhookNode({ }) {
       
       <Handle position={Position.Right} type="source" className="z-10" />
       {/* <Handle position={Position.Left} type="target" className="hidden z-10" /> */}
-    </div>
+      </div>
     </div>
     
-    
+
 
   );
 }

@@ -203,12 +203,14 @@ export function fetchNodeExecutionData(scenarios, activeScenarioId, nodeId) {
 
 
 export const processWebhookEvent = (webhookEventData, webhookFetchStartTime) => {
-    const fetchStartTime = new Date(webhookFetchStartTime);
+    const fetchStartTimeUTC = webhookFetchStartTime.getTime() + (webhookFetchStartTime.getTimezoneOffset() * 60000);
+    console.log('Comparing against fetch start time:', fetchStartTimeUTC);
 
-    // Find the first event that was created after the webhook started fetching
     const newWebhookEvent = webhookEventData.data.find(event => {
-        const eventCreatedAt = new Date(event.created_at);
-        return eventCreatedAt > fetchStartTime;
+        const eventCreatedAtUTC = new Date(event.created_at).getTime();
+        console.log('Event created at:', eventCreatedAtUTC);
+        return eventCreatedAtUTC > fetchStartTimeUTC;
+        ;
     });
 
     // If a new event is found, process it
@@ -235,32 +237,27 @@ export const processWebhookEvent = (webhookEventData, webhookFetchStartTime) => 
 };
 
 
-export async function waitForNewWebhookEvent(uuid, webhookFetchStartTime) {
+export const waitForNewWebhookEvent = async (uuid, webhookFetchStartTime) => {
     let foundNewEvent = false;
     let processedEventData = null;
-  
+
     while (!foundNewEvent) {
-      try {
         const webhookData = await WebhooksService.fetchLatestFromWebhookSite(uuid);
         const { processedEventData: newEventData, isNewEvent } = processWebhookEvent(webhookData, webhookFetchStartTime);
-  
+
         if (isNewEvent) {
-          foundNewEvent = true;
-          processedEventData = newEventData;
-          break; // Exit the loop as we've found a new event
+            foundNewEvent = true;
+            processedEventData = newEventData;
+            break; // Exit the loop if a new event is found
         }
-  
-        // Wait for a specified time before the next check
-        await new Promise(resolve => setTimeout(resolve, 5000)); // Poll every 5 seconds
-      } catch (error) {
-        console.error('Error polling for new webhook data:', error);
-        // Decide how to handle errors - retry, exit, etc.
-        await new Promise(resolve => setTimeout(resolve, 5000)); // Wait before retrying
-      }
+
+        // Wait for a specified interval before polling again
+        await new Promise(resolve => setTimeout(resolve, 5000)); // Wait for 5 seconds before the next poll
     }
-  
+
     return processedEventData;
-  }
+};
+
 
 
 const parseWebhookContent = (content) => {

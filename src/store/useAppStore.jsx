@@ -31,6 +31,7 @@ const defaultState = {
     decision: null, // 'processNow' or 'waitForNew', null initially
   },
   decisionPrompt: { nodeId: null, show: false },
+  isLoadingNode: false,
 };
 
 const useAppStore = create(
@@ -88,6 +89,9 @@ const useAppStore = create(
       setShowDecisionPrompt: (nodeId, show) => set(() => ({
         decisionPrompt: { nodeId: nodeId, show: show },
       })),
+
+      setIsLoadingNode: (isLoading) => set(() => ({ isLoadingNode: isLoading })),
+
       setNodeContentMap: (contentMap) => {
         set({ nodeContentMap: contentMap });
       },

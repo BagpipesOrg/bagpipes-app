@@ -21,7 +21,7 @@ import { ChainToastContent, ActionToastContent, CustomToastContext } from '../..
 const useExecuteFlowScenario = (nodes, setNodes, instance) => {
     const socket = useContext(SocketContext);
     const store = useStoreApi();
-    const { scenarios, activeScenarioId, saveExecution, executionId, setExecutionId, updateNodeContent, setLoading, loading, toggleExecuteFlowScenario, executionState, setExecutionState, saveTriggerNodeToast, updateEdgeStyleForNode, updateNodeResponseData, updateNodeWebhookEventStatus, clearSignedExtrinsic, markExtrinsicAsUsed } = useAppStore(state => ({
+    const { scenarios, activeScenarioId, saveExecution, executionId, setExecutionId, updateNodeContent, setLoading, loading, toggleExecuteFlowScenario, executionState, setExecutionState, saveTriggerNodeToast, updateEdgeStyleForNode, updateNodeResponseData, updateNodeWebhookEventStatus, clearSignedExtrinsic, markExtrinsicAsUsed, setIsLoadingNode } = useAppStore(state => ({
       scenarios: state.scenarios,
       activeScenarioId: state.activeScenarioId,
       saveExecution: state.saveExecution,
@@ -38,6 +38,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
       updateNodeWebhookEventStatus: state.updateNodeWebhookEventStatus,
       clearSignedExtrinsic: state.clearSignedExtrinsic,
       markExtrinsicAsUsed: state.markExtrinsicAsUsed,
+      setIsLoadingNode: state.setIsLoadingNode,   
     }));
     const [nodeContentMap, setNodeContentMap] = useState({}); 
     const [nodeContentHistory, setNodeContentHistory] = useState({});
@@ -199,51 +200,42 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
             
                 break;  
 
-            case 'webhook':
-                updateEdgeStyleForNode(currentNode.id, 'executing');
-                const webhookFetchStartTime = new Date();
-                console.log('executeFlowScenario for webhook event...', currentNode);
-                try {
-                    console.log('executeFlowScenario currentNode formData uuid:', currentNode.formData.uuid);
-                    const webhookData = await WebhooksService.fetchLatestFromWebhookSite(currentNode.formData.uuid);
-                    console.log('executeFlowScenario Webhook data received:', webhookData);
-                    const { processedEventData, isNewEvent } = processWebhookEvent(webhookData, webhookFetchStartTime);
-                    console.log('executeFlowScenario for webhook event...processedEventData:', processedEventData);
-                    // const webhookEventStatus = scenarios[activeScenarioId]?.executions[updatedExecutionId]?.[currentNode.id] || {};
-                    if (!isNewEvent) {
-                        // There are previous events, prompt the user for a decision
-                        console.log('executeFlowScenario for webhook event...hasPreviousEvents:', currentNode.id);
-                        // temporarily set the decision to wait for new.
-                        updateNodeWebhookEventStatus(activeScenarioId, updatedExecutionId, currentNode.id, { hasPreviousEvents: true, userDecision: 'waitForNew' });
-                        const { webhookEventStatus } = useAppStore.getState().scenarios[activeScenarioId]?.executions[updatedExecutionId]?.[currentNode.id] || {};
-                        console.log('executeFlowScenario for webhook event...webhookEventStatus:', webhookEventStatus);
-
-                        // const userDecision = await promptUserForDecision(currentNode.id); // This function needs to be implemented
-                        if (webhookEventStatus?.userDecision === 'waitForNew') {
-                            console.log('executeFlowScenario for webhook event...waitForNew:', currentNode.id);
-
+                case 'webhook':
+                    updateEdgeStyleForNode(currentNode.id, 'executing');
+                    const webhookFetchStartTime = new Date();
+                    setIsLoadingNode(true);
+                    console.log('Webhook fetch start time:', webhookFetchStartTime.toISOString());
+                    try {
+                        console.log('executeFlowScenario currentNode formData uuid:', currentNode.formData.uuid);
+                        const webhookData = await WebhooksService.fetchLatestFromWebhookSite(currentNode.formData.uuid);
+                        console.log('executeFlowScenario Webhook data received:', webhookData);
+                        const { processedEventData, isNewEvent } = processWebhookEvent(webhookData, webhookFetchStartTime);
+                
+                        if (!isNewEvent) {
+                            console.log('Waiting for new webhook event...', currentNode.id);
+                            // Directly start waiting for a new event without user input
                             const newEventData = await waitForNewWebhookEvent(currentNode.formData.uuid, webhookFetchStartTime);
+                            
                             if (newEventData) {
-                              // Process the new event
-                              updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, { eventData: newEventData });
+                                console.log('New webhook event received and processed:', currentNode.id);
+                                // Process the new event data
+                                updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, { eventData: newEventData });
                             }
-                           
-                        } else if (webhookEventStatus?.userDecision === 'processNow') {
-                            console.log('executeFlowScenario for webhook event...processPrevious:', currentNode.id);
-                            // Process the most recent previous event
+                        } else {
+                            // If the event is already new, process it immediately
                             updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, { eventData: processedEventData });
                         }
-                    } else {
-                        // No previous events, process the new event immediately
-                        updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, { eventData: processedEventData });
+                    } catch (error) {
+                        console.error('Error waiting for webhook data:', error);
+                        updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, { error: error.message });
+                    } finally {
+                        setIsLoadingNode(false);
+                        updateEdgeStyleForNode(currentNode.id, 'default_connected');
+
                     }
-                } catch (error) {
-                    console.error('Error waiting for webhook data:', error);
-                    updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, { error: error.message });
-                }
-                updateEdgeStyleForNode(currentNode.id, 'default_connected');
-                executionCycleFinished = index === orderedList.length - 1;
-                break;
+                    executionCycleFinished = index === orderedList.length - 1;
+                    break;
+                
                      
             case 'http':
                 updateEdgeStyleForNode(currentNode.id, 'executing');

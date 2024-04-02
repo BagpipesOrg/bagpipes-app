@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { CreateUiButton, ClearButton,  CreateButton, ExecuteButton, StartButton, CopyButton } from "../buttons";
+import { CreateUiButton, ClearButton,  CreateButton, ExecuteButton, StartButton, GenerateLinkButton } from "../buttons";
 import './TopBar.scss';  
 import { useAppStore } from '../hooks';
 
@@ -27,7 +27,7 @@ const TopBar = ({ createScenario, handleExecuteFlowScenario, handleStartScenario
     return (
         <div className='top-bar'>
 
-            <CopyButton scenarioId={activeScenarioId} />
+            <GenerateLinkButton scenarioId={activeScenarioId} />
             <CreateUiButton />
             <CreateButton createScenario={createScenario} />
             {showExecuteButton ? (
