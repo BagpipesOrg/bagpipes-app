@@ -69,12 +69,14 @@ export async function hydradx_omnipool_sell(
         assetin.toString(),
         assetout.toString(),
         submitamount.toString(),
-        minBuyAmount, 
+        minBuyAmount/10000, 
         route
         );
     console.log(`selltx router.sell drafted`);
 
 }
+console.log(`final tx:`);
+console.log(tx.toHuman())
 console.log(tx.toHex());
 
   return tx;

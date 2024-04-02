@@ -3,6 +3,7 @@ import {
   TradeRouter,
   CachingPoolService,
   PoolType,
+  StableSwap,
 } from "@galacticcouncil/sdk";
 
 import { getApiInstance } from "../api/connect";
@@ -68,7 +69,7 @@ export async function getHydraDxSellPrice(
 
 // simplified route interface for hydradx
 interface MyRoute {
-  pool: string | { Stableswap: string };
+  pool: PoolType | { Stableswap: number };
   assetIn: string;
   assetOut: string;
 }
@@ -84,8 +85,9 @@ export async function hdx_get_routes(assetin: string, assetout: string, amountin
   const bestBuy = await tradeRouter.getBestBuy(assetin, assetout, amountin);
  
   for (const swap of bestBuy.swaps) {
+
     const routeObject: MyRoute = {
-        pool: swap.pool,
+      pool: swap.pool === PoolType.Stable ? { Stableswap: swap.assetIn } : swap.pool,
         assetIn: swap.assetIn,
         assetOut: swap.assetOut
     };

@@ -17,7 +17,7 @@ export async function broadcastToChain(
   { onInBlock, onFinalized, onError } // Add callback parameters
 ): Promise<void> {
   let api: ApiPromise;
-
+console.log(`broadcasting`)
   try {
     api = await getApiInstance(chain);
   } catch (error) {
@@ -30,6 +30,8 @@ export async function broadcastToChain(
       if (dispatchError) {
         const errorMessage = `Transaction error: ${dispatchError.message || dispatchError.toString()}`;
         onError?.(errorMessage);
+        console.log(`mega error:`);
+        console.log(errorMessage);
         reject(new Error(errorMessage));
         return;
       }
@@ -44,11 +46,16 @@ export async function broadcastToChain(
       } else if (status.isDropped || status.isInvalid || status.isUsurped) {
         const errorMessage = `Error with transaction: ${status.type}`;
         onError?.(errorMessage);
+        console.log(`mega error 2:`);
+        console.log(errorMessage);
         reject(new Error(errorMessage));
       }
     }).catch((error) => {
       const errorMessage = `Error broadcasting transaction: ${error.message || error.toString()}`;
       onError?.(errorMessage);
+      console.log(`mega error 3:`);
+
+      console.log(errorMessage);
       reject(new Error(errorMessage));
     });
   });
