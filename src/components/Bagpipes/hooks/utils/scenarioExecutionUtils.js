@@ -238,11 +238,11 @@ export const processWebhookEvent = (webhookEventData, webhookFetchStartTime) => 
 };
 
 
-export const waitForNewWebhookEvent = async (uuid, webhookFetchStartTime) => {
+export const waitForNewWebhookEvent = async (uuid, webhookFetchStartTime, nodeId) => {
     let foundNewEvent = false;
     let processedEventData = null;
 
-    while (!foundNewEvent && useAppStore.getState().isExecuting) {
+    while (!foundNewEvent && useAppStore.getState().isExecuting && useAppStore.getState().nodeLoadingStates[nodeId]) {
         const webhookData = await WebhooksService.fetchLatestFromWebhookSite(uuid);
         const { processedEventData: newEventData, isNewEvent } = processWebhookEvent(webhookData, webhookFetchStartTime);
 
@@ -255,9 +255,9 @@ export const waitForNewWebhookEvent = async (uuid, webhookFetchStartTime) => {
         // Wait for a specified interval before polling again
         await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for 5 seconds before the next poll
 
-        // Here, add a check to see if execution has been stopped
-        // if (!useAppStore.getState().isExecuting) {
-        //     setIsLoadingNode(false); // Assuming this function updates your loading state
+        // // Here, add a check to see if execution has been stopped
+        // if (!useAppStore.getState().isExecuting || !useAppStore.getState().nodeLoadingStates[nodeId]) {
+        //     useAppStore.getState().setIsLoadingNode(nodeId, false);
         //     console.log("Execution stopped, exiting the waiting loop.");
         //     return null; // Exit the function as the execution has been stopped
         // }

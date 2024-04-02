@@ -215,7 +215,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
             case 'webhook':
                     updateEdgeStyleForNode(currentNode.id, 'executing');
                     const webhookFetchStartTime = new Date();
-                    setIsLoadingNode(true);
+                    setIsLoadingNode( currentNode.id, true);
                     console.log('Webhook fetch start time:', webhookFetchStartTime.toISOString());
                     try {
                         console.log('executeFlowScenario currentNode formData uuid:', currentNode.formData.uuid);
@@ -226,7 +226,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                         if (!isNewEvent) {
                             console.log('Waiting for new webhook event...', currentNode.id);
                             // Directly start waiting for a new event without user input
-                            const newEventData = await waitForNewWebhookEvent(currentNode.formData.uuid, webhookFetchStartTime);
+                            const newEventData = await waitForNewWebhookEvent(currentNode.formData.uuid, webhookFetchStartTime, currentNode.id);
                             
                             if (newEventData) {
                                 console.log('New webhook event received and processed:', currentNode.id);
@@ -241,7 +241,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                         console.error('Error waiting for webhook data:', error);
                         updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, { error: error.message });
                     } finally {
-                        setIsLoadingNode(false);
+                        setIsLoadingNode(currentNode.id, false);
                         updateEdgeStyleForNode(currentNode.id, 'default_connected');
 
                     }
@@ -250,6 +250,8 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                 
                      
             case 'http':
+                setIsLoadingNode(currentNode.id, true);
+
                 updateEdgeStyleForNode(currentNode.id, 'executing');
                 console.log('executeFlowScenario for http event...', currentNode.id, currentNode);
                 // assuming we have the scenarios object and the activeScenarioId available
@@ -300,9 +302,12 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                     // Optionally, update the node response data to reflect the error
                     const errorStatusUpdate = { error: error.message };
                     updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, errorStatusUpdate);
+                } finally {
+                    setIsLoadingNode(currentNode.id, false);
+                    updateEdgeStyleForNode(currentNode.id, 'default_connected');
+
                 }
                 
-                updateEdgeStyleForNode(currentNode.id, 'default_connected');
                 // Check if it's the last iteration to set executionCycleFinished accordingly
                 executionCycleFinished = index === orderedList.length - 1;
                 break;

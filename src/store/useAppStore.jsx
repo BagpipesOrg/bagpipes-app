@@ -33,6 +33,8 @@ const defaultState = {
   decisionPrompt: { nodeId: null, show: false },
   isLoadingNode: false,
   isExecuting: false,
+  nodeLoadingStates: {},
+  
 };
 
 const useAppStore = create(
@@ -98,8 +100,17 @@ const useAppStore = create(
         decisionPrompt: { nodeId: nodeId, show: show },
       })),
 
-      setIsLoadingNode: (isLoading) => set(() => ({ isLoadingNode: isLoading })),
+      setIsLoadingNode: (nodeId, isLoading) => {
+      set((state) => ({
 
+        nodeLoadingStates: {
+          ...state.nodeLoadingStates,
+          [nodeId]: isLoading,
+        },
+      }))
+      console.log("[setIsLoadingNode] Called with:", { nodeId, isLoading })
+
+    },
       setNodeContentMap: (contentMap) => {
         set({ nodeContentMap: contentMap });
       },

@@ -14,16 +14,16 @@ import 'tippy.js/themes/light.css';
 import WebhookForm from '../../Forms/PopupForms/Webhook/WebhookForm';
 
 export default function WebhookNode({ }) {
-  const { scenarios, activeScenarioId, executionId, setWebhookDecisionPending, setWebhookUserDecision, webhookDecision, isLoadingNode} = useAppStore(state => ({
+  const { scenarios, activeScenarioId, executionId, setWebhookDecisionPending, setWebhookUserDecision, webhookDecision} = useAppStore(state => ({
     scenarios: state.scenarios,
     activeScenarioId: state.activeScenarioId,
     executionId: state.executionId,
     setWebhookDecisionPending: state.setWebhookDecisionPending,
     setWebhookUserDecision: state.setWebhookUserDecision,
     webhookDecision: state.webhookDecision,
-    isLoadingNode: state.isLoadingNode,
 
   }));
+  
   const nodeId = useNodeId();
   const nodeRef = useRef();
   const [isWebhookFormVisible, setWebhookFormVisible] = useState(false);
@@ -31,6 +31,7 @@ export default function WebhookNode({ }) {
   const { showTippy } = useTippy();
 
   const { webhookEventStatus } = useAppStore(state => state.scenarios[activeScenarioId]?.executions[executionId]?.[nodeId]?.webhookEventStatus || {});
+  const isLoadingNode = useAppStore((state) => state.nodeLoadingStates[nodeId] || false);
 
 
   // const shouldShowDecisionPrompt = webhookDecision.isPending && webhookDecision.nodeId === nodeId;
