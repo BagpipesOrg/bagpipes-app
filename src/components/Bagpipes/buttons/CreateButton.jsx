@@ -12,7 +12,7 @@ export const CreateButton = ({createScenario}) => {
     return (
         <Tippy  theme='light' placement='bottom'  interactive={true}  content={buttonDescriptions.newFlow}>
         <button 
-        className="start-stop-create-button" 
+        className="top-bar-buttons" 
         onClick={createScenario} 
         >
              

@@ -11,7 +11,7 @@ const ExecuteButton = ({ executeFlowScenario, stopExecution, actionNodesPresent 
     }));
 
     // Determine button class based on executionState and whether action nodes are present
-    let buttonClass = "start-stop-create-button";
+    let buttonClass = "top-bar-buttons";
     
     if (executionState === 'idle' && actionNodesPresent) {
         buttonClass += ' idle-effects'; // Apply idle effects only if action nodes are present

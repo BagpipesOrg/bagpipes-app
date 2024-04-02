@@ -21,7 +21,7 @@ import { ChainToastContent, ActionToastContent, CustomToastContext } from '../..
 const useExecuteFlowScenario = (nodes, setNodes, instance) => {
     const socket = useContext(SocketContext);
     const store = useStoreApi();
-    const { scenarios, activeScenarioId, saveExecution, executionId, setExecutionId, updateNodeContent, setLoading, loading, toggleExecuteFlowScenario, executionState, setExecutionState, saveTriggerNodeToast, updateEdgeStyleForNode, updateNodeResponseData, updateNodeWebhookEventStatus, clearSignedExtrinsic, markExtrinsicAsUsed, setIsLoadingNode } = useAppStore(state => ({
+    const { scenarios, activeScenarioId, saveExecution, executionId, setExecutionId, updateNodeContent, setLoading, loading, toggleExecuteFlowScenario, executionState, setExecutionState, saveTriggerNodeToast, updateEdgeStyleForNode, updateNodeResponseData, updateNodeWebhookEventStatus, clearSignedExtrinsic, markExtrinsicAsUsed, setIsLoadingNode, isExecuting, setIsExecuting, saveNodeEventData } = useAppStore(state => ({
       scenarios: state.scenarios,
       activeScenarioId: state.activeScenarioId,
       saveExecution: state.saveExecution,
@@ -39,6 +39,9 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
       clearSignedExtrinsic: state.clearSignedExtrinsic,
       markExtrinsicAsUsed: state.markExtrinsicAsUsed,
       setIsLoadingNode: state.setIsLoadingNode,   
+      isExecuting: state.isExecuting,
+      setIsExecuting: state.setIsExecuting,
+      saveNodeEventData: state.saveNodeEventData,
     }));
     const [nodeContentMap, setNodeContentMap] = useState({}); 
     const [nodeContentHistory, setNodeContentHistory] = useState({});
@@ -102,6 +105,15 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
         let executionCycleFinished = false;
 
         for(let index = 0; index < orderedList.length; index++) {
+
+            console.log('Execution status,', isExecuting);
+            if (!useAppStore.getState().isExecuting) {                
+                console.log('Execution has been stopped by the user.');
+                break; 
+            }
+            console.log('Executing Node:', index, orderedList[index]);
+
+            
             let nodeId = orderedList[index];
             let currentNode = diagramData.nodes.find(node => node.id === nodeId);
           
@@ -200,7 +212,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
             
                 break;  
 
-                case 'webhook':
+            case 'webhook':
                     updateEdgeStyleForNode(currentNode.id, 'executing');
                     const webhookFetchStartTime = new Date();
                     setIsLoadingNode(true);
@@ -280,7 +292,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                 
                     // Update the node response data with the new status update
                     updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, statusUpdate);
-                
+                    saveNodeEventData(activeScenarioId, currentNode.id, httpResponse.data);
                     // toast(<CustomToastContext nodeType="http" eventUpdates={statusUpdate.eventData} />);
 
                 } catch (error) {
@@ -321,6 +333,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
             executedIds.add(updatedExecutionId);
             toggleExecuteFlowScenario();
             setExecutionState('idle');
+            setIsExecuting(false);
             console.log('Workflow Execution Prepared and set to idle and toggled...', executionState, toggleExecuteFlowScenario);
         }
     };

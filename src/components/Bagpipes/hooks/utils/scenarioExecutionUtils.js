@@ -1,5 +1,6 @@
 
 import WebhooksService from '../../../../services/WebhooksService';
+import useAppStore  from '../../../../store/useAppStore';
 
 
 export function replacePlaceholders(text, nodeContents, validNodeIds=[]) {
@@ -241,7 +242,7 @@ export const waitForNewWebhookEvent = async (uuid, webhookFetchStartTime) => {
     let foundNewEvent = false;
     let processedEventData = null;
 
-    while (!foundNewEvent) {
+    while (!foundNewEvent && useAppStore.getState().isExecuting) {
         const webhookData = await WebhooksService.fetchLatestFromWebhookSite(uuid);
         const { processedEventData: newEventData, isNewEvent } = processWebhookEvent(webhookData, webhookFetchStartTime);
 
@@ -252,7 +253,14 @@ export const waitForNewWebhookEvent = async (uuid, webhookFetchStartTime) => {
         }
 
         // Wait for a specified interval before polling again
-        await new Promise(resolve => setTimeout(resolve, 5000)); // Wait for 5 seconds before the next poll
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for 5 seconds before the next poll
+
+        // Here, add a check to see if execution has been stopped
+        // if (!useAppStore.getState().isExecuting) {
+        //     setIsLoadingNode(false); // Assuming this function updates your loading state
+        //     console.log("Execution stopped, exiting the waiting loop.");
+        //     return null; // Exit the function as the execution has been stopped
+        // }
     }
 
     return processedEventData;

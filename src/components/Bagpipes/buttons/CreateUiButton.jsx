@@ -22,7 +22,7 @@ export const CreateUiButton = ({ onCreateUi }) => {
     </div>
     }>
     <button 
-      className="start-stop-create-button flex items-center" 
+      className="top-bar-buttons flex items-center" 
       onClick={onCreateUi} 
     >
       

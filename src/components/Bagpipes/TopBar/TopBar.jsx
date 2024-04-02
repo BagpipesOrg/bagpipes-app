@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
-import { CreateUiButton, ClearButton,  CreateButton, ExecuteButton, StartButton, GenerateLinkButton } from "../buttons";
+import { CreateUiButton, ClearButton,  CreateButton, ExecuteButton, StartButton, StopButton, GenerateLinkButton } from "../buttons";
 import './TopBar.scss';  
 import { useAppStore } from '../hooks';
 
 const TopBar = ({ createScenario, handleExecuteFlowScenario, handleStartScenario, handleStopScenario, actionNodesPresent }) => {
 
-    const { scenarios, activeScenarioId, clearSignedExtrinsic, markExtrinsicAsUsed } = useAppStore(state => ({
+    const { isExecuting, scenarios, activeScenarioId, clearSignedExtrinsic, markExtrinsicAsUsed } = useAppStore(state => ({
+        isExecuting: state.isExecuting,
         scenarios: state.scenarios,
         activeScenarioId: state.activeScenarioId,
         clearSignedExtrinsic: state.clearSignedExtrinsic,
@@ -25,28 +26,26 @@ const TopBar = ({ createScenario, handleExecuteFlowScenario, handleStartScenario
     }
 
     return (
-        <div className='top-bar'>
+      <div className='top-bar'>
+          <GenerateLinkButton scenarioId={activeScenarioId} />
+          <CreateUiButton />
+          <CreateButton createScenario={createScenario} />
 
-            <GenerateLinkButton scenarioId={activeScenarioId} />
-            <CreateUiButton />
-            <CreateButton createScenario={createScenario} />
-            {showExecuteButton ? (
-                <>
-                <ExecuteButton 
-                    executeFlowScenario={handleExecuteFlowScenario} 
-                    stopExecution={handleStopScenario}
-                    actionNodesPresent={actionNodesPresent}
-                />
-                <ClearButton clearExtrinsic={handleClearExtrinsic} />
-
-               
-               
-                </>
-            ) : (
-                <StartButton startScenario={handleStartScenario} />
-            )}
-        </div>
-    );
+          {isExecuting ? (
+              <StopButton stopScenario={handleStopScenario} />
+          ) : showExecuteButton ? (
+              <>
+                  <ExecuteButton 
+                      executeFlowScenario={handleExecuteFlowScenario} 
+                      actionNodesPresent={actionNodesPresent}
+                  />
+                  <ClearButton clearExtrinsic={handleClearExtrinsic} />
+              </>
+          ) : (
+              <StartButton startScenario={handleStartScenario} />
+          )}
+      </div>
+  );
 };
 
 

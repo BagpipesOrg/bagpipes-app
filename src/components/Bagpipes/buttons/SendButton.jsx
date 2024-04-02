@@ -10,7 +10,7 @@ const SendButton = ({ executeChainScenario, stopExecution }) => {
         executionState: state.executionState,
     }));
 
-    let buttonClass = "start-stop-create-button";
+    let buttonClass = "top-bar-buttons";
     if (executionState === 'idle') {
         buttonClass += ' idle-effects';
     } else if (executionState === 'sending') {

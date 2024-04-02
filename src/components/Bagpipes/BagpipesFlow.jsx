@@ -106,7 +106,7 @@ const BagpipesFlow = () => {
   const reactFlowWrapper = useRef(null);
   const { showTippy, hideTippy, tippyProps } = useTippy();
 
-    const { scenarios, activeScenarioId, addScenario, setActiveScenarioId, saveScenario, saveDiagramData, addNodeToScenario, addEdgeToScenario, deleteNodeFromScenario, deleteEdgeFromScenario, updateNodePositionInScenario, updateNodesInScenario, setSelectedNodeInScenario, setSelectedEdgeInScenario, nodeConnections, setNodes, setEdges, setNodeConnections, tempEdge, setTempEdge, loading, transactions, setTransactions, shouldExecuteFlowScenario, toggleExecuteFlowScenario, executionId, setExecutionState, setToastPosition, clearSignedExtrinsic, markExtrinsicAsUsed } = useAppStore(state => ({
+    const { scenarios, activeScenarioId, addScenario, setActiveScenarioId, saveScenario, saveDiagramData, addNodeToScenario, addEdgeToScenario, deleteNodeFromScenario, deleteEdgeFromScenario, updateNodePositionInScenario, updateNodesInScenario, setSelectedNodeInScenario, setSelectedEdgeInScenario, nodeConnections, setNodes, setEdges, setNodeConnections, tempEdge, setTempEdge, loading, transactions, setTransactions, shouldExecuteFlowScenario, toggleExecuteFlowScenario, executionId, setExecutionState, setToastPosition, clearSignedExtrinsic, markExtrinsicAsUsed, setIsExecuting } = useAppStore(state => ({
       scenarios: state.scenarios,
       activeScenarioId: state.activeScenarioId,
       addScenario: state.addScenario,
@@ -137,6 +137,7 @@ const BagpipesFlow = () => {
       setToastPosition: state.setToastPosition,
       clearSignedExtrinsic: state.clearSignedExtrinsic,
       markExtrinsicAsUsed: state.markExtrinsicAsUsed,
+      setIsExecuting: state.setIsExecuting,
 
     }));
     const store = useStoreApi();
@@ -642,6 +643,7 @@ const actionNodesPresent = containsActionNodes(transformedList);
 
 
 const handleStartScenario = async (instance) => {
+  setIsExecuting(true);
   toast(<OrderedListContent list={transformedList} />);
 
   if (actionNodesPresent) {
@@ -695,7 +697,8 @@ const handleStartScenario = async (instance) => {
     // If no action nodes, directly execute the scenario
     try {
       await handleExecuteFlowScenario(instance);
-      toast.success('Scenario executed successfully');
+
+      toast.success('Scenario execution completed.');
     } catch (error) {
       console.error("Error executing scenario:", error);
       toast.error(`Error executing scenario: ${error.message}`);
@@ -703,12 +706,13 @@ const handleStartScenario = async (instance) => {
   }
 };
 
-const handleStopScenario = () => {
-
+const handleStopScenario = (instance) => {
+  console.log("[handleStopScenario] Stopping scenario execution...")
   // Stop the scenario execution
-  stopExecution();
+  // stopExecution();
   // Reset the execution state
   setExecutionState('idle');
+  setIsExecuting(false)
 };
 
 
@@ -717,6 +721,7 @@ const handleStopScenario = () => {
   async function handleExecuteFlowScenario(instance) {
     console.log("Running executeFlowScenario due to executionState being 'idle'");
     setExecutionState('executing');
+    setIsExecuting(true);
     try {
         await executeFlowScenario(instance);
     } catch (error) {

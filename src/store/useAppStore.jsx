@@ -32,6 +32,7 @@ const defaultState = {
   },
   decisionPrompt: { nodeId: null, show: false },
   isLoadingNode: false,
+  isExecuting: false,
 };
 
 const useAppStore = create(
@@ -44,6 +45,13 @@ const useAppStore = create(
       setLoading: (state) => set({ loading: state }),
       setTransactions: (transactions) => set({ transactions }),
       setExecutionId: (id) => set( { executionId: id }),
+      setIsExecuting: (isExecuting) => {
+        console.log("[setIsExecuting] Called with:", isExecuting);
+        set(() => ({ isExecuting }));
+
+      },
+      startExecution: () => set(() => ({ isExecuting: true })),
+      stopExecution: () => set(() => ({ isExecuting: false })),
       setTempEdge: (tempEdge) => set({ tempEdge }),
       setIsModalVisible: (visibility) => set({ isModalVisible: visibility }),
       setActiveScenarioId: (scenarioId) => {
