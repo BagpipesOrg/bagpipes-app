@@ -31,19 +31,23 @@ const TopBar = ({ createScenario, handleExecuteFlowScenario, handleStartScenario
           <CreateUiButton />
           <CreateButton createScenario={createScenario} />
 
-          {isExecuting ? (
-              <StopButton stopScenario={handleStopScenario} />
-          ) : showExecuteButton ? (
-              <>
+              {showExecuteButton ? (
+                <>
                   <ExecuteButton 
                       executeFlowScenario={handleExecuteFlowScenario} 
+                      stopExecution={handleStopScenario}
                       actionNodesPresent={actionNodesPresent}
                   />
                   <ClearButton clearExtrinsic={handleClearExtrinsic} />
               </>
+          ) : isExecuting ? (
+              <StopButton stopScenario={handleStopScenario} />
           ) : (
-              <StartButton startScenario={handleStartScenario} />
-          )}
+            !showExecuteButton && <StartButton startScenario={handleStartScenario} />
+        )}
+
+
+
       </div>
   );
 };

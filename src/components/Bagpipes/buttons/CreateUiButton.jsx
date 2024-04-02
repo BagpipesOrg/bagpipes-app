@@ -15,7 +15,7 @@ export const CreateUiButton = ({ onCreateUi }) => {
       <div className='flex justify-between'>
     <h1 className="text-xl font-bold">Create UI (coming soon)</h1>
 
-    <span className='h-7 w-7'><CreateUI /></span>
+    <span className='h-7 w-7'><CreateUI className='h-6 w-6' fillColor='black'/></span>
     </div>
     <p>Create a UI from the flow you built then share it with others.</p>
     <img className='' src='/bagpipe-UI.jpg'></img>
@@ -26,7 +26,7 @@ export const CreateUiButton = ({ onCreateUi }) => {
       onClick={onCreateUi} 
     >
       
-      <CreateUI />      
+      <CreateUI className='h-5 w-5' fillColor='white' />      
       {/* <span className='ml-2'>Create UI</span> */}
     </button>
     </Tippy>
