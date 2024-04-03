@@ -5,6 +5,8 @@ createUi: <div className='tippy-inner'>'(Coming Soon...) Create a UI for your fl
 draft: <div className='tippy-inner'>Generate the draft transactions that you can review and approve ready for broadbcasting.</div>,
 newFlow: 'Create a new workflow scenario.',
 generateLink: 'Generate a template link to the current workflow scenario, which you can share with others.',
+runOnce: 'Run the workflow scenario once.',
+stopScenario: 'Stop the workflow scenario.',
 
 }
 

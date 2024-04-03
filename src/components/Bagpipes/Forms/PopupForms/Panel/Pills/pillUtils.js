@@ -13,16 +13,33 @@ const createPillsFromNode = (node, orderedList) => {
       nodeType: node.type,
     };
   
-    // Dynamically process eventData and potentially other parts of the node
-    const partsToProcess = ['query', 'content']; 
-    partsToProcess.forEach(part => {
-      const eventDataPart = node.eventData?.[part];
-      if (eventDataPart && typeof eventDataPart === 'object') {
-        nodePill.children = nodePill.children.concat(
-          createPillsFromObject(eventDataPart, `${part}.`, 1, node.type, nodeIndex)
-        );
-      }
-    });
+    switch (node.type) {
+      case 'webhook':
+          // Process Webhook nodes by extracting 'query' and 'content'
+          const partsToProcess = ['query', 'content'];
+          partsToProcess.forEach(part => {
+              const eventDataPart = node.eventData?.[part];
+              if (eventDataPart && typeof eventDataPart === 'object') {
+                  nodePill.children = nodePill.children.concat(
+                      createPillsFromObject(eventDataPart, `${part}.`, 1, node.type, nodeIndex)
+                  );
+              }
+          });
+          break;
+      case 'http':
+          // For HTTP nodes, process the entire eventData as a pill
+          if (node.eventData && typeof node.eventData === 'object') {
+              nodePill.children = createPillsFromObject(node.eventData, '', 1, node.type, nodeIndex);
+          }
+          break;
+      // Handle other node types as necessary
+      default:
+
+        if (node.eventData && typeof node.eventData === 'object') {
+          nodePill.children = createPillsFromObject(node.eventData, '', 1, node.type, nodeIndex);
+      }          
+      break;
+  }
   
     return nodePill;
   };

@@ -1,7 +1,7 @@
 @import '../../../variables.scss';
 
 
-.start-stop-create-button {
+.top-bar-buttons {
   display: flex;
   align-items: center; /* Vertically center the items */
   justify-content: center; /* Horizontally center the items */
@@ -22,7 +22,17 @@
     background-color: darken(#007bff, 10%);
     color: white !important;
   }
+
+
+  &.start-button {
+    background-color: green;
+  }
+
+  &.stop-button {
+    background-color: red;
+  } 
 }
+
 
 
 @keyframes pulsate {

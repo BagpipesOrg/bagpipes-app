@@ -47,7 +47,7 @@ const PanelForm = ({ nodeId, onClose }) => {
       const orderedList = getOrderedList(currentScenario.diagramData.edges);
       console.log('orderedList', orderedList);
       const upstreamNodes = findUpstreamNodes(orderedList, nodeId);
-
+      console.log('upstreamNodes', upstreamNodes);
       if (orderedList) {
         const newPills = extractEventDataFromNodes(upstreamNodes, allNodes, orderedList);
         console.log('newPills', newPills);  

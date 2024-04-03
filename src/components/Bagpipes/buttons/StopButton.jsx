@@ -1,22 +1,22 @@
 // @ts-nocheck
 import React from 'react';
-import { PlayIcon } from '../../Icons/icons';
+import { StopIcon } from '../../Icons/icons';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import './Buttons.scss';
 import Button from './Button.jsx';
 import { buttonDescriptions}  from './buttonDescriptions';
 
-const StartButton = ({ startScenario }) => {
+const StopButton = ({ stopScenario }) => {
     return (
-        <Tippy theme='light' placement='bottom'  interactive={true}  content={buttonDescriptions.runOnce}>
+        <Tippy theme='light' placement='bottom'  interactive={true}  content={buttonDescriptions.stopScenario}>
             <button 
-                className="top-bar-buttons start-button flex items-center" 
-                onClick={startScenario} 
+                className="top-bar-buttons stop-button flex items-center" 
+                onClick={stopScenario} 
                 style={{ zIndex: 1000 }}
             >
             
-            <PlayIcon />
+            <StopIcon />
             {/* <span className='ml-2 '>Start Draft</span> */}
             {/* Draft */}
             </button>
@@ -24,4 +24,4 @@ const StartButton = ({ startScenario }) => {
     );
 }
 
-export default StartButton;
+export default StopButton;

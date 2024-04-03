@@ -30,6 +30,7 @@ export default function HttpNode({ data }) {
   const nodeExecutionData = scenarios[activeScenarioId]?.executions[executionId]?.[nodeId];
   const eventUpdates = nodeExecutionData?.responseData?.eventUpdates || [];
   const hasNotification = eventUpdates.length > 0;
+  const isLoadingNode = useAppStore((state) => state.nodeLoadingStates[nodeId] || false);
 
   const handleNodeClick = () => {
   
@@ -63,14 +64,23 @@ export default function HttpNode({ data }) {
     e.stopPropagation();
   };
 
+  const fillColor = "white";
+
+
 return(
   <div onScroll={handleScroll}>    
   <div ref={nodeRef} onClick={handleNodeClick}>
     <div className="relative nodeBody border-4 border-gray-300 rounded-full w-20 h-20 flex items-center justify-center">
-      {/* Conditionally render the EventNotification component if there are notifications */}
+
       {hasNotification && <EventNotification nodeId={nodeId} eventUpdates={eventUpdates} />}
-      <HttpIcon className='h-7 w-7' fillColor='white' />
-      {/* Logo in the middle of the circle */}
+      {isLoadingNode ? (
+          <div className="spinner-container">
+              {/* Simple CSS spinner */}
+              <div className="node-spinner" style={{ borderColor: '#f3f3f3', borderTopColor: fillColor }}></div>
+          </div>
+      ) : (
+          <HttpIcon className="h-7" fillColor={fillColor} />
+      )}
 
       {/* Title outside the circle below the logo */}
       <div className="node-title-circle absolute bottom-[-38%] text-center">
