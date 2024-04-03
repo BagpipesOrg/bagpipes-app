@@ -40,7 +40,7 @@ const TopBar = ({ createScenario, handleExecuteFlowScenario, handleStartScenario
                   />
                   <ClearButton clearExtrinsic={handleClearExtrinsic} />
               </>
-          ) : isExecuting ? (
+          ) : isExecuting && !showExecuteButton ? (
               <StopButton stopScenario={handleStopScenario} />
           ) : (
             !showExecuteButton && <StartButton startScenario={handleStartScenario} />
