@@ -10,10 +10,10 @@ const IconColor = {
 
 }
 
-export const EditIcon = (
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 plus-edit" fill="white" viewBox="0 0 512 512">
-    <path d="M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0z"></path>
-    <path d="M291.7 90.3L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 220.3 291.7 90.3z"></path>
+export const EditIcon = ({className='create-ui plus-edit', fillColor='white'}) => (
+  <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="white" viewBox="0 0 512 512">
+    <path d="M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0z " fill={fillColor} ></path>
+    <path d="M291.7 90.3L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 220.3 291.7 90.3z" fill={fillColor} ></path>
   </svg>
 );
 

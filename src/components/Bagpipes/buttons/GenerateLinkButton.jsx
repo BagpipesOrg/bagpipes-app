@@ -92,8 +92,8 @@ export const GenerateLinkButton = ({ scenarioId}) => {
 
       return (
         <Tippy theme='light' placement='bottom' interactive={true} content={buttonDescriptions.generateLink}>
-            <button className="top-bar-buttons" onClick={handleCopyToClipboard}>
-                <GenerateLinkIcon />
+            <button className="top-bar-buttons text-black" onClick={handleCopyToClipboard}>
+                <GenerateLinkIcon className='h-5 w-5' fillColor='#007bff' />
             </button>
         </Tippy>
     );

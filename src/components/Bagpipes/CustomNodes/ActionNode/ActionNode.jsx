@@ -212,51 +212,51 @@ export default function ActionNode({ children, data, isConnectable }) {
       }
     }, [assetInFormData, assetOutFormData, currentActionData]); 
     
-  // Here we want to create the action form data object to pass for processing 
-  useEffect(() => {
-    const newActionData = convertFormStateToActionType(formState, assetInFormData, assetOutFormData); 
+    // Here we want to create the action form data object to pass for processing 
+    useEffect(() => {
+      const newActionData = convertFormStateToActionType(formState, assetInFormData, assetOutFormData); 
+      if (newActionData) {
+        setActionData({ [nodeId]: newActionData });
+        console.log("Constructed action data: ", newActionData);
+      }
+    }, [formState, assetInFormData, assetOutFormData]);
+
+  const handleDropdownClick = (value) => {
+    console.log("[handleDropdownClick] Selected value clicked:", value);
+    setDropdownVisible(false);
+    setFormState(prev => ({
+      ...prev,
+      action: value
+    }));
+
+    
+    // Create action data based on the selected value
+    const newActionData = convertFormStateToActionType(
+        { ...formState, action: value }, 
+        assetInFormData, 
+        assetOutFormData
+    );
+
     if (newActionData) {
       setActionData({ [nodeId]: newActionData });
-      console.log("Constructed action data: ", newActionData);
+      console.log("[handleDropdownClick] Constructed action data : ", newActionData);
     }
-  }, [formState, assetInFormData, assetOutFormData]);
-
-const handleDropdownClick = (value) => {
-  console.log("[handleDropdownClick] Selected value clicked:", value);
-  setDropdownVisible(false);
-  setFormState(prev => ({
-    ...prev,
-    action: value
-  }));
-
-  
-  // Create action data based on the selected value
-  const newActionData = convertFormStateToActionType(
-      { ...formState, action: value }, 
-      assetInFormData, 
-      assetOutFormData
-  );
-
-  if (newActionData) {
-    setActionData({ [nodeId]: newActionData });
-    console.log("[handleDropdownClick] Constructed action data : ", newActionData);
-  }
-};
-const handleOutsideClick = useCallback(() => {
-  // setDropdownVisible(false);
-}, []);
+  };
+  const handleOutsideClick = useCallback(() => {
+    // setDropdownVisible(false);
+  }, []);
 
 
 // useOutsideAlerter(dropdownRef, handleOutsideClick);
 
 
-// This function will handle the visibility toggle
-const toggleDropdown = () => {
-  setDropdownVisible(prev => {
-    console.log('Toggling dropdown:', !prev); // This should log the new state
-    return !prev;
-  });
-};
+  // This function will handle the visibility toggle
+  const toggleDropdown = () => {
+    setDropdownVisible(prev => {
+      console.log('Toggling dropdown:', !prev); // This should log the new state
+      return !prev;
+    });
+  };
 
 
   return (

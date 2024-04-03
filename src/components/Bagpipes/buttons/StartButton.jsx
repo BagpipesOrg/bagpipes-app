@@ -11,7 +11,7 @@ const StartButton = ({ startScenario }) => {
     return (
         <Tippy theme='light' placement='bottom'  interactive={true}  content={buttonDescriptions.runOnce}>
             <button 
-                className="top-bar-buttons start-button flex items-center" 
+                className="top-bar-buttons start-button text-white flex items-center" 
                 onClick={startScenario} 
                 style={{ zIndex: 1000 }}
             >

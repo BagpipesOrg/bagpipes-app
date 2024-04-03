@@ -8,15 +8,15 @@ import '../../../index.css';
 import './Buttons.scss';
 import { buttonDescriptions}  from './buttonDescriptions';
 
-export const CreateButton = ({createScenario}) => {
+export const CreateButton = ({ createScenario }) => {
     return (
         <Tippy  theme='light' placement='bottom'  interactive={true}  content={buttonDescriptions.newFlow}>
         <button 
-        className="top-bar-buttons" 
+        className="top-bar-buttons " 
         onClick={createScenario} 
         >
              
-            <PlusIcon />
+            <PlusIcon className='h-5 w-5' fillColor='#007bff' />
             {/* <span className='ml-2 '>New Flow</span> */}
  
         </button>

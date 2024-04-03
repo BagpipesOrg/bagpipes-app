@@ -16,6 +16,7 @@ import { useCreateScenario } from '../../components/Bagpipes/hooks/useCreateScen
 import ThemeContext from '../../contexts/ThemeContext';
 import Toggle from '../../components/Bagpipes/Forms/Toggle';
 import { Button } from 'antd';
+import { GenerateLinkButton } from '../../components/Bagpipes/buttons';
 
 function Lab() {
     const { scenarios, addScenario, setActiveScenarioId, activeScenarioId, setNodeContentMap, loadScenario } = useAppStore((state) => ({
@@ -98,7 +99,7 @@ function Lab() {
                   <div className="scenario-content">
                     <div className=''>{scenario.name}</div>
                     <div className="">Scenario {scenarioId} </div>
-                    <CreateTemplateLink scenarioId={scenarioId} />
+                    <GenerateLinkButton scenarioId={scenarioId} />
 
                     <div onClick={(e) => e.stopPropagation()}>
                     <Toggle
@@ -107,12 +108,11 @@ function Lab() {
                       onToggleChange={(checked) => handleToggleChange(scenarioId, checked)}
                     />
                     </div>
-                                        <button 
+                    <button 
                       className="lab-buttons  hover:bg-blue-700 flex items-center"
                       onClick={(e) => { e.stopPropagation(); editScenario(scenarioId); }}
                     >
-                      {EditIcon}
-                    <span className='ml-2 '>Edit</span>
+                      <EditIcon className='h-4 w-4' />
                     </button>
                     <button 
                       className="close-button-right flex items-center"

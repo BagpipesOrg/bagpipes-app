@@ -4,12 +4,22 @@ export const CHAIN_ASSETS = {
             {
                 "asset": {
                     "name": "DED Token",
-                    "assetType": "Token",
+                    "assetType": "External",
                     "existentialDeposit": "10,000",
                     "xcmRateLimit": null,
                     "symbol": "DED"
                 },
-                "assetId": "1000019"
+                "assetId": "1,000,019"
+            },
+            {
+                "asset": {
+                    "name": "Pink Token",
+                    "assetType": "External",
+                    "existentialDeposit": "1",
+                    "xcmRateLimit": null,
+                    "symbol": "PINK"
+                },
+                "assetId": "1,000,021"
             },
             {
                 "asset": {

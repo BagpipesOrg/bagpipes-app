@@ -26,7 +26,7 @@ export const CreateUiButton = ({ onCreateUi }) => {
       onClick={onCreateUi} 
     >
       
-      <CreateUI className='h-5 w-5' fillColor='white' />      
+      <CreateUI className='h-5 w-5' fillColor='#007bff' />      
       {/* <span className='ml-2'>Create UI</span> */}
     </button>
     </Tippy>

@@ -1,10 +1,5 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
-import {
-  TradeRouter,
-  CachingPoolService,
-  PoolType,
-  StableSwap,
-} from "@galacticcouncil/sdk";
+import { TradeRouter, Router, CachingPoolService, PoolType, StableSwap } from "@galacticcouncil/sdk";
 
 import { getApiInstance } from "../api/connect";
 import endpoints from "../api/WsEndpoints";
