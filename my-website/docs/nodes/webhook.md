@@ -54,7 +54,7 @@ You can now use the event data data downstream in other nodes. Just drag and dro
 
 <div class="text--center">
   <img src="/img/webhook/webhookPillHttp.png" />
-    _Above the variables representing data from the webhook is dragged and dropped into other fields. These are called [Pills](docs/intro/concepts#pills)._ 
+    _Above the variables representing data from the webhook is dragged and dropped into other fields. These are called [Pills](/intro/concepts#pills)._ 
 </div>
 
 :::tip[My tip]

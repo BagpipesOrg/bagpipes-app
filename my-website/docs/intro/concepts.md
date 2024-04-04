@@ -41,10 +41,10 @@ A chain node is an object that represents a blockchain. A chain node needs to be
 [more](/nodes/chain.md)
 
 
-### 2. [Action Node](/nodes/actions.md)   
+### 2. [Action Node](/nodes/action.md)   
 You can drag in an action node between two chains, the action is either xTransfer or Swap.
 
-[more](/nodes/actions.md)
+[more](/nodes/action.md)
 
 #### Actions
 
