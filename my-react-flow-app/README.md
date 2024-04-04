@@ -1,8 +1,23 @@
-# React + Vite
+# XCMSend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![GitHub deployments](https://img.shields.io/github/deployments/XcmSend/app-v0.0.1/production?logo=vercel&link=https%3A%2F%2Fapp-v0-0-1.vercel.app)
+![Discord](https://img.shields.io/discord/1155878499240914944?logo=discord&link=https%3A%2F%2Fdiscord.gg%2FfJYcgrB2F)
+[![Book - mdbook](https://img.shields.io/badge/Book-mdbook-orange?logo=gitbook&logoColor=white&style=flat-square)](https://xcmsend.github.io)    
+![Polkadot](https://img.shields.io/badge/polkadot-E6007A?style=for-the-badge&logo=polkadot&logoColor=white)
+![Vite ](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Build and run me:    
+```shell
+$ git clone git@github.com:XcmSend/app.git  
+$ npm install -f
+$ npm run build
+$ npm run dev
+```
+
+Build tailwind:
+
+```
+npx tailwindcss -c ./tailwind.config.js -i ./src/index.css -o dist/output.css
+```

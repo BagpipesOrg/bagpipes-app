@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "baseUrl": "./",
+    "outDir": "./build",
+    "rootDir": "./src",
+    "allowJs": true,
+    "esModuleInterop": true,
+    "target": "ES2020",
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.json", "src/components/Bagpipes/Forms/PopupForms/ActionSelector.jsx",],
+  "exclude": ["vite.config.js", "node_modules"]
+}

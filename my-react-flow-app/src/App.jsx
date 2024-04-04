@@ -1,35 +1,92 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// Copyright 2019-2023 @bagpipes/xcm-send authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+import React, { useState, useEffect, useContext } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { ConfigProvider } from 'antd';
+import SocketContext from './contexts/SocketContext';
+import { AddressBookProvider } from './contexts/AddressBookContext';
+import initializeKeyring from './services/initializeKeyring';
+import './App.scss';
+import { Socket } from 'socket.io-client';
+import ThemeProvider from './components/Theme/ThemeProvider';
+import { WalletContext } from './components/Wallet/contexts';
+import ThemeContext from './contexts/ThemeContext';
+import Header from './components/Header';
+import Sidebar from './components/Bagpipes/Sidebar/Sidebar';
+import MainLayout from './components/MainLayout/MainLayout';
+import SelectWalletModal from './components/Wallet/components/SelectWalletModal';
+import { WalletContextProvider } from './components/Wallet/providers/WalletContextProvider';
+import 'tippy.js/dist/tippy.css';
+import 'antd/dist/antd.css';
+import { TippyProvider, PanelTippyProvider} from './contexts/tooltips/TippyContext';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
-function App() {
-  const [count, setCount] = useState(0)
+function App () {
+  const [socket, setSocket] = useState(null);
+  const location = useLocation();
+  const walletContext = useContext(WalletContext);
+  const navigate = useNavigate();
+  
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
 
-export default App
+
+
+    async function setupKeyring() {
+      try {
+        await initializeKeyring();
+        console.log("Keyring initialized");
+      } catch (error) {
+          console.error("Failed to initialize keyring:", error);
+      }
+    }
+    setupKeyring();
+
+
+
+  
+    useEffect(() => {
+      console.log('location', location);
+    }, [location]);
+
+    // useEffect(() => {
+    //   if (!walletContext.wallet) {
+    //     navigate('/welcome');
+    //   }
+    // }, [navigate, walletContext]);
+
+    return (
+      <ThemeProvider value={{ theme: 'dark' }}>
+        <DndProvider backend={HTML5Backend}>
+          <WalletContextProvider>
+            <SocketContext.Provider value={socket}>
+              <ConfigProvider>
+                <AddressBookProvider>
+                  <TippyProvider>
+                  <PanelTippyProvider>
+
+                  <div className='absolute top-0 left-0'>
+                </div>
+                <Header open={true} />
+
+                {/* <Header open={walletContext.wallet || walletContext.evmWallet} /> */}
+
+              <div className='main-container'>
+                <Sidebar />
+                <MainLayout theme={'dark'} />
+                </div>
+                {/* <SelectWalletModal theme={'dark'} /> */}
+                <SelectWalletModal />
+                </PanelTippyProvider>
+                </TippyProvider> 
+              </AddressBookProvider>
+              </ConfigProvider>
+            </SocketContext.Provider>
+          </WalletContextProvider>
+        </DndProvider>
+      </ThemeProvider>
+    );
+  }
+
+  export default App;
+  
