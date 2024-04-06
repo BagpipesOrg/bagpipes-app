@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './Fields.scss';
 import { useDrop } from 'react-dnd';
-import { setCaretPosition, getCaretPosition, updateCombinedValue, insertPillAtPosition  } from './utils';
+import { cleanPasteContent,sanitizeHtmlContent, setCaretPosition, getCaretPosition, updateCombinedValue, insertPillAtPosition  } from './utils';
 import { nodeTypeColorMapping } from '../PopupForms/Panel/nodeColorMapping';
 
 const CustomInput = ({ fieldKey, value, onChange, onClick, placeholder, className, pills, setPills,onPillsChange }) => {
@@ -117,32 +117,73 @@ const removePill = (pillId) => {
   // Update state to remove the pill
   setPills(currentPills => currentPills.filter(pill => pill.id !== pillId));
 
-  // Remove the pill element from the DOM
+  // Locate the pill element in the DOM
   const pillElement = editableInputRef.current.querySelector(`.pill[data-id="${pillId}"]`);
   if (pillElement) {
-    pillElement.remove();
-  }
+    // Check if the next sibling is the spacer
+    const nextSibling = pillElement.nextSibling;
+    if (nextSibling && nextSibling.nodeType === Node.TEXT_NODE && nextSibling.textContent === '\u200B') {
+      // If the next sibling is the spacer, remove it
+      pillElement.parentNode.removeChild(nextSibling);
+    }
 
-  // Update combined value
-  updateCombinedValue(editableInputRef.current, onChange);
+    // Remove the pill element from the DOM
+    pillElement.parentNode.removeChild(pillElement);
+
+    // after removing a pill and potentially a spacer, may want to adjust caret positioning
+    //  logic for placing the caret, if needed, would go here
+
+    // Update combined value
+    updateCombinedValue(editableInputRef.current, onChange);
+  }
 };
 
-  const handleKeyDown = (event) => {
-    if (event.key === 'Backspace') {
-      const selection = window.getSelection();
-      // Check if the selection is collapsed (cursor, no text selected)
-      if (selection.isCollapsed) {
-        const anchorNode = selection.anchorNode;
-        const previousSibling = anchorNode.previousSibling;
-  
-        // Check if the cursor is immediately after a pill
-        if (previousSibling && previousSibling.classList.contains('pill')) {
-          const pillId = previousSibling.getAttribute('data-id');
-          removePill(pillId);
-        }
+
+ const handlePaste = (event) => {
+  event.preventDefault();
+  const htmlContent = (event.clipboardData || window.clipboardData).getData('text/html');
+  const cleanedContent = sanitizeHtmlContent(htmlContent);
+  document.execCommand('insertHTML', false, cleanedContent);
+};
+
+
+
+
+const handleKeyDown = (event) => {
+  if (event.key === 'Backspace') {
+    const selection = window.getSelection();
+    if (selection.isCollapsed) {
+      const anchorNode = selection.anchorNode;
+      let targetPill = null;
+
+      // If the anchorNode is a text node and its previous sibling is a pill, target that pill
+      if (anchorNode.nodeType === Node.TEXT_NODE && anchorNode.previousSibling?.classList.contains('pill')) {
+        targetPill = anchorNode.previousSibling;
+      }
+      // If the anchorNode is a pill itself (e.g., caret is directly after a pill), target the pill
+      else if (anchorNode.nodeType === Node.ELEMENT_NODE && anchorNode.classList.contains('pill')) {
+        targetPill = anchorNode;
+      }
+      // If the parent of the anchorNode is a pill (for handling cases with nested structures), target the parent pill
+      else if (anchorNode.parentNode?.classList.contains('pill')) {
+        targetPill = anchorNode.parentNode;
+      }
+
+      if (targetPill) {
+        event.preventDefault(); // Stop the backspace from removing more than the pill
+        const pillId = targetPill.getAttribute('data-id');
+        removePill(pillId);
       }
     }
-  };
+  }
+
+  // if (event.key === 'Enter') {
+  //   event.preventDefault();
+  //   // document.execCommand('insertText', false, '\n');
+  // }
+};
+
+
 
 
   return (
@@ -151,10 +192,10 @@ const removePill = (pillId) => {
         ref={refCallback}
         className={"editable-input"} 
         contentEditable="true"
-        dangerouslySetInnerHTML={{ __html: editableContent }}
+        // dangerouslySetInnerHTML={{ __html: editableContent }}
         onInput={handleContentChange}
         onClick={handleDivClick}
-
+        onPaste={handlePaste}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
       >
