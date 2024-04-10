@@ -1,0 +1,20 @@
+
+
+
+.pills-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 20px; /* Space below the container, adjust as needed */
+    overflow-x: auto;
+
+  }
+  
+  .pill {
+  
+    white-space: nowrap; /* Prevents the pill text from wrapping */
+    margin-bottom: 5px;
+    margin: 0px;
+    margin-bottom: 5px;
+;
+  }
+  
