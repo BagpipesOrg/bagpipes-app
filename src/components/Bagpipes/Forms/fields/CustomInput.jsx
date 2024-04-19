@@ -3,6 +3,8 @@ import './Fields.scss';
 import { useDrop } from 'react-dnd';
 import { cleanPasteContent,sanitizeHtmlContent, setCaretPosition, getCaretPosition, updateCombinedValue, insertPillAtPosition  } from './utils';
 import { nodeTypeColorMapping } from '../PopupForms/Panel/nodeColorMapping';
+import { functionBlocks } from '../PopupForms/Panel/Pills/pillsData';
+import '../PopupForms/Panel/Pills/Pills.scss';
 
 const CustomInput = ({ fieldKey, value, onChange, onClick, placeholder, className, pills, setPills,onPillsChange }) => {
   const editableInputRef = useRef(null);
@@ -12,65 +14,96 @@ const CustomInput = ({ fieldKey, value, onChange, onClick, placeholder, classNam
   
   const [dropPosition, setDropPosition] = useState({ x: 0, y: 0 });
   const [{ isOver }, drop] = useDrop({
-    accept: ['GENERAL_PILL', 'PILL'], 
-     hover: (item, monitor) => {
-      const dropPosition = monitor.getClientOffset();
-      const clientOffset = monitor.getClientOffset();
-      if (clientOffset && editableInputRef.current) {
-          const dropTargetRect = editableInputRef.current.getBoundingClientRect();
-        
-          const xPosition = clientOffset.x - dropTargetRect.left;
-          const yPosition = clientOffset.y - dropTargetRect.top;
-        
-          setDropPosition({ x: xPosition, y: yPosition });
-          console.log("CustomInput Drop position:", xPosition, yPosition);  
-
+    accept: ['GENERAL_PILL', 'PILL', 'FUNCTION_BLOCK', 'KEYWORD_PILL', 'MATH_PILL', 'VARIABLE_PILL', 'OPERAND_PILL' ], // Include 'FUNCTION_BLOCK' or other relevant types as accepted
+    hover: (item, monitor) => {
+        const clientOffset = monitor.getClientOffset();
+        if (clientOffset && editableInputRef.current) {
+            const dropTargetRect = editableInputRef.current.getBoundingClientRect();
+            const xPosition = clientOffset.x - dropTargetRect.left;
+            const yPosition = clientOffset.y - dropTargetRect.top;
+            setDropPosition({ x: xPosition, y: yPosition });
+            console.log("CustomInput Drop position:", xPosition, yPosition);  
         }
-      },
-      drop: (item, monitor) => {
+    },
+    drop: (item, monitor) => {
+        console.log("CustomInput Drop function called", item);
         if (monitor.isOver({ shallow: true })) {
-          let itemsToInsert = [];
-      
-          // Check if the dropped item represents a group of pills
-          if (item.groupType && logicBlocks[item.groupType]) {
-            // Construct the group of pills based on the logic block definition
-            logicBlocks[item.groupType].forEach(pillType => {
-              itemsToInsert.push({
-                ...functionPillTypes[pillType],
-                id: `${item.id}-${pillType}`, // Ensure unique ID within the group
+            console.log("CustomInput Item is over and will be processed", item);
+            let itemsToInsert = [];
+            console.log("CustomInput functionBlocks:", functionBlocks);
+            // Determine if the dropped item is a function block
+            if (item.nodeType === 'function' && functionBlocks[item.id]) {
+              const functionBlockItems = functionBlocks[item.id];
+              console.log("CustomInput Function block items:", functionBlockItems);
+              
+              functionBlockItems.forEach((blockItem, index) => {
+                  // Construct a unique id for each pill. You can use the blockItem's type and index.
+                  // If you need more uniqueness, consider adding more distinct identifiers.
+                  let pillId = `${item.id}-${blockItem.type}-${index}`;
+          
+                  // Use blockItem.name directly for the pill text
+                  let pillText = blockItem.name;
+                  console.log("CustomInput Pill text:", blockItem);
+          
+                  let pillRepresentation = {
+                      id: pillId,
+                      text: pillText,
+                      class: blockItem.class,
+                      group: blockItem.group,
+                      contentEditable: false,
+                      draggable: true,
+                    
+                  };
+                  
+                  itemsToInsert.push(pillRepresentation);
               });
-            });
-          } else {
-            // Handle as a single pill
-            const color = nodeTypeColorMapping[item.nodeType] || 'defaultColor';
-            itemsToInsert.push({
-              id: item.id,  
-              text: item.label,  
-              color: color,
-              contentEditable: false, 
-              draggable: true,
-              nodeIndex: item.nodeIndex,
-            });
+          } else if (item.nodeType === 'keyword' || item.nodeType === 'math' || item.nodeType === 'logic' || item.nodeType === 'general' || item.nodeType === 'operand' || item.nodeType === 'variable') {
+              console.log("CustomInput node type Pill item:", item);
+              itemsToInsert.push({
+                  id: item.id,
+                  text: item.label,
+                  contentEditable: false,
+                  draggable: true,
+                  nodeIndex: item.nodeIndex,
+                  class: item.class,
+              });
           }
-      
-          // Insert each item (this could be a single pill or multiple pills from a group)
-          itemsToInsert.forEach(newPill => {
-            insertPillAtPosition(editableInputRef, newPill, dropPosition, onChange, handleDragStart, handleDragEnd, removePill);
-          });
-      
-          // Update pills state and combined value after all inserts are done
-          const updatedPills = [...pills, ...itemsToInsert];
-          onPillsChange(updatedPills, fieldKey);
-          setPills(updatedPills);
+          
+          else {
+              // Handle as a single pill if not a function block
+              // const textColor = '#232323';
+              const color = nodeTypeColorMapping[item.nodeType] || 'defaultColor';
+              console.log("CustomInput Pill color:", color);
+
+              itemsToInsert.push({
+                  id: item.id,
+                  text: item.label,
+                  contentEditable: false,
+                  draggable: true,
+                  nodeIndex: item.nodeIndex,
+                  class: item.class,
+                  color: color
+                  // style: `background-color: ${color}; color: ${textColor};`, // Assuming you want to use the color variable here
+              });
+          }
+          
+
+            // Insert each item
+            itemsToInsert.forEach(newPill => {
+                insertPillAtPosition(editableInputRef, newPill, dropPosition, onChange, handleDragStart, handleDragEnd, removePill);
+            });
+
+            // Update pills state
+            const updatedPills = [...pills, ...itemsToInsert];
+            onPillsChange(updatedPills, fieldKey);
+            setPills(updatedPills);
         }
-      },
-      
-      collect: monitor => ({
+    },
+    collect: monitor => ({
         isOver: !!monitor.isOver(),
         canDrop: !!monitor.canDrop(),
-
-      }),
-  });
+    }),
+});
 
   // Merged ref callback
   const refCallback = useCallback(

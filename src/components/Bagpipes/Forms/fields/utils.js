@@ -28,10 +28,13 @@ export const insertPillAtPosition = (editableInputRef, pill, dropCoordinates, on
 const createPillElement = (pill, handleDragStart, handleDragEnd,removePill) => {
   let pillElement = document.createElement('span');
   pillElement.setAttribute('data-id', pill.id);
-  pillElement.textContent = `${pill.nodeIndex}. ${pill.text}`;    
+  pillElement.textContent = pill.nodeIndex !== undefined ? `${pill.nodeIndex}. ${pill.text}` : pill.text;
   console.log("CustomInput 1. text content:", pill.text);
   pillElement.className = 'pill';
   pillElement.style.backgroundColor = pill.color;
+  pillElement.style.color = pill.textColor || 'white';
+  pillElement.style.margin = '0 2px'; // Add a horizontal margin between pills
+  pillElement.className = `pill ${pill.class}`
   pillElement.setAttribute('contenteditable', 'false');
   pillElement.setAttribute('data-nodeindex', pill.nodeIndex);
   pillElement.draggable = true;

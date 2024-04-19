@@ -107,7 +107,7 @@ const PanelForm = ({ nodeId, onClose }) => {
               return <DraggableOperandPills key={key} pill={pill} onRemovePill={onRemovePill} />;
             case PillClass.Variable:
               return <DraggableVariablePills key={key} pill={pill} onRemovePill={onRemovePill} />;
-              
+
           }
         });
     };
@@ -129,12 +129,16 @@ const PanelForm = ({ nodeId, onClose }) => {
     ));
   };
 
+
+  
+  
+
   const renderFunctionPills = (group) => {
-    console.log(functionBlocks); 
+    console.log('functionBlocks', functionBlocks); 
     return Object.entries(functionBlocks)
       .filter(([key, blocks]) => blocks[0].group === group)
       .map(([key, blocks]) => (
-        <DraggableFunctionPills key={key} name={key} onDrop={(name) => handleFunctionDrop(name, group)} />
+        <DraggableFunctionPills key={key} name={key} />
       ));
   };
   

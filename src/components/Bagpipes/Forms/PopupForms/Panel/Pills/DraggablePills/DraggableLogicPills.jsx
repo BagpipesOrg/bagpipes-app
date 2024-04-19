@@ -6,7 +6,7 @@ import { nodeTypeColorMapping } from '../../nodeColorMapping';
 
 const DraggableLogicPills = ({ pill, onRemovePill }) => {
   const [{ isDragging }, dragRef] = useDrag(() => ({
-    type: 'PILL',
+    type: 'LOGIC_PILL',
     item: pill,
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
