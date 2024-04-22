@@ -24,7 +24,7 @@ const Sidebar = () => {
         <div className="sidebar-item">
           <Link to="/lab">
             <LabIcon />
-            {isExpanded && <span className="sidebar-text">Lab</span>}
+            {isExpanded && <span className="sidebar-text">Scenarios</span>}
           </Link>
         </div>
 

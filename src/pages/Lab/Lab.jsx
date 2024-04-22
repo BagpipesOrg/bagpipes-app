@@ -80,7 +80,7 @@ function Lab() {
     return (
       <div className={`${theme} lab-container p-8 h-full`}>
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-semibold">Lab</h1>
+          <h1 className="text-2xl font-semibold">Scenarios</h1>
           <button 
             className="button bg-blue-500 flex items-center"
             onClick={createScenario}
