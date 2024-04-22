@@ -16,7 +16,7 @@ import TextUpdaterNode from './TextupdaterNode';
 import Toolbar from '../Toolbar/Toolbar';
 import FormGroupNode from './FormGroupNode';
 import CustomEdge from './CustomEdges/CustomEdge';
-import { ChainNode, ActionNode, RouterNode, WebhookNode,WebsocketNode, APINode, HttpNode, CodeNode, ScheduleNode, DiscordNode, OpenAINode } from './CustomNodes';
+import { ChainNode, ActionNode, RouterNode, WebhookNode,WebsocketNode, APINode, HttpNode, CodeNode, ScheduleNode, DiscordNode, OpenAINode, ChainQueryNode, DelayNode } from './CustomNodes';
 import { startDraftingProcess, preProcessDraftTransactions } from './utils/startDraftingProcess';
 import { calculateTippyPosition } from './utils/canvasUtils';
 import { MarkerType } from 'reactflow';
@@ -84,6 +84,7 @@ const nodeTypes = {
   discord: DiscordNode,
   delay: DelayNode,
   openAi: OpenAINode,
+  chainQuery: ChainQueryNode,
 };
 
 const edgeTypes = {

@@ -11,7 +11,7 @@ export const CHAIN_METADATA = {
 
     },
     interlay: {
-        chain: "interlay",
+        chain: "Interlay",
         endpoints: [
             "wss://rpc-interlay.luckyfriday.io",
             "wss://interlay-rpc.dwellir.com",

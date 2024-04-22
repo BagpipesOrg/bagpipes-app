@@ -123,9 +123,9 @@ function createFunctionBlock(functionName: string, numArgs: number, pillBlockTyp
 
 
 export const logicFunctionBlocks: FunctionBlocks = {
-  "if-then":  createFunctionBlock("if", 2, pillBlockTypes, { class: "function", group: "general", type: "*" }), // 2 separators indicate 3 parts in the "if" construct
-  "switch":   createFunctionBlock("switch", 1, pillBlockTypes, { class: "function", group: "general", type: "*" }), // Adjusted for illustrative purposes
-  "if-empty": createFunctionBlock("ifempty", 1, pillBlockTypes, { class: "function", group: "general", type: "*" }), // 1 separator for the "ifempty" construct
+  "if-then":  createFunctionBlock("if", 3, pillBlockTypes, { class: "function", group: "general", type: "*" }), // 2 separators indicate 3 parts in the "if" construct
+  "switch":   createFunctionBlock("switch", 2, pillBlockTypes, { class: "function", group: "general", type: "*" }), // Adjusted for illustrative purposes
+  "if-empty": createFunctionBlock("ifempty", 2, pillBlockTypes, { class: "function", group: "general", type: "*" }), // 1 separator for the "ifempty" construct
   "( )":      createFunctionBlock("( )", 1, pillBlockTypes, { class: "function", group: "general", type: "*" }),
   "omit":     createFunctionBlock("omit", 1, pillBlockTypes, { class: "function", group: "general", type: "*" }),
   "pick":     createFunctionBlock("pick", 1, pillBlockTypes, { class: "function", group: "general", type: "*" }),

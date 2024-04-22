@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import Tippy from '@tippyjs/react';
 import ThemeContext from '../../contexts/ThemeContext';
 import { nodeDescriptions } from './nodeDescriptions';
-import { AppsIcon, ActionIcon, ChainIcon, ToolsIcon, RouterIcon, WebhookIcon, WebsocketIcon, ScheduleIcon, DelayIcon, APIIcon, CodeIcon, DiscordIcon, OpenAIIcon, HttpIcon } from '../Icons/icons'; 
+import { AppsIcon, ActionIcon, ChainIcon, ToolsIcon, RouterIcon, WebhookIcon, WebsocketIcon, ScheduleIcon, DelayIcon, APIIcon, CodeIcon, DiscordIcon, OpenAIIcon, HttpIcon, ChainQueryIcon } from '../Icons/icons'; 
 import 'tippy.js/dist/tippy.css'; 
 import './Toolbar.scss'; 
 
@@ -26,6 +26,7 @@ const AppsSubMenu = ({ onDragStart, theme }) => {
     schedule: 'Schedule',
     websocket: 'Socket',
     tools: 'Tools',
+    chainQuery: 'Query Chain',
 
 
   };
@@ -39,6 +40,7 @@ const AppsSubMenu = ({ onDragStart, theme }) => {
       case 'delay': return <DelayIcon fillColor='black' />;
       case 'code': return <CodeIcon fillColor='black' />;
       case 'openAi': return <OpenAIIcon fillColor='black' />;
+      case 'chainQuery': return <ChainQueryIcon fillColor='black' />;
       default: return null;
     }
   };
@@ -96,6 +98,9 @@ const Toolbar = () => {
     } 
     else if (nodeKey === 'openAi') {
       IconComponent = <OpenAIIcon />;
+    }
+    else if (nodeKey === 'chainQuery') {
+      IconComponent = <ChainQueryIcon />;
     }
 
     return (

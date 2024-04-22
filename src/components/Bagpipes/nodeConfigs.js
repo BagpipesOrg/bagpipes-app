@@ -19,6 +19,11 @@ export const getNodeConfig = (type, position, getId) => {
         name: "Chain",
         
       },
+      chainQuery: {
+        label: 'Query Chain',
+        image: './chainQuery.svg',
+        name: "Query Chain",
+      },
       discord: {
         label: 'Discord',
         image: './discord-purple.svg',
