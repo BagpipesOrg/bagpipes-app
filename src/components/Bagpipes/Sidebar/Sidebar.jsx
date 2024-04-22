@@ -29,20 +29,20 @@ const Sidebar = () => {
         </div>
 
         {/* Chat */}
-        <div className="sidebar-item">
+        {/* <div className="sidebar-item">
           <Link to="/contacts">
             <ChatIcon />
             {isExpanded && <span className="sidebar-text">Contacts</span>}
           </Link>
-        </div>
+        </div> */}
 
         {/* Settings */}
-        <div className="sidebar-item">
+        {/* <div className="sidebar-item">
           <Link to="/settings">
             <SettingsIcon />
             {isExpanded && <span className="sidebar-text">Settings</span>}
           </Link>
-        </div>
+        </div> */}
       </div>
     </div>
   );
