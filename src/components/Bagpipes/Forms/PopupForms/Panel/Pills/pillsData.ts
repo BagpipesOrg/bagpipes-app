@@ -123,7 +123,7 @@ function createFunctionBlock(functionName: string, numArgs: number, pillBlockTyp
 
 
 export const logicFunctionBlocks: FunctionBlocks = {
-  "if-then":  createFunctionBlock("if", 3, pillBlockTypes, { class: "function", group: "general", type: "*" }), // 2 separators indicate 3 parts in the "if" construct
+  "if-else":  createFunctionBlock("if", 3, pillBlockTypes, { class: "function", group: "general", type: "*" }), // 2 separators indicate 3 parts in the "if" construct
   "switch":   createFunctionBlock("switch", 2, pillBlockTypes, { class: "function", group: "general", type: "*" }), // Adjusted for illustrative purposes
   "if-empty": createFunctionBlock("ifempty", 2, pillBlockTypes, { class: "function", group: "general", type: "*" }), // 1 separator for the "ifempty" construct
   "( )":      createFunctionBlock("( )", 1, pillBlockTypes, { class: "function", group: "general", type: "*" }),
@@ -355,7 +355,7 @@ export const variablePills: Record<string, Pill> = {
 
 export const pillDescriptions: Record<string, PillDescription> = {
   // logicBlockDescriptions
-  "if-then": {
+  "if-else": {
     description: "if(logical expression; output 1; output 2) This function returns 'output 1', if the expression evaluates to true, else it returns 'output 2'.",
     example: "if(a > b; 'a is greater'; 'b is greater or equal')",
     function: "if(expression; output1; output2)",

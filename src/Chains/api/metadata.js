@@ -46,12 +46,22 @@ export const CHAIN_METADATA = {
         transferFunction: "xcmPallet.limitedReserveTransferAssets",
         nativeAccount: true,
     },
-    Kusama: {
+    kusama: {
         chain: "Kusama",
         endpoints: [
               "wss://kusama-rpc.dwellir.com",
             "wss://kusama-rpc.polkadot.io",
             "wss://kusama.api.onfinality.io/public-ws",
+        ],
+        queryBalancePaths: ["system.account"],
+        transferFunction: "xcmPallet.limitedReserveTransferAssets",
+        nativeAccount: true,
+    },
+    moonbeam: {
+        chain: "Moonbeam",
+        endpoints: [
+              "wss://moonbeam-rpc.dwellir.com",
+
         ],
         queryBalancePaths: ["system.account"],
         transferFunction: "xcmPallet.limitedReserveTransferAssets",
@@ -78,6 +88,14 @@ export const CHAIN_METADATA = {
         chain: "Sora",
         endpoints: [
                 "wss://ws.parachain-collator-1.c1.stg1.sora2.soramitsu.co.jp",
+        ],
+        queryBalancePaths: ["system.account"],
+        nativeAccount: true,
+    },
+    turing: {
+        chain: "turing",
+        endpoints: [
+            "wss://rpc.turing.oak.tech",
         ],
         queryBalancePaths: ["system.account"],
         nativeAccount: true,

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 // import CreateChainQueryForm from './CreateChainQueryForm';
 import useAppStore from '../../../../../store/useAppStore';
 import Tippy from '@tippyjs/react';
@@ -20,10 +20,14 @@ import './types';
 
 import { CHAIN_METADATA } from '../../../../../Chains/api/metadata';
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { queryMetadata } from './ChainQueryTest';
+import { queryMetadata } from './QueryMetadata';
 import { parseMetadata } from './utils'
 import { listChains} from '../../../../../Chains/ChainsInfo';
+import { parseTypeDefinition, parseLookupTypes } from './ParseMetadataTypes';
+import renderInputFields from './RenderInputFields';
 
+// import { Params } from '@polkadot/react-params';
+// import { TypeDef } from '@polkadot/types/create/types';
 
 const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
   const { scenarios, activeScenarioId, saveNodeFormData } = useAppStore(state => ({ 
@@ -32,18 +36,56 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     saveNodeFormData: state.saveNodeFormData,
    }));
 
-   // CHAIN QUERY TEST
-    const [metadata, setMetadata] = useState(null); // Add state for metadata
+////////
+    const [metadata, setMetadata] = useState(null); 
     const [pallets, setPallets] = useState([]);
     const [selectedPallet, setSelectedPallet] = useState(null);
     const [selectedMethod, setSelectedMethod] = useState(null);
-
     const [chains, setChains] = useState([]);
     const [selectedChain, setSelectedChain] = useState('');
 
+    const selectedStorageItem = useMemo(() => {
+      return selectedPallet?.storage.find(item => item.name === selectedMethod?.name) || null;
+  }, [selectedPallet, selectedMethod]);
+  
+  
+    const lookupTypes = useMemo(() => {
+      // Accessing the nested types array correctly based on your console log
+      const typesArray = metadata?.metadata?.V14?.lookup?.types;
+      console.log('Lookup Types in lookupTypes:', typesArray);
+      if (typesArray && Array.isArray(typesArray)) {
+          const parsedTypes = parseLookupTypes(typesArray);
+          console.log("Lookup Parsed Types:", parsedTypes);
+          return parsedTypes;
+      }
+      console.error("Metadata is not valid or types are not available");
+      return {};
+  }, [metadata]);
+
+//   useEffect(() => {
+//     const fetchMetadata = async () => {
+//         try {
+//             // Simulate fetching metadata or call your actual API
+//             const response = await fetchMetadataFromAPI(); // Replace with your actual metadata fetch call
+//             if (response.ok) {
+//                 const data = await response.json();
+//                 console.log('Fetched Metadata:', data);
+//                 setMetadata(data);  // Update your state accordingly
+//             } else {
+//                 console.error("Failed to fetch metadata");
+//             }
+//         } catch (error) {
+//             console.error("Error fetching metadata:", error);
+//         }
+//     };
+
+//     fetchMetadata();
+// }, []); // Ensure this only runs once or when specific dependencies change
+
+
     useEffect(() => {
         const fetchChains = async () => {
-            const chainsObject = await listChains();
+            const chainsObject = listChains();
             if (chainsObject && Object.keys(chainsObject).length > 0) {
                 const chainsArray = Object.keys(chainsObject).map(key => ({
                     ...chainsObject[key],
@@ -59,154 +101,251 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
         fetchChains();
     }, []);
 
-    const handleChainSelectChange = async (value) => {
-      setSelectedChain(value);
+    useEffect(() => {
+      if (metadata) {
+        console.log('Metadata:', metadata)
+        const parsedData = parseMetadata(metadata);
+        console.log('Lookup Parsed Data:', parsedData);  
+        setPallets(parsedData);
+      }
+    }, [metadata]);
+
+ 
+  
+
+  const handleChainSelectChange = async (chainName) => {
+    if (chainName !== selectedChain) {
+      console.log('handleChainSelectChange Selected Chain:', chainName);
+      setSelectedChain(chainName);
       setSelectedPallet(null);
       setSelectedMethod(null);
       try {
-        const metadata = await fetchChainMetadata(value);
+        const metadata = await queryMetadata(chainName); 
+        console.log("Types Fetched Metadata:", metadata);
+
         setMetadata(metadata);
-        const parsedPallets = parseMetadata(metadata);
+        const parsedPallets = parseMetadata(metadata); 
         setPallets(parsedPallets);
       } catch (error) {
         console.error('Error fetching metadata:', error);
       }
-    };
+    }
+  };
+
     
     const handlePalletChange = (value) => {
       const pallet = pallets.find(p => p.name === value);
       setSelectedPallet(pallet);
-      setSelectedMethod(null); // Reset methods when changing pallets
+      setSelectedMethod(null);
     };
     
     const handleMethodChange = (value) => {
-      const method = selectedPallet.methods.find(m => m.name === value);
+      const method = selectedPallet.storage.find(storage => storage.name === value);
       setSelectedMethod(method);
     };
     
-
-    const renderChainSelection = () => {
-        if (chains.length === 0) {
-            return <div>Loading chains...</div>;
-        }
-
-        const chainOptions = chains.map(chain => ({
-            label: chain.display || chain.name,
-            value: chain.name
-        }));
-
-        return (
-            <CollapsibleField
-                key="chainDropdown"
-                title="Select Chain"
-                hasToggle={false}
-                fieldTypes="select"
-                nodeId={nodeId}
-                info="Choose a blockchain chain to query"
-                selectOptions={chainOptions}
-                value={selectedChain}
-                onChange={(value) => handleChainSelectChange(value)}
-            />
-        );
-    };
-
-    
-    
-    const renderPalletSelection = () => {
-      if (!selectedChain || pallets.length === 0) return null;
-    
-      return (
-        <CollapsibleField
-          key="palletDropdown"
-          title="Select Pallet"
-          hasToggle={false}
-          type="select"
-          nodeId={nodeId}
-          info="Select a pallet to explore"
-          selectOptions={pallets.map(pallet => ({ label: pallet.name, value: pallet.name }))}
-          value={selectedPallet?.name || ''}
-          onChange={(value) => handlePalletChange(value)}
-        />
-      );
-    };
-    
-    const renderMethodSelection = () => {
-      if (!selectedPallet || selectedPallet.methods.length === 0) return null;
-    
-      return (
-        <CollapsibleField
-          key="methodDropdown"
-          title="Select Method"
-          hasToggle={false}
-          type="select"
-          nodeId={nodeId}
-          info="Select a method to view details"
-          selectOptions={selectedPallet.methods.map(method => ({ label: method.name, value: method.name }))}
-          value={selectedMethod?.name || ''}
-          onChange={(value) => handleMethodChange(value)}
-        />
-      );
-    };
-    
-    
-    
- 
     
 
-      // ChainQuery Test
-
-  const handleQueryMetadata = async () => {
-    try {
-      const fetchedMetadata = await queryMetadata(); // Assume this fetches the metadata
-      console.log('Fetched Metadata:', fetchedMetadata);  // Check what is actually fetched
-      if (fetchedMetadata) {
-        setMetadata(fetchedMetadata); // Save fetched metadata to state
-        // alert('Metadata fetched successfully. Check the console for details.');
-      } else {
-        alert('No metadata fetched');
+  const renderChainSelection = () => {
+      if (chains.length === 0) {
+          return <div>Loading chains...</div>;
       }
-    } catch (error) {
-      console.error('Failed to fetch metadata:', error);
-      // alert('Failed to fetch metadata. See console for details.');
-    }
+
+      const chainOptions = chains.map(chain => ({
+          label: chain.display || chain.name,
+          value: chain.name
+      }));
+
+      return (
+          <CollapsibleField
+              key="chainDropdown"
+              title="Select Chain"
+              hasToggle={false}
+              fieldTypes="select"
+              nodeId={nodeId}
+              info="Choose a blockchain chain to query"
+              selectOptions={chains.map(chain => ({
+                label: chain.display || chain.name,
+                value: chain.name
+              }))}
+              value={selectedChain}
+              onChange={(newValue) => handleChainSelectChange(newValue)}  // Assuming `newValue` is directly the selected value
+              />
+      );
   };
-  
 
-  useEffect(() => {
-    if (metadata) {
-      console.log('Metadata:', metadata)
-      const parsedData = parseMetadata(metadata);
-      console.log('Parsed Data:', parsedData);  
-      setPallets(parsedData);
+    
+    
+  const renderPalletSelection = () => {
+    if (!selectedChain || pallets.length === 0) return null;
+  
+    return (
+      <CollapsibleField
+        key="palletDropdown"
+        title="Select Pallet"
+        hasToggle={false}
+        fieldTypes="select"
+        nodeId={nodeId}
+        info="Select a pallet to explore"
+        selectOptions={pallets.map(pallet => ({ label: pallet.name, value: pallet.name }))}
+        value={selectedPallet?.name || ''}
+        onChange={(value) => handlePalletChange(value)}
+      />
+    );
+  };
+    
+  const renderMethodSelection = () => {
+    if (!selectedPallet || selectedPallet.storage.length === 0) return null;
+  
+    return (
+      <CollapsibleField
+        key="methodDropdown"
+        title="Select Method"
+        hasToggle={false}
+        fieldTypes="select"
+        nodeId={nodeId}
+        info="Select a method to view details"
+        selectOptions={selectedPallet.storage.map(storageItem => ({ label: storageItem.name, value: storageItem.name }))}
+        value={selectedMethod?.name || ''}
+        onChange={(value) => handleMethodChange(value)}
+      />
+    );
+  };
+
+
+
+
+  const renderStorageInput = () => {
+    if (!selectedStorageItem) {
+        return <div>No selected storage item.</div>;
     }
-  }, [metadata]);
+    if (Object.keys(lookupTypes).length === 0) {
+        return <div>Loading data or incomplete metadata...</div>;
+    }
+    return <StorageFieldInput storageItem={selectedStorageItem} lookupTypes={lookupTypes} />;
+};
   
+  const renderMethodFields = () => {
+      if (selectedMethod) {
+          return (
+              <ul>
+                  {selectedMethod.fields.map(field => (
+                      <li key={field.key}>{field.key}: {field.value}</li>
+                  ))}
+              </ul>
+          );
+      }
+      return null;
+  };
 
 
-  //////////////////////////
+  const resolveType = (typeId, lookupTypes) => {
+    const typeInfo = lookupTypes[typeId];
+    if (!typeInfo) {
+        console.warn(`Type information not found for type ID: ${typeId}`);
+        return { displayName: 'Unknown' }; // Provide a fallback type
+    }
 
-  const renderFieldsBasedOnChain = () => {
-  if (!selectedChain) return null;
-  
-  const chainInfo = chains.find(chain => chain.chain === selectedChain);
-  if (!chainInfo) return null;
+    let displayName = '';
+    // Use only the last element of the path if it exists
+    if (typeInfo.path.length > 0) {
+        displayName = typeInfo.path[typeInfo.path.length - 1];
+    } else if (typeInfo.definition) {
+        // If path is empty, determine the display name based on the type definition
+        switch (typeInfo.definition.type) {
+            case 'Primitive':
+                displayName = typeInfo.definition.primitiveType;
+                break;
+            case 'Composite':
+                // For composite types, join type names if available
+                displayName = typeInfo.definition.fields.map(f => f.typeName || f.type).join(', ');
+                break;
+            case 'Variant':
+                // For variant types, list variant names
+                displayName = typeInfo.definition.variants.map(v => v.name).join(', ');
+                break;
+            default:
+                displayName = 'Complex Type'; // Default text for complex or unknown definitions
+                break;
+        }
+    }
 
-  // Example: Suppose each chain has specific "queryOptions"
-  return chainInfo.queryOptions.map(option => {
-    return renderField({
-      key: option.key,
-      label: option.label,
-      hasToggle: option.hasToggle,
-      type: option.type,
-      description: option.description,
-      options: option.options, // If type is 'select'
-    });
-  });
+    return { ...typeInfo, displayName };
 };
 
- 
 
-/////
+
+  
+
+const StorageFieldInput = ({ storageItem, lookupTypes }) => {
+  if (!storageItem) {
+      console.error('Invalid or incomplete storage item:', storageItem);
+      return <div>Storage item data is incomplete or missing.</div>;
+  }
+
+  let keyTypeInfo = { displayName: 'Unknown' };
+  let handleInputChange;
+
+  if (storageItem.type?.Map) {
+      const keyField = storageItem.type.Map.key;
+      keyTypeInfo = resolveType(keyField, lookupTypes);
+      handleInputChange = (value) => {
+          console.log(`Key Input Changed for ${storageItem.name}: ${value}`);
+      };
+  } else if (storageItem.type?.Plain) {
+      keyTypeInfo = resolveType(storageItem.type.Plain, lookupTypes);
+  }
+
+  return (
+      <div>
+          {storageItem.type?.Map && (
+              <div>
+                  <CollapsibleField
+                      title={`Enter Key <${keyTypeInfo.displayName}>`}
+                      info={storageItem.docs}
+                      fieldTypes="input"
+                      nodeId="key-input"
+                      onChange={handleInputChange}
+                      placeholder={`${keyTypeInfo.path[keyTypeInfo.path.length - 1]}`}
+                  />
+              </div>
+          )}
+            {!storageItem.type?.Map && (
+              <div>
+                 <CollapsibleField
+                      title={`Details for ${storageItem.name} <No Input Required>`}
+                      info={`${storageItem.docs}`}
+                      // fieldTypes="input"
+                      nodeId="key-input"
+                      onChange={handleInputChange}
+                  />
+              </div>
+          )}
+      </div>
+  );
+};
+
+
+
+  console.log("Lookup Current Selected Pallet:", selectedPallet);
+  console.log("Lookup Current Selected Method:", selectedMethod);
+  console.log("Lookup Resolved Selected Storage Item:", selectedStorageItem);
+
+const executeMethod = async () => {
+  if (!selectedMethod) return;
+
+  try {
+    const params = selectedMethod.fields.map(field => field.value); // Map fields to a simple array of values or a key-value object as required by your API
+    const result = await blockchainApiCall(selectedMethod.name, params);
+    console.log('Method Execution Result:', result);
+    alert('Method executed successfully! See console for details.');
+  } catch (error) {
+    console.error('Failed to execute method:', error);
+    alert('Failed to execute method. See console for details.');
+  }
+};
+
+
 
   const selectedChainQuery = scenarios[activeScenarioId]?.diagramData.nodes.find(node => node.id === nodeId)?.selectedChainQuery || '';
   const [isCreateFormVisible, setCreateFormVisible] = useState(false);
@@ -705,24 +844,21 @@ if (field.children) {
 
 return (
   <div onScroll={handleScroll} className=''>
-    <FormHeader onClose={handleCancel} title='Query Chain' logo={<ChainQueryIcon className='h-4 w-4' fillColor='black' />} />  
+      <FormHeader onClose={handleCancel} title='Query Chain' logo={<ChainQueryIcon className='h-4 w-4' fillColor='black' />} />  
 
-    <div className='http-form'>
-      {renderChainSelection()}
-      {selectedChain && renderPalletSelection()}
-      {selectedPallet && renderMethodSelection()}
-      {selectedMethod && (
-        <ul>
-          {selectedMethod.fields.map(field => (
-            <li key={field.key}>{field.key}: {field.value}</li>
-          ))}
-        </ul>
-      )}
+      <div className='http-form'>
+          {renderChainSelection()}
+          {renderPalletSelection()}
+          {renderMethodSelection()}
+          {renderStorageInput()}
+          {renderMethodFields()}
 
-      <button onClick={handleQueryMetadata} className='p-2 bg-blue-500 text-white rounded'>Fetch Metadata</button>
+    <button onClick={executeMethod} disabled={!selectedMethod}>Execute Method</button>
+
+      {/* <button onClick={handleQueryMetadata('polkadot')} className='p-2 bg-blue-500 text-white rounded'>Fetch Metadata</button> */}
 
       {/* Render other sections and fields based on the form structure */}
-      {formSections.map((section) => {
+      {/* {formSections.map((section) => {
         if (isSectionVisible(section)) {
           return (
             <div>
@@ -731,7 +867,7 @@ return (
           );
         }
         return null;
-      })}
+      })} */}
     </div>
 
     <FormFooter onClose={handleCancel} onSave={handleSave} showToggle={true} onToggleChange={handleAdvancedSettingsToggle} />

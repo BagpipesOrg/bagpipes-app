@@ -16,7 +16,7 @@ import './Fields.scss';
 const { Option } = Select;
 
 
-const CollapsibleField = ({ fieldKey, nodeId, title, info, toggleTitle, hasToggle,fieldTypes, items=[], selectOptions=[], selectRadioOptions=[], children, value, onChange, onPillsChange }) => {
+const CollapsibleField = ({ fieldKey, nodeId, title, info, toggleTitle, hasToggle,fieldTypes, items=[], selectOptions=[], selectRadioOptions=[], children, value, onChange, onPillsChange, placeholder }) => {
   const [isToggled, setIsToggled] = useState(false);
   const { showPanelTippy, hidePanelTippy } = usePanelTippy();
   const [droppedItems, setDroppedItems] = useState([]);
