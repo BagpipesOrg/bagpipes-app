@@ -1,3 +1,4 @@
+// todo reload asset at build time
 import endpoints from "../api/WsEndpoints";
 import { ChainInfo, listChains } from "../ChainsInfo";
 import { getApiInstance } from "../api/connect";
@@ -8,6 +9,36 @@ const HydraDx = listChains();
 
 export function listAssetHubAssets() {
   const assets = CHAIN_ASSETS.assetHub.assets;
+
+  return assets.map((assetData: { asset: any; assetId: any }) => ({
+    asset: assetData.asset,
+    assetId: assetData.assetId,
+  }));
+}
+
+
+
+export function listkusama_assethubAssets() {
+  const assets = CHAIN_ASSETS.kusama_assethub.assets;
+
+  return assets.map((assetData: { asset: any; assetId: any }) => ({
+    asset: assetData.asset,
+    assetId: assetData.assetId,
+  }));
+}
+
+
+export function listTuringAssets() {
+  const assets = CHAIN_ASSETS.turing.assets;
+
+  return assets.map((assetData: { asset: any; assetId: any }) => ({
+    asset: assetData.asset,
+    assetId: assetData.assetId,
+  }));
+}
+
+export function listmangataxAssets() {
+  const assets = CHAIN_ASSETS.mangatax.assets;
 
   return assets.map((assetData: { asset: any; assetId: any }) => ({
     asset: assetData.asset,
@@ -46,6 +77,16 @@ async function listInterlayAssetReal() {
   const valuesArray = Array.from(dictionary.values());
   return valuesArray;
 }
+
+export function listMoonRiverAssets() {
+  const assets = CHAIN_ASSETS.moonriver.assets;
+  console.log(`listing moonriver assets`);
+  return assets.map((assetData) => ({
+    asset: assetData.asset,
+    assetId: assetData.assetId,
+  }));
+}
+
 export function listHydraDxAssets() {
   const assets = CHAIN_ASSETS.hydraDx.assets;
 
@@ -115,3 +156,30 @@ export function listHydraDxAssets() {
 // 	return dictionary;
 
 // }
+
+/*
+async function export_turing_assets() {
+  const wsProvider = new WsProvider("wss://rpc.turing.oak.tech");
+  const api = await ApiPromise.create({ provider: wsProvider });
+
+  const dictionary = new Map<number, any>();
+  const assets = await api.query.assetRegistry.metadata.entries();
+  assets.forEach(
+    ([
+      {
+        args: [id],
+      },
+      asset,
+    ]) => {
+      //   console.log(`asset is:`, asset);
+      const myasset = {
+        asset: asset.toHuman(),
+        assetId: id.toHuman(),
+      };
+      dictionary.set(id.toHuman() as number, myasset);
+    }
+  );
+  const valuesArray = Array.from(dictionary.values());
+  return valuesArray;
+}
+*/

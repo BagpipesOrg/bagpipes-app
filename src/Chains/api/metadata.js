@@ -84,13 +84,42 @@ export const CHAIN_METADATA = {
         queryBalancePaths: ["system.account"],
         nativeAccount: true,
     },
-    sora: {
-        chain: "Sora",
+    mangatax: {
+        chain: "mangatax",
         endpoints: [
-                "wss://ws.parachain-collator-1.c1.stg1.sora2.soramitsu.co.jp",
+            "wss://kusama-archive.mangata.online",
+            "wss://kusama-rpc.mangata.online",
         ],
+        queryAssetPaths: ["assetRegistry.metadata"],  
         queryBalancePaths: ["system.account"],
         nativeAccount: true,
+    },
+
+    moonriver: {
+        chain: "moonriver",
+        endpoints: [
+            "wss://moonriver-rpc.dwellir.com",
+            "wss://wss.api.moonriver.moonbeam.network"
+        ],
+        queryAssetPaths: ["assetRegistry.metadata"],  
+        queryBalancePaths: ["system.account" ,"assets.accounts"],
+        nativeAccount: true
+    },
+
+
+    kusama_assethub: {
+        chain: "Kusama Assethub",
+        endpoints: ["wss://statemine-rpc.dwellir.com"],
+        queryBalancePaths: ["system.account"],
+    },
+    turing: {
+        chain: "turing",
+        endpoints: [
+            "wss://rpc.turing.oak.tech"
+        ],
+        queryAssetPaths: ["assetRegistry.metadata"],  
+        queryBalancePaths: ["system.account" ,"tokens.accounts"],
+        nativeAccount: true
     },
     turing: {
         chain: "turing",
