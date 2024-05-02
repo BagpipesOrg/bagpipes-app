@@ -26,6 +26,59 @@ export function listChains() {
     // dict[paraid] = ChainInfo
     const chainList: Record<number, ChainInfo> = {};
 
+
+    const KusamaAssethub: ChainInfo = {
+      name: 'kusama_assethub',
+      display: 'Assethub (Kusama)',
+      paraid: 3000, // fake
+      prefix: 42,  // change me
+      token_decimals: 12, //change me
+      logo: '/chains/assethub.svg',
+      relayParent: 'kusama',
+      parachain: true 
+    };
+
+  chainList[9999] = KusamaAssethub;//fake paraid
+
+  const Moonriver: ChainInfo = {
+    name: 'moonriver',
+    display: 'Moonriver (Kusama)',
+    paraid: 2023,
+    prefix: 42, 
+    token_decimals: 18, 
+    logo: '/chains/moonriver.svg',
+    parachain: true, 
+    relayParent: "kusama",
+    relay: false
+  };
+  chainList[2023] = Moonriver;
+
+  const MangataX: ChainInfo = {
+    name: "mangatax",
+    display: "MangataX (Kusama)",
+    paraid: 2110,
+    prefix: 42,
+    token_decimals: 12,
+    logo: '/chains/mangata.png',
+    parachain: true, 
+    relayParent: "kusama",
+    relay: false
+  };
+
+  chainList[2110] = MangataX;
+
+  const Turing: ChainInfo = {
+    name: 'turing',
+    display: 'Turing (Kusama)',
+    paraid: 2114,
+    prefix: 51,
+    token_decimals: 10,
+    logo: '/chains/turing.png',
+    relayParent: 'kusama',
+    parachain: true
+  };
+  chainList[2114] = Turing;
+
       const AssetHub: ChainInfo = {
         name: 'assetHub',
         display: 'Asset Hub (Polkadot)',
@@ -99,17 +152,7 @@ export function listChains() {
       };
       chainList[2004] = Moonbeam;
 
-      const Turing: ChainInfo = {
-        name: 'turing',
-        display: 'Turing (Kusama)',
-        paraid: 2114,
-        prefix: 51,
-        token_decimals: 10,
-        logo: '/chains/turing.png',
-        relayParent: 'kusama',
-        parachain: true
-      };
-      chainList[2114] = Turing;
+  
 
       const Polkadot: ChainInfo = {
         name: 'polkadot',
