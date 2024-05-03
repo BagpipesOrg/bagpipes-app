@@ -127,7 +127,7 @@ const ChainNodeForm: React.FC<ChainNodeFormProps> = ({ visible, nodeId, nodes, e
     const fetchData = async () => {
       console.log('Fetching HRMP channels at initialization');
       try {
-        const newHrmpChannels = await buildHrmp();
+        const newHrmpChannels = await buildHrmp(relaychain);
         saveHrmpChannels(newHrmpChannels); // Assuming saveHrmpChannels is a function to store the channels in your state
         console.log('HRMP channels fetched and saved:', newHrmpChannels);
       } catch (error) {

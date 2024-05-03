@@ -4,7 +4,7 @@
 
 export function parseMetadata(rawMetadata) {
     const metadata = rawMetadata.metadata;
-    console.log("parseMetadata Metadata:", metadata);
+    // console.log("parseMetadata Metadata:", metadata);
     if (!metadata) {
       console.error('No metadata provided:', metadata);
       return [];
@@ -40,7 +40,7 @@ export function parseMetadata(rawMetadata) {
 
 
     const methodOutput = {name: pallet.name, calls, storage: storageItems};
-    console.log("parsePallet methodOutput:", methodOutput);
+    // console.log("parsePallet methodOutput:", methodOutput);
     return methodOutput
 }
 

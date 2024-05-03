@@ -64,12 +64,12 @@ export function parseTypeDefinition(type) {
         console.error('Expected lookupTypes to be an array, received:', lookupTypes);
         return typeDefinitions;
     }
-    console.log("Starting to parse lookup types", lookupTypes);
+    // console.log("Starting to parse lookup types", lookupTypes);
 
     lookupTypes.forEach(typeEntry => {
       const { id, type } = typeEntry;
       typeDefinitions[id] = parseTypeDefinition(type);
-      console.log(`Parsed type ${id}:`, typeDefinitions[id]);
+      // console.log(`Parsed type ${id}:`, typeDefinitions[id]);
 
   });
 
