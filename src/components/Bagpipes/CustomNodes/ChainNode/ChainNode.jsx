@@ -100,21 +100,21 @@ const ChainNode = ({ data, isConnectable }) => {
 
   console.log(`sourceChainName:`, sourceChainName);
 
-  if (sourceChainName == 'rococo') {
-    filteredChainInfoList = ChainInfoList.filter(chainInfo => {
-      return chainInfo.name.toLowerCase() === "rococo";
-  });
-  }
+//   if (sourceChainName == 'rococo') {
+//     filteredChainInfoList = ChainInfoList.filter(chainInfo => {
+//       return chainInfo.name.toLowerCase() === "rococo";
+//   });
+//   }
 
-  if (sourceChainName == 'sora') {
-    filteredChainInfoList = ChainInfoList.filter(chainInfo => {
-      return chainInfo.name.toLowerCase() === "rococo";
-  });
-  }
+//   if (sourceChainName == 'sora') {
+//     filteredChainInfoList = ChainInfoList.filter(chainInfo => {
+//       return chainInfo.name.toLowerCase() === "rococo";
+//   });
+//   }
 
- // filteredChainInfoList = ChainInfoList.filter(chainInfo => {
- //    return chainInfo.name.toLowerCase() === "rococo" | hrmpForSource.length === 0 || hrmpForSource.includes(12011);
- //});
+//  filteredChainInfoList = ChainInfoList.filter(chainInfo => {
+//     return chainInfo.name.toLowerCase() === "rococo" | hrmpForSource.length === 0 || hrmpForSource.includes(12011);
+//  });
 
   // Log a warning if the HRMP channels list is empty
   if (hrmpForSource.length === 0) {
@@ -150,11 +150,10 @@ const ChainNode = ({ data, isConnectable }) => {
   const extensionAddresses = useMemo(() => fetchAddressesFromExtension(), []);
 
 
-
   // Filtered assets based on the selected chain
   const assetsForSelectedChain = assetOptions.find(option => option.chain === formState.chain)?.assets || [];
   const filteredAssets = Array.isArray(assetsForSelectedChain) ? assetsForSelectedChain : [assetsForSelectedChain];
-    // console.log('ChainInfoList', ChainInfoList)
+    console.log('ChainInfoList', ChainInfoList)
 
     const handleFormChange = (field, value) => {
       setFormState(prev => ({
@@ -359,7 +358,7 @@ useEffect(() => {
                 value={formState.chain}  // sets the value for the dropdown from the state
             >
                 <option value="" selected>Select chain</option>
-                {ChainInfoList.map((ChainInfo, index) => (
+                {filteredChainInfoList.map((ChainInfo, index) => (
                   <option key={ChainInfo.name} value={ChainInfo.name}>
                     {ChainInfo.display}
                   </option>
@@ -368,7 +367,7 @@ useEffect(() => {
           </div>
         </div>
         <div className="in-node-border p-2 rounded mb-2 ">
-        {formState.chain && (
+        {formState.chain &&  (
           <div className="asset-selection mb-2">
             <h3 className="text-xxs node-input primary-font mb-1">Asset</h3>
             {isLoading ? (

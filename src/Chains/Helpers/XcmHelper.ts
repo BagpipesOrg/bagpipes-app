@@ -12,6 +12,44 @@ returns a list of paraid's
   2101, 2104
 ]
 */
+
+
+// This function returns a list of all relay chains' names from the chain list.
+function getRelayChains() {
+  const chains = listChains();
+  const relays = Object.values(chains).filter(chain => chain.relay);
+  return relays.map(chain => chain.name);
+}
+
+// This function finds ingress channels for a given paraid on a specified relay chain.
+async function findIngressChannels(relayChainName, paraid) {
+  const api = await getApiInstance(relayChainName);
+  const channels = (await api.query.hrmp.hrmpIngressChannelsIndex(paraid)).map(a => a.toNumber());
+  console.log(`Ingress channels for ${paraid} on ${relayChainName}:`, channels);
+  return channels;
+}
+
+// This function finds egress channels for a given paraid on a specified relay chain.
+async function findEgressChannels(relayChainName, paraid) {
+  const api = await getApiInstance(relayChainName);
+  const channels = (await api.query.hrmp.hrmpEgressChannelsIndex(paraid)).map(a => a.toNumber());
+  console.log(`Egress channels for ${paraid} on ${relayChainName}:`, channels);
+  return channels;
+}
+
+// Example function that processes all relay chains
+async function findAllChannels() {
+  const relayChains = getRelayChains();
+  for (const relayChainName of relayChains) {
+      console.log(`Processing channels for relay chain: ${relayChainName}`);
+      const parachains = Object.values(listChains()).filter(chain => chain.relayParent === relayChainName);
+      for (const parachain of parachains) {
+          const ingressChannels = await findIngressChannels(relayChainName, parachain.paraid);
+          const egressChannels = await findEgressChannels(relayChainName, parachain.paraid);
+          // Do something with channels
+      }
+  }
+}
 export async function findIngressPolkadotChannels(
   paraid: number
 ): Promise<[number]> {
@@ -21,7 +59,7 @@ export async function findIngressPolkadotChannels(
   const Channels = (
     (await api.query.hrmp.hrmpIngressChannelsIndex(paraid)) as any
   ).map((a: { toNumber: () => any }) => a.toNumber());
-
+console.log("findIngressPolkadotChannels for hrmp for  paraid", paraid, Channels);
   return Channels;
 }
 
@@ -36,43 +74,46 @@ export async function findEngressPolkadotChannels(
   return Channels;
 }
 
-/// take input chain and dest chain and check if they got open hrmp channels
-/// input: source chain paraid, dest chain paraid
-export async function polkadotParachainChannelCheck(
-  sourceparaid: number,
-  destchain: number
-): Promise<boolean> {
-  const s_ingress = await findIngressPolkadotChannels(sourceparaid);
-  const s_egress = await findEngressPolkadotChannels(sourceparaid);
+// /// take input chain and dest chain and check if they got open hrmp channels
+// /// input: source chain paraid, dest chain paraid
+// export async function polkadotParachainChannelCheck(
+//   sourceparaid: number,
+//   destchain: number
+// ): Promise<boolean> {
+//   const s_ingress = await findIngressPolkadotChannels(sourceparaid);
+//   const s_egress = await findEngressPolkadotChannels(sourceparaid);
 
-  if (s_ingress.includes(destchain) && s_egress.includes(destchain)) {
-    return true;
-  }
+//   if (s_ingress.includes(destchain) && s_egress.includes(destchain)) {
+//     return true;
+//   }
 
-  return false;
-}
+//   return false;
+// }
 
+// Updated function to process ingress and egress channels across multiple relay chains.
 export async function inAndOutChannels(paraid: number): Promise<number[]> {
-  // console.log("inAndOutChannels for hrmp for paraid", paraid);
-
   try {
-    const s_ingress = await findIngressPolkadotChannels(paraid);
-    // console.log(`Ingress hrmp channels for paraid ${paraid}:`, s_ingress);
+    // Fetch all relay chain names from the list of chains
+    const relayChains = getRelayChains();
+    let paraid_map: number[] = [];
 
-    const s_egress = await findEngressPolkadotChannels(paraid);
-    //  console.log(`Egress hrmp channels for paraid ${paraid}:`, s_egress);
+    // Iterate over each relay chain and find ingress and egress channels
+    for (const relayChainName of relayChains) {
+      const s_ingress = await findIngressChannels(relayChainName, paraid);
+      const s_egress = await findEgressChannels(relayChainName, paraid);
 
-    const paraid_map: number[] = s_ingress.filter((num) =>
-      s_egress.includes(num)
-    );
-    //  console.log(`Filtered channels for hrmp for  paraid ${paraid}:`, paraid_map);
+      // Filter to find matching channel IDs in both ingress and egress channels
+      let matchedChannels = s_ingress.filter(num => s_egress.includes(num));
+      paraid_map = [...new Set([...paraid_map, ...matchedChannels])]; // Combine and remove duplicates
+    }
 
     return paraid_map;
   } catch (error) {
-    //   console.error(`Error in inAndOutChannels for paraid ${paraid}:`, error);
+    console.error(`Error in inAndOutChannels for paraid ${paraid}:`, error);
     throw error; // Re-throw the error to ensure it's not silently ignored
   }
 }
+
 
 export function listParachainsConnectedToRelay(
   relayName: string,

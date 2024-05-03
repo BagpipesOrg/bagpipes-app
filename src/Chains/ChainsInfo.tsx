@@ -30,15 +30,15 @@ export function listChains() {
     const KusamaAssethub: ChainInfo = {
       name: 'kusama_assethub',
       display: 'Assethub (Kusama)',
-      paraid: 3000, // fake
-      prefix: 42,  // change me
+      paraid: 1000,
+      prefix: 2, 
       token_decimals: 12, //change me
       logo: '/chains/assethub.svg',
       relayParent: 'kusama',
       parachain: true 
     };
 
-  chainList[9999] = KusamaAssethub;//fake paraid
+  chainList[21000] = KusamaAssethub;//fake paraid
 
   const Moonriver: ChainInfo = {
     name: 'moonriver',
@@ -125,20 +125,11 @@ export function listChains() {
         logo: '/chains/kabocha.svg',
         parachain: true,
         relay: false,
+        relayParent: 'kusama',
       };
       chainList[2113] = Kabocha;
 
-      const Kusama: ChainInfo = {
-        name: 'kusama',
-        display: 'Kusama',
-        paraid: 2,
-        prefix: 2,
-        token_decimals: 12,
-        logo: '/chains/kusama.svg',
-        parachain: false,
-        relay: true,
-      };
-      chainList[2] = Kusama;
+
 
       const Moonbeam: ChainInfo = {
         name: 'moonbeam',
@@ -147,6 +138,7 @@ export function listChains() {
         prefix: 1284,
         token_decimals: 12,
         logo: '/chains/moonbeam.svg',
+        relayParent: 'polkadot',
         parachain: true,
         relay: false,
       };
@@ -166,6 +158,18 @@ export function listChains() {
       };
       chainList[0] = Polkadot;
 
+      const Kusama: ChainInfo = {
+        name: 'kusama',
+        display: 'Kusama',
+        paraid: 2,
+        prefix: 2,
+        token_decimals: 12,
+        logo: '/chains/kusama.svg',
+        parachain: false,
+        relay: true,
+      };
+      chainList[2] = Kusama;
+
       const Rococo: ChainInfo = {
         name: 'rococo',
         display: 'Rococo',
@@ -182,7 +186,7 @@ export function listChains() {
       const Sora: ChainInfo = {
         name: 'sora',
         display: 'Sora (Rococo)',
-        paraid: 12011, // change me
+        paraid: 2011, // change me
         prefix: 0, //change me
         token_decimals: 10,
         logo: '/chains/sora.svg',
@@ -194,8 +198,8 @@ export function listChains() {
       const RococoAssethub: ChainInfo = {
         name: 'rococo_assethub',
         display: 'Assethub (Rococo)',
-        paraid: 3000, // fake
-        prefix: 42, 
+        paraid: 1000, 
+        prefix: 2, 
         token_decimals: 12,
         logo: '/chains/assethub.svg',
         relayParent: 'rococo',
