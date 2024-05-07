@@ -15,13 +15,16 @@ const JSONContainer = styled.div`
   max-height: 400px;
   width: 100%;
   overflow-y: auto;
-  border: 1px solid #ccc;
-  padding: 10px;
   box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
   font-family: 'Courier New', Courier, monospace;
   white-space: pre-wrap;
   word-wrap: break-word;
-  background-color: var(--bg);
+  background-color: #f4f4f4;
+  color: #333;
+  border: 1px solid #ccc;
+  padding: 10px;
+  box-sizing: border-box;
+  margin: 5px;
 `;
 
 interface TransactionProps {

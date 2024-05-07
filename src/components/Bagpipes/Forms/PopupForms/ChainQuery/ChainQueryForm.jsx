@@ -26,7 +26,6 @@ import { listChains} from '../../../../../Chains/ChainsInfo';
 import { parseTypeDefinition, parseLookupTypes } from './ParseMetadataTypes';
 import renderInputFields from './RenderInputFields';
 import { executeMethod } from './QueryMethod';
-
 import './ChainQueryForm.scss';
 // import { Params } from '@polkadot/react-params';
 // import { TypeDef } from '@polkadot/types/create/types';
