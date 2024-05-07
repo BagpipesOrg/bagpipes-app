@@ -16,7 +16,7 @@ const StopButton = ({ stopScenario }) => {
                 style={{ zIndex: 1000 }}
             >
             
-            <StopIcon />
+            <StopIcon fillColor={'#007bff'} />
             {/* <span className='ml-2 '>Start Draft</span> */}
             {/* Draft */}
             </button>

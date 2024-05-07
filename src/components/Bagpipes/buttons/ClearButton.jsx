@@ -15,7 +15,7 @@ export const ClearButton = ({clearExtrinsic}) => {
                 className="top-bar-buttons" 
                 onClick={clearExtrinsic}
             >
-            <CloseIcon />
+            <CloseIcon fillColor={'#007bff'} />
 
             </button>
             
