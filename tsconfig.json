@@ -10,6 +10,8 @@
     "moduleResolution": "node",
     "skipLibCheck": true,
     "resolveJsonModule": true,
+    "types": ["@polkadot/api/types"],
+    "typeRoots": ["./node_modules/@types", "./node_modules/@polkadot/types/interfaces"],
     "allowSyntheticDefaultImports": true
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.json", "src/components/Bagpipes/Forms/PopupForms/ActionSelector.jsx", "src/pages/Lab/utils/renderNodeDetails.jsx", "src/components/Toolbar/nodeDescriptions.jsx",],

@@ -35,7 +35,7 @@ async function executeMethod({ chainKey, palletName, methodName, params, atBlock
             blockHash = hashResult.toString();
         }
 
-        let result: string | Codec
+        let result: any;
         result = JSON.stringify(result, null, 2)
         if (blockHash) {
             // Execute the query at a specific block hash
@@ -59,15 +59,5 @@ function toCamelCase(str: string): string {
 
 
 
-export { executeMethod, QueryResultDisplay };
+export { executeMethod };
 
-const QueryResultDisplay = ({ result }) => {
-    const formattedResult = JSON.stringify(result, null, 2)
-      .replace(/\"(\d+)\"/g, '$1');  // This regex removes quotes around digits
-  
-    return (
-      <pre style={{ fontFamily: 'Courier, monospace', whiteSpace: 'pre-wrap' }}>
-        {formattedResult}
-      </pre>
-    );
-  };

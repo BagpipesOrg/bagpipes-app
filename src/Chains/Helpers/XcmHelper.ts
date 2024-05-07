@@ -1,5 +1,7 @@
 import { getApiInstance } from "../api/connect";
 import { ChainInfo, listChains, listRelayChains } from "../ChainsInfo";
+import { ApiPromise } from '@polkadot/api';
+
 
 /*
 returns a list of paraid's
@@ -21,21 +23,29 @@ function getRelayChains() {
   return relays.map(chain => chain.name);
 }
 
+
 // This function finds ingress channels for a given paraid on a specified relay chain.
-async function findIngressChannels(relayChainName, paraid) {
-  const api = await getApiInstance(relayChainName);
-  const channels = (await api.query.hrmp.hrmpIngressChannelsIndex(paraid)).map(a => a.toNumber());
+async function findIngressChannels(relayChainName: string, paraid: number): Promise<number[]> {
+  const api: ApiPromise = await getApiInstance(relayChainName);
+  const result = await api.query.hrmp.hrmpIngressChannelsIndex(paraid);
+  // Directly mapping over the result assuming result is Vec<u32>
+  // const channels = result.map((item) => item.toNumber());
+  const channels = (result as unknown as { toNumber: () => number }[]).map(item => item.toNumber());
+
   console.log(`Ingress channels for ${paraid} on ${relayChainName}:`, channels);
   return channels;
 }
 
 // This function finds egress channels for a given paraid on a specified relay chain.
-async function findEgressChannels(relayChainName, paraid) {
-  const api = await getApiInstance(relayChainName);
-  const channels = (await api.query.hrmp.hrmpEgressChannelsIndex(paraid)).map(a => a.toNumber());
+async function findEgressChannels(relayChainName: string, paraid: number): Promise<number[]> {
+  const api: ApiPromise = await getApiInstance(relayChainName);
+  const result = await api.query.hrmp.hrmpEgressChannelsIndex(paraid);
+  // Directly mapping over the result assuming result is Vec<u32>
+  const channels = (result as unknown as { toNumber: () => number }[]).map(item => item.toNumber());
   console.log(`Egress channels for ${paraid} on ${relayChainName}:`, channels);
   return channels;
 }
+
 
 // Example function that processes all relay chains
 async function findAllChannels() {

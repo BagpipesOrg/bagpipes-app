@@ -27,7 +27,7 @@ import { parseTypeDefinition, parseLookupTypes } from './ParseMetadataTypes';
 import renderInputFields from './RenderInputFields';
 import { executeMethod } from './QueryMethod';
 
-
+import './ChainQueryForm.scss';
 // import { Params } from '@polkadot/react-params';
 // import { TypeDef } from '@polkadot/types/create/types';
 
@@ -631,8 +631,8 @@ return (
           {renderBlockHashInput()}
 
 
-    <button className="button" onClick={handleRunMethodClick} disabled={!selectedMethod}>Run Method</button>
-    <textarea className="flex m-2" value={result} readOnly />
+    <button className="button mt-2" onClick={handleRunMethodClick} disabled={!selectedMethod}>Run Method</button>
+    <textarea className="result-textarea" value={result} readOnly />
 
     </div>
 
