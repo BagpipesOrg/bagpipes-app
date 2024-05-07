@@ -7,6 +7,7 @@ import 'tippy.js/themes/light.css';
 import toast from 'react-hot-toast';
 
 import { CollapsibleField }  from '../../fields';
+import { findFieldByKey } from '../../fields/fieldUtils';
 import FormHeader from '../../FormHeader';
 import FormFooter from '../../FormFooter';
 import { HttpIcon } from '../../../../Icons/icons';
@@ -67,6 +68,8 @@ const HttpForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
 //   const httpURL = selectedHttpObject ? `https://http.site/${selectedHttpObject.uuid}` : '';
 
 const formData = scenarios[activeScenarioId]?.diagramData?.nodes.find(node => node.id === nodeId)?.formData || {};
+console.log('HttpForm formData:', formData);
+
 const formSections = httpForm.sections;
 
 const initializeFormValues = () => {
@@ -113,7 +116,7 @@ const initializeFormValues = () => {
 
   const handleFieldChange = (key, value) => {
     const updatedValues = { ...formData, [key]: value };
-    const field = findFieldByKey(key);
+    const field = findFieldByKey(key, formSections);
     // Check if a valid field is found
     if (field && field.type === 'radio' && field.children) {
       field.children.forEach(childSection => {
@@ -292,21 +295,21 @@ const initializeFormValues = () => {
 
 
   const findOptionByKeyAndValue = (key, value) => {
-    const field = findFieldByKey(key);
+    const field = findFieldByKey(key, formSections);
     return field?.options.find(option => option.value === value);
   };
 
 
   
-  const findFieldByKey = (key) => {
-    for (const section of formSections) {
-      const field = section.fields.find(field => field.key === key);
-      if (field) {
-        return field;
-      }
-    }
-    return null;
-  };
+  // const findFieldByKey = (key, formSections) => {
+  //   for (const section of formSections) {
+  //     const field = section.fields.find(field => field.key === key);
+  //     if (field) {
+  //       return field;
+  //     }
+  //   }
+  //   return null;
+  // };
 
 
   const renderFieldWithChildren = (field) => {
@@ -379,6 +382,7 @@ const initializeFormValues = () => {
   
 
   const renderField = (field) => {
+    console.log('httpForm Rendering field: ', field.key, '; Visible: ', isFieldVisible(field));
     // console.log("httpForm Rendering field: ", field.key, "; Visible: ", isFieldVisible(field));
     // Safety check to ensure field is valid and visible
     if (!field || typeof field !== 'object' || !isFieldVisible(field)) return null;

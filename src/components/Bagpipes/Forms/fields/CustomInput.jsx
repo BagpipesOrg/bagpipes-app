@@ -117,11 +117,15 @@ const CustomInput = ({ fieldKey, value, onChange, onClick, placeholder, classNam
     [drop], 
   );
 
+  useEffect(() => {
+    console.log("Component rendered or updated");
+  }, [editableContent]);
+
 
   useEffect(() => {
-    // Update the editableContent based on the external 'value'
-    // This might involve parsing the value if it's a string combining pills and text
-    setEditableContent(value);
+    if (editableInputRef.current && value !== editableInputRef.current.innerHTML) {
+      setEditableContent(value);  // This might cause cursor issues, needs careful handling
+    }
   }, [value]);
 
 
@@ -143,8 +147,6 @@ const CustomInput = ({ fieldKey, value, onChange, onClick, placeholder, classNam
       removePill(pillId);
     }
   };
-
-  
 
   const handlePillClick = (pillId) => {
     // Remove the clicked pill and update the state
@@ -245,7 +247,7 @@ const handleKeyDown = (event) => {
         ref={refCallback}
         className={"editable-input"} 
         contentEditable="true"
-        // dangerouslySetInnerHTML={{ __html: editableContent }}
+        dangerouslySetInnerHTML={{ __html: editableContent }}
         onInput={handleContentChange}
         onClick={handleDivClick}
         onPaste={handlePaste}

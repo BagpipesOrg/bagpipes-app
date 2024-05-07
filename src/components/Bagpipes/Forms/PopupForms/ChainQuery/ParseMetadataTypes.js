@@ -73,6 +73,6 @@ export function parseTypeDefinition(type) {
 
   });
 
-    console.log('Lookup Parsed Type Definitions:', typeDefinitions);
+    // console.log('Lookup Parsed Type Definitions:', typeDefinitions);
     return typeDefinitions;
 }

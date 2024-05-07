@@ -25,6 +25,8 @@ import { parseMetadata } from './utils'
 import { listChains} from '../../../../../Chains/ChainsInfo';
 import { parseTypeDefinition, parseLookupTypes } from './ParseMetadataTypes';
 import renderInputFields from './RenderInputFields';
+import { executeMethod } from './QueryMethod';
+
 
 // import { Params } from '@polkadot/react-params';
 // import { TypeDef } from '@polkadot/types/create/types';
@@ -42,6 +44,8 @@ const formData = scenarios[activeScenarioId]?.diagramData?.nodes.find(node => no
 console.log('ChainQueryForm formData:', formData);
 
   const [metadata, setMetadata] = useState(null); 
+  console.log('ChainQueryForm metadata:', metadata);
+
   const [pallets, setPallets] = useState([]);
   const [chains, setChains] = useState([]);
   const [selectedChain, setSelectedChain] = useState(formData.selectedChain || '');
@@ -49,6 +53,9 @@ console.log('ChainQueryForm formData:', formData);
   const [selectedMethod, setSelectedMethod] = useState(formData.selectedMethod || null);
   const [blockHash, setBlockHash] = useState(formData.blockHash || '');
   const [selectedBlockHash, setSelectedBlockHash] = useState('');
+
+  const [result, setResult] = useState('');
+
 
 
   // const selectedStorageItem = useMemo(() => {
@@ -59,10 +66,10 @@ console.log('ChainQueryForm formData:', formData);
     const lookupTypes = useMemo(() => {
       // Accessing the nested types array correctly based on your console log
       const typesArray = metadata?.metadata?.V14?.lookup?.types;
-      console.log('Lookup Types in lookupTypes:', typesArray);
+      // console.log('Lookup Types in lookupTypes:', typesArray);
       if (typesArray && Array.isArray(typesArray)) {
           const parsedTypes = parseLookupTypes(typesArray);
-          console.log("Lookup Parsed Types:", parsedTypes);
+          // console.log("Lookup Parsed Types:", parsedTypes);
           return parsedTypes;
       }
       console.error("Metadata is not valid or types are not available");
@@ -275,12 +282,14 @@ const handleMethodChange = (methodName) => {
 
   };
 
-    const handleMethodFieldChange = (key, value) => {
-      const updatedMethodFields = selectedPallet?.storage.find(storage => storage.name === value);
+    const handleMethodFieldChange = (value) => {
 
-      const updatedValues = { ...formData, [key]: value };
+      const updatedValues = { ...formData, methodInput: value };
       saveNodeFormData(activeScenarioId, nodeId, updatedValues);
   };
+
+
+ 
     
 
 
@@ -314,7 +323,7 @@ const handleMethodChange = (methodName) => {
 
     
   const renderPalletSelection = () => {
-    console.log('renderPalletSelection pallets:', pallets);
+    // console.log('renderPalletSelection pallets:', pallets);
     if (!selectedChain || pallets.length === 0) return null;
   
     return (
@@ -346,7 +355,7 @@ const handleMethodChange = (methodName) => {
         info="Select a method to view details"
 
         selectOptions={selectedPallet?.storage?.map(storageItem => ({ label: storageItem.name, value: storageItem.name }))}
-        value={formData.selectedMethod.name || ''}
+        value={formData?.selectedMethod?.name || ''}
         onChange={(value) => handleMethodChange(value)}
       />
     );
@@ -368,17 +377,17 @@ const handleMethodChange = (methodName) => {
     
     return (
         <CollapsibleField
-            key="blockHashInput"
-            title="Blockhash to Query"
-            info="Enter a blockhash to query specific data, leave blank for latest block."
+            title="Blockhash/Blocknumber to Query (optional)"
+            info="Enter a block hash or block number to query specific data, leave blank for latest block."
             fieldTypes="input"
-            nodeId="blockhash-input"
-            value={blockHash}
+            nodeId={nodeId}
+            value={formData?.blockHash}
             onChange={handleBlockHashChange}
+            onPillsChange={(updatedPills) => handlePillsChange(updatedPills, blockHash)}
+
         />
     );
 };
-
 
 const StorageFieldInput = ({ storageItem, lookupTypes }) => {
   if (!storageItem) {
@@ -386,12 +395,9 @@ const StorageFieldInput = ({ storageItem, lookupTypes }) => {
       return <div>Storage item data is incomplete or missing.</div>;
   }
 
-  const handleInputChange = (value) => {
-    // Assuming the storageItem's name can be used as part of the field key
-    const fieldKey = `${storageItem.name}-key`;  // Construct a unique key for the input field
-    console.log(`Input Changed for ${storageItem.name}: ${value}`);
-    handleMethodFieldChange(fieldKey, value);  // Directly use the centralized handler
-  };
+
+
+
   let keyTypeInfo = { displayName: 'Unknown' };
   if (storageItem.type?.Map) {
       const keyField = storageItem.type.Map.key;
@@ -410,9 +416,11 @@ const StorageFieldInput = ({ storageItem, lookupTypes }) => {
                       info={storageItem.docs}
                       fieldTypes="input"
                       nodeId={nodeId}
-                      onChange={handleInputChange}
+                      value={formData.methodInput || ''}
+                      onChange={(value) => handleMethodFieldChange(value)}
                       placeholder={`${keyTypeInfo.path[keyTypeInfo.path.length - 1]}`}
-                      value={formData[`${storageItem.name}-key`] || ''}
+                      onPillsChange={(updatedPills) => handlePillsChange(updatedPills, 'methodInput')}
+
                   />
               </div>
           )}
@@ -425,8 +433,6 @@ const StorageFieldInput = ({ storageItem, lookupTypes }) => {
                       info={`${storageItem.docs}`}
                       // fieldTypes="input"
                       nodeId="key-input"
-                      onChange={handleInputChange}
-                      value={formData[`${storageItem.name}-key`] || ''}
                       />
               </div>
           )}
@@ -440,17 +446,35 @@ const StorageFieldInput = ({ storageItem, lookupTypes }) => {
   // console.log("Lookup Current Selected Method:", selectedMethod);
   // console.log("Lookup Resolved Selected Storage Item:", selectedStorageItem);
 
-const executeMethod = async () => {
+// const executeMethod = async () => {
+//   if (!selectedMethod) return;
+
+//   try {
+//     const params = selectedMethod.fields.map(field => field.value); // Map fields to a simple array of values or a key-value object as required by your API
+//     const result = await blockchainApiCall(selectedMethod.name, params);
+//     console.log('Method Execution Result:', result);
+//     alert('Method executed successfully! See console for details.');
+//   } catch (error) {
+//     console.error('Failed to execute method:', error);
+//     alert('Failed to execute method. See console for details.');
+//   }
+// };
+
+const handleRunMethodClick = async () => {
   if (!selectedMethod) return;
 
   try {
-    const params = selectedMethod.fields.map(field => field.value); // Map fields to a simple array of values or a key-value object as required by your API
-    const result = await blockchainApiCall(selectedMethod.name, params);
-    console.log('Method Execution Result:', result);
-    alert('Method executed successfully! See console for details.');
+      const output = await executeMethod({
+          chainKey: formData.selectedChain,
+          palletName: formData.selectedPallet,
+          methodName: formData.selectedMethod.name,
+          params: formData.methodInput,
+          atBlock: formData.blockHash || undefined
+      });
+      setResult(JSON.stringify(output.toHuman(), null, 2));
   } catch (error) {
-    console.error('Failed to execute method:', error);
-    alert('Failed to execute method. See console for details.');
+      console.error('Execution failed:', error);
+      setResult(`Error: ${error.message}`);
   }
 };
 
@@ -547,12 +571,15 @@ const formSections = httpForm.sections;
   };
 
   const handlePillsChange = (updatedPills, fieldKey) => {
-    console.log(`Received updated pills for field: ${fieldKey}`, updatedPills);
     // Update formData accordingly
-    saveNodeFormData(activeScenarioId, nodeId, previousData => ({
-      ...previousData,
-      [fieldKey]: { ...previousData[fieldKey], pills: updatedPills }
-    }));
+    // saveNodeFormData(activeScenarioId, nodeId, previousData => ({
+    //   ...previousData,
+    //   [fieldKey]: { ...previousData[fieldKey], pills: updatedPills }
+    // }));
+     saveNodeFormData(activeScenarioId, nodeId, (previousData) => ({
+    ...previousData,
+    [fieldKey]: updatedPills  // Assuming pills directly relate to the field without a nested structure
+  }));
   };
   
 
@@ -593,7 +620,7 @@ const formSections = httpForm.sections;
 
 
 return (
-  <div onScroll={handleScroll} className=''>
+  <div onScroll={handleScroll} className='bg-gray-500'>
       <FormHeader onClose={handleCancel} title='Query Chain' logo={<ChainQueryIcon className='h-4 w-4' fillColor='black' />} />  
 
       <div className='http-form'>
@@ -604,7 +631,8 @@ return (
           {renderBlockHashInput()}
 
 
-    {/* <button onClick={executeMethod} disabled={!selectedMethod}>Execute Method</button> */}
+    <button className="button" onClick={handleRunMethodClick} disabled={!selectedMethod}>Run Method</button>
+    <textarea className="flex m-2" value={result} readOnly />
 
     </div>
 

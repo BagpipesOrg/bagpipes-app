@@ -1,7 +1,7 @@
 @import "./variables";
 
 .button {
-  background-color: var(--button-bg);
+  background-color: $primary-color !important;
   color: white;
   border: none;
   border-radius: 7px;
@@ -11,11 +11,11 @@
   font-family: $primary-font !important;
     
   &:hover {
-      background-color: darken($primary-color, 10%);
+      background-color: darken($primary-color, 10%) !important;
   }
   
   &:active {
-      background-color: darken($primary-color, 20%);
+      background-color: darken($primary-color, 20%) !important;
   }
 }
 
