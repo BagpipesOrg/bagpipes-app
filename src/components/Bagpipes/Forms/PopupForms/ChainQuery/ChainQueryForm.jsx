@@ -619,7 +619,7 @@ const formSections = httpForm.sections;
 
 
 return (
-  <div onScroll={handleScroll} className='bg-gray-500'>
+  <div onScroll={handleScroll} className=''>
       <FormHeader onClose={handleCancel} title='Query Chain' logo={<ChainQueryIcon className='h-4 w-4' fillColor='black' />} />  
 
       <div className='http-form'>
