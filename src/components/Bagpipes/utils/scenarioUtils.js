@@ -288,6 +288,7 @@ export function parseAndReplacePillsInFormData(formData, executionData, upstream
 
 
 export function getUpstreamNodeIds(orderedList, currentNodeId) {
+    console.log('getUpstreamNodeIds Ordered list:', orderedList);
     const currentIndex = orderedList.indexOf(currentNodeId);
     if (currentIndex === -1) {
         console.error(`Node ID ${currentNodeId} not found in the ordered list.`);

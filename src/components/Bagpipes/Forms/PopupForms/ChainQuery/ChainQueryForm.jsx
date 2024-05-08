@@ -25,7 +25,8 @@ import { parseMetadata } from './utils'
 import { listChains} from '../../../../../Chains/ChainsInfo';
 import { parseTypeDefinition, parseLookupTypes } from './ParseMetadataTypes';
 import renderInputFields from './RenderInputFields';
-import { executeMethod } from './QueryMethod';
+import ChainQueryRpcService from '../../../../../services/ChainQueryRpcService';
+
 import './ChainQueryForm.scss';
 // import { Params } from '@polkadot/react-params';
 // import { TypeDef } from '@polkadot/types/create/types';
@@ -463,14 +464,14 @@ const handleRunMethodClick = async () => {
   if (!selectedMethod) return;
 
   try {
-      const output = await executeMethod({
+      const output = await ChainQueryRpcService.executeChainQueryMethod({
           chainKey: formData.selectedChain,
           palletName: formData.selectedPallet,
           methodName: formData.selectedMethod.name,
           params: formData.methodInput,
           atBlock: formData.blockHash || undefined
       });
-      setResult(JSON.stringify(output.toHuman(), null, 2));
+      setResult(JSON.stringify(output, null, 2));
   } catch (error) {
       console.error('Execution failed:', error);
       setResult(`Error: ${error.message}`);
@@ -581,14 +582,6 @@ const formSections = httpForm.sections;
   }));
   };
   
-
-  
-  
-
-
-  
-  
-
   const handleCreateClick = () => {
     setCreateFormVisible(true);
   };

@@ -8,6 +8,8 @@ import { processScenarioData, validateDiagramData, processAndSanitizeFormData, p
 import { fetchNodeExecutionData, processWebhookEvent, waitForNewWebhookEvent } from './utils/scenarioExecutionUtils';
 import SocketContext from '../../../contexts/SocketContext';
 import WebhooksService from '../../../services/WebhooksService';
+import ChainQueryRpcService from '../../../services/ChainQueryRpcService';
+
 import useAppStore from '../../../store/useAppStore';
 import { v4 as uuidv4 } from 'uuid';
 import toast  from 'react-hot-toast';
@@ -103,6 +105,8 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
 
         let nodeContents = {};
         let executionCycleFinished = false;
+        let parsedFormData; // Used across multiple cases
+        let activeExecutionData = {}; // Used across multiple cases
 
         for(let index = 0; index < orderedList.length; index++) {
 
@@ -180,8 +184,6 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                             updateNodeResponseData(activeScenarioId, updatedExecutionId, nodeId, { inBlock: blockHash });
                             console.log('[markExtrinsicAsUsed] first attempt to clear signed extrinsic...');
                             markExtrinsicAsUsed(activeScenarioId, nodeId);
-
-
                         },
                         onFinalized: (blockHash) => {
                             toast.success(`Transaction finalized at blockHash: ${blockHash}`);
@@ -192,7 +194,6 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                             setLoading(false);
                             updateNodeResponseData(activeScenarioId, updatedExecutionId, nodeId, { error: error.message });
                             console.log('second attempt to clear signed extrinsic...');
-
                         },
                     });
 
@@ -255,15 +256,14 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                 updateEdgeStyleForNode(currentNode.id, 'executing');
                 console.log('executeFlowScenario for http event...', currentNode.id, currentNode);
                 // assuming we have the scenarios object and the activeScenarioId available
-                const executions = useAppStore.getState().scenarios[activeScenarioId]?.executions;
-                console.log('All Executions:', executions, updatedExecutionId);
-                let parsedFormData;
-                let activeExecutionData = {};
+                const httpExecutions = useAppStore.getState().scenarios[activeScenarioId]?.executions;
+                console.log('All Executions:', httpExecutions, updatedExecutionId);
+               
 
-                if (executions) {
+                if (httpExecutions) {
                     const upstreamNodeIds = getUpstreamNodeIds(orderedList, currentNode.id);
                     console.log('executionId:', updatedExecutionId);
-                    activeExecutionData = executions[updatedExecutionId];
+                    activeExecutionData = httpExecutions[updatedExecutionId];
                     console.log('Active Execution Data:', activeExecutionData);
 
 
@@ -311,7 +311,56 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                 // Check if it's the last iteration to set executionCycleFinished accordingly
                 executionCycleFinished = index === orderedList.length - 1;
                 break;
+
+                case 'chainQuery':
+                    console.log('chainQuery executeFlowScenario for chainQuery event...', currentNode.id);
+                    setIsLoadingNode(currentNode.id, true);
+                    updateEdgeStyleForNode(currentNode.id, 'executing');
+                    console.log('Executing Chain Query node...', currentNode.id);
+                
+                    const chainQueryExecutions = useAppStore.getState().scenarios[activeScenarioId]?.executions;
+                
+                    if (chainQueryExecutions) {
+                        const upstreamNodeIds = getUpstreamNodeIds(orderedList, currentNode.id);
+                        const activeExecutionData = chainQueryExecutions[updatedExecutionId];
+                
+                        const parsedFormData = processAndSanitizeFormData(currentNode.formData, activeExecutionData, upstreamNodeIds);
+                        console.log('chainQuery Parsed Form Data:', parsedFormData);
+                        try {
+                            const queryResult = await ChainQueryRpcService.executeChainQueryMethod({
+                                chainKey: parsedFormData.selectedChain,
+                                palletName: parsedFormData.selectedPallet,
+                                methodName: parsedFormData.selectedMethod.name,
+                                params: parsedFormData.methodInput,
+                                atBlock: parsedFormData.blockHash || undefined
+                            });
+                            console.log('Chain Query Response:', queryResult);
+                            updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, {
+                                eventData: queryResult,
+                                status: 'success'
+                            });
+                            saveNodeEventData(activeScenarioId, currentNode.id, queryResult);
+                        } catch (error) {
+                            console.error('Error executing Chain Query:', error);
+                            updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, {
+                                error: error.message,
+                                status: 'error'
+                            });
+                        } finally {
+                            setIsLoadingNode(currentNode.id, false);
+                            updateEdgeStyleForNode(currentNode.id, 'default_connected');
+                        }
+                    } else {
+                        console.error('No executions found for the scenario');
+                        return;
+                    }
+                
+                
+                    executionCycleFinished = index === orderedList.length - 1;
+                    break;
             }
+
+            
 
                 // Hold view
                 await handleNodeViewport(instance, currentNode, 'hold', orderedList);
