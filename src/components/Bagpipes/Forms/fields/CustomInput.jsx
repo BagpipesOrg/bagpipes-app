@@ -6,7 +6,7 @@ import { nodeTypeColorMapping } from '../PopupForms/Panel/nodeColorMapping';
 import { functionBlocks } from '../PopupForms/Panel/Pills/pillsData';
 import '../PopupForms/Panel/Pills/Pills.scss';
 
-const CustomInput = ({ fieldKey, value, onChange, onClick, placeholder, className, pills, setPills,onPillsChange }) => {
+const CustomInput = ({ fieldKey, value, onChange, onClick, placeholder, className, pills, setPills, onPillsChange }) => {
   const editableInputRef = useRef(null);
   const [inputText, setInputText] = useState("");
   const [editableContent, setEditableContent] = useState("");
@@ -57,7 +57,7 @@ const CustomInput = ({ fieldKey, value, onChange, onClick, placeholder, classNam
                   
                   itemsToInsert.push(pillRepresentation);
               });
-          } else if (item.nodeType === 'keyword' || item.nodeType === 'math' || item.nodeType === 'logic' || item.nodeType === 'general' || item.nodeType === 'operand' || item.nodeType === 'variable') {
+          } else if (item.nodeType === 'keyword' || item.nodeType === '' || item.nodeType === 'math' || item.nodeType === 'logic' || item.nodeType === 'general' || item.nodeType === 'operand' || item.nodeType === 'variable') {
               console.log("CustomInput node type Pill item:", item);
               itemsToInsert.push({
                   id: item.id,
@@ -96,6 +96,7 @@ const CustomInput = ({ fieldKey, value, onChange, onClick, placeholder, classNam
             // Update pills state
             const updatedPills = [...pills, ...itemsToInsert];
             onPillsChange(updatedPills, fieldKey);
+            console.log("CustomInput Updated pills:", updatedPills);
             setPills(updatedPills);
         }
     },

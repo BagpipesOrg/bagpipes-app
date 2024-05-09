@@ -162,12 +162,16 @@ const initializeFormValues = () => {
   };
 
   const handlePillsChange = (updatedPills, fieldKey) => {
-    console.log(`Received updated pills for field: ${fieldKey}`, updatedPills);
+    console.log(`httpForm Received updated pills for field: ${fieldKey}`, updatedPills);
     // Update formData accordingly
-    saveNodeFormData(activeScenarioId, nodeId, previousData => ({
-      ...previousData,
-      [fieldKey]: { ...previousData[fieldKey], pills: updatedPills }
-    }));
+    // saveNodeFormData(activeScenarioId, nodeId, previousData => ({
+    //   ...previousData,
+    //   [fieldKey]: { ...previousData[fieldKey], pills: updatedPills }
+    // }));
+         saveNodeFormData(activeScenarioId, nodeId, (previousData) => ({
+    ...previousData,
+    [fieldKey]: updatedPills  // Assuming pills directly relate to the field without a nested structure
+  }));
   };
   
 
@@ -382,7 +386,7 @@ const initializeFormValues = () => {
   
 
   const renderField = (field) => {
-    console.log('httpForm Rendering field: ', field.key, '; Visible: ', isFieldVisible(field));
+    console.log('httpForm Rendering field: ', field.key, ' ; input type: ', field.type, '; Visible: ', isFieldVisible(field));
     // console.log("httpForm Rendering field: ", field.key, "; Visible: ", isFieldVisible(field));
     // Safety check to ensure field is valid and visible
     if (!field || typeof field !== 'object' || !isFieldVisible(field)) return null;
