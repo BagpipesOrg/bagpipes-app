@@ -163,15 +163,11 @@ const initializeFormValues = () => {
 
   const handlePillsChange = (updatedPills, fieldKey) => {
     console.log(`httpForm Received updated pills for field: ${fieldKey}`, updatedPills);
-    // Update formData accordingly
-    // saveNodeFormData(activeScenarioId, nodeId, previousData => ({
-    //   ...previousData,
-    //   [fieldKey]: { ...previousData[fieldKey], pills: updatedPills }
-    // }));
-         saveNodeFormData(activeScenarioId, nodeId, (previousData) => ({
-    ...previousData,
-    [fieldKey]: updatedPills  // Assuming pills directly relate to the field without a nested structure
-  }));
+
+    saveNodeFormData(activeScenarioId, nodeId, {
+        ...previousData,
+        [fieldKey]: updatedPills 
+    });
   };
   
 

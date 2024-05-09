@@ -10,22 +10,24 @@ export const insertPillAtPosition = (editableInputRef, pill, dropCoordinates, on
     // If dropCoordinates aren't provided, use the caret position
     const caretPos = getCaretPosition(editableInputRef);
     index = calculateIndexFromCaretPosition(editableDiv, caretPos);
-  }
+    }
 
-  let pillElement = createPillElement(pill, handleDragStart, handleDragEnd, removePill);
-  const spacer = document.createTextNode('\u200B');
-  if (editableDiv.childNodes[index]) {
-    editableDiv.insertBefore(pillElement, editableDiv.childNodes[index]);
-    // editableDiv.appendChild(spacer);
-  } else {
-    editableDiv.appendChild(pillElement);
-    editableDiv.appendChild(spacer);
-  }
-  console.log("CustomInput 1. inserted pill element", pillElement);
-  updateCombinedValue(editableDiv, onChange); // Update the combined value
+    let pillElement = createPillElement(pill, handleDragStart, handleDragEnd, removePill);
+    const spacer = document.createTextNode('\u200B');
+    if (editableDiv.childNodes[index]) {
+      editableDiv.insertBefore(pillElement, editableDiv.childNodes[index]);
+      // editableDiv.appendChild(spacer);
+    } else {
+      editableDiv.appendChild(pillElement);
+      editableDiv.appendChild(spacer);
+    }
+    console.log("createPillElement CustomInput 1. inserted pill element", pillElement);
+    console.log("createPillElement CustomInput 1. onChange:", onChange);
+    updateCombinedValue(editableDiv, onChange); // Update the combined value
 };
 
 const createPillElement = (pill, handleDragStart, handleDragEnd,removePill) => {
+  console.log("createPillElement CustomInput 1. pill:", pill);
   let pillElement = document.createElement('span');
   pillElement.setAttribute('data-id', pill.id);
   pillElement.textContent = pill.nodeIndex !== undefined ? `${pill.nodeIndex}. ${pill.text}` : pill.text;
@@ -42,7 +44,7 @@ const createPillElement = (pill, handleDragStart, handleDragEnd,removePill) => {
   pillElement.draggable = true;
   pillElement.addEventListener('dragstart', handleDragStart);
   pillElement.addEventListener('dragend', handleDragEnd);
-  console.log("CustomInput 1. created pill element", pillElement);
+  console.log("createPillElement CustomInput 1. created pill element", pillElement);
 
   return pillElement;
 };
@@ -56,16 +58,24 @@ export const updateCombinedValue = (editableDiv, onChange) => {
     if (node.nodeType === Node.TEXT_NODE) {
       // For text nodes, add the text content to the combined value
       combinedValue += node.textContent;
-    } else if (node.nodeType === Node.ELEMENT_NODE && node.className === 'pill') {
-      // For pill elements, create an HTML representation
-      const pillId = node.getAttribute('data-id');
-      const pillText = node.textContent;
-      const pillColor = node.style.backgroundColor;
-      const nodeIndex = node.getAttribute('data-nodeindex');
-      combinedValue += `<span draggable="true" contenteditable="false" class="pill" data-id="${pillId}" data-text="${pillText}" data-nodeindex="${nodeIndex}" style="background-color: ${pillColor};"> ${pillText}</span>`;
-    }
-  });
-  console.log("CustomInput 4. combinedValue:", combinedValue);
+  //   } else if (node.nodeType === Node.ELEMENT_NODE && node.className === 'pill') {
+  //     // For pill elements, create an HTML representation
+  //     const pillId = node.getAttribute('data-id');
+  //     const pillText = node.textContent;
+  //     const pillColor = node.style.backgroundColor;
+  //     const nodeIndex = node.getAttribute('data-nodeindex');
+  //     combinedValue += `<span draggable="true" contenteditable="false" class="pill" data-id="${pillId}" data-text="${pillText}" data-nodeindex="${nodeIndex}" style="background-color: ${pillColor};"> ${pillText}</span>`;
+  //   }
+  // });
+      } else if (node.classList.contains('pill')) {  // Ensure this checks for your specific pill class
+        const pillId = node.getAttribute('data-id');
+        const pillText = node.textContent;
+        const pillColor = node.style.backgroundColor;
+        const nodeIndex = node.getAttribute('data-nodeindex');
+        combinedValue += `<span class="pill" data-id="${pillId}" data-text="${pillText}" data-nodeindex="${nodeIndex}" style="background-color: ${pillColor};">${pillText}</span>`;
+      }
+      });
+  console.log("createPillElement CustomInput 4. combinedValue:", combinedValue);
 
   // Update the state or prop that tracks the combined value
   onChange(combinedValue);

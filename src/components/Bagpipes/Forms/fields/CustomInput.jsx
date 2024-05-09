@@ -57,7 +57,7 @@ const CustomInput = ({ fieldKey, value, onChange, onClick, placeholder, classNam
                   
                   itemsToInsert.push(pillRepresentation);
               });
-          } else if (item.nodeType === 'keyword' || item.nodeType === '' || item.nodeType === 'math' || item.nodeType === 'logic' || item.nodeType === 'general' || item.nodeType === 'operand' || item.nodeType === 'variable') {
+            } else if (item.nodeType === 'keyword' || item.nodeType === '' || item.nodeType === 'math' || item.nodeType === 'logic' || item.nodeType === 'general' || item.nodeType === 'operand' || item.nodeType === 'variable') {
               console.log("CustomInput node type Pill item:", item);
               itemsToInsert.push({
                   id: item.id,
@@ -67,8 +67,7 @@ const CustomInput = ({ fieldKey, value, onChange, onClick, placeholder, classNam
                   nodeIndex: item.nodeIndex,
                   class: item.class,
               });
-          }
-          
+            }
           else {
               // Handle as a single pill if not a function block
               // const textColor = '#232323';
@@ -98,6 +97,7 @@ const CustomInput = ({ fieldKey, value, onChange, onClick, placeholder, classNam
             onPillsChange(updatedPills, fieldKey);
             console.log("CustomInput Updated pills:", updatedPills);
             setPills(updatedPills);
+
         }
     },
     collect: monitor => ({
@@ -129,6 +129,7 @@ const CustomInput = ({ fieldKey, value, onChange, onClick, placeholder, classNam
     }
   }, [value]);
 
+ 
 
 
   const handleContentChange = (e) => {

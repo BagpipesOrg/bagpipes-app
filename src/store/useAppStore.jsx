@@ -457,7 +457,7 @@ const useAppStore = create(
     },
 
     saveNodeFormData: (scenarioId, nodeId, formData) => {
-        console.log("[saveNodeFormData] Called with:", { scenarioId, nodeId, formData });
+        console.log("[saveNodeFormData] tis Called with:", { scenarioId, nodeId, formData });
 
         // Checking for potential issues
         if (!scenarioId || !nodeId) {
