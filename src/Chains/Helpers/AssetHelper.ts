@@ -316,15 +316,14 @@ function isOrmlTokensAccountData(obj: any): obj is OrmlTokensAccountData {
   );
 }
 
-
-export async function checkDOT_kusama_assethub(account_id_32: string):   {
-  balance: number,
-  free: number, 
-  total: number, 
-  status: string,
+export async function checkDOT_kusama_assethub(account_id_32: string): {
+  balance: number;
+  free: number;
+  total: number;
+  status: string;
   assetDecimals?: number;
-  reason?: string,
-  extra?: string
+  reason?: string;
+  extra?: string;
 } {
   const api = await getApiInstance("kusama_assethub");
 
@@ -332,16 +331,15 @@ export async function checkDOT_kusama_assethub(account_id_32: string):   {
   const foreignAssetAccount = await api.query.foreignAssets.account(
     { parents: 2, interior: { X1: { GlobalConsensus: "Polkadot" } } },
     accountid
-);
-const resp = foreignAssetAccount.toHuman();;
-  return  {
+  );
+  const resp = foreignAssetAccount.toHuman();
+  return {
     balance: resp.balance,
-    free: resp.balance, 
+    free: resp.balance,
     total: resp.balance,
     status: resp.status,
     assetDecimals: 12,
-    };
-  
+  };
 }
 
 export async function checkTuringAssetBalance(
@@ -766,7 +764,7 @@ export async function getAssetBalanceForChain(
     case "kusama_assethub":
       console.log(`kusama_assethub detected`);
       balances = await checkDOT_kusama_assethub(accountId);
-    //  console.log(`returning:`, balances);
+      //  console.log(`returning:`, balances);
       break;
 
     case "moonriver":
@@ -782,9 +780,9 @@ export async function getAssetBalanceForChain(
         signal
       );
       balances = assetHubBalanceInfo;
- //     console.log(`getAssetBalanceForChain balanceInfo`, assetHubBalanceInfo);
+      //     console.log(`getAssetBalanceForChain balanceInfo`, assetHubBalanceInfo);
       assetDecimals = assetHubBalanceInfo.assetDecimals;
- //     console.log(`getAssetBalanceForChain assetDecimals`, assetDecimals, balances);
+      //     console.log(`getAssetBalanceForChain assetDecimals`, assetDecimals, balances);
       break;
 
     case "rococo":
@@ -857,7 +855,7 @@ function processChainSpecificBalances(
       totalInUnits = freeInUnits + reservedInUnits;
       break;
     case "kusama_assethub":
-     // console.log(`kusama assethub assethelper`);
+      // console.log(`kusama assethub assethelper`);
       freeInUnits = toUnit(balances.free, 10);
       reservedInUnits = 0;
       totalInUnits = freeInUnits;
