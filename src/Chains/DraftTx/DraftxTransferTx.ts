@@ -708,13 +708,11 @@ export async function turing2moonriver(accountido: string, amount: number) {
   console.log(`turing2moonriver input:`, accountido, amount);
   // monkey patch validate eth address
   if (accountido.startsWith("0x")) {
-    accountme = accountido; 
-    
+    accountme = accountido;
   } else {
-    
     accountme = substrate_address_to_evm(accountido);
-  };
-   // convert to evm address
+  }
+  // convert to evm address
 
   const asset = {
     id: {

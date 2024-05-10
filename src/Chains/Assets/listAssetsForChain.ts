@@ -16,8 +16,6 @@ export function listAssetHubAssets() {
   }));
 }
 
-
-
 export function listkusama_assethubAssets() {
   const assets = CHAIN_ASSETS.kusama_assethub.assets;
 
@@ -26,7 +24,6 @@ export function listkusama_assethubAssets() {
     assetId: assetData.assetId,
   }));
 }
-
 
 export function listTuringAssets() {
   const assets = CHAIN_ASSETS.turing.assets;
