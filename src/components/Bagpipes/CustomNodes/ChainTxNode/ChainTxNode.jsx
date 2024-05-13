@@ -4,17 +4,17 @@ import { ChainQueryIcon } from '../../../Icons/icons';
 import { useTippy } from '../../../../contexts/tooltips/TippyContext';
 import EventNotification from '../../../EventNotifications/EventNotification';
 import useAppStore from '../../../../store/useAppStore';
-import './ChainQuery.scss';
+import './ChainTx.scss';
 import '../../node.styles.scss';
 
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css'; 
 import 'tippy.js/themes/light.css';
 
-import ChainQueryForm from '../../Forms/PopupForms/ChainForms/ChainQueryForm/ChainQueryForm';
+import ChainTxForm from '../../Forms/PopupForms/ChainForms/ChainTxForm/ChainTxForm';
 
 
-export default function ChainQueryNode({ data }) {
+export default function ChainTxNode({ data }) {
   const { scenarios, activeScenarioId, executionId } = useAppStore(state => ({
     scenarios: state.scenarios,
     activeScenarioId: state.activeScenarioId,
@@ -22,7 +22,7 @@ export default function ChainQueryNode({ data }) {
 
   }));
 
-  const [isChainQueryFormVisible, setChainQueryFormVisible] = useState(false);
+  const [isChainTxFormVisible, setChainTxFormVisible] = useState(false);
   const { showTippy } = useTippy();
   const nodeId = useNodeId();
   const nodeRef = useRef();
@@ -46,18 +46,18 @@ export default function ChainQueryNode({ data }) {
       x: shouldFlipToLeft ? rect.left : rect.right,
       y: rect.top
     }; 
-    showTippy(null, nodeId, nodeRef.current, <ChainQueryForm onSave={handleSubmit} onClose={handleCloseChainQueryForm} nodeId={nodeId} reference={nodeRef.current} />, shouldFlipToLeft ? 'left-start' : 'right-start');
+    showTippy(null, nodeId, nodeRef.current, <ChainTxForm onSave={handleSubmit} onClose={handleCloseChainTxForm} nodeId={nodeId} reference={nodeRef.current} />, shouldFlipToLeft ? 'left-start' : 'right-start');
   };
 
   const handleSubmit = (event) => {
     // event.preventDefault();
-    setChainQueryFormVisible(false);
+    setChainTxFormVisible(false);
     // Handle form submission
   };
 
 
-  const handleCloseChainQueryForm = () => {
-    setChainQueryFormVisible(false);
+  const handleCloseChainTxForm = () => {
+    setChainTxFormVisible(false);
   };
 
   const handleScroll = (e) => {
@@ -85,7 +85,7 @@ return(
 
       {/* Title outside the circle below the logo */}
       <div className="node-title-circle absolute bottom-[-38%] text-center">
-      <div className="chainQuery-name font-medium text-xl flex-col text-gray-500">Query Chain
+      <div className="chainTx-name font-medium text-xl flex-col text-gray-500">Chain Tx
       {/* <div className=" font-medium text-xs absolute top-8 right-16 text-gray-500">Get proposal</div> */}
       </div>
       </div>

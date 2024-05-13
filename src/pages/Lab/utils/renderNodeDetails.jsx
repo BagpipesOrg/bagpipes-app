@@ -49,6 +49,22 @@ export const renderNodeDetails = (nodeData) => {
           </tbody>
         </table>
       );
+    case 'chainTx':
+      return (
+        <table>
+          <thead>
+            <tr>
+              <th>Detail</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {eventUpdates.map((event, index) => 
+              renderChainQueryData(getSafe(() => event.eventData), index)
+            )}
+          </tbody>
+        </table>
+      );
 
     default:
       // Handle other nodeTypes or general case

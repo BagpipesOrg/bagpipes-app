@@ -1,6 +1,4 @@
-import { ApiPromise } from '@polkadot/api';
-import { getApiInstance } from '../../../../../Chains/api/connect';
-import { Codec } from '@polkadot/types-codec/types';
+import { getApiInstance } from '../../../../../../Chains/api/connect';
 
 interface MethodParams {
     chainKey: string;

@@ -27,6 +27,7 @@ const AppsSubMenu = ({ onDragStart, theme }) => {
     websocket: 'Socket',
     tools: 'Tools',
     chainQuery: 'Query Chain',
+    chainTx: 'Chain TX',
 
 
   };
@@ -41,6 +42,7 @@ const AppsSubMenu = ({ onDragStart, theme }) => {
       case 'code': return <CodeIcon fillColor='black' />;
       case 'openAi': return <OpenAIIcon fillColor='black' />;
       case 'chainQuery': return <ChainQueryIcon fillColor='black' />;
+      case 'chainTx': return <ChainQueryIcon fillColor='black' />;
       default: return null;
     }
   };
@@ -100,6 +102,9 @@ const Toolbar = () => {
       IconComponent = <OpenAIIcon />;
     }
     else if (nodeKey === 'chainQuery') {
+      IconComponent = <ChainQueryIcon />;
+    }
+    else if (nodeKey === 'chainTx') {
       IconComponent = <ChainQueryIcon />;
     }
 

@@ -13,6 +13,8 @@ import OpenAINode from './OpenAINode/OpenAINode';
 import DelayNode from './DelayNode/DelayNode';
 // import SwitchNode from './SwitchNode/SwitchNode';
 import ChainQueryNode from './ChainQueryNode/ChainQueryNode';
+import ChainTxNode from './ChainTxNode/ChainTxNode';
 
 
-export { ActionNode, ChainNode, RouterNode, WebhookNode, WebsocketNode, APINode, HttpNode, CodeNode, ScheduleNode, DiscordNode, OpenAINode, DelayNode, ChainQueryNode};
+
+export { ActionNode, ChainNode, RouterNode, WebhookNode, WebsocketNode, APINode, HttpNode, CodeNode, ScheduleNode, DiscordNode, OpenAINode, DelayNode, ChainQueryNode, ChainTxNode};
