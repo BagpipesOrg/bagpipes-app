@@ -8,7 +8,7 @@ import { processScenarioData, validateDiagramData, processAndSanitizeFormData, p
 import { fetchNodeExecutionData, processWebhookEvent, waitForNewWebhookEvent } from './utils/scenarioExecutionUtils';
 import SocketContext from '../../../contexts/SocketContext';
 import WebhooksService from '../../../services/WebhooksService';
-import ChainQueryRpcService from '../../../services/ChainQueryRpcService';
+import SubstrateChainRpcService from '../../../services/SubstrateChainRpcService';
 
 import useAppStore from '../../../store/useAppStore';
 import { v4 as uuidv4 } from 'uuid';
@@ -327,7 +327,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                         const parsedFormData = processAndSanitizeFormData(currentNode.formData, activeExecutionData, upstreamNodeIds);
                         console.log('chainQuery Parsed Form Data:', parsedFormData);
                         try {
-                            const queryResult = await ChainQueryRpcService.executeChainQueryMethod({
+                            const queryResult = await SubstrateChainRpcService.executeChainQueryMethod({
                                 chainKey: parsedFormData.selectedChain,
                                 palletName: parsedFormData.selectedPallet,
                                 methodName: parsedFormData.selectedMethod.name,

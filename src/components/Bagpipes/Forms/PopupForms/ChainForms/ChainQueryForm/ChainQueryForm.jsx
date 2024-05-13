@@ -8,7 +8,7 @@ import { queryMetadata } from './QueryMetadata';
 import { parseMetadataPallets } from '../parseMetadata'
 import { parseLookupTypes } from '../ParseMetadataTypes';
 import { resolveKeyType } from '../resolveKeyType';
-import ChainQueryRpcService from '../../../../../../services/ChainQueryRpcService';
+import SubstrateChainRpcService from '../../../../../../services/SubstrateChainRpcService';
 import FormHeader from '../../../FormHeader';
 import FormFooter from '../../../FormFooter';
 
@@ -131,7 +131,7 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
         setSelectedPallet(newPallet);
         setSelectedMethod(null); 
     }
-    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedPallet: palletName});
+    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedPallet: palletName, selectedMethod: null});
   };
 
   const handleMethodChange = (methodName) => {
@@ -298,7 +298,7 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     if (!selectedMethod) return;
 
     try {
-        const output = await ChainQueryRpcService.executeChainQueryMethod({
+        const output = await SubstrateChainRpcService.executeChainQueryMethod({
             chainKey: formData.selectedChain,
             palletName: formData.selectedPallet,
             methodName: formData.selectedMethod.name,
@@ -353,7 +353,7 @@ return (
           {renderBlockHashInput()}
 
 
-    <button className="button mt-2" onClick={handleRunMethodClick} disabled={!selectedMethod}>Run Method</button>
+    <button className="button mt-2" onClick={handleRunMethodClick} disabled={!selectedMethod}>Run Method Once</button>
     <textarea className="result-textarea" value={result} readOnly />
 
     </div>

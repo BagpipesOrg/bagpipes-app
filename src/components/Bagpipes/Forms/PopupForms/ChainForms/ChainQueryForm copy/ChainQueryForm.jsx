@@ -5,10 +5,10 @@ import { ChainQueryIcon } from '../../../../../Icons/icons';
 import { useTippy } from '../../../../../../contexts/tooltips/TippyContext';
 import { listChains} from '../../../../../../Chains/ChainsInfo';
 import { queryMetadata } from './QueryMetadata';
-import { parseMetadataPallets, resolveTypeName } from '../parseMetadata'
+import { parseMetadataPallets } from '../parseMetadata'
 import { parseLookupTypes } from '../ParseMetadataTypes';
 import { resolveKeyType } from '../resolveKeyType';
-import ChainTxRpcService from '../../../../../../services/SubstrateChainRpcService';
+import SubstrateChainRpcService from '../../../../../../services/SubstrateChainRpcService';
 import FormHeader from '../../../FormHeader';
 import FormFooter from '../../../FormFooter';
 
@@ -23,7 +23,7 @@ import '../../Popup.scss';
 import '../../../../../../index.css';
 
 
-const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
+const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
   const { scenarios, activeScenarioId, saveNodeFormData } = useAppStore(state => ({ 
     scenarios: state.scenarios,
     activeScenarioId: state.activeScenarioId,
@@ -31,10 +31,10 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
    }));
 
   const formData = scenarios[activeScenarioId]?.diagramData?.nodes.find(node => node.id === nodeId)?.formData || {};
-  console.log('ChainTxForm formData:', formData);
+  console.log('ChainQueryForm formData:', formData);
 
   const [metadata, setMetadata] = useState(null); 
-  console.log('ChainTxForm metadata:', metadata);
+  console.log('ChainQueryForm metadata:', metadata);
 
   const [pallets, setPallets] = useState([]);
   const [chains, setChains] = useState([]);
@@ -130,14 +130,12 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     if (newPallet && newPallet !== selectedPallet) {
         setSelectedPallet(newPallet);
         setSelectedMethod(null); 
-        console.log('handlePalletChange New Pallet  selectedMethod changing to null:', selectedMethod, newPallet);
-
     }
-    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedPallet: palletName, selectedMethod: null});
+    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedPallet: palletName});
   };
 
   const handleMethodChange = (methodName) => {
-    const newMethod = selectedPallet?.calls.find(calls => calls.name === methodName);
+    const newMethod = selectedPallet?.storage.find(storage => storage.name === methodName);
     console.log('handleMethodChange New Method:', newMethod);
     if (newMethod && newMethod !== selectedMethod) {
         setSelectedMethod(newMethod);
@@ -153,12 +151,10 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     saveNodeFormData(activeScenarioId, nodeId, {...formData, blockHash: newBlockHash});
   };
 
-  const handleMethodFieldChange = (fieldName, value) => {
-    // Update the specific field in formData
-    const updatedValues = { ...formData, [fieldName]: value };
+  const handleMethodFieldChange = (value) => {
+    const updatedValues = { ...formData, methodInput: value };
     saveNodeFormData(activeScenarioId, nodeId, updatedValues);
-};
-
+  };
 
   const renderChainSelection = () => {
       if (chains?.length === 0) {
@@ -204,17 +200,8 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
   };
     
   const renderMethodSelection = () => {
-    console.log('renderMethodSelection selectedPallet:', selectedPallet);
-    if (!selectedPallet) return null;
-  
-    // Check if `calls` array exists and has elements
-    if (!selectedPallet.calls || selectedPallet.calls.length === 0) {
-      console.log("No calls available for:", selectedPallet.name);
-      return <div>No transaction methods available for this pallet.</div>;
-    }
-  
-    // Directly use the calls array since each entry represents a method
-    const methods = selectedPallet.calls;
+    console.log('renderMethodSelection Selected Pallet:', selectedPallet);
+    if (!selectedPallet || selectedPallet?.storage?.length === 0) return null;
   
     return (
       <CollapsibleField
@@ -223,34 +210,24 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
         hasToggle={false}
         fieldTypes="select"
         nodeId={nodeId}
-        info="Select a transaction method to execute"
-        selectOptions={methods.map(method => ({ label: method.name, value: method.name }))}
+        info="Select a method to view details"
+
+        selectOptions={selectedPallet?.storage?.map(storageItem => ({ label: storageItem.name, value: storageItem.name }))}
         value={formData?.selectedMethod?.name || ''}
         onChange={(value) => handleMethodChange(value)}
       />
     );
   };
-  
 
   const renderMethodFields = () => {
     if (!formData.selectedMethod) {
-        return <div>No method selected.</div>;
+        return <div>No selected storage item.</div>;
     }
     if (Object.keys(lookupTypes).length === 0) {
         return <div>Loading data or incomplete metadata...</div>;
     }
-
-    return formData.selectedMethod?.fields?.map((field, index) => (
-        <CallsFieldInput 
-            key={index}
-            field={field}
-            lookupTypes={lookupTypes}
-            formData={formData}
-            handleFieldChange={handleMethodFieldChange}
-        />
-    ));
-};
-
+    return <StorageFieldInput storageItem={selectedMethod} lookupTypes={lookupTypes} />;
+  };
   
   const renderBlockHashInput = () => {
     if (!selectedMethod) return null; 
@@ -269,35 +246,59 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     );
   };
 
-  
-
-  const CallsFieldInput = ({ field, lookupTypes, formData, handleFieldChange }) => {
-    if (!field) {
-        console.error('Invalid or incomplete call field:', field);
-        return <div>Field data is incomplete or missing.</div>;
+  const StorageFieldInput = ({ storageItem, lookupTypes }) => {
+    if (!storageItem) {
+        console.error('Invalid or incomplete storage item:', storageItem);
+        return <div>Storage item data is incomplete or missing.</div>;
     }
 
-    return (
-        <div>
-            <CollapsibleField
-                title={`${field.name} <${field.typeName}>`}
-                info={field.docs || 'No documentation available.'}
-                fieldTypes="input"
-                nodeId={`field-input-${field.name}`}
-                value={formData[field.name] || ''}
-                onChange={(e) => handleFieldChange(field.name, e.target.value)}
-                placeholder={`Enter ${field.name}`}
-            />
-        </div>
+    let keyTypeInfo = { displayName: 'Unknown' };
+    if (storageItem.type?.Map) {
+        const keyField = storageItem.type.Map.key;
+        keyTypeInfo = resolveKeyType(keyField, lookupTypes);
+    } else if (storageItem.type?.Plain) {
+        keyTypeInfo = resolveKeyType(storageItem.type.Plain, lookupTypes);
+    }
+
+  return (
+      <div>
+          {storageItem.type?.Map && (
+              <div>
+                  <CollapsibleField
+                      // key={key}
+                      title={`Enter Key <${keyTypeInfo.displayName}>`}
+                      info={storageItem.docs}
+                      fieldTypes="input"
+                      nodeId={nodeId}
+                      value={formData.methodInput || ''}
+                      onChange={(value) => handleMethodFieldChange(value)}
+                      placeholder={`${keyTypeInfo.path[keyTypeInfo.path.length - 1]}`}
+                      onPillsChange={(updatedPills) => handlePillsChange(updatedPills, 'methodInput')}
+
+                  />
+              </div>
+          )}
+            {!storageItem.type?.Map && (
+              <div>
+                 <CollapsibleField
+                      // key={key}
+
+                      title={`Details for ${storageItem.name} <No Input Required>`}
+                      info={`${storageItem.docs}`}
+                      // fieldTypes="input"
+                      nodeId="key-input"
+                      />
+              </div>
+          )}
+      </div>
     );
-};
+  };
 
-
-  const handleSignMethodClick = async () => {
+  const handleRunMethodClick = async () => {
     if (!selectedMethod) return;
 
     try {
-        const output = await ChainTxRpcService.executeChainMethodSign({
+        const output = await SubstrateChainRpcService.executeChainQueryMethod({
             chainKey: formData.selectedChain,
             palletName: formData.selectedPallet,
             methodName: formData.selectedMethod.name,
@@ -352,7 +353,7 @@ return (
           {renderBlockHashInput()}
 
 
-    <button className="button mt-2" onClick={handleSignMethodClick} disabled={!selectedMethod}>Sign Tx Once</button>
+    <button className="button mt-2" onClick={handleRunMethodClick} disabled={!selectedMethod}>Run Method</button>
     <textarea className="result-textarea" value={result} readOnly />
 
     </div>
@@ -363,4 +364,4 @@ return (
 
 };
 
-export default ChainTxForm;
+export default ChainQueryForm;

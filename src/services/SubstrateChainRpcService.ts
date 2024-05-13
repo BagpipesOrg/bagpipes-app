@@ -8,7 +8,7 @@ interface MethodParams {
     atBlock?: string; // Could be a block number or hash
 }
 
-class ChainQueryRpcService {
+class SubstrateChainRpcService {
     static async executeChainQueryMethod({ chainKey, palletName, methodName, params, atBlock }: MethodParams): Promise<any> {
         console.log('Executing method:', methodName, 'on pallet:', palletName, 'with params:', params, 'at block:', atBlock);
         const api = await getApiInstance(chainKey);
@@ -51,4 +51,4 @@ class ChainQueryRpcService {
     }
 }
 
-export default ChainQueryRpcService;
+export default SubstrateChainRpcService;
