@@ -11,6 +11,7 @@ interface ChainInfo {
   relayParent?: string,
   relay?: boolean
   parachain?: boolean,
+  symbol: string
   }
 
 interface AssetInfo {
@@ -35,7 +36,8 @@ export function listChains() {
       token_decimals: 12, //change me
       logo: '/chains/assethub.svg',
       relayParent: 'kusama',
-      parachain: true 
+      parachain: true,
+      symbol: 'KSM'
     };
 
   chainList[21000] = KusamaAssethub;//fake paraid
@@ -49,7 +51,8 @@ export function listChains() {
     logo: '/chains/moonriver.svg',
     parachain: true, 
     relayParent: "kusama",
-    relay: false
+    relay: false,
+    symbol: 'MOVR'
   };
   chainList[2023] = Moonriver;
 
@@ -62,7 +65,8 @@ export function listChains() {
     logo: '/chains/mangata.png',
     parachain: true, 
     relayParent: "kusama",
-    relay: false
+    relay: false,
+    symbol: 'MGX'
   };
 
   chainList[2110] = MangataX;
@@ -75,7 +79,8 @@ export function listChains() {
     token_decimals: 10,
     logo: '/chains/turing.png',
     relayParent: 'kusama',
-    parachain: true
+    parachain: true,
+    symbol: 'TUR'
   };
   chainList[2114] = Turing;
 
@@ -87,7 +92,8 @@ export function listChains() {
         token_decimals: 10,
         logo: '/chains/assethub.svg',
         relayParent: 'polkadot',
-        parachain: true
+        parachain: true,
+        symbol: 'DOT'
       };
       chainList[1000] = AssetHub;
 
@@ -99,7 +105,8 @@ export function listChains() {
         token_decimals: 12,
         logo: '/chains/hydradx.svg',
         relayParent: 'polkadot',
-        parachain: true
+        parachain: true,
+        symbol: 'HDX'
       };
       chainList[2034] = HydraDX;
 
@@ -112,6 +119,7 @@ export function listChains() {
         logo: '/chains/interlay.svg',
         relayParent: 'polkadot',
         parachain: true,
+        symbol: 'INTR'
         
       };
       chainList[2032] = Interlay;
@@ -126,6 +134,7 @@ export function listChains() {
         parachain: true,
         relay: false,
         relayParent: 'kusama',
+        symbol: 'KAB'
       };
       chainList[2113] = Kabocha;
 
@@ -141,6 +150,7 @@ export function listChains() {
         relayParent: 'polkadot',
         parachain: true,
         relay: false,
+        symbol: 'GLMR'
       };
       chainList[2004] = Moonbeam;
 
@@ -155,6 +165,7 @@ export function listChains() {
         logo: '/chains/polkadot.svg',
         parachain: false,
         relay: true,
+        symbol: 'DOT'
       };
       chainList[0] = Polkadot;
 
@@ -167,6 +178,7 @@ export function listChains() {
         logo: '/chains/kusama.svg',
         parachain: false,
         relay: true,
+        symbol: 'KSM'
       };
       chainList[2] = Kusama;
 
@@ -179,6 +191,7 @@ export function listChains() {
         logo: '/chains/rococo.jpeg',
         parachain: false,
         relay: true,
+        symbol: 'ROC'
 
       };
       chainList[10000] = Rococo;
@@ -191,7 +204,8 @@ export function listChains() {
         token_decimals: 10,
         logo: '/chains/sora.svg',
         relayParent: 'rococo',
-        parachain: true
+        parachain: true,
+        symbol: 'SORA'
       };
       chainList[2011] = Sora;
       // only rococo > rococo assethub transfers is supported 
@@ -203,7 +217,8 @@ export function listChains() {
         token_decimals: 12,
         logo: '/chains/assethub.svg',
         relayParent: 'rococo',
-        parachain: true 
+        parachain: true,
+        symbol: 'ROC'
       };
 
       chainList[3000] = RococoAssethub;// fake paraid

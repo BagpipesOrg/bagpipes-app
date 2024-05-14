@@ -37,7 +37,7 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
    const walletContext = useContext(WalletContext);
    const [balance, setBalance] = useState(null);
    const [isFetchingBalance, setIsFetchingBalance] = useState(false);
-
+   const [chainSymbol, setChainSymbol] = useState('');
 
   const formData = scenarios[activeScenarioId]?.diagramData?.nodes.find(node => node.id === nodeId)?.formData || {};
   console.log('ChainTxForm formData:', formData);
@@ -398,10 +398,18 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
   const fetchBalance = async (signal) => {
     // console.log('getAssetBalanceForChain fetchBalance address:', address, 'chain:', chain);
     // if (!address || !chain) return;
-
+    const chainKey = formData.selectedChain;
     setIsFetchingBalance(true);
+    const chainsArray = Object.values(listChains()); // Convert to array if originally an object
+    const chain = chainsArray.find(c => c.name.toLowerCase() === chainKey.toLowerCase());
+    setChainSymbol(chain.symbol || '');
+    console.log('fetchBalance chain symbol:', chain.symbol);
+      if (!chain) {
+      console.error("No chain information available for:", chainKey);
+      return;
+    }
     try {
-      const fetchedBalance = await getAssetBalanceForChain(formData.selectedChain, 0, formData.selectedAddress);
+      const fetchedBalance = await getAssetBalanceForChain(formData.selectedChain, chain.paraid, formData.selectedAddress);
       setBalance(fetchedBalance);
       if (!signal.aborted) {
         setBalance(fetchedBalance);
@@ -445,7 +453,7 @@ return (
         {isFetchingBalance ? (
           <span>Loading balance...</span>
         ) : (
-          balance && <BalanceTippy balance={balance} symbol="DOT" /> // Adjust symbol accordingly
+          balance && <BalanceTippy balance={balance} symbol={chainSymbol} /> // Adjust symbol accordingly
         )}
               <span onClick={fetchBalance} className="text-xs m-1 p-0 rounded refresh-button">
               <img className="h-3 w-3" src="/refresh.svg" />
