@@ -8,7 +8,7 @@ import { queryMetadata } from './QueryMetadata';
 import { parseMetadataPallets } from '../parseMetadata'
 import { parseLookupTypes } from '../ParseMetadataTypes';
 import { resolveKeyType } from '../resolveKeyType';
-import SubstrateChainRpcService from '../../../../../../services/SubstrateChainRpcService';
+import SubstrateChainRpcService from '../../../../../../services/ChainRpcService';
 import FormHeader from '../../../FormHeader';
 import FormFooter from '../../../FormFooter';
 
@@ -166,7 +166,7 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
           <CollapsibleField
               key="chainDropdown"
               title="Select Chain"
-              hasToggle={false}
+              hasToggle={true}
               fieldTypes="select"
               nodeId={nodeId}
               info="Choose a blockchain chain to query"
@@ -189,7 +189,7 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
       <CollapsibleField
         key="palletDropdown"
         title="Select Pallet"
-        hasToggle={false}
+        hasToggle={true}
         fieldTypes="select"
         nodeId={nodeId}
         info="Select a pallet to explore"
@@ -208,7 +208,7 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
       <CollapsibleField
         key="methodDropdown"
         title="Select Method"
-        hasToggle={false}
+        hasToggle={true}
         fieldTypes="select"
         nodeId={nodeId}
         info="Select a method to view details"
@@ -228,6 +228,7 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
             title="Blockhash/Blocknumber to Query (optional)"
             info="Enter a block hash or block number to query specific data, leave blank for latest block."
             fieldTypes="input"
+            hasToggle={true}
             nodeId={nodeId}
             value={formData?.blockHash}
             onChange={handleBlockHashChange}
@@ -270,6 +271,7 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
                 // key={key}
                 title={`Enter Key <${keyTypeInfo.displayName}>`}
                 info={storageItem.docs}
+                hasToggle={true}
                 fieldTypes="input"
                 nodeId={nodeId}
                 value={formData.methodInput || ''}

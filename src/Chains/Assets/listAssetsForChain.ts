@@ -34,7 +34,7 @@ export function listTuringAssets() {
   }));
 }
 
-export function listmangataxAssets() {
+export function listMangataxAssets() {
   const assets = CHAIN_ASSETS.mangatax.assets;
 
   return assets.map((assetData: { asset: any; assetId: any }) => ({

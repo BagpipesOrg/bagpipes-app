@@ -146,7 +146,7 @@ const ChainNode = ({ data, isConnectable }) => {
     return [];
   };
   
-  // Assuming we have some function to fetch addresses from the extension
+  // function to fetch addresses from the extension
   const extensionAddresses = useMemo(() => fetchAddressesFromExtension(), []);
 
 
@@ -306,6 +306,7 @@ const ChainNode = ({ data, isConnectable }) => {
   const fetchBalance = async (signal) => {
     try {
       setIsFetchingBalance(true);
+      console.log('Fetching balance for:', formState.chain, formState.asset.assetId, formState.address);
       const fetchedBalance = await getAssetBalanceForChain(formState.chain, formState.asset.assetId, formState.address, signal); 
       if (!signal.aborted) {
         setBalance(fetchedBalance);
@@ -321,18 +322,18 @@ const ChainNode = ({ data, isConnectable }) => {
     }
 };
 
-useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
+  useEffect(() => {
+      const controller = new AbortController();
+      const signal = controller.signal;
 
-    if (formState.chain && formState.asset && formState.address) {
+      if (formState.chain && formState.asset && formState.address) {
 
-    fetchBalance(signal);
+      fetchBalance(signal);
 
-    }
+      }
 
-    return () => controller.abort();
-}, [formState.chain, formState.asset, formState.address]);
+      return () => controller.abort();
+  }, [formState.chain, formState.asset, formState.address]);
 
 
   return (

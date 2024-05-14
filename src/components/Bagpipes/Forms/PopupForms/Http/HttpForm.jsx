@@ -150,8 +150,6 @@ const initializeFormValues = () => {
   };
   
 
-
-
   const handleSave = (newHttp) => {
     // event.preventDefault();
 
@@ -166,7 +164,6 @@ const initializeFormValues = () => {
 };
 
   
-
   const handleScroll = (e) => {
     e.stopPropagation();
   };

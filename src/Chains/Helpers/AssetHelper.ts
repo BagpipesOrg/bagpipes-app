@@ -527,14 +527,15 @@ export async function check_tur_on_moonriver(accounteth: string) {
 }
 
 /// returns the raw balance of the native dot token
-export async function checkPolkadotDotRawNativeBalance(
+export async function checkRelayRawNativeBalance(
+  chain: string,
   accountId: string,
   signal?: AbortSignal
 ): Promise<{ free: number; reserved: number; total: number }> {
   let bal: any;
   let bal3: any;
   if (accountId) {
-    const api = await getApiInstance("polkadot", signal);
+    const api = await getApiInstance(chain, signal);
     bal = await api.query.system.account(accountId);
   }
   bal3 = bal.toHuman();
@@ -701,7 +702,7 @@ function formatBalance(balance: number, decimals: number = 4): string {
 
 export async function getAssetBalanceForChain(
   chain: string,
-  assetId: number,
+  assetId?: number,
   accountId: string,
   signal?: AbortSignal
 ): Promise<AssetBalanceInfo> {
@@ -709,6 +710,7 @@ export async function getAssetBalanceForChain(
   let assetDecimals: number | undefined;
   console.log(
     `getAssetBalanceForChain assetId, accountId: `,
+    chain,
     assetId,
     accountId
   );
@@ -733,8 +735,12 @@ export async function getAssetBalanceForChain(
 
   switch (chain) {
     case "polkadot":
-      balances = await checkPolkadotDotRawNativeBalance(accountId, signal);
+      balances = await checkRelayRawNativeBalance('polkadot', accountId, signal);
       break;
+
+      case "kusama":
+        balances = await checkRelayRawNativeBalance('kusama', accountId, signal);
+        break;
 
     case "hydraDx":
       const hydraBalanceInfo = await checkHydraDxAssetBalance(
@@ -835,6 +841,7 @@ function processChainSpecificBalances(
       reservedInUnits = toUnit(balances.reserved, tokenDecimals);
       totalInUnits = freeInUnits + reservedInUnits;
       break;
+      
 
     case "hydraDx":
       // Process balances for HydraDx

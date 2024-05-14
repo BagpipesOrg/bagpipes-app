@@ -13,7 +13,7 @@ import {
   checkAssetHubBalance,
   assetHubNativeBalance,
   checkHydraDxAssetBalance,
-  checkPolkadotDotRawNativeBalance,
+  checkRelayRawNativeBalance,
 } from "./Chains/Helpers/AssetHelper";
 import { Keyring } from "@polkadot/keyring";
 import { inAndOutChannels } from "./Chains/Helpers/XcmHelper";
@@ -194,7 +194,7 @@ async function test_balances() {
 
   /// polkadot native balance check
   console.log(`Checking polkadot balance checks`);
-  const polko = await checkPolkadotDotRawNativeBalance(accountid);
+  const polko = await checkRelayRawNativeBalance('polkadot', accountid);
   assert.ok(
     number_improve(polko) > 0,
     "Polkadot free balance check must be greater than the default 0 value"

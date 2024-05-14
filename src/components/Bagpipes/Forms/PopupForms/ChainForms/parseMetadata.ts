@@ -173,7 +173,7 @@ function parsePallet(pallet: Pallet, typesLookup: any): MethodOutput {
         })),
         index: variant.index
       }));
-      console.log('Call type info:', calls[0]);
+      // console.log('Call type info:', calls[0]);
 
     } else {
       console.error('Call type info not found or invalid for:', callsTypeId);

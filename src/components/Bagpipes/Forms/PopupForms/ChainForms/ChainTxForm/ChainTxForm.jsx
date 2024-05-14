@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useMemo, useContext } from 'react';
 import useAppStore from '../../../../../../store/useAppStore';
 import { WalletContext } from '../../../../../Wallet/contexts';
+import { getAssetBalanceForChain } from '../../../../../../Chains/Helpers/AssetHelper';
+import BalanceTippy from './BalanceTippy';
+
+
 import { CollapsibleField }  from '../../../fields';
 import { ChainQueryIcon } from '../../../../../Icons/icons';
 import { useTippy } from '../../../../../../contexts/tooltips/TippyContext';
@@ -9,7 +13,7 @@ import { queryMetadata } from './QueryMetadata';
 import { parseMetadataPallets, resolveTypeName } from '../parseMetadata'
 import { parseLookupTypes } from '../ParseMetadataTypes';
 import { resolveKeyType } from '../resolveKeyType';
-import SubstrateChainRpcService from '../../../../../../services/SubstrateChainRpcService';
+import ChainRpcService from '../../../../../../services/ChainRpcService';
 import FormHeader from '../../../FormHeader';
 import FormFooter from '../../../FormFooter';
 
@@ -31,6 +35,8 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     saveNodeFormData: state.saveNodeFormData,
    }));
    const walletContext = useContext(WalletContext);
+   const [balance, setBalance] = useState(null);
+   const [isFetchingBalance, setIsFetchingBalance] = useState(false);
 
 
   const formData = scenarios[activeScenarioId]?.diagramData?.nodes.find(node => node.id === nodeId)?.formData || {};
@@ -108,6 +114,8 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
   }, [metadata]);
 
 
+
+
   const handleChainSelectChange = async (chainName) => {
     if (chainName !== selectedChain) {
         setSelectedChain(chainName);
@@ -157,11 +165,44 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
   };
 
   const handleMethodFieldChange = (fieldName, newFieldValue) => {
-    // console.log('handleMethodFieldChange Field:', fieldName, newFieldValue);
-    // Update the specific field in formData
-    const updatedValues = { ...formData, [fieldName]: newFieldValue };
+    // Update the specific field inside formData.params
+    const updatedParams = {
+        ...formData.params, 
+        [fieldName]: newFieldValue
+    };
+    const updatedValues = {
+        ...formData,
+        params: updatedParams
+    };
     saveNodeFormData(activeScenarioId, nodeId, updatedValues);
 };
+
+  // handlers for the form fields
+
+  const renderAddressSelection = () => {
+    if (!walletContext || walletContext.accounts.length === 0) {
+      return <div>No wallet accounts available.</div>;
+    }
+
+    const addressOptions = walletContext.accounts.map(acc => ({
+      label: `${acc.name} (${acc.address})`, // Adjust formatting as needed
+      value: acc.address
+    }));
+
+    return (
+      <CollapsibleField
+        key="addressDropdown"
+        title="Select Address"
+        hasToggle={true}
+        fieldTypes="select"
+        nodeId="address-dropdown"
+        info="Select an address that will sign the transaction."
+        selectOptions={addressOptions}
+        value={formData.selectedAddress || ''}
+        onChange={(value) => handleAddressChange(value)}
+      />
+    );
+  };
 
 
   const renderChainSelection = () => {
@@ -173,7 +214,7 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
           <CollapsibleField
               key="chainDropdown"
               title="Select Chain"
-              hasToggle={false}
+              hasToggle={true}
               fieldTypes="select"
               nodeId={nodeId}
               info="Choose a blockchain chain to query"
@@ -196,7 +237,7 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
       <CollapsibleField
         key="palletDropdown"
         title="Select Pallet"
-        hasToggle={false}
+        hasToggle={true}
         fieldTypes="select"
         nodeId={nodeId}
         info="Select a pallet to explore"
@@ -224,7 +265,7 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
       <CollapsibleField
         key="methodDropdown"
         title="Select Method"
-        hasToggle={false}
+        hasToggle={true}
         fieldTypes="select"
         nodeId={nodeId}
         info="Select a transaction method to execute"
@@ -249,8 +290,9 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
             title={`${field.name} <${field.typeName}>`}
             info={field.docs || 'No documentation available.'}
             fieldTypes="input"
+            hasToggle={true}
             nodeId={nodeId}
-            value={formData[field.name] || ''}
+            value={formData.params?.[field.name] || ''}
             onChange={(value) => handleMethodFieldChange(field.name, value)}
             // onPillsChange={(updatedPills) => handlePillsChange(updatedPills, field.name)}
             placeholder={`Enter ${field.name}`}
@@ -268,6 +310,7 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
             title="Blockhash/Blocknumber to Query (optional)"
             info="Enter a block hash or block number to query specific data, leave blank for latest block."
             fieldTypes="input"
+            hasToggle={true}
             nodeId={nodeId}
             value={formData?.blockHash}
             onChange={handleBlockHashChange}
@@ -279,48 +322,49 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
 
   
 
-  const CallsFieldInput = ({ field, lookupTypes, formData, handleFieldChange }) => {
-    if (!field) {
-        console.error('Invalid or incomplete call field:', field);
-        return <div>Field data is incomplete or missing.</div>;
+//   const CallsFieldInput = ({ field, lookupTypes, formData, handleFieldChange }) => {
+//     if (!field) {
+//         console.error('Invalid or incomplete call field:', field);
+//         return <div>Field data is incomplete or missing.</div>;
+//     }
+
+//     return (
+//         <div>
+//             <CollapsibleField
+//                 title={`${field.name} <${field.typeName}>`}
+//                 info={field.docs || 'No documentation available.'}
+//                 fieldTypes="input"
+//                 hasToggle={true}
+//                 nodeId={`field-input-${field.name}`}
+//                 value={formData[field.name] || ''}
+//                 onChange={handleMethodFieldChange}
+//                 // onPillsChange={(updatedPills) => handlePillsChange(updatedPills, field.name)}
+//                 placeholder={`Enter ${field.name}`}
+//             />
+//         </div>
+//     );
+// };
+
+
+  const handleSignMethodClick = async () => {
+    if (!selectedMethod) return;
+
+    try {
+        const output = await ChainRpcService.executeChainSignMethod({
+            chainKey: formData.selectedChain,
+            palletName: formData.selectedPallet,
+            methodName: formData.selectedMethod.name,
+            params: Object.values(formData.params || {}), // we need to pass in the params so that the tx params are not blank
+            atBlock: formData.blockHash || undefined,
+            signer: walletContext?.wallet?.signer,
+            signerAddress: formData.selectedAddress
+        });
+        setResult(JSON.stringify(output, null, 2));
+    } catch (error) {
+        console.error('Execution failed:', error);
+        setResult(`Error: ${error.message}`);
     }
-
-    return (
-        <div>
-            <CollapsibleField
-                title={`${field.name} <${field.typeName}>`}
-                info={field.docs || 'No documentation available.'}
-                fieldTypes="input"
-                nodeId={`field-input-${field.name}`}
-                value={formData[field.name] || ''}
-                onChange={handleMethodFieldChange}
-                // onPillsChange={(updatedPills) => handlePillsChange(updatedPills, field.name)}
-                placeholder={`Enter ${field.name}`}
-            />
-        </div>
-    );
-};
-
-
-  // const handleSignMethodClick = async () => {
-  //   if (!selectedMethod) return;
-
-  //   try {
-  //       const output = await SubstrateChainRpcService.executeChainSignMethod({
-  //           chainKey: formData.selectedChain,
-  //           palletName: formData.selectedPallet,
-  //           methodName: formData.selectedMethod.name,
-  //           params: formData.methodInput,
-  //           atBlock: formData.blockHash || undefined,
-  //           signer: wallet?.signer,
-  //           signerAddress: wallet?.address
-  //       });
-  //       setResult(JSON.stringify(output, null, 2));
-  //   } catch (error) {
-  //       console.error('Execution failed:', error);
-  //       setResult(`Error: ${error.message}`);
-  //   }
-  // };
+  };
 
   const handlePillsChange = (updatedPills, fieldKey) => {
     console.log('handlePillsChange Updated Pills:', fieldKey);
@@ -351,12 +395,64 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     e.stopPropagation();
   };
 
+  const fetchBalance = async (signal) => {
+    // console.log('getAssetBalanceForChain fetchBalance address:', address, 'chain:', chain);
+    // if (!address || !chain) return;
+
+    setIsFetchingBalance(true);
+    try {
+      const fetchedBalance = await getAssetBalanceForChain(formData.selectedChain, 0, formData.selectedAddress);
+      setBalance(fetchedBalance);
+      if (!signal.aborted) {
+        setBalance(fetchedBalance);
+      }
+    } catch (error) {
+      if (!signal.aborted) {
+        console.error("Failed to fetch balance", error);
+      }
+    } finally {
+      if (!signal.aborted) {
+        setIsFetchingBalance(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    if (formData.selectedAddress && formData.selectedChain) {
+
+    fetchBalance(signal);
+    }
+    return () => controller.abort();
+  }, [formData.selectedAddress, formData.selectedChain]);
+
+  const handleAddressChange = (newAddress) => {
+    // Update formData with the new address
+    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedAddress: newAddress});
+  };
+
 
 return (
   <div onScroll={handleScroll} className=''>
       <FormHeader onClose={handleCancel} title='Query Chain' logo={<ChainQueryIcon className='h-4 w-4' fillColor='black' />} />  
 
       <div className='http-form'>
+          
+          {renderAddressSelection()} 
+          <div className="flex items-center primary-font">
+        {isFetchingBalance ? (
+          <span>Loading balance...</span>
+        ) : (
+          balance && <BalanceTippy balance={balance} symbol="DOT" /> // Adjust symbol accordingly
+        )}
+              <span onClick={fetchBalance} className="text-xs m-1 p-0 rounded refresh-button">
+              <img className="h-3 w-3" src="/refresh.svg" />
+            </span>
+                   
+      </div>
+
           {renderChainSelection()}
           {renderPalletSelection()}
           {renderMethodSelection()}
@@ -364,8 +460,8 @@ return (
           {renderBlockHashInput()}
 
 
-    {/* <button className="button mt-2" onClick={handleSignMethodClick} disabled={!selectedMethod}>Sign Tx Once</button>
-    <textarea className="result-textarea" value={result} readOnly /> */}
+    <button className="button mt-2" onClick={handleSignMethodClick} disabled={!selectedMethod}>Sign Tx Once</button>
+    <textarea className="result-textarea" value={result} readOnly />
 
     </div>
 

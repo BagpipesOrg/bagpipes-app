@@ -8,7 +8,7 @@ import { processScenarioData, validateDiagramData, processAndSanitizeFormData, p
 import { fetchNodeExecutionData, processWebhookEvent, waitForNewWebhookEvent } from './utils/scenarioExecutionUtils';
 import SocketContext from '../../../contexts/SocketContext';
 import WebhooksService from '../../../services/WebhooksService';
-import SubstrateChainRpcService from '../../../services/SubstrateChainRpcService';
+import SubstrateChainRpcService from '../../../services/ChainRpcService';
 
 import useAppStore from '../../../store/useAppStore';
 import { v4 as uuidv4 } from 'uuid';

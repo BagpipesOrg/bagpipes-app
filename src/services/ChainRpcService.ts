@@ -14,7 +14,7 @@ interface MethodParams {
   signer?: any; // Include only for transactions that need signing
 }
 
-class SubstrateChainRpcService {
+class ChainRpcService {
   static async executeChainQueryMethod({ chainKey, palletName, methodName, params, atBlock }: MethodParams): Promise<any> {
     const api = await getApiInstance(chainKey);
     const method = this.resolveMethod(api, palletName, methodName, false);
@@ -78,4 +78,4 @@ class SubstrateChainRpcService {
   }
 }
 
-export default SubstrateChainRpcService;
+export default ChainRpcService;
