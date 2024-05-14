@@ -4,7 +4,7 @@ const BASE_URL =  'https://api.bagpipes.io';//'http://127.0.0.1:8080';//'https:/
 
 const saveUrl = async (longUrl) => {
   try {
-    const response = await axios.post(`${BASE_URL}/saveUrl`, { url: longUrl });
+    const response = await axios.post(`${BASE_URL}/api/template/saveUrl`, { url: longUrl });
     const shortUrl = response.data;
     console.log(`saveUrl:`, shortUrl.shortUrl);
     return shortUrl;
@@ -16,7 +16,7 @@ const saveUrl = async (longUrl) => {
 
 const getUrl = async (shortUrl) => {
   try {
-    const response = await axios.get(`${BASE_URL}/getUrl/${shortUrl}`);
+    const response = await axios.get(`${BASE_URL}/api/template/getUrl/${shortUrl}`);
     console.log(`got response data:`, response);
     const longUrl = response.data.longUrl;
     console.log(`geturl longurl: `,longUrl);

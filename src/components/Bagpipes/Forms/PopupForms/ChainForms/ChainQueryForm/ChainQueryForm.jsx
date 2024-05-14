@@ -151,10 +151,11 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     saveNodeFormData(activeScenarioId, nodeId, {...formData, blockHash: newBlockHash});
   };
 
-  const handleMethodFieldChange = (value) => {
-    const updatedValues = { ...formData, methodInput: value };
+  const handleMethodFieldChange = (newFieldValue) => {
+  
+    const updatedValues = { ...formData, methodInput: newFieldValue };
     saveNodeFormData(activeScenarioId, nodeId, updatedValues);
-  };
+};
 
   const renderChainSelection = () => {
       if (chains?.length === 0) {
@@ -219,16 +220,6 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     );
   };
 
-  const renderMethodFields = () => {
-    if (!formData.selectedMethod) {
-        return <div>No selected storage item.</div>;
-    }
-    if (Object.keys(lookupTypes).length === 0) {
-        return <div>Loading data or incomplete metadata...</div>;
-    }
-    return <StorageFieldInput storageItem={selectedMethod} lookupTypes={lookupTypes} />;
-  };
-  
   const renderBlockHashInput = () => {
     if (!selectedMethod) return null; 
     
@@ -246,11 +237,21 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     );
   };
 
-  const StorageFieldInput = ({ storageItem, lookupTypes }) => {
-    if (!storageItem) {
-        console.error('Invalid or incomplete storage item:', storageItem);
-        return <div>Storage item data is incomplete or missing.</div>;
+
+  const renderMethodFields = () => {
+    if (!formData.selectedMethod) {
+        return <div>No selected storage item.</div>;
     }
+    if (Object.keys(lookupTypes).length === 0) {
+        return <div>Loading data or incomplete metadata...</div>;
+    }
+
+    const storageItem = formData.selectedMethod; 
+
+    if (!storageItem) {
+      console.error('Invalid or incomplete storage item:', storageItem);
+      return <div>Storage item data is incomplete or missing.</div>;
+  }
 
     let keyTypeInfo = { displayName: 'Unknown' };
     if (storageItem.type?.Map) {
@@ -260,39 +261,42 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
         keyTypeInfo = resolveKeyType(storageItem.type.Plain, lookupTypes);
     }
 
-  return (
-      <div>
-          {storageItem.type?.Map && (
-              <div>
-                  <CollapsibleField
-                      // key={key}
-                      title={`Enter Key <${keyTypeInfo.displayName}>`}
-                      info={storageItem.docs}
-                      fieldTypes="input"
-                      nodeId={nodeId}
-                      value={formData.methodInput || ''}
-                      onChange={(value) => handleMethodFieldChange(value)}
-                      placeholder={`${keyTypeInfo.path[keyTypeInfo.path.length - 1]}`}
-                      onPillsChange={(updatedPills) => handlePillsChange(updatedPills, 'methodInput')}
 
-                  />
-              </div>
-          )}
-            {!storageItem.type?.Map && (
-              <div>
-                 <CollapsibleField
-                      // key={key}
+    return (
+    <>
+    {storageItem.type?.Map && (
+     
+            <CollapsibleField
+                // key={key}
+                title={`Enter Key <${keyTypeInfo.displayName}>`}
+                info={storageItem.docs}
+                fieldTypes="input"
+                nodeId={nodeId}
+                value={formData.methodInput || ''}
+                onChange={(value) => handleMethodFieldChange( value)}
+                placeholder={`${keyTypeInfo.path[keyTypeInfo.path.length - 1]}`}
+                // onPillsChange={(updatedPills) => handlePillsChange(updatedPills, 'methodInput')}
 
-                      title={`Details for ${storageItem.name} <No Input Required>`}
-                      info={`${storageItem.docs}`}
-                      // fieldTypes="input"
-                      nodeId="key-input"
-                      />
-              </div>
-          )}
-      </div>
-    );
+            />
+     
+    )}
+      {!storageItem.type?.Map && (
+   
+           <CollapsibleField
+                // key={key}
+
+                title={`Details for ${storageItem.name} <No Input Required>`}
+                info={`${storageItem.docs}`}
+                // fieldTypes="input"
+                nodeId="key-input"
+                />
+   
+    )}
+</>
+)
   };
+  
+ 
 
   const handleRunMethodClick = async () => {
     if (!selectedMethod) return;

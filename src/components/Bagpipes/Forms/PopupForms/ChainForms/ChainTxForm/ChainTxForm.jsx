@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useContext } from 'react';
 import useAppStore from '../../../../../../store/useAppStore';
+import { WalletContext } from '../../../../../Wallet/contexts';
 import { CollapsibleField }  from '../../../fields';
 import { ChainQueryIcon } from '../../../../../Icons/icons';
 import { useTippy } from '../../../../../../contexts/tooltips/TippyContext';
@@ -8,7 +9,7 @@ import { queryMetadata } from './QueryMetadata';
 import { parseMetadataPallets, resolveTypeName } from '../parseMetadata'
 import { parseLookupTypes } from '../ParseMetadataTypes';
 import { resolveKeyType } from '../resolveKeyType';
-import ChainTxRpcService from '../../../../../../services/SubstrateChainRpcService';
+import SubstrateChainRpcService from '../../../../../../services/SubstrateChainRpcService';
 import FormHeader from '../../../FormHeader';
 import FormFooter from '../../../FormFooter';
 
@@ -29,6 +30,8 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     activeScenarioId: state.activeScenarioId,
     saveNodeFormData: state.saveNodeFormData,
    }));
+   const walletContext = useContext(WalletContext);
+
 
   const formData = scenarios[activeScenarioId]?.diagramData?.nodes.find(node => node.id === nodeId)?.formData || {};
   console.log('ChainTxForm formData:', formData);
@@ -149,13 +152,14 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
 
 
   const handleBlockHashChange = (newBlockHash) => {
-    setBlockHash(newBlockHash);
+    // setBlockHash(newBlockHash);
     saveNodeFormData(activeScenarioId, nodeId, {...formData, blockHash: newBlockHash});
   };
 
-  const handleMethodFieldChange = (fieldName, value) => {
+  const handleMethodFieldChange = (fieldName, newFieldValue) => {
+    // console.log('handleMethodFieldChange Field:', fieldName, newFieldValue);
     // Update the specific field in formData
-    const updatedValues = { ...formData, [fieldName]: value };
+    const updatedValues = { ...formData, [fieldName]: newFieldValue };
     saveNodeFormData(activeScenarioId, nodeId, updatedValues);
 };
 
@@ -241,13 +245,17 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     }
 
     return formData.selectedMethod?.fields?.map((field, index) => (
-        <CallsFieldInput 
-            key={index}
-            field={field}
-            lookupTypes={lookupTypes}
-            formData={formData}
-            handleFieldChange={handleMethodFieldChange}
+        <CollapsibleField
+            title={`${field.name} <${field.typeName}>`}
+            info={field.docs || 'No documentation available.'}
+            fieldTypes="input"
+            nodeId={nodeId}
+            value={formData[field.name] || ''}
+            onChange={(value) => handleMethodFieldChange(field.name, value)}
+            // onPillsChange={(updatedPills) => handlePillsChange(updatedPills, field.name)}
+            placeholder={`Enter ${field.name}`}
         />
+
     ));
 };
 
@@ -263,7 +271,7 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
             nodeId={nodeId}
             value={formData?.blockHash}
             onChange={handleBlockHashChange}
-            onPillsChange={(updatedPills) => handlePillsChange(updatedPills, blockHash)}
+            // onPillsChange={(updatedPills) => handlePillsChange(updatedPills, blockHash)}
 
         />
     );
@@ -285,7 +293,8 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
                 fieldTypes="input"
                 nodeId={`field-input-${field.name}`}
                 value={formData[field.name] || ''}
-                onChange={(e) => handleFieldChange(field.name, e.target.value)}
+                onChange={handleMethodFieldChange}
+                // onPillsChange={(updatedPills) => handlePillsChange(updatedPills, field.name)}
                 placeholder={`Enter ${field.name}`}
             />
         </div>
@@ -293,25 +302,28 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
 };
 
 
-  const handleSignMethodClick = async () => {
-    if (!selectedMethod) return;
+  // const handleSignMethodClick = async () => {
+  //   if (!selectedMethod) return;
 
-    try {
-        const output = await ChainTxRpcService.executeChainMethodSign({
-            chainKey: formData.selectedChain,
-            palletName: formData.selectedPallet,
-            methodName: formData.selectedMethod.name,
-            params: formData.methodInput,
-            atBlock: formData.blockHash || undefined
-        });
-        setResult(JSON.stringify(output, null, 2));
-    } catch (error) {
-        console.error('Execution failed:', error);
-        setResult(`Error: ${error.message}`);
-    }
-  };
+  //   try {
+  //       const output = await SubstrateChainRpcService.executeChainSignMethod({
+  //           chainKey: formData.selectedChain,
+  //           palletName: formData.selectedPallet,
+  //           methodName: formData.selectedMethod.name,
+  //           params: formData.methodInput,
+  //           atBlock: formData.blockHash || undefined,
+  //           signer: wallet?.signer,
+  //           signerAddress: wallet?.address
+  //       });
+  //       setResult(JSON.stringify(output, null, 2));
+  //   } catch (error) {
+  //       console.error('Execution failed:', error);
+  //       setResult(`Error: ${error.message}`);
+  //   }
+  // };
 
   const handlePillsChange = (updatedPills, fieldKey) => {
+    console.log('handlePillsChange Updated Pills:', fieldKey);
       saveNodeFormData(activeScenarioId, nodeId, (previousData) => ({
       ...previousData,
       [fieldKey]: updatedPills  // assuming pills directly relate to the field without a nested structure
@@ -352,8 +364,8 @@ return (
           {renderBlockHashInput()}
 
 
-    <button className="button mt-2" onClick={handleSignMethodClick} disabled={!selectedMethod}>Sign Tx Once</button>
-    <textarea className="result-textarea" value={result} readOnly />
+    {/* <button className="button mt-2" onClick={handleSignMethodClick} disabled={!selectedMethod}>Sign Tx Once</button>
+    <textarea className="result-textarea" value={result} readOnly /> */}
 
     </div>
 
