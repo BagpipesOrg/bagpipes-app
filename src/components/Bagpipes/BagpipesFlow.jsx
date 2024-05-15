@@ -603,10 +603,12 @@ const BagpipesFlow = () => {
     
   // Helper function outside of main function
   const isActionDataComplete = (node) => {
+    console.log(`isActionDataComplete: `, node);
+
     if (!node.formData || !node.formData.actionData) return false;
 
     const { source, target } = node.formData.actionData;
-
+    console.log(`isActionDataComplete: `, node.formData.actionData);
     if (!source || !target) return false;
 
     const isSourceComplete = source.chain && source.assetId !== undefined && source.address && source.amount && source.amount.trim() !== "";
