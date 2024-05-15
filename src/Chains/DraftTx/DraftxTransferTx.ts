@@ -85,6 +85,13 @@ export async function polkadot_to_assethub(
   return tx;
 }
 
+/// Generic system remark with event
+export async function generic_system_remark(chain: string, msg: string) {
+  const api = await getApiInstance(chain);
+
+  return api.tx.system.remarkWithEvent(msg);
+}
+
 /// ref: https://rococo.subscan.io/extrinsic/8452803-2?event=8452803-30
 /// send ROC from rococo to rococo assethub using XCM
 export async function roc2assethub(amount: number, accountdest: string) {

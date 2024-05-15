@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
+import RemarkSVG from '/remark.svg';
 import { listChains } from '../../Chains/ChainsInfo';
 import { toast } from 'react-hot-toast';
 import ThemeContext from '../../contexts/ThemeContext';
@@ -18,6 +19,7 @@ const OrderedListContent = ({ list }) => {
         <div className='ordered-list-map' style={{ display: 'flex', alignItems: 'center' }}>
             {list.map((item, index) => {
                 let imageSrc, altText;
+                console.log(`item is:`, item );
                 if (item.type === 'chain') {
                     
                     console.log('OrderedListContent chains',chains);
@@ -40,7 +42,24 @@ const OrderedListContent = ({ list }) => {
                         <img src="/swap.svg" alt="Swap" className="toast-icon" />
 
                     );
-                } else if (item.action === 'xTransfer') {
+                }
+                else if (item.action === 'Remark') {
+                    imageSrc = RemarkSVG;
+                    altText = "System Remark";
+                    return (
+                        <img src="/remark.svg" alt="Remark" className="toast-icon" />
+
+                    );
+                }
+                else if (item.action === 'remark') {
+                    imageSrc = RemarkSVG;
+                    altText = "System Remark";
+                    return (
+                        <img src="/remark.svg" alt="Remark" className="toast-icon" />
+
+                    );
+                }
+                else if (item.action === 'xTransfer') {
                     console.log('OrderedListContent item action',item.action)
                     imageSrc = xTransferSVG;
                     altText = 'xTransfer Action';

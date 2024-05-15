@@ -1,4 +1,4 @@
-import { dotToHydraDx, turing2moonriver, moonriver2turing, mangata2turing, polkadot_assethub_to_kusama_assethub, hydraDxToParachain, turing2mangata, generic_kusama_to_parachain, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
+import { dotToHydraDx, generic_system_remark, turing2moonriver, moonriver2turing, mangata2turing, polkadot_assethub_to_kusama_assethub, hydraDxToParachain, turing2mangata, generic_kusama_to_parachain, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
 import { getTokenDecimalsByChainName, get_hydradx_asset_symbol_decimals } from "../../../../Chains/Helpers/AssetHelper";
 import toast from "react-hot-toast";
 import { isEthereumAddress } from '@polkadot/util-crypto';
@@ -17,10 +17,24 @@ export async function extrinsicHandler(actionType, formData) {
         case 'swap':
             console.log("Inside extrinsicHandler for swap");
             return handleSwap(formData);
+        case 'remark':
+            console.log(`handling remark`);
+            return handleRemark(formData);
         default:
             throw new Error("Unsupported action type.");
         }
 };
+
+function handleRemark(formData) {
+    const source = formData.source;
+    const msg = source.target;
+    const chain = source.chain;
+    console.log(`source: `, source);
+    console.log(`handle Remark form data:`, formData);
+    return generic_system_remark(chain, msg);
+   
+   // throw new Error("You can only swap from hydradx to hydradx");
+}
 
 
 function handlexTransfer(formData) {
