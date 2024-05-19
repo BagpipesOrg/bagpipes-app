@@ -373,14 +373,14 @@ export async function checkTuringAssetBalance(
   }
 
   let api: any;
-  let hdxBalance: any;
+  let turingBalance: any;
   let assetDecimals: number;
 
-  // console.log(`checkHydraDxAssetBalance trying to connect`);
+  // console.log(`checkTuringAssetBalance trying to connect`);
 
   try {
     api = await getApiInstance("turing", signal);
-    hdxBalance = await api.query.tokens.accounts(account_id_32, assetid);
+    turingBalance = await api.query.tokens.accounts(account_id_32, assetid);
   } catch (error) {
     console.error(
       `Error retrieving balance for asset ID ${assetid} and account ${account_id_32}:`,
@@ -389,12 +389,12 @@ export async function checkTuringAssetBalance(
     return { free: 0, reserved: 0, total: 0 };
   }
 
-  const stringBalance = hdxBalance.toHuman();
-  //  console.log(`checkHydraDxAssetBalance Raw HDX Balance:`, stringBalance);
+  const stringBalance = turingBalance.toHuman();
+   console.log(`checkTuringAssetBalance Raw TUR Balance:`, stringBalance);
 
   try {
     // Get the asset's metadata
-    const metadata = await api.query.assetRegistry.assets(assetid);
+    const metadata = await api.query.assetRegistry.metadata(assetid);
 
     if (
       metadata &&
@@ -413,8 +413,8 @@ export async function checkTuringAssetBalance(
     assetDecimals = 12;
   }
 
-  if (isOrmlTokensAccountData(hdxBalance)) {
-    const bal_obj: OrmlTokensAccountData = hdxBalance;
+  if (isOrmlTokensAccountData(turingBalance)) {
+    const bal_obj: OrmlTokensAccountData = turingBalance;
     //  console.log(`checkHydraDxAssetBalance bal obj`, bal_obj.toString());
     return {
       free: bal_obj.free,
