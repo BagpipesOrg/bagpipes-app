@@ -266,7 +266,7 @@ export const CHAIN_ASSETS = {
     },
 
 
-    "kusama_assethub": {
+    "assetHub_kusama": {
         "assets":[
             {
                 "asset": {

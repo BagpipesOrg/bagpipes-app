@@ -8,15 +8,16 @@ import { processScenarioData, validateDiagramData, processAndSanitizeFormData, p
 import { fetchNodeExecutionData, processWebhookEvent, waitForNewWebhookEvent } from './utils/scenarioExecutionUtils';
 import SocketContext from '../../../contexts/SocketContext';
 import WebhooksService from '../../../services/WebhooksService';
-import SubstrateChainRpcService from '../../../services/ChainRpcService';
+import ChainRpcService from '../../../services/ChainRpcService';
 
 import useAppStore from '../../../store/useAppStore';
 import { v4 as uuidv4 } from 'uuid';
 import toast  from 'react-hot-toast';
+import { ChainToastContent, ActionToastContent, CustomToastContext } from '../../toasts/CustomToastContext'
+
 import { getOrderedList } from './utils/scenarioExecutionUtils';
 import { handleNodeViewport } from '../handlers/handleNodeViewport';
-import { broadcastToChain } from '../../../Chains/api/broadcast';
-import { ChainToastContent, ActionToastContent, CustomToastContext } from '../../toasts/CustomToastContext'
+import { broadcastToChain } from '../../../Chains/api/broadcastToChain';
 
 
 
@@ -266,8 +267,6 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                     activeExecutionData = httpExecutions[updatedExecutionId];
                     console.log('Active Execution Data:', activeExecutionData);
 
-
-                    // Assuming currentNode.formData contains the data to be parsed
                     parsedFormData = processAndSanitizeFormData(currentNode.formData, activeExecutionData, upstreamNodeIds);
                     console.log('Parsed Form Data:', parsedFormData);
                     // parsedFormData should contain the formData with pills replaced by actual data
@@ -327,7 +326,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                         const parsedFormData = processAndSanitizeFormData(currentNode.formData, activeExecutionData, upstreamNodeIds);
                         console.log('chainQuery Parsed Form Data:', parsedFormData);
                         try {
-                            const queryResult = await SubstrateChainRpcService.executeChainQueryMethod({
+                            const queryResult = await ChainRpcService.executeChainQueryMethod({
                                 chainKey: parsedFormData.selectedChain,
                                 palletName: parsedFormData.selectedPallet,
                                 methodName: parsedFormData.selectedMethod.name,
@@ -358,7 +357,58 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                 
                     executionCycleFinished = index === orderedList.length - 1;
                     break;
-            }
+            
+                case 'chainTx':
+                    console.log('chainTx executeFlowScenario for chainTx event...', currentNode.id);
+                    setIsLoadingNode(currentNode.id, true);
+                    updateEdgeStyleForNode(currentNode.id, 'executing');
+                    console.log('Executing Chain Tx node...', currentNode.id);
+                
+                    const chainTxExecutions = useAppStore.getState().scenarios[activeScenarioId]?.executions;
+                
+                    if (chainTxExecutions) {
+                        const upstreamNodeIds = getUpstreamNodeIds(orderedList, currentNode.id);
+                        const activeExecutionData = chainTxExecutions[updatedExecutionId];
+                
+                        const parsedFormData = processAndSanitizeFormData(currentNode.formData, activeExecutionData, upstreamNodeIds);
+                        console.log('chainTx Parsed Form Data:', parsedFormData);
+                        try {
+                            const queryResult = await ChainRpcService.executeChainTxMethod({
+                                chainKey: parsedFormData.selectedChain,
+                                palletName: parsedFormData.selectedPallet,
+                                methodName: parsedFormData.selectedMethod.name,
+                                params: parsedFormData.methodInput,
+                                signer: walletContext?.wallet?.signer,
+                                signerAddress: parsedFormData.selectedAddress
+                            });
+                            // static async executeChainTxMethod({ chainKey, palletName, methodName, params, signerAddress, signer }: MethodParams): Promise<any> {
+                               
+                            console.log('Chain Tx Response:', queryResult);
+                            updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, {
+                                eventData: queryResult,
+                                status: 'success'
+                            });
+                            saveNodeEventData(activeScenarioId, currentNode.id, queryResult);
+                        } catch (error) {
+                            console.error('Error executing Chain Tx:', error);
+                            updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, {
+                                error: error.message,
+                                status: 'error'
+                            });
+                        } finally {
+                            setIsLoadingNode(currentNode.id, false);
+                            updateEdgeStyleForNode(currentNode.id, 'default_connected');
+                        }
+                    } else {
+                        console.error('No executions found for the scenario');
+                        return;
+                    }
+                
+                
+                    executionCycleFinished = index === orderedList.length - 1;
+                    break;
+            
+                }
 
             
 

@@ -1,9 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Handle, Position, useNodeId } from 'reactflow';
 import { ChainQueryIcon } from '../../../Icons/icons';
 import { useTippy } from '../../../../contexts/tooltips/TippyContext';
 import EventNotification from '../../../EventNotifications/EventNotification';
 import useAppStore from '../../../../store/useAppStore';
+import { listChains } from '../../../../Chains/ChainsInfo';
+
 import './ChainTx.scss';
 import '../../node.styles.scss';
 
@@ -27,6 +29,15 @@ export default function ChainTxNode({ data }) {
   const nodeId = useNodeId();
   const nodeRef = useRef();
 
+  const [chainList, setChainList] = useState({});
+  const ChainInfoList = Object.values(chainList);
+  const formData = scenarios[activeScenarioId]?.diagramData?.nodes.find(node => node.id === nodeId)?.formData || {};
+  const selectedChain = formData?.selectedChain;
+
+  const selectedChainLogo = ChainInfoList.find(chain => chain.name === selectedChain)?.logo;
+
+
+
   const nodeExecutionData = scenarios[activeScenarioId]?.executions[executionId]?.[nodeId];
   const eventUpdates = nodeExecutionData?.responseData?.eventUpdates || [];
   const hasNotification = eventUpdates.length > 0;
@@ -48,6 +59,18 @@ export default function ChainTxNode({ data }) {
     }; 
     showTippy(null, nodeId, nodeRef.current, <ChainTxForm onSave={handleSubmit} onClose={handleCloseChainTxForm} nodeId={nodeId} reference={nodeRef.current} />, shouldFlipToLeft ? 'left-start' : 'right-start');
   };
+
+
+  useEffect(() => {
+    const fetchChains = async () => {
+        const chains = listChains();
+        setChainList(chains);
+    };
+
+    fetchChains();
+  }, []);
+
+
 
   const handleSubmit = (event) => {
     // event.preventDefault();
@@ -80,7 +103,14 @@ return(
               <div className="node-spinner" style={{ borderColor: '#f3f3f3', borderTopColor: fillColor }}></div>
           </div>
       ) : (
+        <>
+        { selectedChain ? (
+          <img src={selectedChainLogo} className="chain-logo" alt="Chain Logo" />
+        ) : (
           <ChainQueryIcon className="h-7" fillColor={fillColor} />
+        )}
+        
+         </>
       )}
 
       {/* Title outside the circle below the logo */}

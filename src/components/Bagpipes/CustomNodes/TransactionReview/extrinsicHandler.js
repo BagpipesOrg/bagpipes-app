@@ -115,10 +115,10 @@ function handlexTransfer(formData) {
             return turing2moonriver(target.address, submittableAmount);
         },
 
-        'assetHub:kusama_assethub': () => {
+        'assetHub:assetHub_kusama': () => {
             console.log(`Polkadot assethub to kusama assethub`);
             console.log(`input: `, submittableAmount, target.address);
-           return polkadot_assethub_to_kusama_assethub(submittableAmount, target.address);
+           return polkadot_assethub_to_assetHub_kusama(submittableAmount, target.address);
         },
 
 

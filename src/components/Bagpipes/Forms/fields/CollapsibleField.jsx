@@ -16,12 +16,13 @@ import './Fields.scss';
 const { Option } = Select;
 
 
-const CollapsibleField = ({ fieldKey, nodeId, title, info, toggleTitle, hasToggle,fieldTypes, items=[], selectOptions=[], selectRadioOptions=[], children, value, onChange, onPillsChange, placeholder }) => {
+const CollapsibleField = ({ fieldKey, nodeId, title, info, toggleTitle, hasToggle,fieldTypes, items=[], selectOptions=[], selectRadioOptions=[], children, value, onChange, onPillsChange, placeholder, onClick, disabled, isTextAreaValue, customContent, buttonName}) => {
   const [isToggled, setIsToggled] = useState(false);
   const { showPanelTippy, hidePanelTippy } = usePanelTippy();
   const [droppedItems, setDroppedItems] = useState([]);
   const [pills, setPills] = useState([]);
   const [editableContent, setEditableContent] = useState("");
+
  
   const [{ isOver }, drop] = useDrop({
     accept: ['NODE', 'PIll'], 
@@ -195,10 +196,31 @@ const handleToggleChange = (toggled) => {
               placeholder="Select option"
             >
               {selectOptions.map((option, index) => (
-                <Option key={index} value={option.value}>{option.label}</Option>
+                <Option key={index} value={option.value}><span className=''>{option.label}</span></Option>
               ))}
             </Select>
           );
+          break;
+
+          case 'selectAddressWithBalance':
+            content = (
+              <>
+              <Select
+                onChange={value => onChange(value)}
+                getPopupContainer={trigger => trigger.parentNode}
+  
+                value={value} 
+                className='w-full font-semibold custom-select'
+                placeholder="Select option"
+              >
+                {selectOptions.map((option, index) => (
+                  <Option key={index} value={option.value}>{option.label}</Option>
+                ))}
+              </Select>
+              
+      
+            </>
+            );
           break;
       case 'radio':
         // Check if selectRadioOptions is provided, else default to Yes/No
@@ -224,6 +246,17 @@ const handleToggleChange = (toggled) => {
           
           );
           break; 
+      case 'buttonTextArea':
+
+        content = (
+          <>
+            <button className="button mt-2" onClick={onClick} disabled={disabled}>{buttonName}</button>
+            {isTextAreaValue ? (
+            <textarea className="result-textarea" value={value} readOnly />
+            ) : ('')}
+          </>
+        );  
+       break;
       case 'items':
    
         const addItem = () => {
@@ -281,6 +314,7 @@ const handleToggleChange = (toggled) => {
     <div ref={drop} style={{ backgroundColor: isOver ? 'lightblue' : 'transparent' }}>
       {renderDroppedItems()}
       {content} {/* Keep the existing input field */}
+      {customContent}
     </div>
   );
   };

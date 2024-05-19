@@ -4,11 +4,16 @@ import { CollapsibleField }  from '../../../fields';
 import { ChainQueryIcon } from '../../../../../Icons/icons';
 import { useTippy } from '../../../../../../contexts/tooltips/TippyContext';
 import { listChains} from '../../../../../../Chains/ChainsInfo';
+
+import { processScenarioData, validateDiagramData, processAndSanitizeFormData, parseAndReplacePillsInFormData, sanitizeFormData, getUpstreamNodeIds } from '../../../../utils/scenarioUtils';
+import { getOrderedList } from '../../../../hooks/utils/scenarioExecutionUtils';
+
+
 import { queryMetadata } from './QueryMetadata';
 import { parseMetadataPallets } from '../parseMetadata'
 import { parseLookupTypes } from '../ParseMetadataTypes';
 import { resolveKeyType } from '../resolveKeyType';
-import SubstrateChainRpcService from '../../../../../../services/ChainRpcService';
+import ChainRpcService from '../../../../../../services/ChainRpcService';
 import FormHeader from '../../../FormHeader';
 import FormFooter from '../../../FormFooter';
 
@@ -21,6 +26,7 @@ import 'tippy.js/themes/light.css';
 import '../ChainForm.scss';
 import '../../Popup.scss';
 import '../../../../../../index.css';
+import { render } from 'react-dom';
 
 
 const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
@@ -46,6 +52,7 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
 
   const { hideTippy } = useTippy();
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
+  const [isTextAreaValue, setIsTextAreaValue] = useState(false);
 
   const lookupTypes = useMemo(() => {
     const typesArray = metadata?.metadata?.V14?.lookup?.types;
@@ -131,11 +138,11 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
         setSelectedPallet(newPallet);
         setSelectedMethod(null); 
     }
-    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedPallet: palletName, selectedMethod: null});
+    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedPallet: palletName, selectedPalletData: newPallet, selectedMethod: null});
   };
 
   const handleMethodChange = (methodName) => {
-    const newMethod = selectedPallet?.storage.find(storage => storage.name === methodName);
+    const newMethod = formData.selectedPalletData?.storage.find(storage => storage.name === methodName);
     console.log('handleMethodChange New Method:', newMethod);
     if (newMethod && newMethod !== selectedMethod) {
         setSelectedMethod(newMethod);
@@ -201,8 +208,7 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
   };
     
   const renderMethodSelection = () => {
-    console.log('renderMethodSelection Selected Pallet:', selectedPallet);
-    if (!selectedPallet || selectedPallet?.storage?.length === 0) return null;
+    if (!formData.selectedPalletData || formData.selectedPalletData?.storage?.length === 0) return null;
   
     return (
       <CollapsibleField
@@ -213,7 +219,7 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
         nodeId={nodeId}
         info="Select a method to view details"
 
-        selectOptions={selectedPallet?.storage?.map(storageItem => ({ label: storageItem.name, value: storageItem.name }))}
+        selectOptions={formData.selectedPalletData?.storage?.map(storageItem => ({ label: storageItem.name, value: storageItem.name }))}
         value={formData?.selectedMethod?.name || ''}
         onChange={(value) => handleMethodChange(value)}
       />
@@ -297,19 +303,58 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
 </>
 )
   };
+
+  const renderRunMethod = () => {
+    
+    if (!formData.selectedMethod) {
+        return null;
+    }
+      return (
+        <CollapsibleField
+        title={`Run Query Method`}
+        info={'Query the storage within this node. '}
+        fieldTypes="buttonTextArea"
+        nodeId={nodeId}
+        buttonName={'Run Method'}
+        value={result}
+        isTextAreaValue={isTextAreaValue}
+        onClick={handleRunMethodClick}
+        // onPillsChange={(updatedPills) => handlePillsChange(updatedPills, field.name)}
+        placeholder={`Enter`}
+        disabled={!formData.selectedMethod}
+    />
+      );
+  };
+    
   
  
 
   const handleRunMethodClick = async () => {
+    setIsTextAreaValue(true);
+
     if (!selectedMethod) return;
 
+    const lastExecutionId = useAppStore.getState().executionId;
+    const recentExecutions = useAppStore.getState().scenarios[activeScenarioId]?.executions
+    const lastExecution = recentExecutions[lastExecutionId];
+    console.log('Active Execution Data:', lastExecution);
+
+    const diagramData = scenarios[activeScenarioId]?.diagramData;
+    const orderedList = getOrderedList(diagramData.edges);
+
+
+
     try {
-        const output = await SubstrateChainRpcService.executeChainQueryMethod({
-            chainKey: formData.selectedChain,
-            palletName: formData.selectedPallet,
-            methodName: formData.selectedMethod.name,
-            params: formData.methodInput,
-            atBlock: formData.blockHash || undefined
+      const upstreamNodeIds = getUpstreamNodeIds(orderedList, nodeId);
+      const parsedFormData = processAndSanitizeFormData(formData, lastExecution, upstreamNodeIds);
+
+
+        const output = await ChainRpcService.executeChainQueryMethod({
+            chainKey: parsedFormData.selectedChain,
+            palletName: parsedFormData.selectedPallet,
+            methodName: parsedFormData.selectedMethod.name,
+            params: parsedFormData.methodInput,
+            atBlock: parsedFormData.blockHash || undefined
         });
         setResult(JSON.stringify(output, null, 2));
     } catch (error) {
@@ -349,18 +394,15 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
 
 return (
   <div onScroll={handleScroll} className=''>
-      <FormHeader onClose={handleCancel} title='Query Chain' logo={<ChainQueryIcon className='h-4 w-4' fillColor='black' />} />  
+      <FormHeader onClose={handleCancel} title='Query Chain Form' logo={<ChainQueryIcon className='h-4 w-4' fillColor='black' />} />  
 
       <div className='http-form'>
           {renderChainSelection()}
           {renderPalletSelection()}
           {renderMethodSelection()}
           {renderMethodFields()}
+          {renderRunMethod()}
           {renderBlockHashInput()}
-
-
-    <button className="button mt-2" onClick={handleRunMethodClick} disabled={!selectedMethod}>Run Method Once</button>
-    <textarea className="result-textarea" value={result} readOnly />
 
     </div>
 

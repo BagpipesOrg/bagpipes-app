@@ -1,6 +1,6 @@
 import { getApiInstance } from "../api/connect";
 import endpoints from "../api/WsEndpoints";
-import { getHydradxAssetSymbolDecimals } from "../../Chains/Helpers/AssetHelper";
+import { getAssetDecimals } from "../../Chains/Helpers/AssetHelper";
 import {
   getHydraDxSpotPrice,
   getHydraDxSellPrice,
@@ -26,7 +26,7 @@ export async function hydradx_omnipool_sell(
   const aout = pinfo.amountOut;
 
   //const aout = sellprice.amountOut;
-  const resp: any = await getHydradxAssetSymbolDecimals(Number(assetin));
+  const resp: any = await getAssetDecimals("hydradx", Number(assetin));
 
   const tokenDecimals = Number(resp.decimals);
   const minBuyAmount = Math.round(aout * 1e10);

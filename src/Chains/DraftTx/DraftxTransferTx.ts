@@ -621,7 +621,7 @@ function uint8ArrayToHex(uint8Array: Uint8Array): string {
   return hex;
 }
 
-export async function polkadot_assethub_to_kusama_assethub(
+export async function polkadot_assethub_to_assetHub_kusama(
   amount: number,
   accountid: string
 ) {

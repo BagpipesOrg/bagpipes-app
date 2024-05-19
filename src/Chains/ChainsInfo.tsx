@@ -29,7 +29,7 @@ export function listChains() {
 
 
     const KusamaAssethub: ChainInfo = {
-      name: 'kusama_assethub',
+      name: 'assetHub_kusama',
       display: 'Assethub (Kusama)',
       paraid: 1000,
       prefix: 2, 

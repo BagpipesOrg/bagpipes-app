@@ -35,18 +35,26 @@ class ChainRpcService {
     }
   }
 
-  static async executeChainSignMethod({ chainKey, palletName, methodName, params, signerAddress, signer }: MethodParams): Promise<any> {
+  static async executeChainTxMethod({ chainKey, palletName, methodName, params, signerAddress, signer }: MethodParams): Promise<any> {
     const api = await getApiInstance(chainKey);
     const method = this.resolveMethod(api, palletName, methodName, true);
     const formattedParams = this.formatParams(params);
-    const extrinsic = method(...formattedParams) as SubmittableExtrinsic<'promise'>;
-
     if (!signerAddress) throw new Error("Signer address is required for transaction signing.");
 
-    
-    
-    const signedExtrinsic = await signExtrinsicUtil(api, signer, extrinsic, signerAddress);
-    return await signedExtrinsic.send();
+    try {
+      let extrinsic: SubmittableExtrinsic<'promise'>;
+      let signedExtrinsic: SubmittableExtrinsic<'promise'>;
+  
+      extrinsic = method(...formattedParams) as SubmittableExtrinsic<'promise'>;
+      signedExtrinsic = await signExtrinsicUtil(api, signer, extrinsic, signerAddress);
+      
+      return signedExtrinsic;
+
+    } catch (error) {
+      console.error('Error executing chain tx method:', error);
+      throw error;
+    }
+
   }
 
   private static resolveMethod(api: ApiPromise, palletName: string, methodName: string, isTx: boolean): any {

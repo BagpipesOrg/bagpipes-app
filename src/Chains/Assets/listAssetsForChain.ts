@@ -16,8 +16,8 @@ export function listAssetHubAssets() {
   }));
 }
 
-export function listkusama_assethubAssets() {
-  const assets = CHAIN_ASSETS.kusama_assethub.assets;
+export function listassetHub_kusamaAssets() {
+  const assets = CHAIN_ASSETS.assetHub_kusama.assets;
 
   return assets.map((assetData: { asset: any; assetId: any }) => ({
     asset: assetData.asset,

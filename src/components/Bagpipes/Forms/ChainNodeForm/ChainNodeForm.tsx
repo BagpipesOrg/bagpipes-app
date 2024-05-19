@@ -90,7 +90,7 @@ const ChainNodeForm: React.FC<ChainNodeFormProps> = ({ visible, nodeId, nodes, e
 
   const sourceChainName = scenarios[activeScenarioId]?.diagramData?.nodes[previousNodeIndex]?.formData?.chain;
   const sourceChainId = chainNameToId(sourceChainName);
-  let filteredChainInfoList;
+  let filteredChainInfoList: any[];
   const hrmpForSource = hrmpChannels[sourceChainId] || [];  // Default to an empty array if undefined
 
   // Always include "polkadot" and filter based on HRMP channels if they exist

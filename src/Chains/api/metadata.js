@@ -107,7 +107,7 @@ export const CHAIN_METADATA = {
     },
 
 
-    kusama_assethub: {
+    assetHub_kusama: {
         chain: "Kusama Assethub",
         endpoints: ["wss://statemine-rpc.dwellir.com"],
         queryBalancePaths: ["system.account"],

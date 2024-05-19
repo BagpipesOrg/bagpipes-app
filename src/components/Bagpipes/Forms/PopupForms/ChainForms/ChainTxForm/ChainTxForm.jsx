@@ -4,6 +4,13 @@ import { WalletContext } from '../../../../../Wallet/contexts';
 import { getAssetBalanceForChain } from '../../../../../../Chains/Helpers/AssetHelper';
 import BalanceTippy from './BalanceTippy';
 
+import { broadcastToChain } from '../../../../../../Chains/api/broadcastToChain';
+
+import toast  from 'react-hot-toast';
+import { ChainToastContent, ActionToastContent, CustomToastContext } from '../../../../../toasts/CustomToastContext'
+
+import { processScenarioData, validateDiagramData, processAndSanitizeFormData, parseAndReplacePillsInFormData, sanitizeFormData, getUpstreamNodeIds } from '../../../../utils/scenarioUtils';
+import { getOrderedList } from '../../../../hooks/utils/scenarioExecutionUtils';
 
 import { CollapsibleField }  from '../../../fields';
 import { ChainQueryIcon } from '../../../../../Icons/icons';
@@ -29,10 +36,13 @@ import '../../../../../../index.css';
 
 
 const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
-  const { scenarios, activeScenarioId, saveNodeFormData } = useAppStore(state => ({ 
+  const { scenarios, activeScenarioId, saveNodeFormData, clearSignedExtrinsic, markExtrinsicAsUsed, updateNodeResponseData } = useAppStore(state => ({ 
     scenarios: state.scenarios,
     activeScenarioId: state.activeScenarioId,
     saveNodeFormData: state.saveNodeFormData,
+    clearSignedExtrinsic: state.clearSignedExtrinsic,
+    markExtrinsicAsUsed: state.markExtrinsicAsUsed,
+    updateNodeResponseData: state.updateNodeResponseData,
    }));
    const walletContext = useContext(WalletContext);
    const [balance, setBalance] = useState(null);
@@ -50,11 +60,11 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
   const [selectedChain, setSelectedChain] = useState(formData.selectedChain || '');
   const [selectedPallet, setSelectedPallet] = useState(formData.selectedPallet || null);
   const [selectedMethod, setSelectedMethod] = useState(formData.selectedMethod || null);
-  const [blockHash, setBlockHash] = useState(formData.blockHash || '');
   const [result, setResult] = useState('');
 
   const { hideTippy } = useTippy();
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
+  const [isTextAreaValue, setIsTextAreaValue] = useState(false);
 
   const lookupTypes = useMemo(() => {
     const typesArray = metadata?.metadata?.V14?.lookup?.types;
@@ -121,7 +131,7 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
         setSelectedChain(chainName);
         setSelectedPallet(null);
         setSelectedMethod(null);
-        setBlockHash('');
+       
 
         try {
             const metadata = await queryMetadata(chainName);
@@ -132,7 +142,7 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
             console.error('Error fetching metadata:', error);
         }
     }
-    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedChain: chainName, selectedMethod: null, selectedPallet: null, blockHash: ''});
+    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedChain: chainName, selectedMethod: null, selectedPallet: null});
   };
 
     
@@ -144,11 +154,11 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
         console.log('handlePalletChange New Pallet  selectedMethod changing to null:', selectedMethod, newPallet);
 
     }
-    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedPallet: palletName, selectedMethod: null});
+    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedPalletData: newPallet, selectedPallet: palletName, selectedMethod: null});
   };
 
   const handleMethodChange = (methodName) => {
-    const newMethod = selectedPallet?.calls.find(calls => calls.name === methodName);
+    const newMethod = formData.selectedPalletData?.calls.find(calls => calls.name === methodName);
     console.log('handleMethodChange New Method:', newMethod);
     if (newMethod && newMethod !== selectedMethod) {
         setSelectedMethod(newMethod);
@@ -158,11 +168,6 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedMethod: newMethod});
   };
 
-
-  const handleBlockHashChange = (newBlockHash) => {
-    // setBlockHash(newBlockHash);
-    saveNodeFormData(activeScenarioId, nodeId, {...formData, blockHash: newBlockHash});
-  };
 
   const handleMethodFieldChange = (fieldName, newFieldValue) => {
     // Update the specific field inside formData.params
@@ -189,12 +194,34 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
       value: acc.address
     }));
 
+    
+
+    const renderCustomContent = () => {
+      
+
+      return (
+
+      <div className="flex items-center primary-font">
+      {isFetchingBalance ? (
+        <span>Loading balance...</span>
+      ) : (
+        balance && <BalanceTippy balance={balance} symbol={chainSymbol} /> // Adjust symbol accordingly
+      )}
+            <span onClick={fetchBalance} className="text-xs m-1 p-0 rounded refresh-button">
+            <img className="h-3 w-3" src="/refresh.svg" />
+          </span>
+                 
+    </div>
+      );
+    };
+
     return (
       <CollapsibleField
         key="addressDropdown"
         title="Select Address"
         hasToggle={true}
         fieldTypes="select"
+        customContent={renderCustomContent()}
         nodeId="address-dropdown"
         info="Select an address that will sign the transaction."
         selectOptions={addressOptions}
@@ -206,15 +233,20 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
 
 
   const renderChainSelection = () => {
+
+    const renderCustomContent = () => {
       if (chains?.length === 0) {
           return <div>Loading chains...</div>;
       }
+    }
 
       return (
           <CollapsibleField
               key="chainDropdown"
               title="Select Chain"
               hasToggle={true}
+              customContent={renderCustomContent()
+              }
               fieldTypes="select"
               nodeId={nodeId}
               info="Choose a blockchain chain to query"
@@ -249,23 +281,30 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
   };
     
   const renderMethodSelection = () => {
-    console.log('renderMethodSelection selectedPallet:', selectedPallet);
-    if (!selectedPallet) return null;
-  
+    if (!formData.selectedPalletData) return null;
+
+
+
     // Check if `calls` array exists and has elements
-    if (!selectedPallet.calls || selectedPallet.calls.length === 0) {
-      console.log("No calls available for:", selectedPallet.name);
+    if (!formData.selectedPalletData.calls || formData.selectedPalletData.calls.length === 0) {
       return <div>No transaction methods available for this pallet.</div>;
     }
+
+    const generateCustomContent = () => {
   
+
+    };
+    
+
     // Directly use the calls array since each entry represents a method
-    const methods = selectedPallet.calls;
+    const methods = formData.selectedPalletData.calls;
   
     return (
       <CollapsibleField
         key="methodDropdown"
         title="Select Method"
         hasToggle={true}
+        customContent={generateCustomContent()}
         fieldTypes="select"
         nodeId={nodeId}
         info="Select a transaction method to execute"
@@ -279,17 +318,28 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
 
   const renderMethodFields = () => {
     if (!formData.selectedMethod) {
-        return <div>No method selected.</div>;
+      return null;
     }
-    if (Object.keys(lookupTypes).length === 0) {
+
+
+    const generateCustomContent = () => {
+      
+      if (Object.keys(lookupTypes).length === 0) {
         return <div>Loading data or incomplete metadata...</div>;
-    }
+      }
+  
+    };
+
+
+    const customContent = generateCustomContent();
+
 
     return formData.selectedMethod?.fields?.map((field, index) => (
         <CollapsibleField
             title={`${field.name} <${field.typeName}>`}
             info={field.docs || 'No documentation available.'}
             fieldTypes="input"
+            customContent={customContent}
             hasToggle={true}
             nodeId={nodeId}
             value={formData.params?.[field.name] || ''}
@@ -301,78 +351,137 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     ));
 };
 
-  
-  const renderBlockHashInput = () => {
-    if (!selectedMethod) return null; 
-    
+
+const renderSignAndSendTx = () => {
+  if (!formData.selectedMethod) {
+      return null;
+  }
     return (
-        <CollapsibleField
-            title="Blockhash/Blocknumber to Query (optional)"
-            info="Enter a block hash or block number to query specific data, leave blank for latest block."
-            fieldTypes="input"
-            hasToggle={true}
-            nodeId={nodeId}
-            value={formData?.blockHash}
-            onChange={handleBlockHashChange}
-            // onPillsChange={(updatedPills) => handlePillsChange(updatedPills, blockHash)}
-
-        />
+      <CollapsibleField
+      title={`Sign and Send Tx`}
+      info={'Sign and send a transaction just within this node. If you use pills then it will use the data from the previous scenario workflow execution that was made.'}
+      fieldTypes="buttonTextArea"
+      buttonName="Submit Tx"
+      nodeId={nodeId}
+      value={result}
+      isTextAreaValue={isTextAreaValue}
+      onClick={handleSignMethodClick}
+      // onPillsChange={(updatedPills) => handlePillsChange(updatedPills, field.name)}
+      placeholder={`Enter`}
+      disabled={!formData.selectedMethod}
+  />
     );
-  };
-
+};
   
-
-//   const CallsFieldInput = ({ field, lookupTypes, formData, handleFieldChange }) => {
-//     if (!field) {
-//         console.error('Invalid or incomplete call field:', field);
-//         return <div>Field data is incomplete or missing.</div>;
-//     }
-
-//     return (
-//         <div>
-//             <CollapsibleField
-//                 title={`${field.name} <${field.typeName}>`}
-//                 info={field.docs || 'No documentation available.'}
-//                 fieldTypes="input"
-//                 hasToggle={true}
-//                 nodeId={`field-input-${field.name}`}
-//                 value={formData[field.name] || ''}
-//                 onChange={handleMethodFieldChange}
-//                 // onPillsChange={(updatedPills) => handlePillsChange(updatedPills, field.name)}
-//                 placeholder={`Enter ${field.name}`}
-//             />
-//         </div>
-//     );
-// };
+  
 
 
   const handleSignMethodClick = async () => {
-    if (!selectedMethod) return;
+    setIsTextAreaValue(true);
+    clearSignedExtrinsic(activeScenarioId, nodeId);
+
+
+    if (!selectedMethod) {
+        alert("No method selected. Please select a method before attempting to sign.");
+        return;
+    }
+
+    if (!formData.selectedChain || !formData.selectedPallet || !formData.selectedAddress) {
+        alert("Missing required information: Please ensure a chain, pallet, and signer address are selected.");
+        return;
+    }
+    
+    const lastExecutionId = useAppStore.getState().executionId;
+    const recentExecutions = useAppStore.getState().scenarios[activeScenarioId]?.executions
+    const lastExecution = recentExecutions[lastExecutionId];
+    console.log('Active Execution Data:', lastExecution);
+
+    const diagramData = scenarios[activeScenarioId]?.diagramData;
+    const orderedList = getOrderedList(diagramData.edges);
+
 
     try {
-        const output = await ChainRpcService.executeChainSignMethod({
-            chainKey: formData.selectedChain,
-            palletName: formData.selectedPallet,
-            methodName: formData.selectedMethod.name,
-            params: Object.values(formData.params || {}), // we need to pass in the params so that the tx params are not blank
-            atBlock: formData.blockHash || undefined,
+
+      const upstreamNodeIds = getUpstreamNodeIds(orderedList, nodeId);
+      const parsedFormData = processAndSanitizeFormData(formData, lastExecution, upstreamNodeIds);
+
+      const presignPack = `Draft Tx ready to sign: \naddress: ${parsedFormData.selectedAddress}, \nchain: ${parsedFormData.selectedChain}, \npallet: ${parsedFormData.selectedPallet}, \nmethod: ${parsedFormData.selectedMethod.name}, \nparams: ${Object.values(parsedFormData.params)}\n`;
+      setResult(presignPack);
+
+      console.log('Parsed Form Data:', parsedFormData);
+      saveNodeFormData(activeScenarioId, nodeId, {
+        ...formData,
+        isSigned: false
+    });
+        const signedExtrinsic = await ChainRpcService.executeChainTxMethod({
+            chainKey: parsedFormData.selectedChain,
+            palletName: parsedFormData.selectedPallet,
+            methodName: parsedFormData.selectedMethod.name,
+            params: Object.values(parsedFormData.params || {}),
             signer: walletContext?.wallet?.signer,
-            signerAddress: formData.selectedAddress
+            signerAddress: parsedFormData.selectedAddress
         });
-        setResult(JSON.stringify(output, null, 2));
+        // Update the store with signed transaction and signed status
+        saveNodeFormData(activeScenarioId, nodeId, {
+          ...formData,
+            signedExtrinsic: signedExtrinsic,
+            isSigned: true
+        });
+        const resultPack = `Chain Tx signed for: \naddress: ${parsedFormData.selectedAddress}, \nchain: ${parsedFormData.selectedChain}, \npallet: ${parsedFormData.selectedPallet}, \nmethod: ${parsedFormData.selectedMethod.name}, \nparams: ${Object.values(parsedFormData.params)}\n`;
+        const nextSteps = `Transaction signed successfully and is now being submitted to the chain...\n`;
+        const submittingTransaction = `Submitting transaction...\n`;
+        setResult(resultPack);
+        setResult(resultPack + nextSteps);
+
+        
+    // } catch (error) {
+    //     const failedTransaction = `Failed to sign transaction. Error: ${error.message} \n`;
+
+    //     console.error('Execution failed:', error);
+    //     setResult(result + failedTransaction);
+    //     // alert(`Failed to sign transaction: ${error.message}`);
+    // }
+
+    // try {
+
+      await broadcastToChain(formData.selectedChain, signedExtrinsic, {
+          onInBlock: (blockHash) => {
+              setResult(resultPack + nextSteps + "Tx in block...\n");
+
+              console.log(`Transaction included at blockHash: ${blockHash}`);
+              toast.success(`Transaction included at blockHash: ${blockHash}`);
+              // updateNodeResponseData(activeScenarioId, lastExecutionId, nodeId, { inBlock: blockHash });
+              console.log('[markExtrinsicAsUsed] first attempt to clear signed extrinsic...');
+              markExtrinsicAsUsed(activeScenarioId, nodeId);
+          },
+          onFinalized: (blockHash) => {
+              setResult(resultPack + nextSteps + "Tx in block..." + "Tx finalized...");
+              toast.success(`Transaction finalized at blockHash: ${blockHash}`);
+              // updateNodeResponseData(activeScenarioId, lastExecutionId, nodeId, { finalized: blockHash });
+              saveNodeFormData(activeScenarioId, nodeId, { ...formData, signedExtrinsic: '' });
+              console.log('clearing signed extrinsic...', formData);
+          },
+          onError: (error) => {
+              setResult(result + "Tx error ...");
+              toast.error(`Action execution failed: ${error.message}`);
+              // updateNodeResponseData(activeScenarioId, lastExecutionId, nodeId, { error: error.message });
+              console.log('second attempt to clear signed extrinsic...');
+          },
+      });
+
+
     } catch (error) {
-        console.error('Execution failed:', error);
-        setResult(`Error: ${error.message}`);
+      const failedTransaction = `Failed to sign transaction. Error: ${error.message} \n`;
+
+      // This catch block is for handling errors not caught by the onError callback, e.g., network issues
+      toast.error(`Error broadcasting transaction for ChainTx: ${error.message}`);
+      setResult(result + failedTransaction);
     }
+    
+    // toast(<ActionToastContent type={formData?.actionData?.actionType} message={`Broadcasted to Chain: ${sourceChain}`} signedExtrinsic={signedExtrinsic} />);
   };
 
-  const handlePillsChange = (updatedPills, fieldKey) => {
-    console.log('handlePillsChange Updated Pills:', fieldKey);
-      saveNodeFormData(activeScenarioId, nodeId, (previousData) => ({
-      ...previousData,
-      [fieldKey]: updatedPills  // assuming pills directly relate to the field without a nested structure
-    }));
-  };
+
 
   const handleAdvancedSettingsToggle = (isToggled) => {
     setShowAdvancedSettings(isToggled);
@@ -409,7 +518,7 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
       return;
     }
     try {
-      const fetchedBalance = await getAssetBalanceForChain(formData.selectedChain, chain.paraid, formData.selectedAddress);
+      const fetchedBalance = await getAssetBalanceForChain(formData.selectedChain, 0, formData.selectedAddress);
       setBalance(fetchedBalance);
       if (!signal.aborted) {
         setBalance(fetchedBalance);
@@ -444,36 +553,22 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
 
 return (
   <div onScroll={handleScroll} className=''>
-      <FormHeader onClose={handleCancel} title='Query Chain' logo={<ChainQueryIcon className='h-4 w-4' fillColor='black' />} />  
+      <FormHeader onClose={handleCancel} title='Chain Tx Form' logo={<ChainQueryIcon className='h-4 w-4' fillColor='black' />} />  
 
       <div className='http-form'>
           
           {renderAddressSelection()} 
-          <div className="flex items-center primary-font">
-        {isFetchingBalance ? (
-          <span>Loading balance...</span>
-        ) : (
-          balance && <BalanceTippy balance={balance} symbol={chainSymbol} /> // Adjust symbol accordingly
-        )}
-              <span onClick={fetchBalance} className="text-xs m-1 p-0 rounded refresh-button">
-              <img className="h-3 w-3" src="/refresh.svg" />
-            </span>
-                   
-      </div>
-
           {renderChainSelection()}
           {renderPalletSelection()}
           {renderMethodSelection()}
           {renderMethodFields()}
-          {renderBlockHashInput()}
+          {renderSignAndSendTx()}
 
-
-    <button className="button mt-2" onClick={handleSignMethodClick} disabled={!selectedMethod}>Sign Tx Once</button>
-    <textarea className="result-textarea" value={result} readOnly />
 
     </div>
 
-    <FormFooter onClose={handleCancel} onSave={handleSave} showToggle={true} onToggleChange={handleAdvancedSettingsToggle} />
+
+      <FormFooter onClose={handleCancel} onSave={handleSave} showToggle={true} onToggleChange={handleAdvancedSettingsToggle} />
   </div>
 );
 
