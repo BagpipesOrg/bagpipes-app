@@ -142,7 +142,7 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
             console.error('Error fetching metadata:', error);
         }
     }
-    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedChain: chainName, selectedMethod: null, selectedPallet: null});
+    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedChain: chainName, selectedMethod: null, selectedPallet: null, params: null});
   };
 
     
@@ -151,10 +151,11 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     if (newPallet && newPallet !== selectedPallet) {
         setSelectedPallet(newPallet);
         setSelectedMethod(null); 
+        setSelectedParams({});
         console.log('handlePalletChange New Pallet  selectedMethod changing to null:', selectedMethod, newPallet);
 
     }
-    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedPalletData: newPallet, selectedPallet: palletName, selectedMethod: null});
+    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedPalletData: newPallet, selectedPallet: palletName, selectedMethod: null, params: null});
   };
 
   const handleMethodChange = (methodName) => {
@@ -162,10 +163,11 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     console.log('handleMethodChange New Method:', newMethod);
     if (newMethod && newMethod !== selectedMethod) {
         setSelectedMethod(newMethod);
+        setSelectedParams({});
     }
-    setSelectedMethod(newMethod);
+    // setSelectedMethod(newMethod);
 
-    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedMethod: newMethod});
+    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedMethod: newMethod, params: null});
   };
 
 

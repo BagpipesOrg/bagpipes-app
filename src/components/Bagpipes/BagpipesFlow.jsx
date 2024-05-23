@@ -635,8 +635,8 @@ const BagpipesFlow = () => {
 const diagramData = scenarios[activeScenarioId].diagramData;
 const orderedList = getOrderedList(diagramData.edges);
 const transformedList = transformOrderedList(orderedList, scenarios[activeScenarioId]?.diagramData?.nodes);
-const containsActionNodes = (nodes) => nodes.some(node => node.type === 'action');
-const actionNodesPresent = containsActionNodes(transformedList);
+const draftingIsRequired = (nodes) => nodes.some(node => node.type === 'action' || node.type === 'chainTx');
+const draftingNodesPresent = draftingIsRequired(transformedList);
 
 
 
@@ -644,7 +644,8 @@ const handleStartScenario = async (instance) => {
   setIsExecuting(true);
   toast(<OrderedListContent list={transformedList} />);
 
-  if (actionNodesPresent) {
+  if (draftingNodesPresent) {
+    console.log("Drafting nodes present. Starting drafting process...");  
     try {
       const promise = preProcessDraftTransactions(activeScenarioId, scenarios, isActionDataComplete);
 
@@ -800,7 +801,7 @@ const handleStopScenario = (instance) => {
             
 
           
-            <TopBar createScenario={createScenario} handleExecuteFlowScenario={handleExecuteFlowScenario} handleStartScenario={handleStartScenario} handleStopScenario={handleStopScenario} shouldExecuteFlowScenario={shouldExecuteFlowScenario} actionNodesPresent={actionNodesPresent}  />
+            <TopBar createScenario={createScenario} handleExecuteFlowScenario={handleExecuteFlowScenario} handleStartScenario={handleStartScenario} handleStopScenario={handleStopScenario} shouldExecuteFlowScenario={shouldExecuteFlowScenario} draftingNodesPresent={draftingNodesPresent}  />
             <Toolbar />
             </ReactFlowStyled>
             

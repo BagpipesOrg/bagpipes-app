@@ -76,7 +76,7 @@ export default function WebhookNode({ }) {
 
 
   
-    showTippy(null, nodeId, nodeRef.current, <WebhookForm onSave={handleSubmit} onClose={handleCloseWebhookForm} nodeId={nodeId} reference={nodeRef.current} />, shouldFlipToLeft ? 'left-start' : 'right-start');
+    showTippy(null, nodeId, nodeRef.current, <WebhookForm onSave={handleSubmit} onClose={handleCloseWebhookForm} nodeId={nodeId} />, shouldFlipToLeft ? 'left-start' : 'right-start');
   };
 
 

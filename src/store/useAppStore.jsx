@@ -540,15 +540,22 @@ const useAppStore = create(
           return;
         }
     
+       
+    
+        // Wrap the status update in a Response object
+        const wrappedStatusUpdate = {
+          timestamp: new Date().toISOString(),
+          data: {
+            ...statusUpdate,
+          },
+        };
+    
         // Append new status event updates without overwriting previous ones
         const updateExecutionResponseData = {
           ...node.responseData,
           eventUpdates: [
             ...(node.responseData.eventUpdates || []), // Ensure there's a default array to append to
-            {
-              timestamp: new Date().toISOString(),
-              ...statusUpdate,
-            },
+            wrappedStatusUpdate,
           ],
         };
     
@@ -573,6 +580,45 @@ const useAppStore = create(
         };
       });
     },
+    
+
+
+    updateExecutionSigningJob: (scenarioId, executionId, nodeId, signingJob) => {
+      set((state) => {
+        const scenario = state.scenarios[scenarioId];
+        if (!scenario || !scenario.executions || !scenario.executions[executionId]) {
+          console.error(`[updateChainTxExecutionSigning] Execution with ID ${executionId} not found in scenario ${scenarioId}.`);
+          return;
+        }
+  
+        const node = scenario.executions[executionId][nodeId];
+        if (!node) {
+          console.error(`[updateChainTxExecutionSigning] Node with ID ${nodeId} not found in execution ${executionId}.`);
+          return;
+        }
+  
+        // Update the state with the new signing job details
+        return {
+          scenarios: {
+            ...state.scenarios,
+            [scenarioId]: {
+              ...scenario,
+              executions: {
+                ...scenario.executions,
+                [executionId]: {
+                  ...scenario.executions[executionId],
+                  [nodeId]: {
+                    ...node,
+                    signingJob: signingJob,
+                  },
+                },
+              },
+            },
+          },
+        };
+      });
+    },
+
     
     updateNodeWebhookEventStatus: (scenarioId, executionId, nodeId, { hasPreviousEvents, userDecision }) => {
       set((state) => {

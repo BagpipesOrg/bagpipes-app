@@ -22,9 +22,10 @@ import './Pills/Pills.scss';
 
 const PanelForm = ({ nodeId, onClose }) => {
   const dropPositionRef = useRef(null);    
-  const { scenarios, activeScenarioId, saveNodeFormData, savePanel, panels, setSelectedPanelInNode } = useAppStore(state => ({ 
+  const { scenarios, activeScenarioId, saveNodeFormData, savePanel, panels, setSelectedPanelInNode, executionId } = useAppStore(state => ({ 
         scenarios: state.scenarios,
         activeScenarioId: state.activeScenarioId,
+        executionId: state.executionId,
         // saveNodeFormData: state.saveNodeFormData,
     
     }));
@@ -51,22 +52,21 @@ const PanelForm = ({ nodeId, onClose }) => {
     };
 
     useEffect(() => {
+      console.log('PanelForm checking current scenario ', currentScenario);
       const allNodes = currentScenario.diagramData.nodes;
       const orderedList = getOrderedList(currentScenario.diagramData.edges);
       console.log('orderedList', orderedList);
       const upstreamNodes = findUpstreamNodes(orderedList, nodeId);
       console.log('upstreamNodes', upstreamNodes);
       if (orderedList) {
-        const newPills = extractEventDataFromNodes(upstreamNodes, allNodes, orderedList);
+        const newPills = extractEventDataFromNodes(upstreamNodes, allNodes, orderedList, currentScenario.executions[executionId]);
         console.log('newPills', newPills);  
         setPills(newPills);
       } else {
         console.error('orderedList is undefined');
       }
+    }, [currentScenario.diagramData.edges, nodeId, currentScenario.diagramData.nodes, currentScenario.diagramData, executionId]);
   
-  }, [currentScenario.diagramData.edges, nodeId, currentScenario.diagramData.nodes]);
-
-    
 
     // keyword pills
     const generalPills = Object.entries(keywordPills).filter(([key, pill]) => pill.group === PillGroup.General);
@@ -152,11 +152,11 @@ const PanelForm = ({ nodeId, onClose }) => {
         title='Control Panel' 
         onTabChange={handleTabChange}
         activeTab={activeTab}
-        tabToggle={true}
+        // tabToggle={false} switched off tabs for now
       />  
       
       <div className="content">
-      {activeTab === 'Keywords' && renderKeywordPills()}
+      
 
     {activeTab === 'Pills' && (
       <>
@@ -165,6 +165,8 @@ const PanelForm = ({ nodeId, onClose }) => {
         ))}
       </>
     )}
+
+    {activeTab === 'Keywords' && renderKeywordPills()}  
     {activeTab === 'General' && (
       <>
            <h3>Keywords</h3>
@@ -284,7 +286,7 @@ const PanelForm = ({ nodeId, onClose }) => {
           </>
         )}
 
-{activeTab === 'CryptoHash' && (
+    {activeTab === 'CryptoHash' && (
           <>
             <h3>Keywords</h3>
             <div className="pills-container">   

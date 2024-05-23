@@ -18,13 +18,17 @@ import { ChainToastContent, ActionToastContent, CustomToastContext } from '../..
 import { getOrderedList } from './utils/scenarioExecutionUtils';
 import { handleNodeViewport } from '../handlers/handleNodeViewport';
 import { broadcastToChain } from '../../../Chains/api/broadcastToChain';
+import { getPaymentInfo } from '../../../Chains/Helpers/FeeHelper';
+import { useTippy } from '../../../contexts/tooltips/TippyContext';
+// import { sign } from 'crypto';
 
+// import TransactionSignForm from '../Forms/PopupForms/ChainForms/ChainTxForm/TransactionSignForm';
 
 
 const useExecuteFlowScenario = (nodes, setNodes, instance) => {
     const socket = useContext(SocketContext);
     const store = useStoreApi();
-    const { scenarios, activeScenarioId, saveExecution, executionId, setExecutionId, updateNodeContent, setLoading, loading, toggleExecuteFlowScenario, executionState, setExecutionState, saveTriggerNodeToast, updateEdgeStyleForNode, updateNodeResponseData, updateNodeWebhookEventStatus, clearSignedExtrinsic, markExtrinsicAsUsed, setIsLoadingNode, isExecuting, setIsExecuting, saveNodeEventData } = useAppStore(state => ({
+    const { scenarios, activeScenarioId, saveExecution, executionId, setExecutionId, updateNodeContent, setLoading, loading, toggleExecuteFlowScenario, executionState, setExecutionState, saveTriggerNodeToast, updateEdgeStyleForNode, updateNodeResponseData, updateExecutionSigningJob, updateNodeWebhookEventStatus, clearSignedExtrinsic, markExtrinsicAsUsed, setIsLoadingNode, isExecuting, setIsExecuting, saveNodeEventData } = useAppStore(state => ({
       scenarios: state.scenarios,
       activeScenarioId: state.activeScenarioId,
       saveExecution: state.saveExecution,
@@ -45,13 +49,19 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
       isExecuting: state.isExecuting,
       setIsExecuting: state.setIsExecuting,
       saveNodeEventData: state.saveNodeEventData,
+      updateExecutionSigningJob: state.updateExecutionSigningJob,
     }));
     const [nodeContentMap, setNodeContentMap] = useState({}); 
     const [nodeContentHistory, setNodeContentHistory] = useState({});
     const [lastReceived, setLastReceived] = useState({});
     const [executionStatuses, setExecutionStatuses] = useState({});
     const prevExecutionIdRef = useRef(null);  
+    const { showTippy, hideTippy } = useTippy();
+
     const executedIds = useRef(new Set()).current;
+
+
+  
 
     async function executeFlowScenario() {
       const newExecutionId = uuidv4(); 
@@ -173,39 +183,44 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                 const formData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData || null;
                 const node = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId) || null;
                 const signedExtrinsic = node?.extrinsics?.signedExtrinsic || null;
-                const sourceChain = formData?.actionData?.source?.chain || null;
+                // const sourceChain = formData?.actionData?.source?.chain || null;
             
-                try {
-                    console.log('clearing signed extrinsic...');
-                    clearSignedExtrinsic(activeScenarioId, nodeId);
-                    await broadcastToChain(sourceChain, signedExtrinsic, {
-                        onInBlock: (blockHash) => {
-                            console.log(`Transaction included at blockHash: ${blockHash}`);
-                            toast.success(`Transaction included at blockHash: ${blockHash}`);
-                            updateNodeResponseData(activeScenarioId, updatedExecutionId, nodeId, { inBlock: blockHash });
-                            console.log('[markExtrinsicAsUsed] first attempt to clear signed extrinsic...');
-                            markExtrinsicAsUsed(activeScenarioId, nodeId);
-                        },
-                        onFinalized: (blockHash) => {
-                            toast.success(`Transaction finalized at blockHash: ${blockHash}`);
-                            updateNodeResponseData(activeScenarioId, updatedExecutionId, nodeId, { finalized: blockHash });
-                        },
-                        onError: (error) => {
-                            toast.error(`Action execution failed: ${error.message}`);
-                            setLoading(false);
-                            updateNodeResponseData(activeScenarioId, updatedExecutionId, nodeId, { error: error.message });
-                            console.log('second attempt to clear signed extrinsic...');
-                        },
-                    });
+                // we use this function instead of the extrinsicHandler to handle the different action types, 
+                // but we need to validate it works with action nodes before removing the commented out code
+                // !TODO: also process pills for actions, which means providing parsedFormData to the function
+                await broadcastTransaction(activeScenarioId, updatedExecutionId, currentNode.id, formData, signedExtrinsic);
 
-                } catch (error) {
-                    // This catch block is for handling errors not caught by the onError callback, e.g., network issues
-                    toast.error(`Error broadcasting transaction: ${error.message}`);
-                    setLoading(false);
-                }
-                console.log('third attempt to clear signed extrinsic...');
-                console.log('Broadcasted to Chain:', signedExtrinsic);
-                toast(<ActionToastContent type={formData?.actionData?.actionType} message={`Broadcasted to Chain: ${sourceChain}`} signedExtrinsic={signedExtrinsic} />);
+                // try {
+                //     console.log('clearing signed extrinsic...');
+                //     clearSignedExtrinsic(activeScenarioId, nodeId);
+                //     await broadcastToChain(sourceChain, signedExtrinsic, {
+                //         onInBlock: (blockHash) => {
+                //             console.log(`Transaction included at blockHash: ${blockHash}`);
+                //             toast.success(`Transaction included at blockHash: ${blockHash}`);
+                //             updateNodeResponseData(activeScenarioId, updatedExecutionId, nodeId, { inBlock: blockHash });
+                //             console.log('[markExtrinsicAsUsed] first attempt to clear signed extrinsic...');
+                //             markExtrinsicAsUsed(activeScenarioId, nodeId);
+                //         },
+                //         onFinalized: (blockHash) => {
+                //             toast.success(`Transaction finalized at blockHash: ${blockHash}`);
+                //             updateNodeResponseData(activeScenarioId, updatedExecutionId, nodeId, { finalized: blockHash });
+                //         },
+                //         onError: (error) => {
+                //             toast.error(`Action execution failed: ${error.message}`);
+                //             setLoading(false);
+                //             updateNodeResponseData(activeScenarioId, updatedExecutionId, nodeId, { error: error.message });
+                //             console.log('second attempt to clear signed extrinsic...');
+                //         },
+                //     });
+
+                // } catch (error) {
+                //     // This catch block is for handling errors not caught by the onError callback, e.g., network issues
+                //     toast.error(`Error broadcasting transaction: ${error.message}`);
+                //     setLoading(false);
+                // }
+                // console.log('third attempt to clear signed extrinsic...');
+                // console.log('Broadcasted to Chain:', signedExtrinsic);
+                // toast(<ActionToastContent type={formData?.actionData?.actionType} message={`Broadcasted to Chain: ${sourceChain}`} signedExtrinsic={signedExtrinsic} />);
             
                 // Check if it's the last iteration to set executionCycleFinished accordingly
                 executionCycleFinished = index === orderedList.length - 1;
@@ -250,7 +265,6 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                     executionCycleFinished = index === orderedList.length - 1;
                     break;
                 
-                     
             case 'http':
                 setIsLoadingNode(currentNode.id, true);
 
@@ -311,104 +325,139 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                 executionCycleFinished = index === orderedList.length - 1;
                 break;
 
-                case 'chainQuery':
-                    console.log('chainQuery executeFlowScenario for chainQuery event...', currentNode.id);
-                    setIsLoadingNode(currentNode.id, true);
-                    updateEdgeStyleForNode(currentNode.id, 'executing');
-                    console.log('Executing Chain Query node...', currentNode.id);
-                
-                    const chainQueryExecutions = useAppStore.getState().scenarios[activeScenarioId]?.executions;
-                
-                    if (chainQueryExecutions) {
-                        const upstreamNodeIds = getUpstreamNodeIds(orderedList, currentNode.id);
-                        const activeExecutionData = chainQueryExecutions[updatedExecutionId];
-                
-                        const parsedFormData = processAndSanitizeFormData(currentNode.formData, activeExecutionData, upstreamNodeIds);
-                        console.log('chainQuery Parsed Form Data:', parsedFormData);
-                        try {
-                            const queryResult = await ChainRpcService.executeChainQueryMethod({
-                                chainKey: parsedFormData.selectedChain,
-                                palletName: parsedFormData.selectedPallet,
-                                methodName: parsedFormData.selectedMethod.name,
-                                params: parsedFormData.methodInput,
-                                atBlock: parsedFormData.blockHash || undefined
-                            });
-                            console.log('Chain Query Response:', queryResult);
-                            updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, {
-                                eventData: queryResult,
-                                status: 'success'
-                            });
-                            saveNodeEventData(activeScenarioId, currentNode.id, queryResult);
-                        } catch (error) {
-                            console.error('Error executing Chain Query:', error);
-                            updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, {
-                                error: error.message,
-                                status: 'error'
-                            });
-                        } finally {
-                            setIsLoadingNode(currentNode.id, false);
-                            updateEdgeStyleForNode(currentNode.id, 'default_connected');
-                        }
-                    } else {
-                        console.error('No executions found for the scenario');
-                        return;
-                    }
-                
-                
-                    executionCycleFinished = index === orderedList.length - 1;
-                    break;
+            case 'chainQuery':
+                console.log('chainQuery executeFlowScenario for chainQuery event...', currentNode.id);
+                setIsLoadingNode(currentNode.id, true);
+                updateEdgeStyleForNode(currentNode.id, 'executing');
+                console.log('Executing Chain Query node...', currentNode.id);
             
-                case 'chainTx':
-                    console.log('chainTx executeFlowScenario for chainTx event...', currentNode.id);
-                    setIsLoadingNode(currentNode.id, true);
-                    updateEdgeStyleForNode(currentNode.id, 'executing');
-                    console.log('Executing Chain Tx node...', currentNode.id);
-                
-                    const chainTxExecutions = useAppStore.getState().scenarios[activeScenarioId]?.executions;
-                
-                    if (chainTxExecutions) {
-                        const upstreamNodeIds = getUpstreamNodeIds(orderedList, currentNode.id);
-                        const activeExecutionData = chainTxExecutions[updatedExecutionId];
-                
-                        const parsedFormData = processAndSanitizeFormData(currentNode.formData, activeExecutionData, upstreamNodeIds);
-                        console.log('chainTx Parsed Form Data:', parsedFormData);
-                        try {
-                            const queryResult = await ChainRpcService.executeChainTxMethod({
-                                chainKey: parsedFormData.selectedChain,
-                                palletName: parsedFormData.selectedPallet,
-                                methodName: parsedFormData.selectedMethod.name,
-                                params: parsedFormData.methodInput,
-                                signer: walletContext?.wallet?.signer,
-                                signerAddress: parsedFormData.selectedAddress
-                            });
-                            // static async executeChainTxMethod({ chainKey, palletName, methodName, params, signerAddress, signer }: MethodParams): Promise<any> {
-                               
-                            console.log('Chain Tx Response:', queryResult);
-                            updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, {
-                                eventData: queryResult,
-                                status: 'success'
-                            });
-                            saveNodeEventData(activeScenarioId, currentNode.id, queryResult);
-                        } catch (error) {
-                            console.error('Error executing Chain Tx:', error);
-                            updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, {
-                                error: error.message,
-                                status: 'error'
-                            });
-                        } finally {
-                            setIsLoadingNode(currentNode.id, false);
-                            updateEdgeStyleForNode(currentNode.id, 'default_connected');
-                        }
-                    } else {
-                        console.error('No executions found for the scenario');
-                        return;
-                    }
-                
-                
-                    executionCycleFinished = index === orderedList.length - 1;
-                    break;
+                const chainQueryExecutions = useAppStore.getState().scenarios[activeScenarioId]?.executions;
             
+                if (chainQueryExecutions) {
+                    const upstreamNodeIds = getUpstreamNodeIds(orderedList, currentNode.id);
+                    const activeExecutionData = chainQueryExecutions[updatedExecutionId];
+            
+                    const parsedFormData = processAndSanitizeFormData(currentNode.formData, activeExecutionData, upstreamNodeIds);
+                    console.log('chainQuery Parsed Form Data:', parsedFormData);
+                    try {
+                        const queryResult = await ChainRpcService.executeChainQueryMethod({
+                            chainKey: parsedFormData.selectedChain,
+                            palletName: parsedFormData.selectedPallet,
+                            methodName: parsedFormData.selectedMethod.name,
+                            params: parsedFormData.methodInput,
+                            atBlock: parsedFormData.blockHash || undefined
+                        });
+                        console.log('Chain Query Response:', queryResult);
+                        updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, {
+                            eventData: queryResult,
+                            status: 'success'
+                        });
+                        saveNodeEventData(activeScenarioId, currentNode.id, queryResult);
+                    } catch (error) {
+                        console.error('Error executing Chain Query:', error);
+                        updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, {
+                            error: error.message,
+                            status: 'error'
+                        });
+                    } finally {
+                        setIsLoadingNode(currentNode.id, false);
+                        updateEdgeStyleForNode(currentNode.id, 'default_connected');
+                    }
+                } else {
+                    console.error('No executions found for the scenario');
+                    return;
                 }
+            
+                
+                executionCycleFinished = index === orderedList.length - 1;
+                    
+                    break;
+            
+            case 'chainTx':
+                console.log('chainTx executeFlowScenario for chainTx event...', currentNode.id);
+                setIsLoadingNode(currentNode.id, true);
+                updateEdgeStyleForNode(currentNode.id, 'executing');
+                console.log('Executing Chain Tx node...', currentNode.id);
+            
+                const chainTxExecutions = useAppStore.getState().scenarios[activeScenarioId]?.executions;
+            
+                if (chainTxExecutions) {
+                    const upstreamNodeIds = getUpstreamNodeIds(orderedList, currentNode.id);
+                    const activeExecutionData = chainTxExecutions[updatedExecutionId];
+            
+                    const parsedFormData = processAndSanitizeFormData(currentNode.formData, activeExecutionData, upstreamNodeIds);
+                    console.log('chainTx Parsed Form Data:', parsedFormData);
+                    try {
+                        const { extrinsic, encodedCallData } = await ChainRpcService.createChainTxMethod({
+                            chainKey: parsedFormData.selectedChain,
+                            palletName: parsedFormData.selectedPallet,
+                            methodName: parsedFormData.selectedMethod.name,
+                            params: Object.values(parsedFormData.params || {})
+                            // chainKey: parsedFormData.selectedChain,
+                            // palletName: parsedFormData.selectedPallet,
+                            // methodName: parsedFormData.selectedMethod.name,
+                            // params: parsedFormData.methodInput,
+                            // signer: walletContext?.wallet?.signer,
+                            // signerAddress: parsedFormData.selectedAddress
+                        });
+                        const paymentInfo = await getPaymentInfo(extrinsic, parsedFormData.selectedAddress, parsedFormData.selectedChain);
+                        
+
+                        const transactionDetails = {
+                            parsedFormData,
+                            paymentInfo,
+                            needsSigning: true,
+                            };
+
+        
+    
+                        updateExecutionSigningJob(activeScenarioId, updatedExecutionId, currentNode.id, {
+                            transactionDetails,
+                            extrinsic
+                        });
+
+                        console.log('Chain Tx Transaction Details:', transactionDetails);
+
+                            // Wait for the signing to complete
+                        await new Promise(resolve => {
+                            const interval = setInterval(() => {
+                            const updatedJob = useAppStore.getState().scenarios[activeScenarioId]?.executions[updatedExecutionId]?.[currentNode.id]?.signingJob;
+                            if (updatedJob?.transactionDetails?.needsSigning === false) {
+                                clearInterval(interval);
+                                resolve();
+                            }
+                            }, 1000);
+                        });
+                        
+                        const signedExtrinsic = useAppStore.getState().scenarios[activeScenarioId]?.executions[updatedExecutionId]?.[currentNode.id]?.signingJob?.signedExtrinsic
+                        console.log('broadcasting transaction...', signedExtrinsic);
+                        await broadcastTransaction(activeScenarioId, updatedExecutionId, currentNode.id, parsedFormData, signedExtrinsic);
+
+                        // console.log('Chain Tx Response:', signedExtrinsic);
+                        // updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, {
+                        //     eventData: signedExtrinsic,
+                        //     status: 'success'
+                        // });
+                        // saveNodeEventData(activeScenarioId, currentNode.id, signedExtrinsic);
+                    } catch (error) {
+                        console.error('Error executing Chain Tx:', error);
+                        updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, {
+                            error: error.message,
+                            status: 'error'
+                        });
+                    } finally {
+                        setIsLoadingNode(currentNode.id, false);
+                        updateEdgeStyleForNode(currentNode.id, 'default_connected');
+                    }
+                } else {
+                    console.error('No executions found for the scenario');
+                    return;
+                }
+            
+            
+                executionCycleFinished = index === orderedList.length - 1;
+                break;
+            }
 
             
 
@@ -475,6 +524,48 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
 
 
     return { nodeContentMap, executeFlowScenario, stopExecution };
+
+    async function broadcastTransaction(activeScenarioId, executionId, nodeId, formData, signedExtrinsic) {
+        const sourceChain = formData?.actionData?.source?.chain || formData.selectedChain;
+      
+        try {
+          console.log('Clearing signed extrinsic...');
+          clearSignedExtrinsic(activeScenarioId, nodeId);
+          await broadcastToChain(sourceChain, signedExtrinsic, {
+            onInBlock: (blockHash) => {
+              console.log(`Transaction included at blockHash: ${blockHash}`);
+              toast.success(`Transaction included at blockHash: ${blockHash}`);
+              updateNodeResponseData(activeScenarioId, executionId, nodeId, { inBlock: blockHash });
+              console.log('[markExtrinsicAsUsed] first attempt to clear signed extrinsic...');
+              markExtrinsicAsUsed(activeScenarioId, nodeId);
+            },
+            onFinalized: (blockHash) => {
+              toast.success(`Transaction finalized at blockHash: ${blockHash}`);
+              updateNodeResponseData(activeScenarioId, executionId, nodeId, { finalized: blockHash });
+            },
+            onError: (error) => {
+              toast.error(`Action execution failed: ${error.message}`);
+              setLoading(false);
+              updateNodeResponseData(activeScenarioId, executionId, nodeId, { error: error.message });
+              console.log('Second attempt to clear signed extrinsic...');
+            },
+          });
+      
+        } catch (error) {
+          // This catch block is for handling errors not caught by the onError callback, e.g., network issues
+          toast.error(`Error broadcasting transaction: ${error.message}`);
+          setLoading(false);
+        }
+        console.log('Third attempt to clear signed extrinsic...');
+        console.log('Broadcasted to Chain:', signedExtrinsic);
+        toast(<ActionToastContent type={formData?.actionData?.actionType || 'Chain Tx'} message={`Broadcasted to Chain: ${sourceChain}`} signedExtrinsic={signedExtrinsic} />);
+      }
+
+
+
 };
+
+
+
 
 export default useExecuteFlowScenario;

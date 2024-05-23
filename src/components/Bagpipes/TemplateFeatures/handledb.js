@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL =  'https://api.bagpipes.io';//'http://127.0.0.1:8080';//'https://api.xcmsend.com'; // set API instance's URL
+const BASE_URL = 'http://127.0.0.1:8080'; // 'https://api.bagpipes.io'; 'http://127.0.0.1:8080';//'https://api.xcmsend.com'; // set API instance's URL
 
 const saveUrl = async (longUrl) => {
   try {

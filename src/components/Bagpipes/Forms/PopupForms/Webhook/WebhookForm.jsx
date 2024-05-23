@@ -20,7 +20,7 @@ import '../../../../../index.css';
 
 
 
-const WebhookForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
+const WebhookForm = ({ onSubmit, onSave, onClose, nodeId }) => {
   const { scenarios, activeScenarioId, saveNodeEventData, saveNodeFormData, saveWebhook, webhooks, setSelectedWebhookInNode } = useAppStore(state => ({ 
     scenarios: state.scenarios,
     activeScenarioId: state.activeScenarioId,
