@@ -77,13 +77,16 @@ const EventNotification = ({ nodeId, nodeType, eventUpdates }) => {
     setEventDataPopup(false);
   };
 
+  const hasError = eventUpdates.some(update => update.data && update.data.error);
+  console.log('eventUpdates has Error', hasError, eventUpdates);
+
   if (eventUpdates.length === 0) return null;
 
   return (
     <div
       ref={notificationRef}
       onClick={handleNotificationClick}
-      className="eventNotification"
+      className={`eventNotification ${hasError ? 'error' : 'success'}`}
     >
       {eventUpdates.length}
     </div>

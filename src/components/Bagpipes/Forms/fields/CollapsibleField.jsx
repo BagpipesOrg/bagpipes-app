@@ -9,6 +9,7 @@ import PanelForm from '../PopupForms/Panel/PanelForm';
 import { v4 as uuidv4 } from 'uuid';
 import { useDrop, useDrag } from 'react-dnd';
 import CustomInput from './CustomInput';
+import { CopyBlock, CodeBlock, dracula } from 'react-code-blocks';
 import 'antd/dist/antd.css';
 import './Fields.scss';
 
@@ -248,11 +249,26 @@ const handleToggleChange = (toggled) => {
           break; 
       case 'buttonTextArea':
 
+      <textarea className="result-textarea" value={value} readOnly />
+
         content = (
           <>
             <button className="button mt-2" onClick={onClick} disabled={disabled}>{buttonName}</button>
             {isTextAreaValue ? (
-            <textarea className="result-textarea" value={value} readOnly />
+            <div className=''>
+              <CopyBlock
+              text={value}
+              language={'json'}
+              showLineNumbers={false}
+              customStyle={{borderRadius: '5px', marginTop:'15px', padding: '5px', backgroundColor: '#f5f5f5', overflow: 'auto', maxWidth: '275px'}}
+              />
+                  {/* <CodeBlock
+            text={value}
+            language={'javascript'}
+            showLineNumbers={true}
+            theme={dracula}
+          /> */}
+            </div>
             ) : ('')}
           </>
         );  

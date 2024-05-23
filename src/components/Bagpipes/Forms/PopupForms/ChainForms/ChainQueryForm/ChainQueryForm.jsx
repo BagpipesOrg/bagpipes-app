@@ -17,6 +17,9 @@ import ChainRpcService from '../../../../../../services/ChainRpcService';
 import FormHeader from '../../../FormHeader';
 import FormFooter from '../../../FormFooter';
 
+import { CopyBlock } from 'react-code-blocks';
+
+
 import '../types';
 
 import Tippy from '@tippyjs/react';
@@ -26,7 +29,7 @@ import 'tippy.js/themes/light.css';
 import '../ChainForm.scss';
 import '../../Popup.scss';
 import '../../../../../../index.css';
-import { render } from 'react-dom';
+
 
 
 const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
