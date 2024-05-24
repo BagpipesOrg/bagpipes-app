@@ -56,7 +56,6 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
     const [lastReceived, setLastReceived] = useState({});
     const [executionStatuses, setExecutionStatuses] = useState({});
     const prevExecutionIdRef = useRef(null);  
-    const { showTippy, hideTippy } = useTippy();
 
     const executedIds = useRef(new Set()).current;
 
@@ -384,7 +383,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                 if (chainTxExecutions) {
                     const upstreamNodeIds = getUpstreamNodeIds(orderedList, currentNode.id);
                     const activeExecutionData = chainTxExecutions[updatedExecutionId];
-            
+                    console.log('Active Execution Data:', activeExecutionData);
                     const parsedFormData = processAndSanitizeFormData(currentNode.formData, activeExecutionData, upstreamNodeIds);
                     console.log('chainTx Parsed Form Data:', parsedFormData);
                     try {

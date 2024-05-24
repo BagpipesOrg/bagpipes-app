@@ -128,7 +128,8 @@ export function processAndSanitizeFormData(formData, executionData, upstreamNode
             }
 
             const nodeId = upstreamNodeIds[nodeIndex];
-            const eventData = executionData[nodeId]?.responseData?.eventUpdates?.slice(-1)[0]?.eventData;
+            const eventData = executionData[nodeId]?.responseData?.eventUpdates?.slice(-1)[0]?.data;
+            console.log('processAndSanitizeFormData Event Data:', eventData);
             if (!eventData) {
                 console.error(`No eventData found for node: ${nodeId}`);
                 return match; // Return original pill markup if no event data found

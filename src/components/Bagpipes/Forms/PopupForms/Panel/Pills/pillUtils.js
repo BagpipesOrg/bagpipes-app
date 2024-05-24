@@ -13,9 +13,9 @@ export const extractEventDataFromNodes = (nodes, allNodes, orderedList, executio
     console.log("extractEventDataFromNodes - node:", node);
     
     // Get the execution data for the current node
-    const executionData = executions[nodeId] || {};
+    const executionData = executions ? executions[nodeId] : {};
     console.log("extractEventDataFromNodes - executionData:", executionData);
-    const eventUpdates = executionData.responseData?.eventUpdates || [];
+    const eventUpdates = executionData?.responseData?.eventUpdates || [];
     
     // Update node with execution response data
     const nodeWithResponseData = {
