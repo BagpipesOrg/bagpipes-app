@@ -359,7 +359,10 @@ const ChainNode = ({ data, isConnectable }) => {
                 value={formState.chain}  // sets the value for the dropdown from the state
             >
                 <option value="" selected>Select chain</option>
-                {filteredChainInfoList.map((ChainInfo, index) => (
+                
+                {/* to filter chains for possible connections {filteredChainInfoList.map((ChainInfo, index) => ( */}
+                {ChainInfoList.map((ChainInfo, index) => (
+
                   <option key={ChainInfo.name} value={ChainInfo.name}>
                     {ChainInfo.display}
                   </option>
