@@ -39,6 +39,7 @@ class ChainRpcService {
 
   /// Execute a transaction method on a chain
   static async executeChainTxMethod({ chainKey, palletName, methodName, params, signerAddress, signer }: MethodParams): Promise<any> {
+    console.log(`executeChainTxMethod: chainKey, palletName, methodName, params: `, chainKey, palletName, methodName, params); 
     const api = await getApiInstance(chainKey);
     const method = this.resolveMethod(api, palletName, methodName, true);
     const formattedParams = this.formatParams(params);
