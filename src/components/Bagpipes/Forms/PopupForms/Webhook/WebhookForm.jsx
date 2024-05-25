@@ -109,15 +109,18 @@ const WebhookForm = ({ onSubmit, onSave, onClose, nodeId }) => {
   const fetchAndProcessEvents = async () => {
     console.log('Fetching webhook events... uuid:', selectedWebhookObject.uuid);  
     const data = await WebhooksService.fetchLatestFromWebhookSite(selectedWebhookObject.uuid);
-    if (data && data.data.length > 0) {
-      console.log('Webhook event received:', data.data);
-      toast.success('Webhook event received');
+    console.log('Webhook event received 1:', data);
+
+   
+    if (data) {
   
-      const webhookEvent = data.data[0];
+      console.log('Webhook event received:', data);
+  
+      const webhookEvent = data[0];
       // Attempt to parse the content field if it exists and is a JSON string
       let parsedContent = null;
       try {
-        parsedContent = webhookEvent.content ? JSON.parse(webhookEvent.content) : null;
+        parsedContent = webhookEvent?.content ? JSON.parse(webhookEvent.content) : null;
       } catch (error) {
         console.error('Error parsing webhook event content:', error);
       }
@@ -126,16 +129,17 @@ const WebhookForm = ({ onSubmit, onSave, onClose, nodeId }) => {
       // }
   
       const eventData = {
-        query: webhookEvent.query,
-        content: webhookEvent.request || parsedContent, // Use request or parsed content
-        headers: webhookEvent.headers, 
-        createdAt: webhookEvent.created_at,
-        method: webhookEvent.method,
+        query: webhookEvent?.query,
+        content: webhookEvent?.request || parsedContent, // Use request or parsed content
+        headers: webhookEvent?.headers, 
+        createdAt: webhookEvent?.created_at,
+        method: webhookEvent?.method,
       };
 
       // Save the updated formData in the node
       saveNodeEventData(activeScenarioId, nodeId, eventData);
-      
+      toast.success('Webhook event received');
+
       setEventReceived(true);
       stopListening();
     }
@@ -143,6 +147,8 @@ const WebhookForm = ({ onSubmit, onSave, onClose, nodeId }) => {
 
   const startListening = () => {
     console.log('Starting to listen for webhook events...');
+    console.log('pollingIntervalRef.current:', pollingIntervalRef.current);
+    setEventReceived(false);
     if (!pollingIntervalRef.current && !eventReceived) {
       console.log('Starting to listen for webhook events in if...');
       fetchAndProcessEvents(); 
