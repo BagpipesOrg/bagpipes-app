@@ -14,7 +14,6 @@ interface TypeDef {
     variants: Variant[];
   };
 }
-
 interface Field {
   name: string;
   typeName: string;

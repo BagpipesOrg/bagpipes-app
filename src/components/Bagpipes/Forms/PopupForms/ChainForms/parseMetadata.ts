@@ -71,32 +71,32 @@ interface TypeDefDetail {
     fields: TypeField[];
   };
   Sequence?: {
-    type: string; // Reference to another type ID
-    length?: number; // Optional length for fixed-size sequences
+    type: string;
+    length?: number;
   };
   Array?: {
-    type: string; // Reference to another type ID
+    type: string; 
     len: number;
   };
   Tuple?: {
-    types: string[]; // Array of type IDs
+    types: string[]; // array of type IDs
   };
   Variant?: {
     variants: Variant[];
   };
-  // more type definitions as needed
+  //more types
 }
 
 interface TypeField {
-  name?: string; // Name might be optional in some contexts
+  name?: string; // name is optional in some contexts
   type: string; // Reference to type ID
   typeName?: string; // Optional more readable type name
   docs?: string[];
 }
 
 interface TypeParam {
-  name: string; // Name of the parameter, often generic, like "T"
-  type?: string; // Reference to another type ID
+  name: string; 
+  type?: string; 
 }
 
 interface Variant {
@@ -141,10 +141,9 @@ export function parseMetadataPallets(rawMetadata: RawMetadata): MethodOutput[] {
   let pallets: MethodOutput[] = [];
   if (metadata.V14) {
     console.log('Metadata version:', metadata.V14);
-    // Pass typesLookup to parsePallet
+
     pallets = metadata.V14.pallets.map(pallet => parsePallet(pallet, typesLookup));
   } else if (metadata.V13) {
-    // If you need similar logic for V13, ensure it also passes types information
     console.error('Metadata V13 handling needs to be implemented if necessary');
   } else {
     console.error('Metadata version not supported:', metadata);
@@ -158,7 +157,7 @@ function parsePallet(pallet: Pallet, typesLookup: any): MethodOutput {
 
   if (pallet.calls) {
     const callsTypeId = pallet.calls.type;
-    const callTypeInfo = typesLookup[callsTypeId]; // Assuming you have a mechanism to lookup types by ID
+    const callTypeInfo = typesLookup[callsTypeId]; 
 
     if (callTypeInfo && callTypeInfo.def && callTypeInfo.def.Variant) {
       calls = callTypeInfo.def.Variant.variants.map((variant: any) => ({
@@ -219,7 +218,7 @@ export function resolveTypeName(typeId: string, typesLookup: any): string {
   } else if (def.Variant) {
     return `Variant`;
   } else {
-    // If none of the types matched, default to Complex Type
+    // or default to Complex Type
     return 'Complex Type';
   }
 }

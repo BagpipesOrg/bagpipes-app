@@ -203,38 +203,67 @@ export function fetchNodeExecutionData(scenarios, activeScenarioId, nodeId) {
 }
 
 
+// export const processWebhookEvent = (webhookEventData, webhookFetchStartTime) => {
+//     const fetchStartTimeUTC = webhookFetchStartTime.getTime() + (webhookFetchStartTime.getTimezoneOffset() * 60000);
+//     console.log('Comparing against fetch start time:', fetchStartTimeUTC);
+//     console.log('processWebhookEvent webhookEventData:', webhookEventData);
+//     const newWebhookEvent = webhookEventData?.find(event => {
+//         console.log('Event created at:', event.created_at);
+//         const eventCreatedAtUTC = new Date(event.created_at).getTime();
+//         console.log('Event created at:', eventCreatedAtUTC);
+//         return eventCreatedAtUTC > fetchStartTimeUTC;
+//     });
+
+//     console.log('processWebhookEvent New event found:', newWebhookEvent);
+
+//     // If a new event is found, process it
+//     if (newWebhookEvent) {
+//         const processedEventData = {
+//             query: newWebhookEvent.query || null,
+//             content: parseWebhookContent(newWebhookEvent.content || null),
+//             headers: newWebhookEvent.headers || null,
+//             method: newWebhookEvent.method || null,
+//             createdAt: newWebhookEvent.created_at || null,
+//         };
+//         return { processedEventData, isNewEvent: true };
+//     }
+//     console.log('processWebhookEvent No new event found', webhookEventData.data[0])
+//     // If no new event is found, return the most recent event but indicate it's not new
+//     // const mostRecentEvent = webhookEventData.data[0]; // Assuming data is sorted by created_at
+//     // console.log('processWebhookEvent Most recent event:', mostRecentEvent);
+//     // const processedMostRecentEventData = {
+//     //     query: mostRecentEvent.query || null,
+//     //     content: parseWebhookContent(mostRecentEvent.content || null),
+//     //     headers: mostRecentEvent.headers || null,
+//     //     method: mostRecentEvent.method || null,
+//     //     createdAt: mostRecentEvent.created_at || null,
+//     // };
+
+//     // return { processedEventData: processedMostRecentEventData, isNewEvent: false };
+//         return { processedEventData: null, isNewEvent: false };
+
+// };
+
 export const processWebhookEvent = (webhookEventData, webhookFetchStartTime) => {
     const fetchStartTimeUTC = webhookFetchStartTime.getTime() + (webhookFetchStartTime.getTimezoneOffset() * 60000);
     console.log('Comparing against fetch start time:', fetchStartTimeUTC);
+    console.log('processWebhookEvent webhookEventData:', webhookEventData);
 
-    const newWebhookEvent = webhookEventData.data.find(event => {
-        const eventCreatedAtUTC = new Date(event.created_at).getTime();
-        console.log('Event created at:', eventCreatedAtUTC);
-        return eventCreatedAtUTC > fetchStartTimeUTC;
-        ;
-    });
+    const eventCreatedAtUTC = new Date(webhookEventData.created_at).getTime();
+    console.log('Event created at:', eventCreatedAtUTC);
 
-    // If a new event is found, process it
-    if (newWebhookEvent) {
+    if (eventCreatedAtUTC > fetchStartTimeUTC) {
         const processedEventData = {
-            query: newWebhookEvent.query, 
-            content: parseWebhookContent(newWebhookEvent.content), 
-            headers: newWebhookEvent.headers,
-            method: newWebhookEvent.method,
-            createdAt: newWebhookEvent.created_at,
+            query: webhookEventData.query || null,
+            content: parseWebhookContent(webhookEventData.content || null),
+            headers: webhookEventData.headers || null,
+            method: webhookEventData.method || null,
+            createdAt: webhookEventData.created_at || null,
         };
         return { processedEventData, isNewEvent: true };
+    } else {
+        return { processedEventData: null, isNewEvent: false };
     }
-    // Return the most recent event but indicate it's not new
-    const mostRecentEvent = webhookEventData.data[0]; // Assuming data is sorted by created_at
-    const processedMostRecentEventData = {
-        query: mostRecentEvent.query, 
-        content: parseWebhookContent(mostRecentEvent.content), 
-        headers: mostRecentEvent.headers,
-        method: mostRecentEvent.method,
-        createdAt: mostRecentEvent.created_at,
-    };
-    return { processedEventData: processedMostRecentEventData, isNewEvent: false };
 };
 
 
@@ -243,28 +272,55 @@ export const waitForNewWebhookEvent = async (uuid, webhookFetchStartTime, nodeId
     let processedEventData = null;
 
     while (!foundNewEvent && useAppStore.getState().isExecuting && useAppStore.getState().nodeLoadingStates[nodeId]) {
-        const webhookData = await WebhooksService.fetchLatestFromWebhookSite(uuid);
-        const { processedEventData: newEventData, isNewEvent } = processWebhookEvent(webhookData, webhookFetchStartTime);
+        try {
+            const webhookData = await WebhooksService.fetchLatestFromWebhookSite(uuid);
+            const { processedEventData: newEventData, isNewEvent } = processWebhookEvent(webhookData, webhookFetchStartTime);
 
-        if (isNewEvent) {
-            foundNewEvent = true;
-            processedEventData = newEventData;
-            break; // Exit the loop if a new event is found
+            if (isNewEvent) {
+                foundNewEvent = true;
+                processedEventData = newEventData;
+                break; // Exit the loop if a new event is found
+            }
+        } catch (error) {
+            console.error('Error fetching new webhook event:', error);
         }
 
         // Wait for a specified interval before polling again
-        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for 5 seconds before the next poll
-
-        // // Here, add a check to see if execution has been stopped
-        // if (!useAppStore.getState().isExecuting || !useAppStore.getState().nodeLoadingStates[nodeId]) {
-        //     useAppStore.getState().setIsLoadingNode(nodeId, false);
-        //     console.log("Execution stopped, exiting the waiting loop.");
-        //     return null; // Exit the function as the execution has been stopped
-        // }
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for 2 seconds before the next poll
     }
 
     return processedEventData;
 };
+
+
+
+// export const waitForNewWebhookEvent = async (uuid, webhookFetchStartTime, nodeId) => {
+//     let foundNewEvent = false;
+//     let processedEventData = null;
+
+//     while (!foundNewEvent && useAppStore.getState().isExecuting && useAppStore.getState().nodeLoadingStates[nodeId]) {
+//         const webhookData = await WebhooksService.fetchLatestFromWebhookSite(uuid);
+//         const { processedEventData: newEventData, isNewEvent } = processWebhookEvent(webhookData, webhookFetchStartTime);
+
+//         if (isNewEvent) {
+//             foundNewEvent = true;
+//             processedEventData = newEventData;
+//             break; // Exit the loop if a new event is found
+//         }
+
+//         // Wait for a specified interval before polling again
+//         await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for 5 seconds before the next poll
+
+//         // // Here, add a check to see if execution has been stopped
+//         // if (!useAppStore.getState().isExecuting || !useAppStore.getState().nodeLoadingStates[nodeId]) {
+//         //     useAppStore.getState().setIsLoadingNode(nodeId, false);
+//         //     console.log("Execution stopped, exiting the waiting loop.");
+//         //     return null; // Exit the function as the execution has been stopped
+//         // }
+//     }
+
+//     return processedEventData;
+// };
 
 
 

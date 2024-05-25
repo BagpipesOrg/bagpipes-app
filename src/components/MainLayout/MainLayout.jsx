@@ -38,7 +38,6 @@ function MainLayout({ children }) {
   <div className={`main-layout ${theme === 'dark' ? '-dark' : '-light'}`}>
 
 {tippyProps.visible && (
-
         <Tippy
           appendTo={tippyProps.reference || (() => document.body)}
           content={tippyProps.content}
@@ -50,26 +49,12 @@ function MainLayout({ children }) {
         >
           <div style={{ position: 'fixed', left: tippyProps.position.x, top: tippyProps.position.y }}></div>
         </Tippy>
-
       )}
 
-      {panelTippyProps.visible && (
-        <Tippy
-      appendTo={() => document.body}
-      content={panelTippyProps.content}
-      interactive={true}
-      placement={panelTippyProps.placement}
-      visible={panelTippyProps.visible}
-      theme="light"
-      trigger='click'
-      hideOnClick="toggle"
-      onClickOutside={() => hidePanelTippy()}
-      flip={true}
-      boundary="viewport"
-    >
-      <div style={{ position: 'fixed', left: panelTippyProps.position.x, top: panelTippyProps.position.y }}></div>
-    </Tippy>
-      )}
+
+  
+
+      
 
 
         {/* <Toaster /> */}

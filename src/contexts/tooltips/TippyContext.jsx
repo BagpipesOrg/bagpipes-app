@@ -1,4 +1,6 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useRef, useEffect } from 'react';
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css';
 
 const TippyContext = createContext();
 
@@ -73,30 +75,113 @@ export const PanelTippyProvider = ({ children }) => {
     content: null,
     placement: 'bottom',
   });
+  const tippyInstance = useRef(null);
+  const observerRef = useRef(null);
 
-  const showPanelTippy = (nodeId, position, content, placement ='top-start') => {
-    const parentPosition = { x: 100, y: 300 }; // Example: Get this from the parent element's bounding box
-    const bestPlacement = calculateBestPlacement(parentPosition, -200); // Use a 15px offset
-    
+  const showPanelTippy = (nodeId, referenceElement, content, placement = 'top-start') => {
+    const rect = referenceElement.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+
+    const spaceOnRight = viewportWidth - rect.right;
+    const tooltipWidth = 300; // Approximate or dynamically determine your tooltip's width.
+    const shouldFlipToLeft = spaceOnRight < tooltipWidth;
+
+    const calculatedPosition = {
+      x: shouldFlipToLeft ? rect.left : rect.right,
+      y: rect.top
+    };
+
     setPanelTippyProps({ 
       visible: true, 
-      position,
+      position: calculatedPosition,
       content, 
-      placement, 
+      placement: shouldFlipToLeft ? 'left-start' : placement,
     });
   };
 
   const hidePanelTippy = () => {
     setPanelTippyProps({ visible: false, position: { x: 0, y: 0 }, content: null, placement: 'right' });
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
   };
 
-  // Ensure you render the Tippy component only when it's visible
-  // And ensure you're providing a reference to an element, even if it's hidden or not interactable
+  useEffect(() => {
+    console.log('PanelTippyProvider useEffect for visibility/content change');
+
+    if (tippyInstance.current && tippyInstance.current.popperInstance) {
+      console.log('Updating Tippy instance');
+      tippyInstance.current.popperInstance.update();
+    }
+  }, [panelTippyProps.content, tippyInstance.current, panelTippyProps.visible]);
+
+  useEffect(() => {
+    if (tippyInstance.current && tippyInstance.current.popper && panelTippyProps.visible) {
+      const contentElement = tippyInstance.current.popper.querySelector('.tippy-content');
+
+      if (contentElement) {
+        console.log('Setting up MutationObserver');
+        observerRef.current = new MutationObserver(() => {
+          if (tippyInstance.current && tippyInstance.current.popperInstance) {
+            console.log('Content changed, updating Tippy instance');
+            tippyInstance.current.popperInstance.update();
+          }
+        });
+
+        observerRef.current.observe(contentElement, {
+          attributes: true,
+          childList: true,
+          subtree: true,
+        });
+
+        const handleClick = () => {
+          if (tippyInstance.current && tippyInstance.current.popperInstance) {
+            console.log('Content clicked, updating Tippy instance');
+            tippyInstance.current.popperInstance.update();
+          }
+        };
+
+        contentElement.addEventListener('click', handleClick);
+
+        return () => {
+          contentElement.removeEventListener('click', handleClick);
+        };
+      }
+    }
+  }, [panelTippyProps.visible, panelTippyProps.content]);
 
   return (
-    <PanelTippyContext.Provider value={{ panelTippyProps, showPanelTippy, hidePanelTippy }}>
+    <PanelTippyContext.Provider value={{ panelTippyProps, showPanelTippy, hidePanelTippy, tippyInstance }}>
       {children}
-      {/* Your Tippy implementation here */}
+      {panelTippyProps.visible && (
+        <Tippy
+          appendTo={() => document.body}
+          content={panelTippyProps.content}
+          interactive={true}
+          placement={panelTippyProps.placement}
+          visible={panelTippyProps.visible}
+          theme="light"
+          trigger="click"
+          hideOnClick={false}
+          onClickOutside={() => hidePanelTippy()}
+          flip={true}
+          boundary="viewport"
+          maxWidth="100%"
+          onCreate={(instance) => {
+            tippyInstance.current = instance;
+          }}
+        >
+          <div
+            style={{
+              position: 'fixed',
+              left: panelTippyProps.position.x,
+              top: panelTippyProps.position.y,
+              maxHeight: '80vh', // Set max height for the tippy
+              overflowY: 'auto', // Enable vertical scrolling
+            }}
+          ></div>
+        </Tippy>
+      )}
     </PanelTippyContext.Provider>
   );
 };
@@ -124,4 +209,43 @@ function calculateBestPlacement(position, offset = 10) {
     return verticalSpaceTop > verticalSpaceBottom ? 'right' : 'left';
   }
 }
+
+
+
+const calculatePosition = (referenceElement, placement) => {
+  if (!(referenceElement instanceof Element)) {
+    console.error('referenceElement is not a DOM element:', referenceElement);
+    return { calculatedPosition: { x: 0, y: 0 }, placement };
+  }
+
+  const rect = referenceElement.getBoundingClientRect(); // Define rect here
+  const viewportHeight = window.innerHeight;
+  const viewportWidth = window.innerWidth;
+  const tooltipWidth = 300; // Adjust based on your tooltip size or make it dynamic
+  const tooltipHeight = 200; // Estimate or calculate dynamically if possible
+  const spaceOnRight = viewportWidth - rect.right;
+  const spaceBelow = viewportHeight - rect.bottom;
+  const shouldFlipToLeft = spaceOnRight < tooltipWidth && placement.startsWith('right');
+  const shouldFlipToTop = spaceBelow < tooltipHeight && placement.startsWith('bottom');
+
+  let calculatedPosition;
+  switch (placement) {
+    case 'right-start':
+    case 'right':
+      calculatedPosition = shouldFlipToLeft ? { x: rect.left - tooltipWidth, y: rect.top } : { x: rect.right, y: rect.top };
+      break;
+    case 'bottom-start':
+    case 'bottom':
+      calculatedPosition = shouldFlipToTop ? { x: rect.left, y: rect.top - tooltipHeight } : { x: rect.left, y: rect.bottom };
+      break;
+    // Implement other placements as needed
+    default:
+      calculatedPosition = { x: rect.left, y: rect.top + window.scrollY }; // Fallback or default position
+  }
+
+  return {
+    calculatedPosition,
+    placement: shouldFlipToLeft && placement.startsWith('right') ? 'left-start' : shouldFlipToTop && placement.startsWith('bottom') ? 'top-start' : placement
+  };
+};
 

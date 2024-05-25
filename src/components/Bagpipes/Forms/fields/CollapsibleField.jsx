@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Collapse, Input, Button, Select, Radio } from 'antd';
 import Toggle from '../Toggle';
 import ItemField from './ItemField'; // Assuming ItemField is in the same directory
@@ -19,7 +19,8 @@ const { Option } = Select;
 
 const CollapsibleField = ({ fieldKey, nodeId, title, info, toggleTitle, hasToggle,fieldTypes, items=[], selectOptions=[], selectRadioOptions=[], children, value, onChange, onPillsChange, placeholder, onClick, disabled, isTextAreaValue, customContent, buttonName}) => {
   const [isToggled, setIsToggled] = useState(false);
-  const { showPanelTippy, hidePanelTippy } = usePanelTippy();
+  const { showPanelTippy, hidePanelTippy, tippyInstance } = usePanelTippy();
+  const referenceElement = useRef(null);
   const [droppedItems, setDroppedItems] = useState([]);
   const [pills, setPills] = useState([]);
   const [editableContent, setEditableContent] = useState("");
@@ -59,9 +60,8 @@ const handleInputClick = (event, nodeId) => {
   const rect = event.currentTarget.getBoundingClientRect();
   const viewportWidth = window.innerWidth;
 
-  // Determine if there's enough space to the right; if not, use the left position.
   const spaceOnRight = viewportWidth - rect.right;
-  const tooltipWidth = 300; // Approximate or dynamically determine your tooltip's width.
+  const tooltipWidth = 300;
   const shouldFlipToLeft = spaceOnRight < tooltipWidth;
 
   const calculatedPosition = {
@@ -69,8 +69,16 @@ const handleInputClick = (event, nodeId) => {
     y: rect.top
   };
 
-  showPanelTippy(nodeId, calculatedPosition, <PanelForm nodeId={nodeId} onClose={hidePanelTippy} />, shouldFlipToLeft ? 'left-start' : 'right-start');
+  showPanelTippy(nodeId, event.currentTarget, <PanelForm nodeId={nodeId} onClose={hidePanelTippy} notifyChange={handleContentChange} />, shouldFlipToLeft ? 'left-start' : 'right-start');
   event.stopPropagation();
+};
+
+const handleContentChange = () => {
+
+  // Notify that content has changed
+  if (tippyInstance.current && tippyInstance.current.popperInstance) {
+    tippyInstance.current.popperInstance.update();
+  }
 };
 
 const handleToggleChange = (toggled) => {
@@ -249,18 +257,17 @@ const handleToggleChange = (toggled) => {
           break; 
       case 'buttonTextArea':
 
-      <textarea className="result-textarea" value={value} readOnly />
+      // <textarea className="result-textarea" value={value} readOnly />
 
         content = (
           <>
-            <button className="button mt-2" onClick={onClick} disabled={disabled}>{buttonName}</button>
             {isTextAreaValue ? (
             <div className=''>
               <CopyBlock
               text={value}
               language={'json'}
               showLineNumbers={false}
-              customStyle={{borderRadius: '5px', marginTop:'15px', padding: '5px', backgroundColor: '#f5f5f5', overflow: 'auto', maxWidth: '275px'}}
+              customStyle={{borderRadius: '5px', marginBottom:'15px', padding: '5px', backgroundColor: '#f5f5f5', overflow: 'auto', maxWidth: '275px'}}
               />
                   {/* <CodeBlock
             text={value}
@@ -270,6 +277,8 @@ const handleToggleChange = (toggled) => {
           /> */}
             </div>
             ) : ('')}
+          <button className="button mt-3" onClick={onClick} disabled={disabled}>{buttonName}</button>
+
           </>
         );  
        break;

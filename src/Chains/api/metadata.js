@@ -21,7 +21,20 @@ export const CHAIN_METADATA = {
         nativeAccount: true,
     },
     hydraDx: {
-        chain: "HydraDX",
+        chain: "HydraDX" || "hydradx",
+        endpoints: [
+            "wss://hydradx-rpc.dwellir.com",
+            "wss://hydradx.api.onfinality.io/public-ws",
+            "wss://rpc.hydradx.cloud",
+        ],
+        queryAssetPaths: ["assetRegistry.assets"],  
+        queryBalancePaths: ["system.account", "tokens.accounts"],
+        transferFunction: "xTokens.transferMultiasset",
+        nativeAccount: true,
+
+    },
+    hydradx: {
+        chain: "HydraDX" || "hydradx",
         endpoints: [
             "wss://hydradx-rpc.dwellir.com",
             "wss://hydradx.api.onfinality.io/public-ws",

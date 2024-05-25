@@ -20,7 +20,7 @@ import './Pills/Pills.scss';
 // import { PanelIcon } from '../../../../Icons/icons';
 
 
-const PanelForm = ({ nodeId, onClose }) => {
+const PanelForm = ({ nodeId, onClose, notifyChange }) => {
   const dropPositionRef = useRef(null);    
   const { scenarios, activeScenarioId, saveNodeFormData, savePanel, panels, setSelectedPanelInNode, executionId } = useAppStore(state => ({ 
         scenarios: state.scenarios,
@@ -35,7 +35,8 @@ const PanelForm = ({ nodeId, onClose }) => {
     const node = currentScenario.diagramData.nodes.find(node => node.id === nodeId);
     const savedState = getSavedFormState(nodeId) ?? { inputNodes: node?.data?.inputNodes || [] };
     const [inputNodes, setInputNodes] = useState(node?.data?.inputNodes || []);
- 
+    const [content, setContent] = useState([]);
+
     const handleCancel = () => {
       onClose(); // Invoke the onClose function passed from the parent component
     };
@@ -50,6 +51,14 @@ const PanelForm = ({ nodeId, onClose }) => {
       setPills(currentPills => currentPills.filter(pill => pill.id !== pillId));
       // Additional logic if needed, like updating the combined value or other states
     };
+
+    useEffect(() => {
+      // Notify parent when content changes
+      if (notifyChange) {
+        notifyChange();
+      }
+    }, [content, notifyChange]);
+  
 
     useEffect(() => {
       console.log('PanelForm checking current scenario ', currentScenario);
