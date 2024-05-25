@@ -44,19 +44,20 @@ const createPillsFromNode = (node, orderedList) => {
   };
 
   switch (node.type) {
-    case 'webhook':
-      // Process Webhook nodes by extracting 'query' and 'content'
-      const partsToProcess = ['query', 'content'];
-      partsToProcess.forEach(part => {
-        const eventDataPart = node.responseData?.[part];
-        if (eventDataPart && typeof eventDataPart === 'object') {
-          nodePill.children = nodePill.children.concat(
-            createPillsFromObject(eventDataPart, `${part}.`, 1, node.type, nodeIndex)
-          );
-        }
-      });
-      break;
-
+    // case 'webhook':
+    //   console.log("createPillsFromNode - node:", node);
+    //   // Process Webhook nodes by extracting 'query' and 'content'
+    //   const partsToProcess = ['query', 'content'];
+    //   partsToProcess.forEach(part => {
+    //     const eventDataPart = node.responseData?.[part];
+    //     if (eventDataPart && typeof eventDataPart === 'object') {
+    //       nodePill.children = nodePill.children.concat(
+    //         createPillsFromObject(eventDataPart, `${part}.`, 1, node.type, nodeIndex)
+    //       );
+    //     }
+    //   });
+    //   break;
+    case 'webhook': 
     case 'http':
     case 'chainTx':
     case 'chainQuery':

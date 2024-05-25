@@ -59,39 +59,39 @@ function MainLayout({ children }) {
 
         {/* <Toaster /> */}
         <Toaster
-            position="top-left"
-
-            containerStyle={{ position: 'absolute' }} 
-            toastOptions={{
-              className: 'toast-styles',
-                style: {
-                    background: '#fff00', 
-                    padding: 0,
-                    minWidth: "200px",
-                    transition: "all 0.5s ease-out",
-                    zIndex: 100000,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between", 
-                },
-            }}
-        > 
+        position="top-left"
+        containerStyle={{ position: 'absolute' }} 
+        toastOptions={{
+            className: 'toast-styles',
+            style: {
+                background: '#fff00', 
+                padding: 0,
+                minWidth: "200px",
+                transition: "all 0.5s ease-out",
+                zIndex: 100000,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between", 
+                overflow: "hidden",
+            },
+        }}
+    >
         {(t) => (
             <ToastBar toast={t}>
                 {({ icon, message }) => (
-                    <div className={` toast-container ${theme}`}>
-                      <div className="toast-content">
-                          {icon}
-                          {message}
-                      </div>
-                      {t.type !== 'loading' && (
-                          <button className='toast-button' onClick={() => toast.dismiss(t.id)}>x</button>
-                      )}
+                    <div className={`toast-container p-1 ${theme}`}>
+                        <div className="toast-content pr-2">
+                            {icon}
+                            <span className="toast-message pr-2">{message}</span>
+                        </div>
+                        {t.type !== 'loading' && (
+                            <button className='toast-button' onClick={() => toast.dismiss(t.id)}>x</button>
+                        )}
                     </div>
                 )}
-            </ToastBar> 
+            </ToastBar>
         )}
-        </Toaster>
+    </Toaster>
         
         {/* <Header /> */}
             <Routes>

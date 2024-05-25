@@ -10,9 +10,6 @@ const MAX_RECONNECTION_ATTEMPTS = 3;
 const RECONNECTION_TIMEOUT = 5000; // milliseconds
 
 export async function getApiInstance(chain: string): Promise<ApiPromise> {
-  if (chain.toLowerCase() === 'hydradx') {
-        chain = 'hydraDx';
-    }
 
   if (apiConnections.has(chain)) {
     const api = apiConnections.get(chain);

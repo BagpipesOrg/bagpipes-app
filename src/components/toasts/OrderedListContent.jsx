@@ -33,7 +33,36 @@ const OrderedListContent = ({ list }) => {
                             className="toast-icon"
                         />
                     );
-                }
+                }  
+                if (item.type === 'chainQuery') {
+                    
+                    console.log('OrderedListContent chains',chains);
+                    const chainInfo = Object.values(chains).find(chain => chain.name === item.name);
+                    console.log('OrderedListContent chainInfo',chainInfo);
+                    return (
+                        <img
+                            key={index}
+                            src={chainInfo.logo}
+                            alt={`${chainInfo.name} logo`}
+                            className="toast-icon"
+                        />
+                    );
+                } 
+                if (item.type === 'chainTx') {
+                    console.log('OrderedListContent chainTx',chains);
+                    const chainTxInfo = Object.values(chains).find(selectedChain => selectedChain.selectedChain === item.selectedChain);
+                    console.log('OrderedListContent chainInfo',chainTxInfo);
+                    return (
+                        <img
+                            key={index}
+                            src={item.data.image}
+                            alt={`${chainTxInfo.name} logo`}
+                            className="toast-icon"
+                        />
+                    );
+
+                };
+                    
                 if (item.action === 'swap') {
                     console.log('OrderedListContent item action', item.action)
                     imageSrc = SwapSVG;

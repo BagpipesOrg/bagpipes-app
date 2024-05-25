@@ -17,8 +17,7 @@ const StopButton = ({ stopScenario }) => {
             >
             
             <StopIcon  />
-            {/* <span className='ml-2 '>Start Draft</span> */}
-            {/* Draft */}
+
             </button>
         </Tippy>
     );

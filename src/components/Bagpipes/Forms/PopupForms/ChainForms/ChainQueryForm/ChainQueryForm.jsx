@@ -239,9 +239,8 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
             fieldTypes="input"
             hasToggle={true}
             nodeId={nodeId}
-            value={formData?.blockHash}
+            value={formData?.blockHash || ''}
             onChange={handleBlockHashChange}
-            onPillsChange={(updatedPills) => handlePillsChange(updatedPills, blockHash)}
 
         />
     );

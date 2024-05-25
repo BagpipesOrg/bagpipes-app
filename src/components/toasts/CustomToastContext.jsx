@@ -36,11 +36,9 @@ export const ActionToastContent = ({ type, message, signedExtrinsic }) => {
         imageSrc = RemarkSVG;
         altText = "System remark"
     } 
-    
     else if (type === 'xTransfer') {
         imageSrc = xTransferSVG;
         altText = 'xTransfer Action';
-        console.log('ActionToastContent xTransferSVG',xTransferSVG);
     }
     console.log('imageSrc', imageSrc);
 

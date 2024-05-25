@@ -286,7 +286,7 @@ export const waitForNewWebhookEvent = async (uuid, webhookFetchStartTime, nodeId
         }
 
         // Wait for a specified interval before polling again
-        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for 2 seconds before the next poll
+        await new Promise(resolve => setTimeout(resolve, 2000)); 
     }
 
     return processedEventData;
