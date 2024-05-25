@@ -7,6 +7,32 @@ import {
   hdx_get_routes,
 } from "../Helpers/PriceHelper";
 
+
+interface HydradxAssetSymbolDecimalsResponse {
+  name: string
+  assetType: string
+  existentialDeposit: string
+  symbol: string
+  decimals: number
+  xcmRateLimit: null | any // You can specify a more precise type if known
+  isSufficient: boolean
+}
+
+export async function getHydradxAssetSymbolDecimals(assetid: number): Promise<HydradxAssetSymbolDecimalsResponse> {
+  console.log(`getHydradxAssetSymbolDecimals assetid`, assetid)
+  const api = await getApiInstance("hydraDx");
+  const resp = (await api.query.assetRegistry.assets(assetid)).toHuman() as any
+  const assetInfo: HydradxAssetSymbolDecimalsResponse = {
+    name: resp.name,
+    assetType: resp.assetType,
+    existentialDeposit: resp.existentialDeposit,
+    symbol: resp.symbol,
+    decimals: parseInt(resp.decimals),
+    xcmRateLimit: resp.xcmRateLimit,
+    isSufficient: resp.isSufficient,
+  }
+  return assetInfo
+}
 // Swap functionality | THIS SUPPORTS ALL SWAPS ON HYDRA NOT ONLY OMNIPOOL SELL!! // FLIPCHAN
 /// put in a sell order to sell/swap asset A for asset B on omnipool
 /// Input:
@@ -26,53 +52,38 @@ export async function hydradx_omnipool_sell(
   const aout = pinfo.amountOut;
 
   //const aout = sellprice.amountOut;
-  const resp: any = await getAssetDecimals("hydradx", Number(assetin));
+  const resp: any = await getHydradxAssetSymbolDecimals(Number(assetin))
 
-  const tokenDecimals = Number(resp.decimals);
-  const minBuyAmount = Math.round(aout * 1e10);
-  console.log(
-    `[hydradx_omnipool_sell] my input:`,
-    assetin,
-    assetout,
-    rawamount,
-    minBuyAmount,
-    submitamount
-  );
+  const tokenDecimals = Number(resp.decimals)
+  const minBuyAmount = BigInt(Math.round(aout * 1e10))
+  console.log(`[hydradx_omnipool_sell] my input:`, assetin, assetout, rawamount, minBuyAmount, submitamount)
 
-  // two options for swaps, omnipool sell or router sell
-  console.log(`sorting out the route`);
-  // get the swap routes
-  const route = await hdx_get_routes(assetin, assetout, rawamount);
-  var tx: any;
-
-  console.log(`got route back: `, route);
+  const route = await hdx_get_routes(assetin, assetout, rawamount)
+  var tx: any
+  console.log(`working with: `, assetin, assetout, submitamount)
+  console.log(`got route back: `, route)
   if (route.length == 1) {
-    console.log(`route log`);
-    console.log(route[0]);
-    if (route[0].pool == "Omnipool") {
-      console.log(`omnipool only detected`);
-      tx = await api.tx.omnipool.sell(
-        assetin,
-        assetout,
-        submitamount,
-        minBuyAmount
-      );
-      console.log(`omnipool tx drafted`);
-      console.log(tx.toHex());
+    console.log(`route log`)
+    console.log(route[0])
+    if (route[0].pool == 'Omnipool') {
+      console.log(`omnipool only detected`)
+      tx = await api.tx.omnipool.sell(assetin, assetout, submitamount, minBuyAmount)
+      console.log(`omnipool tx drafted`)
+      console.log(tx.toHex())
     }
   } else {
     tx = await api.tx.router.sell(
       assetin.toString(),
       assetout.toString(),
       submitamount.toString(),
-      minBuyAmount / 10000,
-      route
-    );
-    console.log(`selltx router.sell drafted`);
+      minBuyAmount / BigInt(10000),
+      route,
+    )
+    console.log(`selltx router.sell drafted`)
   }
-  console.log(`final tx:`);
-  console.log(tx.toHuman());
-  console.log(tx.toHex());
+  console.log(`final tx:`)
+  console.log(tx.toHuman())
+  console.log(tx.toHex())
 
-  return tx;
+  return tx
 }
