@@ -5,7 +5,7 @@ import { ChainQueryIcon } from '../../../../../Icons/icons';
 import { useTippy } from '../../../../../../contexts/tooltips/TippyContext';
 import { listChains} from '../../../../../../Chains/ChainsInfo';
 
-import { processScenarioData, validateDiagramData, processAndSanitizeFormData, parseAndReplacePillsInFormData, sanitizeFormData, getUpstreamNodeIds } from '../../../../utils/scenarioUtils';
+import { processScenarioData, validateDiagramData, processAndSanitizeFormData, getUpstreamNodeIds } from '../../../../utils/scenarioUtils';
 import { getOrderedList } from '../../../../hooks/utils/scenarioExecutionUtils';
 
 
@@ -240,7 +240,7 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
             hasToggle={true}
             nodeId={nodeId}
             value={formData?.blockHash || ''}
-            onChange={handleBlockHashChange}
+            onChange={(value) => handleBlockHashChange(value)}
 
         />
     );
@@ -396,7 +396,7 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
 
 return (
   <div onScroll={handleScroll} className=''>
-      <FormHeader onClose={handleCancel} title='Query Chain Form' logo={<ChainQueryIcon className='h-4 w-4' fillColor='black' />} />  
+      <FormHeader onClose={handleCancel} title={`Query Chain Form (${nodeId})`} logo={<ChainQueryIcon className='h-4 w-4' fillColor='black' />} />  
 
       <div className='http-form'>
           {renderChainSelection()}

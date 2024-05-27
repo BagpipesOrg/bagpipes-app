@@ -18,6 +18,8 @@ import '../Popup.scss';
 import '../../fields/Fields.scss';
 import '../../../../../index.css';
 
+import axios from "axios";
+
 
 
 const WebhookForm = ({ onSubmit, onSave, onClose, nodeId }) => {
@@ -52,7 +54,7 @@ const WebhookForm = ({ onSubmit, onSave, onClose, nodeId }) => {
   const selectedWebhookData = webhookNodes.find(webhook => webhook.selectedWebhook === selectedWebhook);
   const selectedWebhookObject = webhooks?.find(webhook => webhook.name === selectedWebhook);
   console.log('selectedWebhookObject outside:', selectedWebhookObject);
-  const webhookURL = selectedWebhookObject ? `https://webhook.site/${selectedWebhookObject.uuid}` : '';
+  const webhookURL = selectedWebhookObject ? `https://webhook.bagpipes.io/${selectedWebhookObject.uuid}` : '';
   
 
   // Callback function to handle new webhook data
@@ -114,7 +116,7 @@ const WebhookForm = ({ onSubmit, onSave, onClose, nodeId }) => {
    
     if (data) {
   
-      console.log('Webhook event received:', data);
+      console.log('fetchAndProcessEvents Webhook event received:', data);
   
       const webhookEvent = data[0];
       // Attempt to parse the content field if it exists and is a JSON string
@@ -130,7 +132,7 @@ const WebhookForm = ({ onSubmit, onSave, onClose, nodeId }) => {
   
       const eventData = {
         query: webhookEvent?.query,
-        content: webhookEvent?.request || parsedContent, // Use request or parsed content
+        content: webhookEvent?.request || parsedContent, 
         headers: webhookEvent?.headers, 
         createdAt: webhookEvent?.created_at,
         method: webhookEvent?.method,
@@ -198,6 +200,59 @@ const WebhookForm = ({ onSubmit, onSave, onClose, nodeId }) => {
       // Actions like updating the UI, fetching related data, etc.
     }
   }, [scenarios, activeScenarioId, nodeId]);
+
+
+  const [response, setResponse] = useState(null);
+  const [formData, setFormData] = useState({
+    chain: "",
+    asset: "",
+    address: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+
+
+  const callWebhook = async (e) => {
+    e.preventDefault();
+    const payload = {
+      title: "Price Checker",
+      chain: formData.chain,
+      asset: {
+        asset: formData.asset,
+        address: formData.address,
+      },
+    };
+
+    try {
+      const res = await axios.post(
+        "https://webhook.bagpipes.io/2179d881-8ea2-4a3f-bf15-cf6ffb6549ad",
+        payload,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "*",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Expose-Headers": "Content-Length,Content-Range",
+          },
+        },
+      );
+      setResponse(res.data);
+    } catch (error) {
+      console.error("Error calling webhook:", error);
+      setResponse({ error: error.message });
+    }
+  };
+
+
 
   return (
     <div>
@@ -272,6 +327,50 @@ const WebhookForm = ({ onSubmit, onSave, onClose, nodeId }) => {
           )}
         </button>
       </div>
+
+
+      <div>
+      {/* <h1>React with a Bagpipe</h1>
+      <form onSubmit={callWebhook}>
+        <div>
+          <label>Chain Name:</label>
+          <input
+            type="text"
+            name="chain"
+            value={formData.chain}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label>Asset:</label>
+          <input
+            type="text"
+            name="asset"
+            value={formData.asset}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label>Address:</label>
+          <input
+            type="text"
+            name="address"
+            value={formData.address}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <button type="submit">Call Webhook</button>
+      </form>
+      {response && (
+        <div>
+          <h2>Webhook Response</h2>
+          <pre>{JSON.stringify(response, null, 2)}</pre>
+        </div>
+      )} */}
+    </div>
     
       <FormFooter onClose={handleCancel} onSave={handleSave} showToggle={false} />
     </div>

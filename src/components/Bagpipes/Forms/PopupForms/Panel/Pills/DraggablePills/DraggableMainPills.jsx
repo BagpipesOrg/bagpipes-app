@@ -6,7 +6,7 @@ import { nodeTypeColorMapping } from '../../nodeColorMapping';
 
 const DraggablePills = ({ pill, depth, onRemovePill, onToggleExpand }) => {
     const pillColor = nodeTypeColorMapping[pill.nodeType] || nodeTypeColorMapping.defaultColor;
-    console.log(`Node type draggable: ${pill.nodeType}, Color: ${pillColor}`);
+    // console.log(`Node type draggable: ${pill.nodeType}, Color: ${pillColor}`);
 
     const [isExpanded, setIsExpanded] = useState(false);
     const [{ isDragging }, drag, preview] = useDrag(() => ({

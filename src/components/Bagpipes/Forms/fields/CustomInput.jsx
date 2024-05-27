@@ -22,7 +22,7 @@ const CustomInput = ({ fieldKey, value, onChange, onClick, placeholder, classNam
             const xPosition = clientOffset.x - dropTargetRect.left;
             const yPosition = clientOffset.y - dropTargetRect.top;
             setDropPosition({ x: xPosition, y: yPosition });
-            console.log("CustomInput Drop position:", xPosition, yPosition);  
+            // console.log("CustomInput Drop position:", xPosition, yPosition);  
         }
     },
     drop: (item, monitor) => {
@@ -94,8 +94,8 @@ const CustomInput = ({ fieldKey, value, onChange, onClick, placeholder, classNam
 
             // Update pills state
             const updatedPills = [...pills, ...itemsToInsert];
-            onPillsChange(updatedPills, fieldKey);
-            console.log("CustomInput Updated pills:", updatedPills);
+            // onPillsChange(updatedPills, fieldKey);
+            // console.log("CustomInput Updated pills:", updatedPills);
             setPills(updatedPills);
 
         }
@@ -196,12 +196,17 @@ const removePill = (pillId) => {
 };
 
 
- const handlePaste = (event) => {
-  event.preventDefault();
-  const htmlContent = (event.clipboardData || window.clipboardData).getData('text/html');
-  const cleanedContent = sanitizeHtmlContent(htmlContent);
-  document.execCommand('insertHTML', false, cleanedContent);
-};
+  const handlePaste = (event) => {
+    event.preventDefault();
+    const clipboardData = event.clipboardData || window.clipboardData;
+    const text = clipboardData.getData('text/plain');
+    const html = clipboardData.getData('text/html');
+    
+    const contentToPaste = html || text;
+    const cleanedContent = sanitizeHtmlContent(contentToPaste);
+    
+    document.execCommand('insertHTML', false, cleanedContent);
+  };
 
 
 

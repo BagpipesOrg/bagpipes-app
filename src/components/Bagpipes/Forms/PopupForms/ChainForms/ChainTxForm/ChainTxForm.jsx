@@ -9,7 +9,7 @@ import { broadcastToChain } from '../../../../../../Chains/api/broadcastToChain'
 import toast  from 'react-hot-toast';
 import { ChainToastContent, ActionToastContent, CustomToastContext } from '../../../../../toasts/CustomToastContext'
 
-import { processScenarioData, validateDiagramData, processAndSanitizeFormData, parseAndReplacePillsInFormData, sanitizeFormData, getUpstreamNodeIds } from '../../../../utils/scenarioUtils';
+import { processScenarioData, validateDiagramData, processAndSanitizeFormData, getUpstreamNodeIds } from '../../../../utils/scenarioUtils';
 import { getOrderedList } from '../../../../hooks/utils/scenarioExecutionUtils';
 
 import { CollapsibleField }  from '../../../fields';

@@ -4,7 +4,7 @@ import { useStoreApi } from 'reactflow';
 import { getSavedFormState } from '../utils/storageUtils'; 
 import ScenarioService from '../../../services/ScenarioService';
 import NodeExecutionService from '../../../services/NodeExecutionService';
-import { processScenarioData, validateDiagramData, processAndSanitizeFormData, parseAndReplacePillsInFormData, sanitizeFormData, getUpstreamNodeIds } from '../utils/scenarioUtils';
+import { processScenarioData, validateDiagramData, processAndSanitizeFormData, getUpstreamNodeIds } from '../utils/scenarioUtils';
 import { fetchNodeExecutionData, processWebhookEvent, waitForNewWebhookEvent } from './utils/scenarioExecutionUtils';
 import SocketContext from '../../../contexts/SocketContext';
 import WebhooksService from '../../../services/WebhooksService';
@@ -276,15 +276,16 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                     const activeExecutionData = chainQueryExecutions[updatedExecutionId];
             
                     const parsedFormData = processAndSanitizeFormData(currentNode.formData, activeExecutionData, upstreamNodeIds);
-                    console.log('chainQuery Parsed Form Data:', parsedFormData);
+                    console.log('chainQuery Parsed Form Data:', parsedFormData, currentNode.id);
                     try {
                         const queryParams = {
                             chainKey: parsedFormData.selectedChain,
                             palletName: parsedFormData.selectedPallet,
                             methodName: parsedFormData.selectedMethod.name,
                             params: parsedFormData.methodInput,
-                            atBlock: parsedFormData.blockHash || undefined
+                            atBlock: parsedFormData.blockHash || null,
                         }
+                        console.log('[queryParams] Chain Query Params:', queryParams);
                         const queryResult = await ChainRpcService.executeChainQueryMethod({
                             ...queryParams
                         });
@@ -453,15 +454,22 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
           clearSignedExtrinsic(activeScenarioId, nodeId);
           await broadcastToChain(sourceChain, signedExtrinsic, {
             onInBlock: (blockHash) => {
+            const evenData = {
+                inBlock: blockHash
+            }
               console.log(`Transaction included at blockHash: ${blockHash}`);
               toast.success(`Transaction included at blockHash: ${blockHash}`);
-              updateNodeResponseData(activeScenarioId, executionId, nodeId, { inBlock: blockHash });
+              updateNodeResponseData(activeScenarioId, executionId, nodeId, { evenData });
               console.log('[markExtrinsicAsUsed] first attempt to clear signed extrinsic...');
               markExtrinsicAsUsed(activeScenarioId, nodeId);
             },
+            
             onFinalized: (blockHash) => {
+                const eventData = {
+                    finalized: blockHash
+                }
               toast.success(`Transaction finalized at blockHash: ${blockHash}`);
-              updateNodeResponseData(activeScenarioId, executionId, nodeId, { finalized: blockHash });
+              updateNodeResponseData(activeScenarioId, executionId, nodeId, { eventData });
             },
             onError: (error) => {
               toast.error(`Action execution failed: ${error.message}`);

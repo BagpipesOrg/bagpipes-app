@@ -21,15 +21,18 @@ class ChainRpcService {
     const api = await getApiInstance(chainKey);
     const method = this.resolveMethod(api, palletName, methodName, false);
     const formattedParams = this.formatParams(params);
-
+    console.log('1. executeChainQueryMethod formattedParams:', formattedParams);
+    console.log('1. executeChainQueryMethod params:', params);
     try {
       let result: Codec;
       if (atBlock) {
+        console.log('2. executeChainQueryMethod atBlock:', atBlock);
         const blockHash = await this.getBlockHash(api, atBlock);
         result = await method.at(blockHash, ...formattedParams);
       } else {
         result = await method(...formattedParams);
       }
+      // result = await method(...formattedParams);
       return result.toHuman();
     } catch (error) {
       console.error('Error executing chain query method:', error);
@@ -85,15 +88,49 @@ console.log('formattedParams:', formattedParams);
     const namespace = isTx ? api.tx : api.query;
 
     if (!namespace[camelPalletName] || !namespace[camelPalletName][camelMethodName]) {
-      throw new Error(`The method ${methodName} is not available on the pallet ${palletName}.`);
+        throw new Error(`The method ${methodName} is not available on the pallet ${palletName}.`);
     }
     return namespace[camelPalletName][camelMethodName];
+}
+
+private static formatParams(params: any): any[] {
+  // Function to clean a string by removing zero-width spaces and other unwanted characters
+  function cleanString(value: string): string {
+      return value.split('').filter(char => {
+          const code = char.charCodeAt(0);
+          return code >= 32 && code <= 126; // Only include printable ASCII characters
+      }).join('');
   }
 
-  private static formatParams(params: any[]): any[] {
-    // Ensure params are correctly formatted as an array
-    return Array.isArray(params) ? params : [params];
+  // Function to recursively clean parameters
+  function cleanParams(param: any): any {
+      if (typeof param === 'string') {
+          return cleanString(param);
+      } else if (Array.isArray(param)) {
+          return param.map(item => cleanParams(item));
+      } else if (param && typeof param === 'object') {
+          const cleanedObject = {};
+          for (const key in param) {
+              if (param.hasOwnProperty(key)) {
+                  cleanedObject[key] = cleanParams(param[key]);
+              }
+          }
+          return cleanedObject;
+      }
+      return param;
   }
+
+  // Ensure params is an array
+  const paramsArray = Array.isArray(params) ? params : [params];
+
+  // Clean each parameter
+  const cleanedParams = paramsArray.map(param => cleanParams(param));
+
+  console.log('Formatted and cleaned params:', cleanedParams);
+  return cleanedParams;
+}
+
+
 
   private static async getBlockHash(api: ApiPromise, atBlock: string): Promise<string> {
     if (/^\d+$/.test(atBlock)) { // If it's a numeric string, treat it as a block number
