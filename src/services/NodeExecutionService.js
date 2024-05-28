@@ -3,7 +3,7 @@ import useAppStore from '../store/useAppStore';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 
-import config from './config';
+import config from '../config';
 
 
 class NodeExecutionService {

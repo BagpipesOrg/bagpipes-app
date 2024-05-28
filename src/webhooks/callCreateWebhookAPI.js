@@ -1,5 +1,5 @@
 
-import config from './config';
+import config from '../config';
 
 async function callCreateWebhookAPI() {
   try {
