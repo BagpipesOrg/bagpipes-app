@@ -3,10 +3,9 @@ import useAppStore from '../store/useAppStore';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 
+import config from './config';
 
 
-
-const baseUrl =  'http://localhost:8080'
 class NodeExecutionService {
     constructor() {
         this.csrfToken = null;
@@ -18,7 +17,7 @@ class NodeExecutionService {
 
     async createScenario(initialData) {
         try {
-            const response = await axios.post('/api/scenario/createScenario', { initialData, _csrf: this.csrfToken }, { withCredentials: true });
+            const response = await axios.post(`${config.baseUrl}/api/scenario/createScenario`, { initialData, _csrf: this.csrfToken }, { withCredentials: true });
             if (response.status === 201) {
                 const scenarioId = response.data._id; // Rename _id to scenarioId
                 console.log(`[createScenario] scenario created successfully with scenarioId: ${scenarioId}`);
@@ -57,7 +56,7 @@ class NodeExecutionService {
       };
 
       console.log(`Sending HTTP request to server`);
-      const response = await axios.post(`${baseUrl}/api/http/executeHttpRequest`, requestBody);
+      const response = await axios.post(`${config.baseUrl}/api/http/executeHttpRequest`, requestBody);
 
       // Log the part of the response you're interested in, for debugging
       console.log('HTTP request successful, status:', response.status);

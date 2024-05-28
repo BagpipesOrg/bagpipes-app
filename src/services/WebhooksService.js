@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-// const baseUrl = 'https://api.bagpipes.io' || 'http://localhost:8080';
-const baseUrl = 'http://localhost:8080';
+import config from './config';
 
 class WebhooksService {
     constructor() {
