@@ -1,6 +1,9 @@
+
+
 // import axios from './AxiosService';
 import useAppStore from '../store/useAppStore';
 import toast from 'react-hot-toast';
+import threadbagInstance from './AxiosService'
 class ScenarioService {
     constructor() {
         this.csrfToken = null;
@@ -222,7 +225,29 @@ class ScenarioService {
         }
     }
     
-    
+
+    async startPersistScenario(scenarioId, persist) {
+        try {
+            const response = await threadbagInstance.post('/api/persist/startJob', { scenarioId, persist, _csrf: this.csrfToken }, { withCredentials: true });
+            console.log('Server response:', response.data);
+            return response.data;
+        } catch (error) {
+            console.error(`Failed to persist scenario ${scenarioId}:`, error);
+            throw error;
+        }
+    }
+
+    async stopPersistScenario(scenarioId, persist) {
+        try {
+            const response = await threadbagInstance.post('/api/persist/stopJob', { scenarioId, persist, _csrf: this.csrfToken }, { withCredentials: true });
+            console.log('Server response:', response.data);
+            return response.data;
+        } catch (error) {
+            console.error(`Failed to persist scenario ${scenarioId}:`, error);
+            throw error;
+        }
+    }
+
  
 
     async fetchMissingData(executionId) {

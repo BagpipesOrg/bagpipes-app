@@ -7,6 +7,9 @@ newFlow: 'Create a new workflow scenario.',
 generateLink: 'Generate a template link to the current workflow scenario, which you can share with others.',
 runOnce: 'Run the workflow scenario once.',
 stopScenario: 'Stop the workflow scenario.',
+executionsButton: 'View executions of this workflow scenario.',
+deleteScenarioButton: 'Delete this workflow scenario.',
+persistScenarioToggle: <div className='tippy-inner'>Persisting your scenario into a background app that is constantly running in the background.</div>,
 
 }
 

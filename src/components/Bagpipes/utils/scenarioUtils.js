@@ -143,9 +143,9 @@ export function processAndSanitizeFormData(formData, executionData, upstreamNode
 
     // Replace pills with their actual values from execution data
     function replacePills(value) {
-        console.log('1. processAndSanitizeFormData Value:', value);
+        // console.log('1. processAndSanitizeFormData Value:', value);
         return value.replace(pillRegex, (match, dataId, nodeIndexStr) => {
-            console.log('2. processAndSanitizeFormData Match:', match);
+            // console.log('2. processAndSanitizeFormData Match:', match);
             const nodeIndex = parseInt(nodeIndexStr, 10) - 1;
             if (nodeIndex < 0 || nodeIndex >= upstreamNodeIds.length) {
                 console.error(`Node index ${nodeIndex} out of bounds for upstream nodes.`);
@@ -168,13 +168,13 @@ export function processAndSanitizeFormData(formData, executionData, upstreamNode
                 }
 
                 const pathParts = dataId.split('.');
-                console.log('4. processAndSanitizeFormData Path Parts:', pathParts);
+                // console.log('4. processAndSanitizeFormData Path Parts:', pathParts);
                 actualValue = eventData;
                 for (const part of pathParts) {
-                    console.log('5. processAndSanitizeFormData Part:', part);
+                    // console.log('5. processAndSanitizeFormData Part:', part);
                     if (actualValue && actualValue.hasOwnProperty(part)) {
                         actualValue = actualValue[part];
-                        console.log('5b. processAndSanitizeFormData Actual Value:', actualValue);
+                        // console.log('5b. processAndSanitizeFormData Actual Value:', actualValue);
                     } else {
                         console.error(`Path not found in eventData for node ${nodeId}: ${dataId}`);
                         actualValue = undefined;
@@ -192,19 +192,19 @@ export function processAndSanitizeFormData(formData, executionData, upstreamNode
             }
 
             // Log character codes before cleaning
-            console.log('6. processAndSanitizeFormData Actual Value Before Cleaning:', actualValue);
+            // console.log('6. processAndSanitizeFormData Actual Value Before Cleaning:', actualValue);
 
             // Rebuild the string to ensure no invisible characters are included and validate the address format
             let cleanValue = rebuildString(typeof actualValue === 'object' ? JSON.stringify(actualValue) : `${actualValue}`);
 
             // Log character codes after cleaning
-            console.log('7. processAndSanitizeFormData Clean Value:', cleanValue);
+            // console.log('7. processAndSanitizeFormData Clean Value:', cleanValue);
 
             // if (!isValidBase58(cleanValue)) {
             //     console.error(`Invalid Base58 value found: ${cleanValue}`);
             //     return match; // Return original pill markup if value is not a valid Base58
             // }
-            console.log('7b. processAndSanitizeFormData Clean Value:', cleanValue);
+            // console.log('7b. processAndSanitizeFormData Clean Value:', cleanValue);
 
             return cleanValue;
         });
@@ -212,12 +212,12 @@ export function processAndSanitizeFormData(formData, executionData, upstreamNode
 
     // Recursively apply sanitization and pill replacement to strings, arrays, and object values
     function recursiveProcess(value) {
-        console.log('8. processAndSanitizeFormData Value:', value);
+        // console.log('8. processAndSanitizeFormData Value:', value);
         if (typeof value === 'string') {
             let sanitizedValue = sanitizeValue(value);
             return replacePills(sanitizedValue);
         } else if (Array.isArray(value)) {
-            console.log('9. processAndSanitizeFormData Value:', value);
+            // console.log('9. processAndSanitizeFormData Value:', value);
             return value.map(item => {
                 if (typeof item === 'object') {
                     return recursiveProcess(item); // Recursively process each item if it's an object

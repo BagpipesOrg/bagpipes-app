@@ -85,6 +85,36 @@ export const loadScenarioAsync = async (scenarioId) => {
 //     }
 //   };
 
+
+export const startPersistScenarioAsync = async (scenarioId, persist) => {
+  try {
+      const success = await ScenarioService.startPersistScenario(scenarioId, persist);
+      console.log('Server response:', success);
+      if (success) {
+          useAppStore.getState().persistScenario(scenarioId, persist);
+          return true;
+      }
+  } catch (error) {
+      console.error(`Failed to start persisting scenario ${scenarioId}:`, error);
+      return false;
+  }
+};
+
+export const stopPersistScenarioAsync = async (scenarioId, persist) => {
+  try {
+      const success = await ScenarioService.stopPersistScenario(scenarioId, persist);
+      console.log('Server response:', success);
+      if (success) {
+          useAppStore.getState().persistScenario(scenarioId, persist);
+          return true;
+      }
+  } catch (error) {
+      console.error(`Failed to stop persisting scenario ${scenarioId}:`, error);
+      return false;
+  }
+};
+
+
   export const deleteScenarioAsync = async (_id) => {
     try {
       // const success = await ScenarioService.deleteScenario(_id);
@@ -155,6 +185,9 @@ export const loadScenarioAsync = async (scenarioId) => {
         }
       }
     }
+
+
+
   
     // Optionally, you can also compare and update other fields for each scenario and execution
     // ...

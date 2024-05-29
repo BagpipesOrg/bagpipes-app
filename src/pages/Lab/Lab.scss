@@ -20,9 +20,13 @@
     padding: 10px;
     cursor: pointer;
   }
+
   .scenario-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-top: 15px;
-    padding: 15px 20px 15px 20px;
+    padding: 15px 20px;
     border-radius: 10px;
     transition: all 0.3s ease;
     
@@ -30,11 +34,22 @@
     transform: scale(1);
   
     &:hover {
-      // Reduced scaling
       transform: scale(1.02);
       background-color: var(--bg);
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     }
+  }
+  
+  .scenario-title {
+    flex: 1;
+    text-align: left;
+  }
+  
+  .scenario-details {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 50px; /* Adjust the gap as needed */
   }
   
   .scenario-header {

@@ -1,8 +1,8 @@
-// // axiosService.js
-// import axios from 'axios';
+// axiosService.js
+import axios from 'axios';
 
-// const instance = axios.create({
-//     baseURL: 'http://localhost:5001'
-// });
+const threadbagInstance = axios.create({
+    baseURL: 'http://localhost:5001'
+});
 
-// export default instance;
+export default threadbagInstance;
