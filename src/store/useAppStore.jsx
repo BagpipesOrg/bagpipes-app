@@ -6,6 +6,7 @@ import { EDGE_STYLES } from './reactflow/onConnect';
 
 const defaultState = {
   scenarios: {},
+  persistedScenarios: {},
   activeScenarioId: null,
   executions: {},
   executionId: null,
@@ -440,6 +441,20 @@ const useAppStore = create(
         };
       });
     },
+
+    persistScenario: (scenarioId, persist) => {
+      console.log('[persistScenario] Persisting scenario state (in useAppStore):', scenarioId, persist);
+      set((state) => {
+          const updatedState = {
+              scenarios: {
+                  ...state.scenarios,
+                  [scenarioId]: { ...state.scenarios[scenarioId], persisted: persist },
+              },
+          };
+          console.log("[persistScenario] Updated state for scenarioId:", updatedState.scenarios[scenarioId]);
+          return updatedState;
+      });
+  },
 
     
     saveDiagramData: (scenarioId, diagramData) => {

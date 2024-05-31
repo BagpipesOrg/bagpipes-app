@@ -228,7 +228,8 @@ class ScenarioService {
 
     async startPersistScenario(scenarioId, persist) {
         try {
-            const response = await threadbagInstance.post('/api/persist/startJob', { scenarioId, persist, _csrf: this.csrfToken }, { withCredentials: true });
+            console.log('startPersistScenario', scenarioId, persist);
+            const response = await threadbagInstance.post('/job/start', { id: scenarioId, persist: true, _csrf: this.csrfToken }, { withCredentials: true });
             console.log('Server response:', response.data);
             return response.data;
         } catch (error) {
@@ -239,7 +240,7 @@ class ScenarioService {
 
     async stopPersistScenario(scenarioId, persist) {
         try {
-            const response = await threadbagInstance.post('/api/persist/stopJob', { scenarioId, persist, _csrf: this.csrfToken }, { withCredentials: true });
+            const response = await threadbagInstance.post('/job/start', { id: scenarioId, persist: false, _csrf: this.csrfToken }, { withCredentials: true });
             console.log('Server response:', response.data);
             return response.data;
         } catch (error) {
@@ -248,7 +249,29 @@ class ScenarioService {
         }
     }
 
- 
+    async fetchPersistedScenarioLogs(scenarioId) {
+        try {
+            const response = await threadbagInstance.post(
+                `/scenario/worker/logs`, { id: scenarioId }, { withCredentials: true }
+            );
+            console.log('Server response:', response.data);
+            return response.data;
+        } catch (error) {
+            console.error(`Failed to get logs for scenario ${scenarioId}:`, error);
+            throw error;
+        }
+    }
+
+    async fetchAllWorkers() {
+        try {
+            const response = await threadbagInstance.get('/scenario/all_workers', { withCredentials: true });
+            console.log('Server response:', response.data);
+            return response.data;
+        } catch (error) {
+            console.error(`Failed to get all workers:`, error);
+            throw error;
+        }
+    }
 
     async fetchMissingData(executionId) {
         try {

@@ -7,7 +7,7 @@ import './Lab.scss';
 import '../../index.css';
 import '../../main.scss';
 import { ExecutionIcon, PlusIcon, CloseIcon } from '../../components/Icons/icons';
-import { deleteScenarioAsync, loadScenarioAsync, startPersistScenarioAsync } from '../../store/AsyncHelpers';
+import { deleteScenarioAsync, fetchPersistedScenarioLogs, loadScenarioAsync, startPersistScenarioAsync, stopPersistScenarioAsync, fetchAllWorkers } from '../../store/AsyncHelpers';
 import CreateTemplateLink from '../../components/Bagpipes/TemplateFeatures/CreateTemplateLink';
 import ScenarioService from '../../services/ScenarioService';
 import toast from 'react-hot-toast';
@@ -17,9 +17,10 @@ import ThemeContext from '../../contexts/ThemeContext';
 import Toggle from '../../components/Bagpipes/Forms/Toggle';
 import { Button } from 'antd';
 import { GenerateLinkButton, ExecutionsButton, DeleteScenarioButton, PersistScenarioToggle } from '../../components/Bagpipes/buttons';
+import { useTippy } from '../../contexts/tooltips/TippyContext';
 
 function Lab() {
-    const { scenarios, addScenario, setActiveScenarioId, activeScenarioId, setNodeContentMap, loadScenario } = useAppStore((state) => ({
+    const { scenarios, addScenario, setActiveScenarioId, activeScenarioId, setNodeContentMap, loadScenario, persistedScenarios} = useAppStore((state) => ({
         scenarios: state.scenarios,
         addScenario: state.addScenario,
         setActiveScenarioId: state.setActiveScenarioId,
@@ -27,29 +28,39 @@ function Lab() {
         saveScenario: state.saveScenario,
         setNodeContentMap: state.setNodeContentMap,
         loadScenario: state.loadScenario,
+        // persistedScenarios: state.persistedScenarios,
     }));
     const navigate = useNavigate();
     const createScenario = useCreateScenario();
     const [templateScenarioId, setTemplateScenarioId] = useState(null);
     const { theme } = React.useContext(ThemeContext);
-    const [persistedScenarios, setPersistedScenarios] = useState({});
+    // const [persistedScenarios, setPersistedScenarios] = useState({});
+    const [isToggled, setIsToggled] = useState(false);
 
     // useEffect(() => {
     //   // Load persisted scenarios from the store or an API
     // }, []);
 
-    const handleToggleChange = async (scenarioId, checked) => {
-      const persistFunction = checked ? startPersistScenarioAsync : stopPersistScenarioAsync;
-      const success = await persistFunction(scenarioId, checked);
+    const handleToggleChange = async (scenarioId, persist) => {
+      const persistFunction = persist ? startPersistScenarioAsync : stopPersistScenarioAsync;
+      const success = await persistFunction(scenarioId, persist);
       if (success) {
-        setPersistedScenarios({
-          ...persistedScenarios,
-          [scenarioId]: checked,
-        });
+        return true;
       } else {
-        console.error(`Error ${checked ? 'starting' : 'stopping'} persisting scenario state`);
+        console.error(`Error ${persist ? 'starting' : 'stopping'} persisting scenario state`);
+        return false;
       }
     };
+
+    const handleButtonClick = async (scenarioId) => {
+
+      console.log('Button clicked');
+      // await fetchPersistedScenarioLogs(scenarioId);
+      await fetchAllWorkers();
+
+    };
+
+
 
     
     const editScenario = async (scenarioId) => {
@@ -91,7 +102,8 @@ function Lab() {
                   <div className="scenario-details">
                     <div className="">Scenario {scenarioId} </div>
                     <GenerateLinkButton scenarioId={scenarioId} />
-                    <PersistScenarioToggle scenarioId={scenarioId} isToggled={!!persistedScenarios[scenarioId]} onToggleChange={handleToggleChange} />                    
+                    <button onClick={(e) =>{e.stopPropagation(); handleButtonClick(scenarioId)}} className="button bg-blue-500 flex items-center">Click</button>
+                    <PersistScenarioToggle scenarioId={scenarioId} isToggled={scenario.persisted} onToggleChange={handleToggleChange} />                    
                     <ExecutionsButton scenarioId={scenarioId} />
                     <DeleteScenarioButton scenarioId={scenarioId} />
                   

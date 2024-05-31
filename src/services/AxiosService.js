@@ -2,7 +2,8 @@
 import axios from 'axios';
 
 const threadbagInstance = axios.create({
-    baseURL: 'http://localhost:5001'
+    baseURL: import.meta.env.VITE_THREADBAG_BASE_URL,
+    withCredentials: true, 
 });
 
 export default threadbagInstance;

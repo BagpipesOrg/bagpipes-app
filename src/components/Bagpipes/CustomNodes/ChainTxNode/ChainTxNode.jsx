@@ -9,7 +9,6 @@ import { listChains } from '../../../../Chains/ChainsInfo';
 import './ChainTx.scss';
 import '../../node.styles.scss';
 
-import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css'; 
 import 'tippy.js/themes/light.css';
 
