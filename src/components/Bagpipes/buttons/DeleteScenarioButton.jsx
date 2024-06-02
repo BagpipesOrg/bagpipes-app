@@ -9,6 +9,8 @@ import './Buttons.scss';
 import { buttonDescriptions}  from './buttonDescriptions.jsx';
 import { useAppStore } from '../hooks/index.js';
 import { useNavigate } from 'react-router-dom';
+import { deleteScenarioAsync } from '../../../store/AsyncHelpers';
+
 
 import '../buttons/Buttons.scss';
 import toast from 'react-hot-toast';
