@@ -102,7 +102,7 @@ function Lab() {
                   <div className="scenario-details">
                     <div className="">Scenario {scenarioId} </div>
                     <GenerateLinkButton scenarioId={scenarioId} />
-                    <button onClick={(e) =>{e.stopPropagation(); handleButtonClick(scenarioId)}} className="button bg-blue-500 flex items-center">Click</button>
+                    {/* <button onClick={(e) =>{e.stopPropagation(); handleButtonClick(scenarioId)}} className="button bg-blue-500 flex items-center">Click</button> */}
                     <PersistScenarioToggle scenarioId={scenarioId} isToggled={scenario.persisted} onToggleChange={handleToggleChange} />                    
                     <ExecutionsButton scenarioId={scenarioId} />
                     <DeleteScenarioButton scenarioId={scenarioId} />
