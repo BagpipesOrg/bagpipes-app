@@ -8,7 +8,7 @@ import { EvmWallet, EvmWalletInfo, WalletLogoProps } from '../../types';
 
 export class BaseEvmWallet implements EvmWallet {
   extensionName = '';
-  installUrl = '';
+  installUrl? = '';
   logo: WalletLogoProps;
   title: string;
   isSetGlobalString: string;

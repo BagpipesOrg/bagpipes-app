@@ -249,19 +249,31 @@ export const processWebhookEvent = (webhookEventData, webhookFetchStartTime) => 
     console.log('Comparing against fetch start time:', fetchStartTimeUTC);
     console.log('processWebhookEvent webhookEventData:', webhookEventData);
 
-    const eventCreatedAtUTC = new Date(webhookEventData.created_at).getTime();
-    console.log('Event created at:', eventCreatedAtUTC);
+    try {
+        const eventCreatedAtUTC = webhookEventData.created_at ? new Date(webhookEventData.created_at).getTime() : null;
+        
+        if (eventCreatedAtUTC && isNaN(eventCreatedAtUTC)) {
+            throw new Error('Invalid created_at date');
+        }
 
-    if (eventCreatedAtUTC > fetchStartTimeUTC) {
-        const processedEventData = {
-            query: webhookEventData.query || null,
-            content: parseWebhookContent(webhookEventData.content || null),
-            headers: webhookEventData.headers || null,
-            method: webhookEventData.method || null,
-            createdAt: webhookEventData.created_at || null,
-        };
-        return { processedEventData, isNewEvent: true };
-    } else {
+        if (eventCreatedAtUTC && eventCreatedAtUTC > fetchStartTimeUTC) {
+            const processedEventData = {};
+            for (const key in webhookEventData) {
+                if (webhookEventData.hasOwnProperty(key)) {
+                    processedEventData[key] = webhookEventData[key];
+                }
+            }
+
+            if (processedEventData.content) {
+                processedEventData.content = parseWebhookContent(processedEventData.content);
+            }
+            console.log('processWebhookEvent New event found:', processedEventData);
+            return { processedEventData, isNewEvent: true };
+        } else {
+            return { processedEventData: null, isNewEvent: false };
+        }
+    } catch (error) {
+        console.error('Error processing webhook event:', error);
         return { processedEventData: null, isNewEvent: false };
     }
 };

@@ -67,17 +67,17 @@ export async function hydradx_omnipool_sell(
     console.log(route[0])
     if (route[0].pool == 'Omnipool') {
       console.log(`omnipool only detected`)
-      tx = await api.tx.omnipool.sell(assetin, assetout, submitamount, minBuyAmount)
+      tx =  api.tx.omnipool.sell(assetin, assetout, submitamount, minBuyAmount)
       console.log(`omnipool tx drafted`)
       console.log(tx.toHex())
     }
   } else {
-    tx = await api.tx.router.sell(
+    tx = await api.tx.omnipool.sell(
       assetin.toString(),
       assetout.toString(),
       submitamount.toString(),
       minBuyAmount / BigInt(10000),
-      route,
+      // TODO: fix router,
     )
     console.log(`selltx router.sell drafted`)
   }

@@ -1,5 +1,5 @@
 import { dotToHydraDx, turing2moonriver, moonriver2turing, mangata2turing, polkadot_assethub_to_assetHub_kusama, hydraDxToParachain, turing2mangata, generic_kusama_to_parachain, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
-import { getTokenDecimalsByChainName, get_hydradx_asset_symbol_decimals } from "../../../../Chains/Helpers/AssetHelper";
+import { getTokenDecimalsByAssetName, getTokenDecimalsByChainName, get_hydradx_asset_symbol_decimals } from "../../../../Chains/Helpers/AssetHelper";
 import toast from "react-hot-toast";
 import { isEthereumAddress } from '@polkadot/util-crypto';
 
@@ -16,7 +16,7 @@ export async function extrinsicHandler(actionType, formData) {
             return handlexTransfer(formData);
         case 'swap':
             console.log("Inside extrinsicHandler for swap");
-            return handleSwap(formData);
+            return await handleSwap(formData);
         case 'remark':
             console.log(`handling remark`);
             return handleRemark(formData);
@@ -174,13 +174,14 @@ not ready yet
 
 
  
-function handleSwap(formData) {
+async function handleSwap(formData) {
     const source = formData.source;
     const target = formData.target;
     console.log(`handle swap form data:`, formData);
       // Retrieve token decimals for the source chain
-      const tokenDecimals = getTokenDecimalsByChainName(source.chain);
-
+    //   const tokenDecimals = getTokenDecimalsByChainName(source.chain);
+      const tokenDecimals =  await getTokenDecimalsByAssetName(source.assetId);
+console.log(`tokenDecimals: `, tokenDecimals);
            // Adjust the source amount according to the token decimals
       const submittableAmount = source.amount * (10 ** tokenDecimals);
         const assetin = source.assetId;
@@ -193,6 +194,8 @@ function handleSwap(formData) {
 /// minBuyAmount = minimum amount to buy, note: tx will fail if this is set to 0 or to low
       // TODO: handle swaps
     if (source.chain === 'hydraDx' && target.chain === 'hydraDx') {
+
+        
         return hydradx_omnipool_sell(assetin, assetout, source.amount, submittableAmount);  //hydradx_omnipool_sell(assetin: string, assetout: string, amount: number, minBuyAmount: number)
        //  true;
     }

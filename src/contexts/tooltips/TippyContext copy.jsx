@@ -5,7 +5,6 @@ import 'tippy.js/dist/tippy.css';
 const TippyContext = createContext();
 
 export const useTippy = () => useContext(TippyContext);
-
 export const TippyProvider = ({ children }) => {
   const [tippyProps, setTippyProps] = useState({
     visible: false,
@@ -14,6 +13,9 @@ export const TippyProvider = ({ children }) => {
     placement: 'bottom',
     content: null
   });
+
+  const tippyInstance = useRef(null);
+  const pollingIntervalRef = useRef(null);
 
   const calculatePosition = (referenceElement, placement) => {
     const rect = referenceElement.getBoundingClientRect();
@@ -36,7 +38,6 @@ export const TippyProvider = ({ children }) => {
     return { calculatedPosition, placement: shouldFlipToLeft && placement.startsWith('right') ? 'left-start' : placement };
   };
 
-
   const showTippy = (contentType, nodeId, referenceElement, content, placement = 'bottom') => {
     console.log('showTippy called with nodeId:', nodeId);
   
@@ -49,16 +50,78 @@ export const TippyProvider = ({ children }) => {
       content,
       placement: finalPlacement,
     });
-  };
 
+    // Start polling to check for content changes
+    startPolling();
+  };
 
   const hideTippy = () => {
     setTippyProps({ visible: false, position: { x: 0, y: 0 }, nodeId: null, content: null, placement: 'bottom' });
+    
+    // Stop polling
+    stopPolling();
   };
+
+  const startPolling = () => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+    }
+
+    pollingIntervalRef.current = setInterval(() => {
+      if (tippyInstance.current && tippyInstance.current.popperInstance) {
+        console.log('Polling: Updating Tippy instance');
+        tippyInstance.current.popperInstance.update();
+      }
+    }, 3000); // Poll every 3 seconds
+  };
+
+  const stopPolling = () => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      // Clean up interval on component unmount
+      stopPolling();
+    };
+  }, []);
 
   return (
     <TippyContext.Provider value={{ tippyProps, showTippy, hideTippy }}>
       {children}
+      {tippyProps.visible && (
+        <Tippy
+          appendTo={() => document.body}
+          content={tippyProps.content}
+          interactive={true}
+          placement={tippyProps.placement}
+          visible={tippyProps.visible}
+          theme="light"
+          trigger="click"
+          hideOnClick={false}
+          onClickOutside={() => hideTippy()}
+          flip={true}
+          boundary="viewport"
+          
+          onCreate={(instance) => {
+            tippyInstance.current = instance;
+          }}
+        >
+          <div
+            style={{
+              position: 'fixed',
+              left: tippyProps.position.x,
+              top: tippyProps.position.y,
+              maxHeight: '80vh', // Set max height for the tippy
+              overflowY: 'auto', // Enable vertical scrolling
+            }}
+          ></div>
+          
+        </Tippy>
+      )}
     </TippyContext.Provider>
   );
 };
@@ -119,7 +182,7 @@ export const PanelTippyProvider = ({ children }) => {
         console.log('Polling: Updating Tippy instance');
         tippyInstance.current.popperInstance.update();
       }
-    }, 1000); // Poll every 3 seconds
+    }, 3000); // Poll every 3 seconds
   };
 
   const stopPolling = () => {

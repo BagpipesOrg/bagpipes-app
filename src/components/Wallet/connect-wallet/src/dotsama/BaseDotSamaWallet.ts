@@ -14,7 +14,7 @@ const DAPP_NAME = 'SubWallet Connect';
 export class BaseDotSamaWallet implements Wallet {
   extensionName: string;
   title: string;
-  installUrl: string;
+  installUrl?: string;
   logo: WalletLogoProps;
 
   _extension: InjectedExtension | undefined;

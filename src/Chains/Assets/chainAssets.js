@@ -270,7 +270,7 @@ export const CHAIN_ASSETS = {
         "assets":[
             {
                 "asset": {
-                    "decimals": '12',
+                    "decimals": '10',
                     "name": 'DOT Foreign asset',
                     "symbol": 'DOT',
                     "existentialDeposit": '500,000,000,000',

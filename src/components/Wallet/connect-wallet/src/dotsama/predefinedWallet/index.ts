@@ -13,6 +13,8 @@ import SubWalletLogo from './SubWalletLogo.svg';
 import TalismanLogo from './TalismanLogo.svg';
 // @ts-ignore
 import NovaWalletLogo from './NovaWalletLogo.svg';
+// @ts-ignore
+import WalletConnectLogo from './WalletConnectLogo.svg';
 
 export const PREDEFINED_WALLETS: WalletInfo[] = [
   {
@@ -59,5 +61,13 @@ export const PREDEFINED_WALLETS: WalletInfo[] = [
       src: NovaWalletLogo as string,
       alt: 'Nova Wallet'
     }
-  }
+  },
+  // {
+  //   extensionName: 'wallet-connect',
+  //   title: 'Wallet Connect',
+  //   logo: {
+  //     src: WalletConnectLogo as string,
+  //     alt: 'Wallet Connect'
+  //   }
+  // }
 ];

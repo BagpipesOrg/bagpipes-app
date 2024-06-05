@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { getApiInstance } from "../api/connect";
 import { ChainInfo, listChains } from "../ChainsInfo";
-import { listInterlayAssets } from "../Assets/listAssetsForChain";
+import { listHydraDxAssets, listInterlayAssets } from "../Assets/listAssetsForChain";
 import {
   adjustBalance,
   parseBalanceString,
@@ -13,6 +13,8 @@ import { string } from "slate";
 import { getRawAddress } from "../DraftTx/DraftxTransferTx";
 import { Asset } from "@galacticcouncil/sdk";
 import { Outlet } from "react-router-dom";
+import { get_hydradx_asset_symbol_decimals } from "../Helpers/AssetHelper";
+
 
 interface BaseBalance {
   free: number;
@@ -687,6 +689,21 @@ export function getTokenDecimalsByChainName(chainName: string): number {
   }
   return selectedChain.token_decimals;
 }
+
+export async function getTokenDecimalsByAssetName(assetId: string): number {
+  // const chainList = listHydraDxAssets();
+  // nd(
+  //   (asset) => asset.id === assetName
+  // );
+  // if (!selectedAsset) {
+  //   throw new Error(`Chain not found: ${assetName}`);
+  // }
+  const asset = await get_hydradx_asset_symbol_decimals(assetId);
+  console.log(' getTokenDecimalsByAssetName Asset Decimals', asset)  
+  // const selectedAsset = Object.values(chainList).fi
+  return Number(asset.decimals);
+}
+
 
 // generic function to check native account balance
 async function generic_check_native_balance(api: ApiPromise, address: string) {

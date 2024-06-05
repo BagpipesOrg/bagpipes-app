@@ -1,7 +1,7 @@
 // Copyright 2019-2022 @subwallet/wallet-connect authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { EvmWalletInfo } from './types';
+import { EvmWalletInfo } from '../../types';
 
 // @ts-ignore
 import MetaMaskLogo from './MetaMaskLogo.svg';
@@ -11,6 +11,8 @@ import SubWalletLogo from './SubWalletLogo.svg';
 import NovaWalletLogo from './NovaWalletLogo.svg';
 // @ts-ignore
 import TalismanWalletLogo from './TalismanLogo.svg';
+// @ts-ignore
+import WalletConnectLogo from './WalletConnectLogo.svg';
 
 export const PREDEFINED_EVM_WALLETS: EvmWalletInfo[] = [
   {
@@ -23,7 +25,7 @@ export const PREDEFINED_EVM_WALLETS: EvmWalletInfo[] = [
     },
     isSetGlobalString: 'isSubWallet',
     initEvent: 'subwallet#initialized'
-  },
+  },    
   {
     extensionName: 'talisman',
     title: 'Talisman',
@@ -44,10 +46,10 @@ export const PREDEFINED_EVM_WALLETS: EvmWalletInfo[] = [
       alt: 'MetaMask Extension'
     },
     isSetGlobalString: 'isMetaMask',
-    initEvent: 'metamask#initialized'
+    initEvent: 'ethereum#initialized'
   },
   {
-    extensionName: 'ethereum',
+    extensionName: 'nova',
     title: 'Nova Wallet (EVM)',
     installUrl: 'https://novawallet.io',
     logo: {
@@ -55,6 +57,16 @@ export const PREDEFINED_EVM_WALLETS: EvmWalletInfo[] = [
       alt: 'NovaWallet (EVM)'
     },
     isSetGlobalString: 'isNovaWallet',
-    initEvent: 'ethereum#initialized'
-  }
+    initEvent: 'nova#initialized'
+  },
+  {
+    extensionName: 'WalletConnect',
+    title: 'Wallet Connect',
+    logo: {
+      src: WalletConnectLogo as string,
+      alt: 'Wallet Connect'
+    },
+    isSetGlobalString: 'isWalletConnect',
+    initEvent: 'walletconnect#initialized'
+  },
 ];

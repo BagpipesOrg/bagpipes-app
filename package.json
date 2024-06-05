@@ -55,7 +55,7 @@
     "@polkadot/util": "^12.6.2",
     "@polkadot/util-crypto": "^12.6.2",
     "@polkadot/wasm-crypto": "^7.3.2",
-    "@sub-wallet/wallet-connect": "./src/components/Wallet/wallet-connect",
+    "@sub-wallet/wallet-connect": "./src/components/Wallet/connect-wallet",
     "@subwallet/wallet-connect": "^0.2.3",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.0.0",

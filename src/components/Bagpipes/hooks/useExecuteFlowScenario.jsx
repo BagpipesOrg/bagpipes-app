@@ -143,7 +143,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
 
             case 'action':
                 console.log('executeFlowScenario currentNode position:', currentNode.position);
-            
+
                 toast('Executing action!', {
                     icon: '💥',
                     id: 'execution-action',
@@ -166,7 +166,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                 const formData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData || null;
                 const node = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId) || null;
                 const signedExtrinsic = node?.extrinsics?.signedExtrinsic || null;
-                // const sourceChain = formData?.actionData?.source?.chain || null;
+                const sourceChain = formData?.actionData?.source?.chain || null;
             
                 // we use this function instead of the extrinsicHandler to handle the different action types, 
                 // but we need to validate it works with action nodes before removing the commented out code

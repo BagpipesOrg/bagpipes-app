@@ -28,7 +28,7 @@ export interface WalletAccount {
 export interface WalletInfo {
   extensionName: string;
   title: string;
-  installUrl: string;
+  installUrl?: string;
   logo: WalletLogoProps;
 }
 
