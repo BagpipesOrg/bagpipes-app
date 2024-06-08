@@ -40,6 +40,28 @@
     }
   }
   
+
+  .scenario-card .scenario-name {
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: larger;
+    width: 30em;
+    text-decoration: underline;
+}
+
+.scenario-card .scenario-id {
+    font-size: smaller;
+    color: #6c757d;
+    width: 25em;
+    align-items: right;
+
+}
+
+.scenario-card .scenario-name:hover {
+    text-decoration: underline dotted;
+}
+
   .scenario-title {
     flex: 1;
     text-align: left;

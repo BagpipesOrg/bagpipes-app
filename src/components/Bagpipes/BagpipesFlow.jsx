@@ -642,6 +642,7 @@ const draftingNodesPresent = draftingIsRequired(transformedList);
 
 const handleStartScenario = async (instance) => {
   setIsExecuting(true);
+  console.log("[handleStartScenario] Starting scenario execution...");
   toast(<OrderedListContent list={transformedList} />);
 
   if (draftingNodesPresent) {

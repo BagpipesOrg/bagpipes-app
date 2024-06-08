@@ -6,7 +6,7 @@ import 'tippy.js/dist/tippy.css';
 import '../nodes.jsx';
 import '../../../index.css';
 import './Buttons.scss';
-import { buttonDescriptions}  from './buttonDescriptions.jsx';
+import { tippyDescriptions}  from './tippyDescriptions.jsx';
 import { useAppStore } from '../hooks/index.js';
 import { useNavigate } from 'react-router-dom';
 import { deleteScenarioAsync } from '../../../store/AsyncHelpers';
@@ -27,7 +27,7 @@ export const DeleteScenarioButton = ({ scenarioId}) => {
 
 
       return (
-        <Tippy theme='light' placement='bottom' interactive={true} content={buttonDescriptions.deleteScenarioButton}>
+        <Tippy theme='light' placement='bottom' interactive={true} content={tippyDescriptions.deleteScenarioButton}>
                         <button 
             className="close-button-right flex items-center"
             onClick={(e) => { e.stopPropagation(); deleteScenarioAsync(scenarioId); }}

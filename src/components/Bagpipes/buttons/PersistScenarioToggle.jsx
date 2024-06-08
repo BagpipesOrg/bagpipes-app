@@ -9,7 +9,7 @@ import 'tippy.js/dist/tippy.css';
 import '../nodes.jsx';
 import '../../../index.css';
 import './Buttons.scss';
-import { buttonDescriptions}  from './buttonDescriptions.jsx';
+import { tippyDescriptions}  from './tippyDescriptions.jsx';
 import { useAppStore } from '../hooks/index.js';
 import { useNavigate } from 'react-router-dom';
 import Toggle from '../../../components/Bagpipes/Forms/Toggle';

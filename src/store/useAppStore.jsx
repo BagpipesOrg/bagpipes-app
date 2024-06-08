@@ -225,7 +225,24 @@ const useAppStore = create(
         // }
       
     },
-    
+
+    saveScenarioName: (scenarioId, newName) => {
+      if (!scenarioId) {
+          console.error('[saveScenarioName] Scenario ID is missing or incorrect. Cannot save scenario name.');
+          return;
+      }
+
+      set((state) => {
+          const updatedScenarios = {
+              ...state.scenarios,
+              [scenarioId]: {
+                  ...state.scenarios[scenarioId],
+                  name: newName
+              }
+          };
+          return { scenarios: updatedScenarios };
+      });
+    },
         
     saveScenario: (scenarioId, diagramData) => {
 

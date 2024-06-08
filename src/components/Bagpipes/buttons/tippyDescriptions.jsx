@@ -1,6 +1,6 @@
 import React from "react";
 
-export const buttonDescriptions = {
+export const tippyDescriptions = {
 createUi: <div className='tippy-inner'>'(Coming Soon...) Create a UI for your flow that you can share with your users.</div>,
 draft: <div className='tippy-inner'>Generate the draft transactions that you can review and approve ready for broadbcasting.</div>,
 newFlow: 'Create a new workflow scenario.',
@@ -10,10 +10,10 @@ stopScenario: 'Stop the workflow scenario.',
 executionsButton: 'View executions of this workflow scenario.',
 deleteScenarioButton: 'Delete this workflow scenario.',
 persistScenarioToggle: <div className='tippy-inner'>Persisting your scenario into a background app that is constantly running in the background.</div>,
-
+scenarioNameHover: 'Click to edit the scenario name.',
 }
 
-export const buttonDescriptions2 = () => {
+export const tippyDescriptions2 = () => {
 
     return (
 

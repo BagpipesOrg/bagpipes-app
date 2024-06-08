@@ -6,7 +6,7 @@ import 'tippy.js/dist/tippy.css';
 import '../nodes.jsx';
 import '../../../index.css';
 import './Buttons.scss';
-import { buttonDescriptions}  from './buttonDescriptions.jsx';
+import { tippyDescriptions}  from './tippyDescriptions.jsx';
 import { useAppStore } from '../hooks/index.js';
 import { useNavigate } from 'react-router-dom';
 
@@ -25,7 +25,7 @@ export const ExecutionsButton = ({ scenarioId}) => {
 
 
       return (
-        <Tippy theme='light' placement='bottom' interactive={true} content={buttonDescriptions.executionsButton}>
+        <Tippy theme='light' placement='bottom' interactive={true} content={tippyDescriptions.executionsButton}>
               <button 
                     className="lab-buttons hover:bg-blue-700 flex items-center"
                     onClick={(e) => { e.stopPropagation(); navigate(`/scenario/${scenarioId}`)}}

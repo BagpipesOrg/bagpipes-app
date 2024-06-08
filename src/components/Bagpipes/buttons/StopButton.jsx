@@ -5,11 +5,11 @@ import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import './Buttons.scss';
 import Button from './Button.jsx';
-import { buttonDescriptions}  from './buttonDescriptions';
+import { tippyDescriptions}  from './tippyDescriptions';
 
 const StopButton = ({ stopScenario }) => {
     return (
-        <Tippy theme='light' placement='bottom'  interactive={true}  content={buttonDescriptions.stopScenario}>
+        <Tippy theme='light' placement='bottom'  interactive={true}  content={tippyDescriptions.stopScenario}>
             <button 
                 className="top-bar-buttons stop-button flex items-center" 
                 onClick={stopScenario} 
