@@ -33,12 +33,14 @@ function Lab() {
         setNodeContentMap,
         loadScenario,
         persistedScenarios,
+        saveScenarioName
     } = useAppStore((state) => ({
         scenarios: state.scenarios,
         addScenario: state.addScenario,
         setActiveScenarioId: state.setActiveScenarioId,
         activeScenarioId: state.activeScenarioId,
         saveScenario: state.saveScenario,
+        saveScenarioName: state.saveScenarioName,
         setNodeContentMap: state.setNodeContentMap,
         loadScenario: state.loadScenario,
     }));
@@ -50,6 +52,7 @@ function Lab() {
     const [templateScenarioId, setTemplateScenarioId] = useState(null);
     const { theme } = useContext(ThemeContext);
     const [isToggled, setIsToggled] = useState(false);
+    const { showTippy } = useTippy();
 
     const handleSubmit = (formData) => {
         console.log("Form submitted with data: ", formData);
