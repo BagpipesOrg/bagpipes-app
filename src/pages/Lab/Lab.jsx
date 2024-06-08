@@ -125,7 +125,9 @@ function Lab() {
                         return scenario ? (
                             <div key={scenarioId} className="scenario-card relative cursor-pointer" onClick={(e) => { e.stopPropagation(); editScenario(scenarioId); }}>
                                 <Tippy content="Scenario Name" theme='light' interactive={true} duration={[200, 200]} arrow={true}>
-                                    <div ref={labelRef} onClick={(e) => { e.stopPropagation(); handleTippyScenario(scenarioId, e); }} className="scenario-name">{scenario.name}</div>
+                                    <div ref={labelRef} onClick={(e) => { e.stopPropagation(); handleTippyScenario(scenarioId, e); }} className="scenario-name">
+                                    {scenario.name || <span className="placeholder-text">Click to name Scenario</span>}
+                                        </div>
                                 </Tippy>
                                 <OrderedListContent list={transformedList} />
                                 <div className="scenario-details">
