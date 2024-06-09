@@ -14,8 +14,11 @@ import { parseMetadataPallets } from '../parseMetadata'
 import { parseLookupTypes } from '../ParseMetadataTypes';
 import { resolveKeyType } from '../resolveKeyType';
 import ChainRpcService from '../../../../../../services/ChainRpcService';
+import ExtrinsicCountTester from './ExtrinsicCountTester'; // Import the ExtrinsicCountTester component
+
 import FormHeader from '../../../FormHeader';
 import FormFooter from '../../../FormFooter';
+
 
 import { CopyBlock } from 'react-code-blocks';
 
@@ -131,7 +134,7 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
             console.error('Error fetching metadata:', error);
         }
     }
-    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedChain: chainName, selectedMethod: null, selectedPallet: null, blockHash: ''});
+    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedChain: chainName, selectedMethod: null, selectedPallet: null, blockHash: '', methodInput: null});
   };
 
     
@@ -141,7 +144,7 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
         setSelectedPallet(newPallet);
         setSelectedMethod(null); 
     }
-    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedPallet: palletName, selectedPalletData: newPallet, selectedMethod: null});
+    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedPallet: palletName, selectedPalletData: newPallet, selectedMethod: null, methodInput: null});
   };
 
   const handleMethodChange = (methodName) => {
@@ -152,7 +155,7 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     }
     setSelectedMethod(newMethod);
 
-    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedMethod: newMethod});
+    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedMethod: newMethod, methodInput: null});
   };
 
 
@@ -404,6 +407,7 @@ return (
           {renderMethodSelection()}
           {renderMethodFields()}
           {renderRunMethod()}
+            <ExtrinsicCountTester chainKey='polkadot' />
           {renderBlockHashInput()}
 
     </div>

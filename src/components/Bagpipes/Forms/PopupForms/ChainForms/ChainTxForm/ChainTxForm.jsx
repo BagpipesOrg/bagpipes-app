@@ -351,7 +351,7 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
         />
 
     ));
-};
+  };
 
 
 const renderSignAndSendTx = () => {

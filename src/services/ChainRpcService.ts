@@ -16,52 +16,95 @@ interface MethodParams {
 
 class ChainRpcService {
 
-  /// Execute a query method on a chain
+
   static async executeChainQueryMethod({ chainKey, palletName, methodName, params, atBlock }: MethodParams): Promise<any> {
     const api = await getApiInstance(chainKey);
     const method = this.resolveMethod(api, palletName, methodName, false);
-    const formattedParams = this.formatParams(params);
-    console.log('1. executeChainQueryMethod formattedParams:', formattedParams);
-    console.log('1. executeChainQueryMethod params:', params);
+  console.log('1. executeChainQueryMethod method:', method);
     try {
+      const blockHash = atBlock ? await this.getBlockHash(api, atBlock) : undefined;
       let result: Codec;
-      if (atBlock) {
-        console.log('2. executeChainQueryMethod atBlock:', atBlock);
-        const blockHash = await this.getBlockHash(api, atBlock);
-        result = await method.at(blockHash, ...formattedParams);
+      if (params && params.length > 0) {
+        const formattedParams = this.formatParams(params);
+        result = blockHash ? await method.at(blockHash, ...formattedParams) : await method(...formattedParams);
       } else {
-        result = await method(...formattedParams);
+        result = blockHash ? await method.at(blockHash) : await method();
       }
-      // result = await method(...formattedParams);
-      return result.toHuman();
+      return result.toHuman ? result.toHuman() : result.toString();
     } catch (error) {
       console.error('Error executing chain query method:', error);
       throw error;
     }
   }
 
-  /// Execute a transaction method on a chain
+
   static async executeChainTxMethod({ chainKey, palletName, methodName, params, signerAddress, signer }: MethodParams): Promise<any> {
-    console.log(`executeChainTxMethod: chainKey, palletName, methodName, params: `, chainKey, palletName, methodName, params); 
     const api = await getApiInstance(chainKey);
     const method = this.resolveMethod(api, palletName, methodName, true);
-    const formattedParams = this.formatParams(params);
-    if (!signerAddress) throw new Error("Signer address is required for transaction signing.");
-
-    try {
-      let extrinsic: SubmittableExtrinsic<'promise'>;
-      let signedExtrinsic: SubmittableExtrinsic<'promise'>;
   
-      extrinsic = method(...formattedParams) as SubmittableExtrinsic<'promise'>;
-      signedExtrinsic = await signExtrinsicUtil(api, signer, extrinsic, signerAddress);
-      
+    if (!signerAddress) throw new Error("Signer address is required for transaction signing.");
+    try {
+      const formattedParams = params && params.length > 0 ? this.formatParams(params) : [];
+      const extrinsic = formattedParams.length > 0 ? method(...formattedParams) : method();
+  
+      const signedExtrinsic = await signExtrinsicUtil(api, signer, extrinsic, signerAddress);
       return signedExtrinsic;
-
     } catch (error) {
       console.error('Error executing chain tx method:', error);
       throw error;
     }
   }
+  
+  
+
+
+  // /// Execute a query method on a chain
+  // static async executeChainQueryMethod({ chainKey, palletName, methodName, params, atBlock }: MethodParams): Promise<any> {
+  //   const api = await getApiInstance(chainKey);
+  //   const method = this.resolveMethod(api, palletName, methodName, false);
+  //   const formattedParams = this.formatParams(params);
+  //   console.log('1. executeChainQueryMethod formattedParams:', formattedParams);
+  //   console.log('1. executeChainQueryMethod params:', params);
+  //   try {
+  //     let result: Codec;
+  //     if (atBlock) {
+  //       console.log('2. executeChainQueryMethod atBlock:', atBlock);
+  //       const blockHash = await this.getBlockHash(api, atBlock);
+  //       result = await method.at(blockHash, ...formattedParams);
+  //     } else {
+  //       result = await method(...formattedParams);
+  //     }
+  //     // result = await method(...formattedParams);
+  //     return result.toHuman();
+  //   } catch (error) {
+  //     console.error('Error executing chain query method:', error);
+  //     throw error;
+  //   }
+  // }
+  
+
+  // /// Execute a transaction method on a chain
+  // static async executeChainTxMethod({ chainKey, palletName, methodName, params, signerAddress, signer }: MethodParams): Promise<any> {
+  //   console.log(`executeChainTxMethod: chainKey, palletName, methodName, params: `, chainKey, palletName, methodName, params); 
+  //   const api = await getApiInstance(chainKey);
+  //   const method = this.resolveMethod(api, palletName, methodName, true);
+  //   const formattedParams = this.formatParams(params);
+  //   if (!signerAddress) throw new Error("Signer address is required for transaction signing.");
+
+  //   try {
+  //     let extrinsic: SubmittableExtrinsic<'promise'>;
+  //     let signedExtrinsic: SubmittableExtrinsic<'promise'>;
+  
+  //     extrinsic = method(...formattedParams) as SubmittableExtrinsic<'promise'>;
+  //     signedExtrinsic = await signExtrinsicUtil(api, signer, extrinsic, signerAddress);
+      
+  //     return signedExtrinsic;
+
+  //   } catch (error) {
+  //     console.error('Error executing chain tx method:', error);
+  //     throw error;
+  //   }
+  // }
 
   /// Create a transaction method on a chain
   static async createChainTxMethod({ chainKey, palletName, methodName, params }: MethodParams) {
@@ -87,11 +130,28 @@ console.log('formattedParams:', formattedParams);
     const camelMethodName = this.toCamelCase(methodName);
     const namespace = isTx ? api.tx : api.query;
 
-    if (!namespace[camelPalletName] || !namespace[camelPalletName][camelMethodName]) {
-        throw new Error(`The method ${methodName} is not available on the pallet ${palletName}.`);
+    console.log(`Resolving method: ${methodName} on pallet: ${palletName}`);
+    console.log(`Camel Case Pallet Name: ${camelPalletName}, Camel Case Method Name: ${camelMethodName}`);
+    console.log(`Namespace details:`, namespace);
+
+    if (!namespace[camelPalletName]) {
+      console.error(`Pallet ${camelPalletName} is not available in the namespace.`);
+      return null;
     }
-    return namespace[camelPalletName][camelMethodName];
+
+    const method = namespace[camelPalletName][camelMethodName];
+
+    if (typeof method === 'function') {
+      console.log(`Direct method access successful for: ${camelMethodName}`);
+      return method;
+    } else {
+      console.error(`The method ${camelMethodName} is not available on the pallet ${palletName} as a function, checked as ${camelMethodName}.`);
+      return null;
+    }
 }
+
+  
+  
 
 private static formatParams(params: any): any[] {
   // Function to clean a string by removing zero-width spaces and other unwanted characters
@@ -141,8 +201,13 @@ private static formatParams(params: any): any[] {
   }
 
   private static toCamelCase(str: string): string {
-    return str.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase());
+    return str
+      .replace(/(?:^\w|[A-Z]|\b\w)/g, function(word, index) {
+        return index == 0 ? word.toLowerCase() : word.toUpperCase();
+      })
+      .replace(/\s+/g, '');
   }
+  
 }
 
 export default ChainRpcService;

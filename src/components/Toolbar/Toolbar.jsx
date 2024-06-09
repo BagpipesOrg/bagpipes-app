@@ -97,17 +97,13 @@ const Toolbar = () => {
       IconComponent = <HttpIcon />;
     } else if (nodeKey === 'code') {
       IconComponent = <CodeIcon />;
-    } 
-    else if (nodeKey === 'discord') {
+    } else if (nodeKey === 'discord') {
       IconComponent = <DiscordIcon className='h-6 w-6' fillColor='white' />;
-    } 
-    else if (nodeKey === 'openAi' || nodeKey === 'chatGpt') {
+    } else if (nodeKey === 'openAi' || nodeKey === 'chatGpt') {
       IconComponent = <OpenAIIcon />;
-    }
-    else if (nodeKey === 'chainQuery') {
+    } else if (nodeKey === 'chainQuery') {
       IconComponent = <ChainQueryIcon />;
-    }
-    else if (nodeKey === 'chainTx') {
+    }else if (nodeKey === 'chainTx') {
       IconComponent = <ChainQueryIcon />;
     }
 

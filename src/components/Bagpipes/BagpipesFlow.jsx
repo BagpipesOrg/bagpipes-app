@@ -14,6 +14,7 @@ import GitInfo from './git_tag';
 import { useDebounce } from 'use-debounce';
 import TextUpdaterNode from './TextupdaterNode';
 import Toolbar from '../Toolbar/Toolbar';
+// import AppsToolbar from '../Toolbar/AppsToolbar';
 import FormGroupNode from './FormGroupNode';
 import CustomEdge from './CustomEdges/CustomEdge';
 import { ChainNode, ActionNode, RouterNode, WebhookNode,WebsocketNode, APINode, HttpNode, CodeNode, ScheduleNode, DiscordNode, OpenAINode, ChatGptNode,  ChainQueryNode, ChainTxNode, DelayNode } from './CustomNodes';
@@ -804,6 +805,8 @@ const handleStopScenario = (instance) => {
           
             <TopBar createScenario={createScenario} handleExecuteFlowScenario={handleExecuteFlowScenario} handleStartScenario={handleStartScenario} handleStopScenario={handleStopScenario} shouldExecuteFlowScenario={shouldExecuteFlowScenario} draftingNodesPresent={draftingNodesPresent}  />
             <Toolbar />
+            {/* <AppsToolbar /> */}
+
             </ReactFlowStyled>
             
            
