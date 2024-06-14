@@ -194,7 +194,7 @@ async function test_balances() {
 
   /// polkadot native balance check
   console.log(`Checking polkadot balance checks`);
-  const polko = await checkRelayRawNativeBalance('polkadot', accountid);
+  const polko = await checkRelayRawNativeBalance("polkadot", accountid);
   assert.ok(
     number_improve(polko) > 0,
     "Polkadot free balance check must be greater than the default 0 value"

@@ -1,7 +1,11 @@
 //@ts-nocheck
 import { getApiInstance } from "../api/connect";
 import { ChainInfo, listChains } from "../ChainsInfo";
-import { listHydraDxAssets, listInterlayAssets } from "../Assets/listAssetsForChain";
+import {
+  listHydraDxAssets,
+  list_onchainassets,
+  listInterlayAssets,
+} from "../Assets/listAssetsForChain";
 import {
   adjustBalance,
   parseBalanceString,
@@ -14,7 +18,6 @@ import { getRawAddress } from "../DraftTx/DraftxTransferTx";
 import { Asset } from "@galacticcouncil/sdk";
 import { Outlet } from "react-router-dom";
 import { get_hydradx_asset_symbol_decimals } from "../Helpers/AssetHelper";
-
 
 interface BaseBalance {
   free: number;
@@ -38,6 +41,7 @@ interface AssetHubAssetBalance extends BaseBalance {
   status: string;
   reason: string;
   extra: string;
+  decimals?: number;
 }
 
 interface AssetBalanceInfo extends BaseBalance {
@@ -79,6 +83,7 @@ interface AssetHubAssetBalance {
   status: string;
   reason: string;
   extra: string;
+  decimals?: number;
 }
 
 // moonriver assets pallet
@@ -129,8 +134,8 @@ export async function checkmangataxAssetBalance(
     return { free: 0, reserved: 0, total: 0 };
   }
 
-    const stringBalance = hdxBalance.toHuman();
-    //  console.log(`checkHydraDxAssetBalance Raw HDX Balance:`, stringBalance);
+  const stringBalance = hdxBalance.toHuman();
+  //  console.log(`checkHydraDxAssetBalance Raw HDX Balance:`, stringBalance);
 
   try {
     const assetlist = listInterlayAssets();
@@ -367,7 +372,7 @@ export async function checkBalance(
   }
 
   const stringBalance = chainBalance.toHuman();
-   console.log(`checkBalance Raw Balance:`, stringBalance);
+  console.log(`checkBalance Raw Balance:`, stringBalance);
 
   try {
     // Get the asset's metadata
@@ -375,7 +380,6 @@ export async function checkBalance(
     console.log(`checkBalance metadataRaw`, metadataRaw);
     const metadata = metadataRaw.toString();
     console.log(`checkBalance metadata`, metadata);
-
 
     if (
       metadata &&
@@ -456,7 +460,7 @@ export async function checkTuringAssetBalance(
   }
 
   const stringBalance = turingBalance.toHuman();
-   console.log(`checkTuringAssetBalance Raw TUR Balance:`, stringBalance);
+  console.log(`checkTuringAssetBalance Raw TUR Balance:`, stringBalance);
 
   try {
     // Get the asset's metadata
@@ -518,8 +522,6 @@ export async function checkDOT_assetHub_kusama(account_id_32: string): {
     assetDecimals: 12,
   };
 }
-
-
 
 export async function checkHydraDxAssetBalance(
   assetid: number | string,
@@ -594,6 +596,40 @@ export async function checkHydraDxAssetBalance(
     };
   }
   return { free: 0, reserved: 0, total: 0 };
+}
+
+// input 0x eth account
+export async function check_moonbeam(accounteth: string, dassetid: string) {
+  const api = await getApiInstance("moonbeam");
+  const assetobj = list_onchainassets("moonbeam");
+  console.log(`assetobj: `, assetobj);
+  var decimals = 0;
+  for (const x of assetobj) {
+    if (x.assetId === dassetid) {
+      console.log(`assetobj| found asset: `, x);
+      decimals = parseInt(x.asset.decimals, 10);
+    }
+  }
+  //const decimals = assetobj.find(assetobj => assetobj.assetId == assetid).asset.decimals;
+  const assetid = dassetid.replace(/,/g, "");
+  console.log(`moonbeam balance check: `, accounteth, assetid, decimals);
+  const balance = await api.query.assets.account(assetid, accounteth);
+  const b3 = balance.toHuman();
+  console.log(`checking moonbeam: `, b3);
+  if (isAssetHubAssetBalance(b3)) {
+    const bal_obj: AssetHubAssetBalance = b3;
+    return {
+      free: bal_obj.balance,
+      decimals: parseInt(decimals, 10),
+      reserved: 0,
+    };
+  }
+  console.log(`moonbeam returning 0`);
+  return {
+    free: 0,
+    reserved: 0,
+    decimals: 0,
+  };
 }
 
 // input 0x eth account
@@ -678,7 +714,6 @@ export async function getAssetDecimals(chain: string, assetid: number) {
   return resp;
 }
 
-
 export function getTokenDecimalsByChainName(chainName: string): number {
   const chainList = listChains();
   const selectedChain = Object.values(chainList).find(
@@ -699,11 +734,10 @@ export async function getTokenDecimalsByAssetName(assetId: string): number {
   //   throw new Error(`Chain not found: ${assetName}`);
   // }
   const asset = await get_hydradx_asset_symbol_decimals(assetId);
-  console.log(' getTokenDecimalsByAssetName Asset Decimals', asset)  
+  console.log(" getTokenDecimalsByAssetName Asset Decimals", asset);
   // const selectedAsset = Object.values(chainList).fi
   return Number(asset.decimals);
 }
-
 
 // generic function to check native account balance
 async function generic_check_native_balance(api: ApiPromise, address: string) {
@@ -712,7 +746,6 @@ async function generic_check_native_balance(api: ApiPromise, address: string) {
   const bal = await api.query.system.account(address); // Codec type
   const bal3 = bal.toHuman();
   if (isAssetResponseObject(bal3)) {
-
     return {
       free: bal3.data.free,
       reserved: bal3.data.reserved,
@@ -824,7 +857,7 @@ export async function getAssetBalanceForChain(
     accountId
   );
   var sanitizedAssetId: number;
-  if (chain == "moonriver") {
+  if (chain == "moonriver" || chain == "moonbeam") {
     sanitizedAssetId = assetId;
   } else {
     sanitizedAssetId = parseInt(assetId.toString().replace(/,/g, ""), 10);
@@ -844,12 +877,16 @@ export async function getAssetBalanceForChain(
 
   switch (chain) {
     case "polkadot":
-      balances = await checkRelayRawNativeBalance('polkadot', accountId, signal);
+      balances = await checkRelayRawNativeBalance(
+        "polkadot",
+        accountId,
+        signal
+      );
       break;
 
-      case "kusama":
-        balances = await checkRelayRawNativeBalance('kusama', accountId, signal);
-        break;
+    case "kusama":
+      balances = await checkRelayRawNativeBalance("kusama", accountId, signal);
+      break;
 
     case "hydraDx":
       const hydraBalanceInfo = await checkHydraDxAssetBalance(
@@ -881,6 +918,13 @@ export async function getAssetBalanceForChain(
       console.log(`assetHub_kusama detected`);
       balances = await checkDOT_assetHub_kusama(accountId);
       //  console.log(`returning:`, balances);
+      break;
+
+    case "moonbeam":
+      console.log(`moonbeam checking`);
+      balances = await check_moonbeam(accountId, assetId);
+      console.log(`moonbeam balances: `, balances);
+      assetDecimals = balances.decimals;
       break;
 
     case "moonriver":
@@ -951,7 +995,15 @@ function processChainSpecificBalances(
       reservedInUnits = toUnit(balances.reserved, tokenDecimals);
       totalInUnits = freeInUnits + reservedInUnits;
       break;
-      
+
+    case "moonbeam":
+      console.log(`moonbeam checker: `, balances);
+      // Process balances for HydraDx
+
+      freeInUnits = toUnit(balances.free, assetDecimals);
+      reservedInUnits = toUnit(balances.reserved, assetDecimals);
+      totalInUnits = freeInUnits + reservedInUnits;
+      break;
 
     case "hydraDx":
       // Process balances for HydraDx

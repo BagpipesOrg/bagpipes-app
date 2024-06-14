@@ -6,6 +6,9 @@ import './AccountDropdown.scss';
 import { WalletAccount } from '../../../Wallet/connect-wallet/src/types';
 import { listChains } from '../../../../Chains/ChainsInfo';
 import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
+import { isEthereumAddress } from '@polkadot/util-crypto';
+
+
 
 function AccountDropdown({ selectedChainName, onSelect, selectedAddress }: { 
   selectedChainName: string, 
@@ -33,9 +36,13 @@ function AccountDropdown({ selectedChainName, onSelect, selectedAddress }: {
     // console.log("Selected Address:", selectedAccount);
 };
 
-
   const displayAddress = (address: string, prefix: number) => {
-    const encodedAddress = encodeAddress(decodeAddress(address), prefix);
+    console.log(`display address: `, address);
+    console.log(`display prefix: `, prefix);
+    var encodedAddress = address;
+    if (!isEthereumAddress(address)) { // if address is not an evm address, we want to substrate encode it
+      encodedAddress = encodeAddress(decodeAddress(address), prefix);
+    }
     const start = encodedAddress.slice(0, 6); 
     const end = encodedAddress.slice(-4); 
     return `${start}...${end}`;

@@ -25,6 +25,20 @@ export function listassetHub_kusamaAssets() {
   }));
 }
 
+export function list_onchainassets(chain: string) {
+  switch (chain) {
+    case "moonbeam":
+      const assets = CHAIN_ASSETS.moonbeam.assets;
+      return assets.map(
+        (assetData: { asset: any; decimals: any; assetId: any }) => ({
+          asset: assetData.asset,
+          decimals: assetData.decimals,
+          assetId: assetData.assetId.replace(",", ""),
+        })
+      );
+  }
+}
+
 export function listTuringAssets() {
   const assets = CHAIN_ASSETS.turing.assets;
 

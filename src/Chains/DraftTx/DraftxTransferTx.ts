@@ -65,17 +65,13 @@ export async function polkadot_to_assethub(
     { Unlimited: 0 }
   );
   if (delay) {
-    const future: number = ((
+    const future: number = (
       await api.query.system.number()
-    ).toHuman()) as number;
+    ).toHuman() as number;
     const priority = 0;
-    const numberfuture: number = parseInt(future.toString().replace(/,/g, "")) + delay;
-    const txo = api.tx.scheduler.schedule(
-      numberfuture,
-      null,
-      priority,
-      tx
-    );
+    const numberfuture: number =
+      parseInt(future.toString().replace(/,/g, "")) + delay;
+    const txo = api.tx.scheduler.schedule(numberfuture, null, priority, tx);
     return txo;
   }
 

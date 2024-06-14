@@ -142,7 +142,7 @@ export function listChains() {
 
       const Moonbeam: ChainInfo = {
         name: 'moonbeam',
-        display: 'Moonbeam',
+        display: 'Moonbeam (Polkadot)',
         paraid: 2004,
         prefix: 1284,
         token_decimals: 12,

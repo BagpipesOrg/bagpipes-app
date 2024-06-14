@@ -14,8 +14,6 @@ import endpoints from "../api/WsEndpoints";
 
 let tradeRouter: any;
 
-
-
 async function initializeTradeRouter() {
   const api = await getApiInstance("hydraDx");
 
@@ -32,30 +30,42 @@ async function initializeTradeRouter() {
 
 export async function getHydraDxSpotPrice(assetIn: string, assetOut: string) {
   if (!tradeRouter) {
-    await initializeTradeRouter()
+    await initializeTradeRouter();
   }
-  console.log(`got trade router`)
-  console.log(`calling getBestSpotPrice`)
-  const spotPrice = await tradeRouter.getBestSpotPrice(assetIn, assetOut)
-  console.log(`getHydraDx Spot price for ${assetIn} to ${assetOut}: ${JSON.stringify(spotPrice, null, 2)}`)
-  console.log(`got spot price`)
-  return spotPrice.toString()
+  console.log(`got trade router`);
+  console.log(`calling getBestSpotPrice`);
+  const spotPrice = await tradeRouter.getBestSpotPrice(assetIn, assetOut);
+  console.log(
+    `getHydraDx Spot price for ${assetIn} to ${assetOut}: ${JSON.stringify(
+      spotPrice,
+      null,
+      2
+    )}`
+  );
+  console.log(`got spot price`);
+  return spotPrice.toString();
 }
 
-export async function getHydraDxSellPrice(assetIn: string, assetOut: string, amount: number) {
-  console.log(`getHydraDx Getting selling details...`)
+export async function getHydraDxSellPrice(
+  assetIn: string,
+  assetOut: string,
+  amount: number
+) {
+  console.log(`getHydraDx Getting selling details...`);
   if (!tradeRouter) {
-    console.log(`getHydraDx Initializing TradeRouter in teh getHydraDxSell function...`)
-    await initializeTradeRouter()
+    console.log(
+      `getHydraDx Initializing TradeRouter in teh getHydraDxSell function...`
+    );
+    await initializeTradeRouter();
   }
 
-  console.log(`getHydraDx Getting selling details...`)
-  console.log(`assetIn, assetOut, amount:`, assetIn, assetOut, amount)
-  const tradeDetails = await tradeRouter.getBestSell(assetIn, assetOut, amount)
-  console.log(`i got trade details!`)
-  console.log(`getHydraDx trade details:`, tradeDetails.toHuman())
+  console.log(`getHydraDx Getting selling details...`);
+  console.log(`assetIn, assetOut, amount:`, assetIn, assetOut, amount);
+  const tradeDetails = await tradeRouter.getBestSell(assetIn, assetOut, amount);
+  console.log(`i got trade details!`);
+  console.log(`getHydraDx trade details:`, tradeDetails.toHuman());
 
-  return tradeDetails.toHuman()
+  return tradeDetails.toHuman();
 }
 
 // simplified route interface for hydradx

@@ -34,7 +34,7 @@ async function findIngressChannels(
     (item) => item.toNumber()
   );
 
-  console.log(`Ingress channels for ${paraid} on ${relayChainName}:`, channels);
+  // console.log(`Ingress channels for ${paraid} on ${relayChainName}:`, channels);
   return channels;
 }
 
