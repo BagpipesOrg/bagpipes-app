@@ -73,7 +73,9 @@ export const CHAIN_METADATA = {
     moonbeam: {
         chain: "Moonbeam",
         endpoints: [
+            "wss://wss.api.moonbeam.network",
               "wss://moonbeam-rpc.dwellir.com",
+
 
         ],
         queryBalancePaths: ["system.account"],

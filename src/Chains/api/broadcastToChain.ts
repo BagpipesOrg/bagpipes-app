@@ -39,7 +39,6 @@ export async function broadcastToChain(
           reject(new Error(errorMessage));
           return;
         }
-      
 
         if (status.isInBlock) {
           console.log(
@@ -60,7 +59,7 @@ export async function broadcastToChain(
           reject(new Error(errorMessage));
         }
       })
-      .catch((error: { message: any; toString: () => any; }) => {
+      .catch((error: { message: any; toString: () => any }) => {
         const errorMessage = `Error broadcasting transaction: ${
           error.message || error.toString()
         }`;
