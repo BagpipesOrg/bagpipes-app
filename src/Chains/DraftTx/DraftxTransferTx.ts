@@ -603,6 +603,45 @@ export async function hydraDxToParachain(
   return tx;
 }
 
+
+async function moonbeam2parachain(accountidme: string, assetid: string, amount: string, paraid: number) {
+  const api = await getApiInstance("moonbeam");
+
+    const asset = {
+      fun: {
+        Fungible: amount,
+      },
+      id: {
+        Concrete: {
+          interior: {
+            X3: [
+              { Parachain: paraid, PalletInstance: 50, GeneralIndex: assetid },
+            ],
+            parents: 1,
+          },
+        },
+      },
+    };
+  
+    const destination = {
+      parents: 1,
+      interior: {
+        X2: [{ Parachain: paraid, AccountId32: accountidme, network: null }],
+      },
+    };
+  
+    const tx = api.tx.xTokens.transferMultiasset(
+      { V3: asset },
+      { V2: destination },
+      { Unlimited: 0 }
+    );
+
+
+
+    return tx;
+
+  }
+
 function uint8ArrayToHex(uint8Array: Uint8Array): string {
   let hex = "";
   for (let i = 0; i < uint8Array.length; i++) {
