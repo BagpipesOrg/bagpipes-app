@@ -306,9 +306,11 @@ border: 1px solid rgb(184, 184, 184);
 }
 
 .react-flow {
-  height: 93% !important;
+  /* height: 93% !important; */
+  height: 100% !important;
+
   position: absolute !important;
-  top: 75px;
+  top: 0px;
   bottom: 0px;
   left: 0px;
 }

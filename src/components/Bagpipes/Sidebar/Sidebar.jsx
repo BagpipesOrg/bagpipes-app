@@ -1,17 +1,46 @@
 import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { SettingsIcon, ChatIcon, PlaygroundIcon, LabIcon } from '../../Icons/icons';
+import { SettingsIcon, ChatIcon, PlaygroundIcon, LabIcon, WalletIcon } from '../../Icons/icons';
 import ThemeContext from '../../../contexts/ThemeContext';
+import { OpenSelectWallet, WalletContext } from '../../Wallet/contexts';
+
 
 import './Sidebar.scss';
 
 const Sidebar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { theme } = useContext(ThemeContext);
+  const selectWallet = useContext(OpenSelectWallet);
+  const logoSrc = theme === 'dark' ? '/logo-white.svg' : '/logo.svg';
+
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const openModal = () => {
+    setModalOpen(true);
+    selectWallet.open();
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
 
   return (
-    <div className={`${theme} sidebar`} onMouseEnter={() => setIsExpanded(true)} onMouseLeave={() => setIsExpanded(false)}>
+    <div className={`${theme} sidebar ${isExpanded ? 'expanded' : ''}`} onMouseEnter={() => setIsExpanded(true)} onMouseLeave={() => setIsExpanded(false)}>
       <div className="sidebar-content">
+      <img src={logoSrc} className='bagpipe-logo' alt="Bagpipe Logo" />
+
+
+ {/* Wallet */}
+      <div className="sidebar-item" >
+      <Link to="#" onClick={openModal}>
+
+            <WalletIcon fillColor="#757575" />
+            {isExpanded && <span className="sidebar-text">Wallet</span>}
+            </Link>
+        </div>
+
+
         {/* Builder */}
         <div className="sidebar-item">
           <Link to="/builder">
@@ -37,12 +66,12 @@ const Sidebar = () => {
         </div> */}
 
         {/* Settings */}
-        {/* <div className="sidebar-item">
+        <div className="sidebar-item">
           <Link to="/settings">
             <SettingsIcon />
             {isExpanded && <span className="sidebar-text">Settings</span>}
           </Link>
-        </div> */}
+        </div>
       </div>
     </div>
   );

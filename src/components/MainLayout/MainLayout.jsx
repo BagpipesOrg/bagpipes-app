@@ -19,6 +19,7 @@ import ThemeContext from '../../contexts/ThemeContext';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import { useTippy, usePanelTippy } from '../../contexts/tooltips/TippyContext';
+import Settings from '../../pages/Settings/Settings';
 
 import '../toasts/toast.scss';
 // import '../index.css';
@@ -109,6 +110,9 @@ function MainLayout({ children }) {
                     <Route path="parachains" element={<Parachains />} />
                     <Route path="test-flow" element={<ReactTestFlow />} />
                     <Route path="evm-wallet-info" element={<EvmWalletInfo />} />
+                    <Route path="settings" element={<Settings />} />
+
+
                 {/* </Route> */}
                 {/* Other Top-Level Routes */}
                 <Route path="/create" element={<CreateFromTemplate />} />
