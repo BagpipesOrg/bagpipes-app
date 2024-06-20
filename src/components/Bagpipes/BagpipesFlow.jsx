@@ -38,6 +38,7 @@ import { getNodeConfig } from './nodeConfigs';
 import EdgeForm from './Forms/EdgeForm'
 import { EDGE_STYLES } from '../../store/reactflow/onConnect';
 import TopBar from './TopBar/TopBar';
+import ScenarioInfo from './ScenarioInfo/ScenarioInfo';
 import './utils/getAllConnectedNodes';
 
 
@@ -800,9 +801,7 @@ const handleStopScenario = (instance) => {
       />
     )}
 
-            
-
-          
+            <ScenarioInfo />
             <TopBar createScenario={createScenario} handleExecuteFlowScenario={handleExecuteFlowScenario} handleStartScenario={handleStartScenario} handleStopScenario={handleStopScenario} shouldExecuteFlowScenario={shouldExecuteFlowScenario} draftingNodesPresent={draftingNodesPresent}  />
             <Toolbar />
             {/* <AppsToolbar /> */}

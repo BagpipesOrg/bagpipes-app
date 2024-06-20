@@ -15,7 +15,7 @@ import Toggle from '../../components/Bagpipes/Forms/Toggle';
 import { Button } from 'antd';
 import { GenerateLinkButton, ExecutionsButton, DeleteScenarioButton, PersistScenarioToggle } from '../../components/Bagpipes/buttons';
 import { useTippy } from '../../contexts/tooltips/TippyContext';
-import ScenarioNameForm from './ScenarioNameForm';
+import ScenarioNameForm from '../../components/Bagpipes/Forms/PopupForms/ScenarioNameForm';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import { tippyDescriptions}  from '../../components/Bagpipes/buttons/tippyDescriptions';

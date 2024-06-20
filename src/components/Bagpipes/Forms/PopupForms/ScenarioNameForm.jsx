@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import FormHeader from "../../components/Bagpipes/Forms/FormHeader";
-import FormFooter from "../../components/Bagpipes/Forms/FormFooter";
-import '../../components/Bagpipes/Forms/PopupForms/Popup.scss';
-import { useTippy } from '../../contexts/tooltips/TippyContext';
-import { useAppStore } from '../../components/Bagpipes/hooks';
+import FormHeader from "../FormHeader";
+import FormFooter from "../FormFooter";
+import './Popup.scss';
+import { useTippy } from '../../../../contexts/tooltips/TippyContext';
+import { useAppStore } from '../../hooks';
 
 
 

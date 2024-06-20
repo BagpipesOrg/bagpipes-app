@@ -6,7 +6,6 @@ import { listChains } from '../../Chains/ChainsInfo';
 import { toast } from 'react-hot-toast';
 import ThemeContext from '../../contexts/ThemeContext';
 import { ChainQueryIcon, WebhookIcon, HttpIcon } from '../Icons/icons';
-
 import './toast.scss';
 
 const OrderedListContent = ({ list }) => {
@@ -17,7 +16,7 @@ const OrderedListContent = ({ list }) => {
     console.log('OrderedListContent SwapSVG', SwapSVG);
 
     return (
-        <div className={`flex justify-left w-full ${theme}`}>
+        <div className={`ordered-list-content-container flex justify-left w-full ${theme}`}>
             <div className='ordered-list-map flex justify-left' >
                 {list.map((item, index) => {
                     let imageSrc, altText;
