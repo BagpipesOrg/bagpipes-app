@@ -21,6 +21,7 @@ import 'tippy.js/dist/tippy.css';
 import { useTippy, usePanelTippy } from '../../contexts/tooltips/TippyContext';
 import Settings from '../../pages/Settings/Settings';
 
+
 import '../toasts/toast.scss';
 // import '../index.css';
 import './MainLayout.scss';
@@ -93,6 +94,9 @@ function MainLayout({ children }) {
             </ToastBar>
         )}
     </Toaster>
+
+    {/* <Sidebar /> */}
+
         
         {/* <Header /> */}
             <Routes>

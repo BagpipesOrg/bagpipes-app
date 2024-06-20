@@ -30,7 +30,7 @@ const Sidebar = () => {
       <div className="sidebar-content">
       <img src={logoSrc} className='bagpipe-logo' alt="Bagpipe Logo" />
 
-
+      <div className="sidebar-items" >
  {/* Wallet */}
       <div className="sidebar-item" >
       <Link to="#" onClick={openModal}>
@@ -72,6 +72,7 @@ const Sidebar = () => {
             {isExpanded && <span className="sidebar-text">Settings</span>}
           </Link>
         </div>
+        </div>  
       </div>
     </div>
   );

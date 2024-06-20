@@ -1,5 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import './ScenarioInfo.scss';
+import '../../../index.css';
+
 import useAppStore from '../../../store/useAppStore';
 import Tippy from '@tippyjs/react';
 import { useTippy } from '../../../contexts/tooltips/TippyContext';
@@ -17,6 +19,7 @@ const ScenarioInfo = () => {
       scenarios: state.scenarios,
       setActiveScenarioId: state.setActiveScenarioId,
     }));
+    const [dropdownVisible, setDropdownVisible] = useState(false);
     const { showTippy } = useTippy();
     const labelRef = useRef(null);
     const dropdownRef = useRef(null);
@@ -50,15 +53,23 @@ const ScenarioInfo = () => {
   
     const handleSelectScenario = (scenarioId) => {
       setActiveScenarioId(scenarioId);
+      setDropdownVisible(false);
     };
+
+    
   
     return (
+        <>
+        {dropdownVisible && <div className="overlay" onClick={() => setDropdownVisible(false)}></div>}
+  
       <Tippy
         content={<ScenarioDropdown onSelectScenario={handleSelectScenario} />}
         interactive={true}
         theme='light'
         placement="bottom-end"
         trigger="click"
+        onShow={() => setDropdownVisible(true)}
+        onHide={() => setDropdownVisible(false)}
       >
         <div className='scenario-info-container'>
           <div className='scenario-info' onClick={(e) => { e.stopPropagation(); }}>
@@ -70,6 +81,7 @@ const ScenarioInfo = () => {
           </div>
         </div>
       </Tippy>
+      </>
     );
   };
   
@@ -158,3 +170,6 @@ const ScenarioDropdown = ({ onSelectScenario }) => {
     );
   };
 
+
+
+  

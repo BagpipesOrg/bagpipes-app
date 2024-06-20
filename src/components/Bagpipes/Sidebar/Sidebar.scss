@@ -3,10 +3,11 @@
 .sidebar {
   width: 50px; /* Initial minimized width */
   transition: width 0.5s ease;
-  z-index: 1000 !important;
   height: 100%;
   overflow: hidden; /* Hide content that overflows during transition */
   background-color: var(--bg);
+  min-height: 1000px; /* Adjust as needed */
+
 
   &.expanded {
     width: 150px; /* Expanded width */
@@ -16,7 +17,6 @@
 .sidebar-content {
   width: 100%; /* Full-width */
   transition: transform 0.5s ease; /* Smooth transition for width */
-  z-index: 1000 !important;
 }
 
 .sidebar-item {
@@ -27,7 +27,6 @@
   color: inherit;
   transition: background-color 0.5s ease, box-shadow 0.5s ease, transform 0.5s ease; /* Transition for hover effect */
   width: 100%;
-  z-index: 1000 !important;
   background-color: var(--bg);
   position: relative; /* Ensure content doesn't move the icons */
   height: 40px; /* Adjust as needed */
@@ -39,12 +38,22 @@
   }
 }
 
+
+
 .sidebar-item a {
   text-decoration: none;
   color: inherit; /* Inherit color from parent */
   display: flex;
   align-items: center;
-  z-index: 1000 !important;
+}
+
+.sidebar-items {
+  position: fixed;  
+  top: 100px;
+  // height: 100%;
+padding: 5px;
+border-radius: 5px;
+  background-color: rgb(255, 255, 255);
 }
 
 .sidebar-text {
@@ -54,7 +63,6 @@
   color: rgb(43, 43, 43);
   transition: opacity 0.5s ease;
   margin-left: 10px;
-  z-index: 1000 !important;
   white-space: nowrap; /* Prevent text from wrapping */
 }
 
@@ -64,7 +72,6 @@
 
 .sidebar-icon {
   min-width: 30px; /* Adjust as needed */
-  z-index: 1000 !important;
   flex-shrink: 0; /* Prevent the icon from shrinking */
 }
 
