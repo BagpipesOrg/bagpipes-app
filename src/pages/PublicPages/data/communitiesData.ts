@@ -1,4 +1,6 @@
 import { Community } from '../types';
+import { hashtags } from './hashtagsData';
+
 
 export const communities: Community[] = [
   {
@@ -48,7 +50,7 @@ export const communities: Community[] = [
             description: "A comprehensive guide to building and connecting a custom blockchain using Substrate and Polkadot."
           }
         ],
-        hashTags: ["blockchain", "interoperability", "scalability", "security"],
+        hashTags: ["1", "2", "3", "4"],
         mostActiveCreators: ["1", "2", "3"],         
         features: [
           { feature: "Interoperability", description: "Allows for cross-chain communication and transfer of any type of data or asset." },
@@ -112,7 +114,7 @@ export const communities: Community[] = [
           }
         ],    
         mostActiveCreators: ["1", "2", "3"],  
-        hashTags: ["blockchain", "interoperability", "scalability", "security"],
+        hashTags: ["5", "1", "2", "3"],        
         features: [
           { feature: "Intelligent Automation", description: "Transactions autonomously execute based on predefined conditions, streamlining operations." },
           { feature: "Enhanced Privacy", description: "Advanced MEV (Maximal Extractable Value) protection mechanisms ensure transaction confidentiality, safeguarding against front-running and privacy breaches." },

@@ -4,7 +4,8 @@ import ThemeContext from '../../../contexts/ThemeContext';
 import './CommunityPage.scss';
 import { communities } from '../data/communitiesData';
 import { creators } from '../data/creatorsData';
-import { Community, Creator } from '../types';
+import { hashtags } from '../data/hashtagsData';
+import { Community, Creator, Hashtag } from '../types';
 
 const communityRecord: Record<string, Community> = communities.reduce((acc, community) => {
   acc[community.name] = community;
@@ -15,6 +16,11 @@ const creatorRecord: Record<string, Creator> = creators.reduce((acc, creator) =>
   acc[creator.id] = creator;
   return acc;
 }, {} as Record<string, Creator>);
+
+const hashtagRecord: Record<string, Hashtag> = hashtags.reduce((acc, hashtag) => {
+  acc[hashtag.id] = hashtag;
+  return acc;
+}, {} as Record<string, Hashtag>);
 
 const CommunityPage = () => {
   const { theme } = useContext(ThemeContext);
@@ -36,9 +42,14 @@ const CommunityPage = () => {
           <h1>{community.title}</h1>
           <p>{community.description}</p>
           <div className="hashtags">
-            {community.hashTags.map((tag, index) => (
-              <span key={index} className="hashtag">#{tag}</span>
-            ))}
+            {community.hashTags.map((tagId) => {
+              const tag = hashtagRecord[tagId];
+              return tag ? (
+                <span key={tag.id} className="hashtag" style={{ backgroundColor: tag.backgroundColor, color: tag.color }}>
+                  #{tag.tag}
+                </span>
+              ) : null;
+            })}
           </div>
         </div>
       </header>

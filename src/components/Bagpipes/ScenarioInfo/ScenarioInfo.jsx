@@ -70,12 +70,13 @@ const ScenarioInfo = () => {
         trigger="click"
         onShow={() => setDropdownVisible(true)}
         onHide={() => setDropdownVisible(false)}
+        appendTo={() => document.body}
       >
         <div className='scenario-info-container'>
           <div className='scenario-info' onClick={(e) => { e.stopPropagation(); }}>
             <ScenarioName 
               name={scenario.name} 
-              onClick={handleTippyScenario.bind(null, activeScenarioId)}
+              onClick={ handleTippyScenario.bind(null, activeScenarioId)}
               labelRef={labelRef} 
             />
           </div>
@@ -89,7 +90,7 @@ export default ScenarioInfo;
 
 
 const ScenarioName = ({ name, onClick, labelRef }) => (
-  <Tippy content="Click to change the scenario name" theme='light' interactive={true} duration={[200, 200]} arrow={true} placement="right">
+  <Tippy content="Click to change the scenario name" theme='light' interactive={true} duration={[200, 200]} arrow={true} placement="right"  appendTo={() => document.body}>
     <div ref={labelRef} onClick={onClick} className="scenario-name">
       {name || <span className="placeholder-text">Click to name Scenario</span>}
     </div>
@@ -148,13 +149,18 @@ const ScenarioDropdown = ({ onSelectScenario }) => {
           return (
            
               <div  className={`scenario-dropdown-item  ${isActive ? 'active' : ''}`} onClick={() => onSelectScenario(scenarioId)} > 
-                <div  className='scenario-dropdown-name' ref={labelRef} onClick={(e) => handleTippyScenario(scenarioId, e)}>
-                    <Tippy key={scenarioId} 
-              content={<div className='tippy-scenario-name'>Click to change the scenario name</div>} 
-              theme='light' interactive={true} duration={[200, 200]} arrow={true} placement="right">
+                {/* <div  className='scenario-dropdown-name' ref={labelRef} onClick={(e) => handleTippyScenario(scenarioId, e)}> */}
+                    {/* <Tippy 
+                        key={scenarioId} 
+                        content={<div className='tippy-scenario-name'>Click to change the scenario name</div>} 
+                        theme='light' interactive={true} duration={[200, 200]} 
+                        arrow={true} 
+                        placement="right"
+                        appendTo={() => document.body}
+                    > */}
                         <span className='scenario-dropdown-name'>{scenario.name || <span className="placeholder-text">Unnamed Scenario</span>}</span>
-                    </Tippy>
-                </div>
+                    {/* </Tippy> */}
+                {/* </div> */}
 
                 <span className="scenario-id">{formatScenarioId(scenarioId)}</span>
                 <OrderedListContent list={transformedList} />
