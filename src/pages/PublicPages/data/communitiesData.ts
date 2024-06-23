@@ -30,14 +30,14 @@ export const communities: Community[] = [
             {
               id: "polkadot-bagpipes-3",
               title: "Polkadot UI Template 1",
-              description: "A UI template for Polkadot-based projects.",
+              description: " (Coming soon) A UI template for Polkadot-based projects.",
               image: "/images/polkadot-ui1.png",
-              links: [{ title: "Figma", url: "https://figma.com/polkadot-ui1" }]
+              links: [{ title: "Coming Soon", url: "https://figma.com/polkadot-ui1" }]
             },
             {
               id: "polkadot-bagpipes-4",
               title: "Polkadot UI Template 2",
-              description: "Another UI template for Polkadot-based projects.",
+              description: " (Coming soon) Another UI template for Polkadot-based projects.",
               image: "/images/polkadot-ui2.png",
               links: [{ title: "Sketch", url: "https://sketch.com/polkadot-ui2" }]
             }
@@ -91,26 +91,26 @@ export const communities: Community[] = [
             {
               id: "ava-bagpipes-3",
 
-              title: "Polkadot UI Template 1",
-              description: "A UI template for Polkadot-based projects.",
+              title: "Ava DEX tools",
+              description: "(Coming soon) Tools for trading on DEXs. ",
               image: "/images/polkadot-ui1.png",
-              links: [{ title: "Figma", url: "https://figma.com/polkadot-ui1" }]
+              links: [{ title: "Ava DEX", url: "https://figma.com/polkadot-ui1" }]
             },
             {
               id: "ava-bagpipes-4",
 
-              title: "Polkadot UI Template 2",
-              description: "Another UI template for Polkadot-based projects.",
+              title: "Ava Web3 Subscriptions",
+              description: " (Coming soon) Another UI template for Ava-based projects.",
               image: "/images/polkadot-ui2.png",
-              links: [{ title: "Sketch", url: "https://sketch.com/polkadot-ui2" }]
+              links: [{ title: "Ava Pay", url: "https://sketch.com/polkadot-ui2" }]
             }
           ]
         },    
         howTos: [
           {
-            title: "How to build a blockchain on Polkadot",
+            title: "How to build a Dapp on Ava",
             image: "/images/polkadot-howto.png",
-            description: "A comprehensive guide to building and connecting a custom blockchain using Substrate and Polkadot."
+            description: "(Example) A comprehensive guide to building and connecting a custom Dapp on Ava."
           }
         ],    
         mostActiveCreators: ["1", "2", "3"],  
@@ -154,7 +154,7 @@ export const communities: Community[] = [
               id: "moonbeam-bagpipes-3",
 
               title: "Moonbeam  UI Template 1",
-              description: "A UI template for Polkadot-based projects.",
+              description: "(Coming soon) A UI template for Polkadot-based projects.",
               image: "/images/polkadot-ui1.png",
               links: [{ title: "Figma", url: "https://figma.com/polkadot-ui1" }]
             },
@@ -162,7 +162,7 @@ export const communities: Community[] = [
               id: "moonbeam-bagpipes-4",
 
               title: "Moonbeam  UI Template 2",
-              description: "Another UI template for Polkadot-based projects.",
+              description: " (Coming soon) Another UI template for Moonbeam-based projects.",
               image: "/images/Moonbeam-ui2.png",
               links: [{ title: "Sketch", url: "https://sketch.com/polkadot-ui2" }]
             }
@@ -210,15 +210,15 @@ export const communities: Community[] = [
           ui: [
             {
               id: "hydrax-bagpipes-3",
-              title: "Polkadot UI Template 1",
-              description: "A UI template for Polkadot-based projects.",
+              title: "HydraDx UI Template 1",
+              description: " (Coming soon) A UI template for Polkadot-based projects.",
               image: "/images/polkadot-ui1.png",
               links: [{ title: "Figma", url: "https://figma.com/polkadot-ui1" }]
             },
             {
               id: "hydrax-bagpipes-4",
               title: "Polkadot UI Template 2",
-              description: "Another UI template for Polkadot-based projects.",
+              description: " (Coming soon) Another UI template for Polkadot-based projects.",
               image: "/images/polkadot-ui2.png",
               links: [{ title: "Sketch", url: "https://sketch.com/polkadot-ui2" }]
             }

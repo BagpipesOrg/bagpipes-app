@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import ThemeContext from '../../../contexts/ThemeContext';
 import './CommunityPage.scss';
 import { communities } from '../data/communitiesData';
@@ -58,7 +58,7 @@ const CommunityPage = () => {
           <h2>Templates</h2>
           <div className="template-container">
             <div className="template-group">
-              <h3>Bagpipes Templates</h3>
+              <h3>Bagpipes Scenarios</h3>
               <div className="template-flex">
                 {community.templates.bagpipes.map((template, index) => (
                   <div key={index} className="template-box box">
@@ -127,8 +127,10 @@ const CommunityPage = () => {
           ))}
         </section>
         <section className="community-section">
-          <h2 onClick={() => setFeaturesVisible(!featuresVisible)} className="collapsible-header">
-            Features {featuresVisible ? '▲' : '▼'}
+          {/* <h2 onClick={() => setFeaturesVisible(!featuresVisible)} className="collapsible-header">
+            Features {featuresVisible ? '▲' : '▼'} */}
+                      <h2  className="collapsible-header">
+            Features 
           </h2>
           {featuresVisible && (
             <div className="features-grid">
@@ -149,12 +151,16 @@ const CommunityPage = () => {
             const creator = creatorRecord[creatorId];
             return (
               <li key={index} className="creator-box box">
-                <img src={creator.image} alt={creator.name} className="creator-image" />
-                <div>
-                  <h3>{creator.name} ({creator.username})</h3>
-                  <h4>{creator.title}</h4>
+                <Link to={`/creators/${creator.id}`} className="creator-link">
+                  <div className="flex items-center m-1">
+                    <img src={creator.image} alt={creator.name} className="creator-image mr-2 p-1" />
+                    <div className="items-center">
+                      <h3>{creator.name} ({creator.username})</h3>
+                      <h4>{creator.title}</h4>
+                    </div>
+                  </div>
                   <p>{creator.description}</p>
-                </div>
+                </Link>
               </li>
             );
           })}
