@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { SettingsIcon, ChatIcon, PlaygroundIcon, LabIcon, WalletIcon } from '../../Icons/icons';
+import { SettingsIcon, ChatIcon, ProjectIcon, SocialIcon, PlaygroundIcon, LabIcon, WalletIcon } from '../../Icons/icons';
 import ThemeContext from '../../../contexts/ThemeContext';
 import { OpenSelectWallet, WalletContext } from '../../Wallet/contexts';
 
@@ -54,6 +54,22 @@ const Sidebar = () => {
           <Link to="/lab">
             <LabIcon />
             {isExpanded && <span className="sidebar-text">Scenarios</span>}
+          </Link>
+        </div>
+
+        {/* Pages */}
+        <div className="sidebar-item">
+          <Link to="/pages">
+            <ProjectIcon fillColor='#757575' />
+            {isExpanded && <span className="sidebar-text">Pages</span>}
+          </Link>
+        </div>
+
+        {/* Creators */}
+        <div className="sidebar-item">
+          <Link to="/creators">
+            <SocialIcon fillColor='#757575' />
+            {isExpanded && <span className="sidebar-text">Creators</span>}
           </Link>
         </div>
 

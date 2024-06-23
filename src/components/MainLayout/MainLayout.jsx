@@ -13,6 +13,11 @@ import ReactTestFlow from '../../ReactTestFlow';
 import Sidebar from '../Bagpipes/Sidebar/Sidebar';
 import Header from '../Header';
 import Lab from '../../pages/Lab/Lab';
+import CommunityPages from '../../pages/PublicPages/CommunityPages';
+import CommunityPage from '../../pages/PublicPages/CommunityPage/CommunityPage';
+import CreatorPage from '../../pages/PublicPages/CreatorPage/CreatorPage';
+import CreatorsPage from '../../pages/PublicPages/CreatorsPage/CreatorsPage';
+
 import ScenarioInfo from '../../pages/Lab/Scenario';
 import Parachains from '../../pages/Parachains/Parachains';
 import ThemeContext from '../../contexts/ThemeContext';
@@ -106,6 +111,11 @@ function MainLayout({ children }) {
                     <Route index element={<Welcome />} />
                     <Route path="welcome" element={<Welcome />} />
                     <Route path="builder" element={<BagpipesFlowRoute />} />
+
+                    <Route path="pages" element={<CommunityPages />} />
+                    <Route path="/pages/:communityName" element={<CommunityPage />} />
+                    <Route path="/creators/:creatorId" element={<CreatorPage />} /> 
+                    <Route path="/creators" element={<CreatorsPage />} /> 
 
                     <Route path="lab" element={<Lab />} />
                     <Route path="/scenario/:scenarioId" element={<ScenarioInfo />} />
