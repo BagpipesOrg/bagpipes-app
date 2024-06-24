@@ -37,8 +37,8 @@ function AccountDropdown({ selectedChainName, onSelect, selectedAddress }: {
 };
 
   const displayAddress = (address: string, prefix: number) => {
-    console.log(`display address: `, address);
-    console.log(`display prefix: `, prefix);
+  //    console.log(`display address: `, address);
+  //    console.log(`display prefix: `, prefix);
     var encodedAddress = address;
     if (!isEthereumAddress(address)) { // if address is not an evm address, we want to substrate encode it
       encodedAddress = encodeAddress(decodeAddress(address), prefix);

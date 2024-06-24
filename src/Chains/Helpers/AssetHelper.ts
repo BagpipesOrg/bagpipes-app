@@ -598,6 +598,18 @@ export async function checkHydraDxAssetBalance(
   return { free: 0, reserved: 0, total: 0 };
 }
 
+export function get_moonbeam_asset_decimals(assetid: string) {
+  const assetobj = list_onchainassets("moonbeam");
+  var decimals = 0;
+  for (const x of assetobj) {
+    if (x.assetId === assetid) {
+      console.log(`assetobj| found asset: `, x);
+      decimals = parseInt(x.asset.decimals, 10);
+    }
+  }
+  return decimals;
+}
+
 // input 0x eth account
 export async function check_moonbeam(accounteth: string, dassetid: string) {
   const api = await getApiInstance("moonbeam");
