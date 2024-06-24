@@ -245,14 +245,12 @@ export async function hydradx_to_assethub(
   return tx;
 }
 
-
-
 /// working: https://moonbeam.subscan.io/extrinsic/6444324-6?tab=xcm_transfer
 export async function moon2parachain(
   assetid: string,
   amount: number,
   account: string,
-  paraid: number,
+  paraid: number
 ) {
   const api = await getApiInstance("moonbeam");
   console.log(`moon to assethub called`);
@@ -263,7 +261,7 @@ export async function moon2parachain(
     parents: 1,
     interior: {
       X2: [
-        { Parachain: paraid }, 
+        { Parachain: paraid },
         {
           Accountid32: {
             id: accountme, //convertAccountId32ToAccountId20(accountido),
@@ -280,7 +278,6 @@ export async function moon2parachain(
     { V3: dest },
     { Unlimited: null }
   );
-
 
   return tx;
 }
@@ -833,6 +830,35 @@ export async function polkadot_assethub_to_assetHub_kusama(
   return tx;
 }
 
+/// moonbeam > Polkadot Relay chain
+export async function moon2polkadot(account: string, amount: number) {
+  const api = await getApiInstance("moonbeam");
+
+  const relayAccount = getRawAddress(account);
+  const dest = {
+    V4: {
+      parents: 1,
+      interior: { X1: [{ AccountId32: { id: relayAccount } }] },
+    },
+  };
+
+  const destWeightLimit = { Unlimited: null };
+  const asset = {
+    V4: {
+      id: {
+        parents: 1,
+        interior: null,
+      },
+      fun: {
+        Fungible: { Fungible: amount },
+      },
+    },
+  };
+
+  const tx = api.tx.xTokens.transferMultiasset(asset, dest, destWeightLimit);
+  return tx;
+}
+
 // https://moonriver.subscan.io/block/0xdc22e440ade2ebc6a5c3c07db1ab05f84f762f3b7a011f07b1fcc4cfbe68198a
 // correct with talisman polkadot wallet: https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fmoonriver.public.curie.radiumblock.co%2Fws#/extrinsics/decode/0x6a0101000101000921000700e40b54020101020009210100ca477d2ed3c433806a8ce7969c5a1890187d765ab8080d3793b49b42aa9e805f00
 export async function moonriver2turing(accountidme: string, amount: number) {
@@ -1090,11 +1116,11 @@ export async function polkadot2moonbeam(amount: string, accountme: string) {
   };
 
   const tx = api.tx.xcmPallet.limitedReserveTransferAssets(
-    { V3: destination },
-    { V3: beneficiary },
-    { V3: assets },
+    { V2: destination },
+    { V2: beneficiary },
+    { V2: assets },
     { fee_asset_item: 0 },
-    { Unlimited: 0 }
+    { Unlimited: null }
   );
 
   return tx;
