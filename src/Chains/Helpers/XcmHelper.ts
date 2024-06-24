@@ -49,7 +49,7 @@ async function findEgressChannels(
   const channels = (result as unknown as { toNumber: () => number }[]).map(
     (item) => item.toNumber()
   );
-  console.log(`Egress channels for ${paraid} on ${relayChainName}:`, channels);
+  //   console.log(`Egress channels for ${paraid} on ${relayChainName}:`, channels);
   return channels;
 }
 

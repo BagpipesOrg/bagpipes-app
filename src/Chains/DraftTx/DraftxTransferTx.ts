@@ -245,6 +245,137 @@ export async function hydradx_to_assethub(
   return tx;
 }
 
+/// working: https://moonbeam.subscan.io/extrinsic/6444324-6?tab=xcm_transfer
+export async function moon2parachain(
+  assetid: string,
+  amount: number,
+  account: string,
+  paraid: number
+) {
+  const api = await getApiInstance("moonbeam");
+  console.log(`moon to assethub called`);
+  const accountme = getRawAddress(account); //"0xb6864e89ef92820dfd586c034a264e175415cee72270d853ab8b42110f24de25";
+  const cleanAssetId = assetid.replace(/,/g, "");
+
+  const dest = {
+    parents: 1,
+    interior: {
+      X2: [
+        { Parachain: paraid },
+        {
+          Accountid32: {
+            id: accountme, //convertAccountId32ToAccountId20(accountido),
+            network: null,
+          },
+        },
+      ],
+    },
+  };
+
+  const tx = await api.tx.xTokens.transfer(
+    { foreignasset: cleanAssetId.toString() },
+    { amount: amount },
+    { V3: dest },
+    { Unlimited: null }
+  );
+
+  return tx;
+}
+
+/// https://moonbeam.subscan.io/extrinsic/6444042-5?tab=xcm_transfer
+export async function moon2hydra2(
+  assetid: string,
+  amount: number,
+  account: string
+) {
+  const accountme = getRawAddress(account); //"0xb6864e89ef92820dfd586c034a264e175415cee72270d853ab8b42110f24de25";
+  //const amount = 1000000000000;
+  const cleanAssetId = assetid.replace(/,/g, "");
+  console.log(`moon2hydra2 input:`, cleanAssetId, accountme, amount);
+  const api = await getApiInstance("moonbeam");
+
+  const dest = {
+    parents: 1,
+    interior: {
+      X2: [
+        { Parachain: 2034 }, // hydra paraid
+        {
+          Accountid32: {
+            id: accountme, //convertAccountId32ToAccountId20(accountido),
+            network: null,
+          },
+        },
+      ],
+    },
+  };
+
+  //const assetid = "166446646689194205559791995948102903873";
+  const tx = await api.tx.xTokens.transfer(
+    { foreignasset: cleanAssetId.toString() },
+    { amount: amount },
+    { V3: dest },
+    { Unlimited: null }
+  );
+  return tx;
+}
+
+// native only, do not use
+// only for native once
+// https://moonbeam.subscan.io/extrinsic/6443822-5?tab=xcm_transfer
+export async function moon2hydra(account: string, amount: number) {
+  const api = await getApiInstance("moonbeam");
+  console.log(`moon2hydra input: `, account, amount);
+  const accountme = getRawAddress(account);
+
+  /*
+ const asset = {
+      id: { Concrete: { parents: 0, interior: { X1:{
+        PalletInstance: 10 } }},
+      fun: { Fungible: parseInt(amount) },
+    }};
+*/
+  const asset = {
+    id: {
+      Concrete: {
+        parents: 0,
+        interior: {
+          X1: {
+            PalletInstance: 10,
+          },
+        },
+      },
+    },
+    fun: {
+      Fungible: amount.toString(),
+    },
+  };
+
+  //     console.log(`asset obj: `, JSON.stringify(asset));
+
+  const dest = {
+    parents: 1,
+    interior: {
+      X2: [
+        { Parachain: 2034 }, // hydra paraid
+        {
+          Accountid32: {
+            id: accountme, //convertAccountId32ToAccountId20(accountido),
+            network: {
+              Any: "NULL",
+            },
+          },
+        },
+      ],
+    },
+  };
+
+  return api.tx.xTokens.transferMultiasset(
+    { V2: asset },
+    { V2: dest },
+    { Unlimited: null }
+  );
+}
+
 // https://assethub-polkadot.subscan.io/extrinsic/4929110-2
 export async function assethub2interlay(
   assetid: number,
@@ -603,6 +734,46 @@ export async function hydraDxToParachain(
   return tx;
 }
 
+async function moonbeam2parachain(
+  accountidme: string,
+  assetid: string,
+  amount: string,
+  paraid: number
+) {
+  const api = await getApiInstance("moonbeam");
+
+  const asset = {
+    fun: {
+      Fungible: amount,
+    },
+    id: {
+      Concrete: {
+        interior: {
+          X3: [
+            { Parachain: paraid, PalletInstance: 50, GeneralIndex: assetid },
+          ],
+          parents: 1,
+        },
+      },
+    },
+  };
+
+  const destination = {
+    parents: 1,
+    interior: {
+      X2: [{ Parachain: paraid, AccountId32: accountidme, network: null }],
+    },
+  };
+
+  const tx = api.tx.xTokens.transferMultiasset(
+    { V3: asset },
+    { V2: destination },
+    { Unlimited: 0 }
+  );
+
+  return tx;
+}
+
 function uint8ArrayToHex(uint8Array: Uint8Array): string {
   let hex = "";
   for (let i = 0; i < uint8Array.length; i++) {
@@ -656,6 +827,35 @@ export async function polkadot_assethub_to_assetHub_kusama(
     0,
     { Unlimited: 0 }
   );
+  return tx;
+}
+
+/// moonbeam > Polkadot Relay chain
+export async function moon2polkadot(account: string, amount: number) {
+  const api = await getApiInstance("moonbeam");
+
+  const relayAccount = getRawAddress(account);
+  const dest = {
+    V4: {
+      parents: 1,
+      interior: { X1: [{ AccountId32: { id: relayAccount } }] },
+    },
+  };
+
+  const destWeightLimit = { Unlimited: null };
+  const asset = {
+    V4: {
+      id: {
+        parents: 1,
+        interior: null,
+      },
+      fun: {
+        Fungible: { Fungible: amount },
+      },
+    },
+  };
+
+  const tx = api.tx.xTokens.transferMultiasset(asset, dest, destWeightLimit);
   return tx;
 }
 
@@ -823,80 +1023,77 @@ export async function turing2mangata(amount: number, accountido: string) {
   return tx;
 }
 
-
 /// interlay > moonbeam
-export async function interlay2moonbeam(amount: string, assetid: string, account: string){
-
- 
+export async function interlay2moonbeam(
+  amount: string,
+  assetid: string,
+  account: string
+) {
   const api = await getApiInstance("interlay");
 
-    const dest = {
-      parents: 1,
-      interior: {
-        X2: [
-          { Parachain: 2004 }, // Moonbeam paraid
-          {
-            AccountKey20: {
-              key: account,//convertAccountId32ToAccountId20(accountido),
-              network: null,
-            },
+  const dest = {
+    parents: 1,
+    interior: {
+      X2: [
+        { Parachain: 2004 }, // Moonbeam paraid
+        {
+          AccountKey20: {
+            key: account, //convertAccountId32ToAccountId20(accountido),
+            network: null,
           },
-        ],
-      },
-    };
+        },
+      ],
+    },
+  };
 
-	const tx = await api.tx.xTokens.transfer(
-		{ "foreignasset": assetid },
-		{ amount: amount.toString() },
-		{ V3: dest },
-		{ unlimited: null },
-
-	);
+  const tx = await api.tx.xTokens.transfer(
+    { foreignasset: assetid },
+    { amount: amount.toString() },
+    { V3: dest },
+    { unlimited: null }
+  );
   return tx;
-
 }
 
 /// hydra > moonbeam
-export async function hydra2moonbeam(accountme: string, assetid: string, amount: string){
+export async function hydra2moonbeam(
+  accountme: string,
+  assetid: string,
+  amount: string
+) {
   const api = await getApiInstance("hydraDx");
 
   const dest = {
-      parents: 1,
-      interior: {
-        X2: [
-          { Parachain: 2004 }, // Moonbeam paraid
-          {
-            AccountKey20: {
-              key: accountme,//convertAccountId32ToAccountId20(accountido),
-              network: null,
-            },
+    parents: 1,
+    interior: {
+      X2: [
+        { Parachain: 2004 }, // Moonbeam paraid
+        {
+          AccountKey20: {
+            key: accountme, //convertAccountId32ToAccountId20(accountido),
+            network: null,
           },
-        ],
-      },
-    };
+        },
+      ],
+    },
+  };
 
-    return api.tx.xTokens.transfer(
-      { currency_id: assetid },
-      { amount: amount },
-      { V3: dest},
-      { Unlimited: null }
-    );
-
-
+  return api.tx.xTokens.transfer(
+    { currency_id: assetid },
+    { amount: amount },
+    { V3: dest },
+    { Unlimited: null }
+  );
 }
 
-
-
 /// polkadot > moonbeam
-export async function polkadot2moonbeam(amount: string, accountme: string){
-
+export async function polkadot2moonbeam(amount: string, accountme: string) {
   const api = await getApiInstance("polkadot");
 
   const destination = {
     interior: { X1: { Parachain: 2004 } },
     parents: 0,
   };
-
 
   const assets = [
     {
@@ -908,35 +1105,33 @@ export async function polkadot2moonbeam(amount: string, accountme: string){
   const beneficiary = {
     parents: 0,
     interior: {
-      X1:
-        {
-          AccountKey20: {
-            // change me
-            network: null,
-            key: accountme, //convertAccountId32ToAccountId20(accountido),
-          },
+      X1: {
+        AccountKey20: {
+          // change me
+          network: null,
+          key: accountme, //convertAccountId32ToAccountId20(accountido),
         },
-
+      },
     },
   };
 
-  const tx =  api.tx.xcmPallet.limitedReserveTransferAssets(
-    { V3: destination },
-    { V3: beneficiary },
-    { V3: assets },
+  const tx = api.tx.xcmPallet.limitedReserveTransferAssets(
+    { V2: destination },
+    { V2: beneficiary },
+    { V2: assets },
     { fee_asset_item: 0 },
-    { Unlimited: 0 }
+    { Unlimited: null }
   );
 
   return tx;
 }
 
-
-
-
 /// assethub > moonbeam
-export async function assethub2moonbeam(amount: string, assetid: string, account: string){
-
+export async function assethub2moonbeam(
+  amount: string,
+  assetid: string,
+  account: string
+) {
   const api = await getApiInstance("assetHub");
 
   const destination = {
@@ -949,10 +1144,7 @@ export async function assethub2moonbeam(amount: string, assetid: string, account
       Concrete: {
         parents: 0,
         interior: {
-          X2: [
-            { PalletInstance: 50 },
-            { GeneralIndex: assetid },
-          ],
+          X2: [{ PalletInstance: 50 }, { GeneralIndex: assetid }],
         },
       },
     },
@@ -983,12 +1175,8 @@ export async function assethub2moonbeam(amount: string, assetid: string, account
     { Unlimited: null }
   );
 
-
   return tx;
-
-
 }
-
 
 /// assethub > hydra
 export async function assethub_to_hydra(
