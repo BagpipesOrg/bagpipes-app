@@ -245,6 +245,46 @@ export async function hydradx_to_assethub(
   return tx;
 }
 
+
+
+/// working: https://moonbeam.subscan.io/extrinsic/6444324-6?tab=xcm_transfer
+export async function moon2parachain(
+  assetid: string,
+  amount: number,
+  account: string,
+  paraid: number,
+) {
+  const api = await getApiInstance("moonbeam");
+  console.log(`moon to assethub called`);
+  const accountme = getRawAddress(account); //"0xb6864e89ef92820dfd586c034a264e175415cee72270d853ab8b42110f24de25";
+  const cleanAssetId = assetid.replace(/,/g, "");
+
+  const dest = {
+    parents: 1,
+    interior: {
+      X2: [
+        { Parachain: paraid }, 
+        {
+          Accountid32: {
+            id: accountme, //convertAccountId32ToAccountId20(accountido),
+            network: null,
+          },
+        },
+      ],
+    },
+  };
+
+  const tx = await api.tx.xTokens.transfer(
+    { foreignasset: cleanAssetId.toString() },
+    { amount: amount },
+    { V3: dest },
+    { Unlimited: null }
+  );
+
+
+  return tx;
+}
+
 /// https://moonbeam.subscan.io/extrinsic/6444042-5?tab=xcm_transfer
 export async function moon2hydra2(
   assetid: string,
@@ -282,6 +322,7 @@ export async function moon2hydra2(
   return tx;
 }
 
+// native only, do not use
 // only for native once
 // https://moonbeam.subscan.io/extrinsic/6443822-5?tab=xcm_transfer
 export async function moon2hydra(account: string, amount: number) {

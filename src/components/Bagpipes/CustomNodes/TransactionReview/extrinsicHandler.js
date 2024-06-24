@@ -1,4 +1,4 @@
-import { dotToHydraDx, moon2hydra, moon2hydra2, hydra2moonbeam, interlay2moonbeam, polkadot2moonbeam, assethub2moonbeam, turing2moonriver, moonriver2turing, mangata2turing, polkadot_assethub_to_assetHub_kusama, hydraDxToParachain, turing2mangata, generic_kusama_to_parachain, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
+import { dotToHydraDx, moon2parachain, moon2hydra2, hydra2moonbeam, interlay2moonbeam, polkadot2moonbeam, assethub2moonbeam, turing2moonriver, moonriver2turing, mangata2turing, polkadot_assethub_to_assetHub_kusama, hydraDxToParachain, turing2mangata, generic_kusama_to_parachain, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
 import { getTokenDecimalsByAssetName, get_moonbeam_asset_decimals, getTokenDecimalsByChainName, get_hydradx_asset_symbol_decimals } from "../../../../Chains/Helpers/AssetHelper";
 import toast from "react-hot-toast";
 import { isEthereumAddress } from '@polkadot/util-crypto';
@@ -76,6 +76,13 @@ function handlexTransfer(formData) {
 ///hydra2moonbeam, interlay2moonbeam, polkadot2moonbeam, assethubassethub2moonbeam
         'polkadot:moonbeam': () => {
             return polkadot2moonbeam(source.amount, target.address);
+        },
+        'moonbeam:assetHub': () => {
+            console.log(`moon2assethub`);
+            const mdecimals = get_moonbeam_asset_decimals(source.assetId);
+            const correct_amount = source.amount * (10 ** mdecimals);
+          
+            return moon2parachain(source.assetId, correct_amount, target.address, 1000);
         },
 
         'moonbeam:hydraDx': () => {
