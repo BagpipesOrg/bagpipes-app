@@ -11,7 +11,7 @@
 
 ## 🚀 Introduction
 
-Welcome to Bagpipes.io, a no-code platform for Web3 development. Our platform simplifies the creation and management of decentralized applications.
+Welcome to Bagpipes.io, no-code platform for Web3 development. Our platform simplifies the creation and management of decentralized applications.
 
 ## 📚 Documentation
 
