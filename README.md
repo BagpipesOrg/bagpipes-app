@@ -1,11 +1,10 @@
 ---
 
-# ![Bagpipes Logo](https://drive.google.com/uc?export=download&id=1FCWVCncb68abzUReOeMoQOEGOWbBLDPE) Bagpipes.io
-
-![GitHub deployments](https://img.shields.io/github/deployments/XcmSend/app-v0.0.1/production?logo=vercel&link=https%3A%2F%2Fapp-v0-0-1.vercel.app) 
-![Discord](https://img.shields.io/discord/1155878499240914944?logo=discord&link=https%3A%2F%2Fdiscord.gg%2FfJYcgrB2F) 
-[![Book - mdbook](https://img.shields.io/badge/Book-mdbook-orange?logo=gitbook&logoColor=white&style=flat-square)](https://xcmsend.github.io)
-![Polkadot](https://img.shields.io/badge/polkadot-E6007A?style=for-the-badge&logo=polkadot&logoColor=white) 
+# ![Bagpipes Logo](https://drive.google.com/uc?export=download&id=1t9QlFCEGjh5KJqU4s8RGfLCeYFC2SZBS) Bagpipes.io
+![GitHub deployments](https://img.shields.io/github/deployments/XcmSend/xcmsend-ui/production?logo=vercel&link=https%3A%2F%2Fapp-v0-0-1.vercel.app)
+![Discord](https://img.shields.io/discord/1155878499240914944?logo=discord&link=https%3A%2F%2Fdiscord.gg%2FfJYcgrB2F)
+![Docusaurus - Docusaurus](https://img.shields.io/badge/Docusaurus-Docusaurus-blue?logo=docusaurus&logoColor=white&style=flat-square)
+![Polkadot](https://img.shields.io/badge/polkadot-E6007A?style=for-the-badge&logo=polkadot&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)
 
 ---
