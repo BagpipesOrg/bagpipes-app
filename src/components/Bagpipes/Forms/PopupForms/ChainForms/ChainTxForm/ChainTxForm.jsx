@@ -17,7 +17,7 @@ import { ChainQueryIcon } from '../../../../../Icons/icons';
 import { useTippy } from '../../../../../../contexts/tooltips/TippyContext';
 import { listChains} from '../../../../../../Chains/ChainsInfo';
 import { queryMetadata } from './QueryMetadata';
-import { parseMetadataPallets, resolveTypeName } from '../parseMetadata'
+import { parseMetadataPallets, resolveTypeName, resolveFieldType } from '../parseMetadata'
 import { parseLookupTypes } from '../ParseMetadataTypes';
 import { resolveKeyType } from '../resolveKeyType';
 import ChainRpcService from '../../../../../../services/ChainRpcService';
@@ -60,6 +60,8 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
   const [selectedChain, setSelectedChain] = useState(formData.selectedChain || '');
   const [selectedPallet, setSelectedPallet] = useState(formData.selectedPallet || null);
   const [selectedMethod, setSelectedMethod] = useState(formData.selectedMethod || null);
+  const [selectedParams, setSelectedParams] = useState(formData.selectedParams || null);
+
   const [result, setResult] = useState('');
 
   const { hideTippy } = useTippy();
@@ -320,38 +322,35 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
 
   const renderMethodFields = () => {
     if (!formData.selectedMethod) {
-      return null;
+        return null;  
     }
 
+    const customContent = Object.keys(lookupTypes).length === 0 
+                          ? <div>Loading data or incomplete metadata...</div>
+                          : null;
 
-    const generateCustomContent = () => {
-      
-      if (Object.keys(lookupTypes).length === 0) {
-        return <div>Loading data or incomplete metadata...</div>;
-      }
-  
-    };
-
-
-    const customContent = generateCustomContent();
-
-
-    return formData.selectedMethod?.fields?.map((field, index) => (
-        <CollapsibleField
-            title={`${field.name} <${field.typeName}>`}
-            info={field.docs || 'No documentation available.'}
-            fieldTypes="input"
-            customContent={customContent}
-            hasToggle={true}
-            nodeId={nodeId}
-            value={formData.params?.[field.name] || ''}
-            onChange={(value) => handleMethodFieldChange(field.name, value)}
-            // onPillsChange={(updatedPills) => handlePillsChange(updatedPills, field.name)}
-            placeholder={`Enter ${field.name}`}
-        />
-
-    ));
-  };
+    return formData.selectedMethod.fields.map((field, index) => {
+        const fieldTypeObject = resolveFieldType(field.type, lookupTypes);
+        console.log('Field Type ID:', fieldTypeObject);
+        return (
+            <CollapsibleField
+                key={index}
+                title={`${field.name} <${field.typeName || resolveTypeName(field.type, lookupTypes)}> `}
+                info={field.docs || 'No documentation available.'}
+                fieldTypes={fieldTypeObject.type}  
+                customContent={customContent}
+                hasToggle={true}
+                nodeId={formData.nodeId}
+                value={formData.params?.[field.name] || ''}
+                onChange={(newFieldValue) => handleMethodFieldChange(field.name, newFieldValue)} // Pass the onChange handler
+                placeholder={`Enter ${field.name}`}
+                // Pass typesLookup if needed for dynamic rendering within the field
+                typesLookup={lookupTypes}
+                elementType={fieldTypeObject.elementType}
+            />
+        );
+    });
+};
 
 
 const renderSignAndSendTx = () => {

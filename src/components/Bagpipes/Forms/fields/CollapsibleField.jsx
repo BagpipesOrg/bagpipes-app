@@ -9,6 +9,7 @@ import PanelForm from '../PopupForms/Panel/PanelForm';
 import { v4 as uuidv4 } from 'uuid';
 import { useDrop, useDrag } from 'react-dnd';
 import CustomInput from './CustomInput';
+import SequenceField from './SequenceField';
 import { CopyBlock, CodeBlock, dracula } from 'react-code-blocks';
 import 'antd/dist/antd.css';
 import './Fields.scss';
@@ -17,7 +18,7 @@ import './Fields.scss';
 const { Option } = Select;
 
 
-const CollapsibleField = ({ fieldKey, nodeId, title, info, toggleTitle, hasToggle,fieldTypes, items=[], selectOptions=[], selectRadioOptions=[], children, value, onChange, onPillsChange, placeholder, onClick, disabled, isTextAreaValue, customContent, buttonName}) => {
+const CollapsibleField = ({ fieldKey, nodeId, title, info, toggleTitle, hasToggle,fieldTypes, items=[], selectOptions=[], selectRadioOptions=[], children, value, onChange, onPillsChange, placeholder, onClick, disabled, isTextAreaValue, customContent, buttonName, typesLookup, elementType}) => {
   const [isToggled, setIsToggled] = useState(false);
   const { showPanelTippy, hidePanelTippy, tippyInstance } = usePanelTippy();
   const referenceElement = useRef(null);
@@ -104,6 +105,42 @@ const handleToggleChange = (toggled) => {
     }
 };
 
+// Sequence Items
+const handleAddItem = (defaultType = 'input') => {
+  const newItem = { typeId: defaultType, value: '', id: generateUniqueId() }; // Default type can be parameterized
+  const newItems = [...items, newItem];
+  onChange(newItems);
+};
+
+const handleRemoveItem = (index) => {
+  const newItems = items.filter((_, idx) => idx !== index);
+  onChange(newItems);
+};
+
+const handleChangeItem = (index, newValue) => {
+  const newItems = items.map((item, idx) => idx === index ? { ...item, value: newValue } : item);
+  onChange(newItems);
+};
+
+const renderSequenceItems = () => {
+  return (
+      <div className='flex flex-col'>
+          {items.map((item, index) => (
+              <div key={item.id} className='flex flex-row items-center'>
+                  {renderField(item, index, handleChangeItem)}
+                  <button onClick={() => handleRemoveItem(index)}>Remove</button>
+              </div>
+          ))}
+          <button onClick={() => handleAddItem()}>Add New Item</button>
+      </div>
+  );
+};
+
+
+
+
+
+
   
 
   const deleteItem = (itemToDelete) => {
@@ -152,6 +189,24 @@ const handleToggleChange = (toggled) => {
   };
 
 
+  function typeRenderer(typeId, typesLookup) {
+    const typeInfo = typesLookup[typeId];
+    if (!typeInfo) return <div>Unknown Type</div>;
+
+    switch (typeInfo.def.type) {
+        case 'Sequence':
+            return <SequenceComponent typeId={typeInfo.def.Sequence.type} typesLookup={typesLookup} />;
+        case 'Array':
+            return <ArrayComponent typeId={typeInfo.def.Array.type} length={typeInfo.def.Array.len} typesLookup={typesLookup} />;
+        case 'Variant':
+            return <VariantComponent variants={typeInfo.def.Variant.variants} typesLookup={typesLookup} />;
+        default:
+            return <div>Unsupported Type: {typeInfo.def.type}</div>;
+    }
+}
+
+
+
   const renderContent = () => {
     let content;
 
@@ -177,6 +232,8 @@ const handleToggleChange = (toggled) => {
   
     // Dynamic field type rendering based on the fieldType prop
     switch (fieldTypes) {
+
+
         case 'input':
             content = (
               <CustomInput 
@@ -329,9 +386,31 @@ const handleToggleChange = (toggled) => {
           </div>
         );
       break
+
+      case 'sequence':
+        content = (
+            <SequenceField
+                items={value || []}
+                onChange={(newItems) => onChange(newItems)}
+                typesLookup={typesLookup}
+                elementType={elementType}
+                setPills={setPills}
+                onPillsChange={onPillsChange}
+                nodeId={nodeId}
+            />
+        );
+        break;
+
+    case 'sequenceItems':
+          return renderSequenceItems();
     case 'accordion':
       
     break;
+    case 'sequenceItems':
+      case 'array':
+      case 'variant':
+          return typeRenderer(field.typeId, lookupTypes);
+
       default:
         content = <div className="description">{info}</div>;
     }

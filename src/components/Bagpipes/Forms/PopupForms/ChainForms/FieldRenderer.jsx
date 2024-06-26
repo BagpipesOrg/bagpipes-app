@@ -3,6 +3,7 @@
 import React from 'react';
 import CollapsibleField from '../../fields/CollapsibleField';
 import { isFieldVisible } from '../formUtils';
+import { findFieldByKey } from '../../../Forms/fields/fieldUtils';
 
 
 const renderFieldElement = (field) => {
@@ -90,11 +91,11 @@ const renderFieldElement = (field) => {
   }
  
 
-  const FieldRenderer = ({ fieldKey, formValues, handleFieldChange, handleSelectChange, findFieldByKey, formSections, isFieldVisible, showAdvancedSettings }) => {
+  const FieldRenderer = ({ fieldKey, formValues, handleFieldChange, handleSelectChange, formSections, isFieldVisible, showAdvancedSettings, field }) => {
     // Use findFieldByKey with formSections
-    const field = findFieldByKey(fieldKey);
-    if (isFieldVisible(field, formValues, showAdvancedSettings)) return null;
-  
+    // const field = findFieldByKey(fieldKey);
+    // if (isFieldVisible(field, formValues, showAdvancedSettings)) return null;
+  console.log('FieldRenderer field', field)
     let fieldElement = renderFieldElement(field, formValues, handleFieldChange, handleSelectChange);
   
     let childrenElements = field.children?.map(childKey => (
@@ -104,9 +105,8 @@ const renderFieldElement = (field) => {
         formValues={formValues}
         handleFieldChange={handleFieldChange}
         handleSelectChange={handleSelectChange}
-        findFieldByKey={findFieldByKey}
-        formSections={formSections}
-      />
+        // isFieldVisible={isFieldVisible}
+        />
     ));
   
     return (

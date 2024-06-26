@@ -1,61 +1,11 @@
-interface TypeDef {
-  Composite?: {
-    fields: Field[];
-  };
-  Primitive?: string;
-  Array?: {
-    len: number;
-    type: string;
-  };
-  Sequence?: {
-    type: string;
-  };
-  Variant?: {
-    variants: Variant[];
-  };
-}
-interface Field {
-  name: string;
-  typeName: string;
-  type: string;
-  docs: string[];
-}
+import {  Type, TypeEntry, ParsedTypeDefinition, TypeDefinitions } from './TypeDefinitions';
 
-interface Variant {
-  name: string;
-  index: number;
-  fields: Field[];
-}
-
-interface Type {
-  path: string[];
-  params: any[];
-  def: TypeDef;
-  docs: string[];
-}
-
-interface TypeEntry {
-  id: string;
-  type: Type;
-}
-
-interface TypeDefinitions {
-  [key: string]: ParsedTypeDefinition;
-}
-
-interface ParsedTypeDefinition {
-  path: string[];
-  params: any[];
-  definition: any;
-  docs: string;
-}
 
 export function parseTypeDefinition(type: Type): ParsedTypeDefinition {
-  let definition: any = {};
+  let def: any = {};
 
   if (type.def.Composite) {
-    definition = {
-      type: 'Composite',
+    def.Composite = {
       fields: type.def.Composite.fields.map(field => ({
         name: field.name,
         typeName: field.typeName,
@@ -64,24 +14,18 @@ export function parseTypeDefinition(type: Type): ParsedTypeDefinition {
       }))
     };
   } else if (type.def.Primitive) {
-    definition = {
-      type: 'Primitive',
-      primitiveType: type.def.Primitive
-    };
+    def.Primitive = type.def.Primitive;
   } else if (type.def.Array) {
-    definition = {
-      type: 'Array',
+    def.Array = {
       length: type.def.Array.len,
       elementType: type.def.Array.type
     };
   } else if (type.def.Sequence) {
-    definition = {
-      type: 'Sequence',
+    def.Sequence = {
       elementType: type.def.Sequence.type
     };
   } else if (type.def.Variant) {
-    definition = {
-      type: 'Variant',
+    def.Variant = {
       variants: type.def.Variant.variants.map(variant => ({
         name: variant.name,
         index: variant.index,
@@ -93,19 +37,23 @@ export function parseTypeDefinition(type: Type): ParsedTypeDefinition {
         }))
       }))
     };
-  } else {
-    definition = {
-      type: 'Unknown'
+  } else if (type.def.Tuple) {
+    def.Tuple = {
+      elements: type.def.Tuple.map(tupleTypeId => tupleTypeId) // Assuming tuple contains an array of typeIds
     };
+  } else {
+    def.Unknown = {}; // Handle unclassified or unhandled types
   }
 
   return {
     path: type.path, 
     params: type.params,
-    definition,
+    def, // Using the direct keys from the metadata
     docs: type.docs.join(' ')
   };
 }
+
+
 
 export function parseLookupTypes(lookupTypes: TypeEntry[]): TypeDefinitions {
   const typeDefinitions: TypeDefinitions = {};
@@ -124,13 +72,65 @@ export function parseLookupTypes(lookupTypes: TypeEntry[]): TypeDefinitions {
 }
 
 
+// interface TypeDef {
+//   Composite?: {
+//     fields: Field[];
+//   };
+//   Primitive?: string;
+//   Array?: {
+//     len: number;
+//     type: string;
+//   };
+//   Sequence?: {
+//     type: string;
+//   };
+//   Variant?: {
+//     variants: Variant[];
+//   };
+// }
+// interface Field {
+//   name: string;
+//   typeName: string;
+//   type: string;
+//   docs: string[];
+// }
+
+// interface Variant {
+//   name: string;
+//   index: number;
+//   fields: Field[];
+// }
+
+// interface Type {
+//   path: string[];
+//   params: any[];
+//   def: TypeDef;
+//   docs: string[];
+// }
+
+// interface TypeEntry {
+//   id: string;
+//   type: Type;
+// }
+
+// interface TypeDefinitions {
+//   [key: string]: ParsedTypeDefinition;
+// }
+
+// interface ParsedTypeDefinition {
+//   path: string[];
+//   params: any[];
+//   def: any;
+//   docs: string;
+// }
+
 
 // export function parseTypeDefinition(type) {
-//     let definition = {};
+//     let def = {};
 
   
 //     if (type.def.Composite) {
-//       definition = {
+//       def = {
 //         type: 'Composite',
 //         fields: type.def.Composite.fields.map(field => ({
 //             name: field.name,
@@ -140,23 +140,23 @@ export function parseLookupTypes(lookupTypes: TypeEntry[]): TypeDefinitions {
 //         }))
 //     };
 //     } else if (type.def.Primitive) {
-//       definition = {
+//       def = {
 //         type: 'Primitive',
 //         primitiveType: type.def.Primitive
 //       };
 //     } else if (type.def.Array) {
-//       definition = {
+//       def = {
 //         type: 'Array',
 //         length: type.def.Array.len,
 //         elementType: type.def.Array.type
 //       };
 //     } else if (type.def.Sequence) {
-//       definition = {
+//       def = {
 //         type: 'Sequence',
 //         elementType: type.def.Sequence.type
 //       };
 //     } else if (type.def.Variant) {
-//       definition = {
+//       def = {
 //         type: 'Variant',
 //         variants: type.def.Variant.variants.map(variant => ({
 //           name: variant.name,
@@ -170,7 +170,7 @@ export function parseLookupTypes(lookupTypes: TypeEntry[]): TypeDefinitions {
 //         }))
 //       };
 //     } else {
-//       definition = {
+//       def = {
 //         type: 'Unknown'
 //       };
 //     }
@@ -178,7 +178,7 @@ export function parseLookupTypes(lookupTypes: TypeEntry[]): TypeDefinitions {
 //     return {
 //       path: type.path, 
 //       params: type.params,
-//       definition,
+//       def,
 //       docs: type.docs.join(' ')
 //   };
 //   }
@@ -203,3 +203,5 @@ export function parseLookupTypes(lookupTypes: TypeEntry[]): TypeDefinitions {
 //     // console.log('Lookup Parsed Type Definitions:', typeDefinitions);
 //     return typeDefinitions;
 // }
+
+
