@@ -614,6 +614,11 @@ const BagpipesFlow = () => {
 
     const { source, target } = node.formData.actionData;
     console.log(`isActionDataComplete: `, node.formData.actionData);
+        if (node.formData.actionData){
+      if (node.formData.actionData.actionType == "remark"){
+        return true;
+      }
+    }
     if (!source || !target) return false;
 
     const isSourceComplete = source.chain && source.assetId !== undefined && source.address && source.amount && source.amount.trim() !== "";
