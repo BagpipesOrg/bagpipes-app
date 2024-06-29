@@ -35,7 +35,7 @@ import { onConnect, onEdgesChange, onNodesChange } from '../../store/reactflow/'
 import useOnEdgesChange from '../../store/reactflow/useOnEdgesChange';
 import Edges from './edges';
 import { getNodeConfig } from './nodeConfigs';
-import EdgeForm from './Forms/EdgeForm'
+import EdgeForm from './Forms/PopupForms/EdgeForm'
 import { EDGE_STYLES } from '../../store/reactflow/onConnect';
 import TopBar from './TopBar/TopBar';
 import ScenarioInfo from './ScenarioInfo/ScenarioInfo';
@@ -564,6 +564,8 @@ const BagpipesFlow = () => {
 
 
     const onEdgeClick = useCallback((event, edge) => {
+
+      const edgeId = edge.id;
       if (selectedEdgeId === edge.id) {
           setSelectedEdgeId(null); // deselect if the same edge is clicked again
           setSelectedEdgeInScenario(activeScenarioId, null); // update scenario state
@@ -795,7 +797,7 @@ const handleStopScenario = (instance) => {
                 </div>
 
             </Panel> */}
-            {isEdgeFormVisible && selectedEdgeId && (
+            {/* {isEdgeFormVisible && selectedEdgeId && (
       <EdgeForm
         edge={selectedEdgeId}
         onSubmit={(data) => {
@@ -804,7 +806,7 @@ const handleStopScenario = (instance) => {
         }}
         onClose={() => setIsEdgeFormVisible(false)}
       />
-    )}
+    )} */}
 
             <ScenarioInfo />
             <TopBar createScenario={createScenario} handleExecuteFlowScenario={handleExecuteFlowScenario} handleStartScenario={handleStartScenario} handleStopScenario={handleStopScenario} shouldExecuteFlowScenario={shouldExecuteFlowScenario} draftingNodesPresent={draftingNodesPresent}  />

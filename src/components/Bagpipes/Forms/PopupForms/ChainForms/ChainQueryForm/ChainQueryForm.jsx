@@ -240,7 +240,7 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
             title="Blockhash/Blocknumber to Query (optional)"
             info="Enter a block hash or block number to query specific data, leave blank for latest block."
             fieldTypes="input"
-            hasToggle={true}
+            hasToggle={false}
             nodeId={nodeId}
             value={formData?.blockHash || ''}
             onChange={(value) => handleBlockHashChange(value)}
@@ -282,7 +282,7 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
                 // key={key}
                 title={`Enter Key <${keyTypeInfo.displayName}>`}
                 info={storageItem.docs}
-                hasToggle={true}
+                hasToggle={false}
                 fieldTypes="input"
                 nodeId={nodeId}
                 value={formData.methodInput || ''}
@@ -401,7 +401,7 @@ return (
   <div onScroll={handleScroll} className=''>
       <FormHeader onClose={handleCancel} title={`Query Chain Form (${nodeId})`} logo={<ChainQueryIcon className='h-4 w-4' fillColor='black' />} />  
 
-      <div className='http-form'>
+      <div className='standard-form'>
           {renderChainSelection()}
           {renderPalletSelection()}
           {renderMethodSelection()}

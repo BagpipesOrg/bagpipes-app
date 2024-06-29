@@ -18,7 +18,7 @@ import './Fields.scss';
 const { Option } = Select;
 
 
-const CollapsibleField = ({ fieldKey, nodeId, title, info, toggleTitle, hasToggle,fieldTypes, items=[], selectOptions=[], selectRadioOptions=[], children, value, onChange, onPillsChange, placeholder, onClick, disabled, isTextAreaValue, customContent, buttonName, typesLookup, elementType}) => {
+const CollapsibleField = ({ fieldKey, nodeId, edgeId, title, info, toggleTitle, hasToggle,fieldTypes, items=[], selectOptions=[], selectRadioOptions=[], children, value, onChange, onPillsChange, placeholder, onClick, disabled, isTextAreaValue, customContent, buttonName, typesLookup, elementType}) => {
   const [isToggled, setIsToggled] = useState(false);
   const { showPanelTippy, hidePanelTippy, tippyInstance } = usePanelTippy();
   const referenceElement = useRef(null);
@@ -387,6 +387,94 @@ const renderSequenceItems = () => {
         );
       break
 
+     case 'condition':
+
+
+     const parseNodeIdFromEdgeId = (edgeId) => {
+      console.log('parseNodeIdFromEdgeId', edgeId);
+      const parts = edgeId.split('-');
+      return parts.length > 1 ? parts[1] : '';
+    };
+  
+    const parsenodeIdfromEdgeId = parseNodeIdFromEdgeId(edgeId);
+
+    
+      const handleContentChange = (index, field, newContent) => {
+        const updatedValues = [...(value || [])];
+        updatedValues[index][field] = newContent;
+        onChange(updatedValues);
+      };
+
+
+      const handleSelectChange = (index, field, selectedOption) => {
+        const updatedValues = [...(value || [])];
+        updatedValues[index][field] = selectedOption.value;
+        onChange(updatedValues);
+      };
+
+      const handleAddCondition = (type) => {
+        const updatedValues = [
+          ...(Array.isArray(value) ? value : []),
+          { value: '', operator: '', anotherValue: '', type }
+        ];
+        onChange(updatedValues);
+      };
+
+      const handleRemoveItem = (index) => {
+        const updatedValues = value.filter((_, i) => i !== index);
+        onChange(updatedValues);
+      };
+
+      const renderConditionField = (condition, index) => (
+        <div key={index} className="condition-field">
+          <CustomInput
+            value={condition?.value}
+            onChange={(newContent) => handleContentChange(index, 'value', newContent)}
+            fieldKey={`${fieldKey}-${index}-value`}
+            onPillsChange={onPillsChange}
+            onClick={(e) => handleInputClick(e, parsenodeIdfromEdgeId)} 
+            placeholder={info}
+            className='custom-input'
+            pills={pills}
+            setPills={setPills}
+            nodeId={edgeId}
+          />
+          <Select
+            onChange={(selectedOption) => handleSelectChange(index, 'operator', selectedOption)}
+            value={selectOptions.find(option => option.value === condition?.operator)}
+            options={selectOptions}
+            placeholder="Select operator"
+            className='w-full font-semibold custom-select'
+          />
+          <CustomInput
+            value={condition?.anotherValue}
+            onChange={(newContent) => handleContentChange(index, 'anotherValue', newContent)}
+            fieldKey={`${fieldKey}-${index}-anotherValue`}
+            onPillsChange={onPillsChange}
+            onClick={(e) => handleInputClick(e, parsenodeIdfromEdgeId)} 
+            placeholder={info}
+            className='custom-input'
+            pills={pills}
+            setPills={setPills}
+            nodeId={edgeId}
+          />
+          <button type="button" onClick={() => handleRemoveItem(index)} disabled={value.length === 1}>Remove</button>
+          <button type="button" onClick={() => handleAddCondition('AND')}>Add AND rule</button>
+          <button type="button" onClick={() => handleAddCondition('OR')}>Add OR rule</button>
+        </div>
+      );
+
+      content = (
+        <div>
+          {(Array.isArray(value) && value?.length === 0) ? (
+            <button type="button" onClick={() => handleAddCondition('')}>Add Condition</button>
+          ) : (
+            value.map(renderConditionField)
+          )}
+        </div>
+      );
+      break;
+
       case 'sequence':
         content = (
             <SequenceField
@@ -406,7 +494,7 @@ const renderSequenceItems = () => {
     case 'accordion':
       
     break;
-    case 'sequenceItems':
+    // case 'sequenceItems':
       case 'array':
       case 'variant':
           return typeRenderer(field.typeId, lookupTypes);

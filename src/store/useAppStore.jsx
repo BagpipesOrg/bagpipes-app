@@ -519,6 +519,38 @@ const useAppStore = create(
         });
     },
 
+    saveEdgeFormData: (scenarioId, edgeId, formData) => {
+      console.log("[saveEdgeFormData] tis Called with:", { scenarioId, edgeId, formData });
+
+      // Checking for potential issues
+      if (!scenarioId || !edgeId) {
+          console.error("[saveEdgeFormData] Scenario ID or Edge ID is missing. Cannot save edge form data.");
+          return;
+      }
+
+      set((state) => {
+          const scenario = state.scenarios[scenarioId];
+          
+          if (!scenario) {
+              console.error(`[saveEdgeFormData] Scenario with ID ${scenarioId} not found.`);
+              return;
+          }
+
+          const edges = scenario.diagramData.edges.map((edge) =>
+              edge.id === edgeId ? { ...edge, formData } : edge
+          );
+
+          const updatedScenarios = {
+              ...state.scenarios,
+              [scenarioId]: { ...scenario, diagramData: { ...scenario.diagramData, edges } },
+          };
+
+          console.log("[saveNodeForsaveEdgeFormDatamData] Updated scenarios:", edges, scenarioId);
+          return { scenarios: updatedScenarios };
+      });
+    },
+
+
     saveNodeEventData: (scenarioId, nodeId, eventData) => {
       console.log("[saveNodeEventData] Called with:", { scenarioId, nodeId, eventData });
 

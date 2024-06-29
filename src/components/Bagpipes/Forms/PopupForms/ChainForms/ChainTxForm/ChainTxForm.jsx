@@ -556,7 +556,7 @@ return (
   <div onScroll={handleScroll} className=''>
       <FormHeader onClose={handleCancel} title='Chain Tx Form' logo={<ChainQueryIcon className='h-4 w-4' fillColor='black' />} />  
 
-      <div className='http-form'>
+      <div className='standard-form'>
           
           {renderAddressSelection()} 
           {renderChainSelection()}
