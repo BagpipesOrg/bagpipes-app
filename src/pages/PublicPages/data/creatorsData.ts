@@ -34,7 +34,7 @@ export const creators: Creator[] = [
     name: "Sacha",
     username: "sacha",
     title: "Web3 Evangelist and DevRel",
-    image: "/users/sacha.jpg",
+    image: "/users/sacha1.jpg",
     description: "Sacha's on an interplanetary mission to help developers build a better more accessible web.",
     templates: ["polkadot-bagpipes-1", "polkadot-ui-1"]
   },
