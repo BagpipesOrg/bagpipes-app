@@ -110,53 +110,49 @@ export function resolveTypeName(typeId: string, typesLookup: any): string {
 
 
 
-export function resolveFieldType(typeId: string, typesLookup: TypeLookup, depth = 0, path: string[] = []): ResolvedType {
+export function resolveFieldType(typeId: string, typesLookup: TypeLookup, depth = 0, path = []): ResolvedType {
   console.log(`Resolving type for typeId: ${typeId} at recursion depth: ${depth}`);
-  if (depth > 10) { // Safety check to prevent infinite recursion
+  if (depth > 10) {
       console.warn('Too deep recursion in resolveFieldType at depth:', depth);
-      return { type: 'complex', path }; // Return 'complex' with the path when recursion is too deep
+      return { type: 'complex', path }; // Safeguard against excessive recursion
   }
 
   const typeInfo = typesLookup[typeId];
   if (!typeInfo || !typeInfo.def) {
       console.error(`Type information is undefined or missing definition for typeId: ${typeId}`);
-      return { type: 'input', path }; // Return 'input' as fallback
+      return { type: 'input', path }; // Fallback to 'input' for undefined types
   }
 
-  const currentType = Object.keys(typeInfo.def)[0]; // Assuming the key itself is descriptive
-  path.push(currentType); // Add the current type to the path
+  const currentType = Object.keys(typeInfo.def)[0];
+  path.push(currentType); // Track the path for debugging or detailed information purposes
   console.log(`Current type path: ${path.join(' -> ')}`);
 
-  if (typeInfo.def.Primitive) {
-      console.log(`Type ${typeId} is a Primitive: ${typeInfo.def.Primitive}`);
-      return { type: 'input', path };
-  } else if (typeInfo.def.Composite) {
-      console.log(`Type ${typeId} is a Composite`);
-      return { type: 'composite', path };
-  } else if (typeInfo.def.Sequence) {
-      console.log(`Type ${typeId} is a Sequence, element type: ${typeInfo.def.Sequence.elementType}`);
-      const elementType = resolveFieldType(typeInfo.def.Sequence.elementType, typesLookup, depth + 1, path);
-    return {
-        type: 'sequence',
-        path,
-        elements: [elementType], // Now, elements will contain full information of the nested types.
-        elementType: elementType.type // Additional detail about the type of elements in the sequence.
-    };
-  } else if (typeInfo.def.Array) {
-      console.log(`Type ${typeId} is an Array, element type: ${typeInfo.def.Array.elementType}`);
-      return resolveFieldType(typeInfo.def.Array.elementType, typesLookup, depth + 1, path);
-  } else if (typeInfo.def.Variant) {
-      console.log(`Type ${typeId} is a Variant`);
-      return { type: 'select', path };
-  } else if (typeInfo.def.Tuple) {
-      console.log(`Type ${typeId} is a Tuple`);
-      const elements = typeInfo.def.Tuple.elements.map(elementId => resolveFieldType(elementId, typesLookup, depth + 1, path.slice()));
-      console.log(`Resolved elements for Tuple ${typeId}:`, elements.map(e => e.type));
-      return { type: 'tuple', path, elements };
-  } else {
-      console.log(`Type ${typeId} is classified as Complex`);
-      return { type: 'complex', path };
+  // Directly resolve the terminal type, bypassing nested structures like composites
+  switch (currentType) {
+      case 'Primitive':
+          console.log(`Type ${typeId} is a Primitive: ${typeInfo.def.Primitive}`);
+          return { type: 'input', path };
+
+      case 'Composite':
+          // For Composites, recursively resolve the type of the first field (simplistic approach)
+          // You may want to handle differently depending on specific use cases
+          return resolveFieldType(typeInfo.def.Composite.fields[0].type, typesLookup, depth + 1, path);
+
+      case 'Sequence':
+      case 'Array':
+          // For both Sequences and Arrays, find the element type
+          console.log(`Type ${typeId} is a ${currentType}, element type: ${typeInfo.def[currentType].elementType}`);
+          return resolveFieldType(typeInfo.def[currentType].elementType, typesLookup, depth + 1, path);
+
+      case 'Variant':
+      case 'Tuple':
+          // For Variants and Tuples, typically resolve the first element's type as a simplification
+          console.log(`Type ${typeId} is a ${currentType}`);
+          return resolveFieldType(typeInfo.def[currentType][0], typesLookup, depth + 1, path);
+
+      default:
+          console.log(`Type ${typeId} is classified as Complex`);
+          return { type: 'complex', path };
   }
 }
-
 
