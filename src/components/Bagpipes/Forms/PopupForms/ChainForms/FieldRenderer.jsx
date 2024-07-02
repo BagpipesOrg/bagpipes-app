@@ -95,7 +95,7 @@ const renderFieldElement = (field) => {
     // Use findFieldByKey with formSections
     // const field = findFieldByKey(fieldKey);
     // if (isFieldVisible(field, formValues, showAdvancedSettings)) return null;
-  console.log('FieldRenderer field', field)
+    console.log('FieldRenderer field', field)
     let fieldElement = renderFieldElement(field, formValues, handleFieldChange, handleSelectChange);
   
     let childrenElements = field.children?.map(childKey => (

@@ -20,7 +20,7 @@ const OrderedListContent = ({ list }) => {
             <div className='ordered-list-map flex justify-left' >
                 {list.map((item, index) => {
                     let imageSrc, altText;
-                    console.log(`OrderedListContent item is:`, item);
+                    // console.log(`OrderedListContent item is:`, item);
                     if (item.type === 'chain') {
                         const chainInfo = Object.values(chains).find(chain => chain.name === item.name);
                         console.log('OrderedListContent chainInfo', chainInfo);
@@ -52,8 +52,8 @@ const OrderedListContent = ({ list }) => {
                     } 
                     if (item.type === 'chainTx') {
                         const chainTxInfo = Object.values(chains).find(chain => chain.name === item.name);
-                        console.log('OrderedListContent chainInfo', chainTxInfo);
-                        console.log('OrderedListContent chainTx item', item);
+                        // console.log('OrderedListContent chainInfo', chainTxInfo);
+                        // console.log('OrderedListContent chainTx item', item);
                         return (
                             <div key={index} className="toast-icon">
                                 {chainTxInfo?.name ? (

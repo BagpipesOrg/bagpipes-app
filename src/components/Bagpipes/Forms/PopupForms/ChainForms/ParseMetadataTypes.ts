@@ -25,6 +25,7 @@ export function parseTypeDefinition(type: Type): ParsedTypeDefinition {
       elementType: type.def.Sequence.type
     };
   } else if (type.def.Variant) {
+    console.log(`Parsing Variant type for ID: ${type} with variants: ${type.def.Variant.variants}`);
     def.Variant = {
       variants: type.def.Variant.variants.map(variant => ({
         name: variant.name,
@@ -41,6 +42,18 @@ export function parseTypeDefinition(type: Type): ParsedTypeDefinition {
     def.Tuple = {
       elements: type.def.Tuple.map(tupleTypeId => tupleTypeId) // Assuming tuple contains an array of typeIds
     };
+  } 
+  // Inside parseTypeDefinition function
+  else if (type.def.Compact) {
+    console.log(`Parsing Compact type for ID: ${type} with base type: ${type.def.Compact.type}`);
+    if (!type.def.Compact.type) {
+        console.error(`Compact type at ID ${type} is missing its base type`);
+        def.Compact = { type: 'Undefined' }; // Use an explicit error state or fallback
+    } else {
+        def.Compact = {
+            type: type.def.Compact.type
+        };
+    }
   } else {
     def.Unknown = {}; // Handle unclassified or unhandled types
   }

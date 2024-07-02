@@ -17,6 +17,9 @@ export interface TypeDef {
       map(arg0: (tupleTypeId: any) => any): unknown;
       elements: string[];
     };
+    Compact?: {
+      type: string;
+    };
   }
   
   export interface Field {
@@ -146,6 +149,9 @@ export interface TypeDef {
     };
     Tuple?: {
       elements: string[];  // Array of type IDs
+    };
+    Compact?: {
+      type: any; 
     };
   }
 

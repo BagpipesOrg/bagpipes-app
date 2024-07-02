@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import FieldRenderer from '../PopupForms/ChainForms/FieldRenderer';
-import { findFieldByKey } from './fieldUtils';
-import { isFieldVisible } from '../PopupForms/formUtils';
-import CustomInput from './CustomInput';
+import FieldRenderer from '../../PopupForms/ChainForms/FieldRenderer';
+import { findFieldByKey } from '../fieldUtils';
+import { isFieldVisible } from '../../PopupForms/formUtils';
+import CustomInput from '../CustomInput';
 
 const SequenceField = ({ items, onChange, typesLookup, elementType, setPills, onPillsChange, nodeId }) => {    console.log("SequenceField items:", items);
     const handleAddItem = () => {

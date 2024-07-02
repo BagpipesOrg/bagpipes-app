@@ -9,7 +9,7 @@ import PanelForm from '../PopupForms/Panel/PanelForm';
 import { v4 as uuidv4 } from 'uuid';
 import { useDrop, useDrag } from 'react-dnd';
 import CustomInput from './CustomInput';
-import SequenceField from './SequenceField';
+import { SequenceField, CompositeField } from './SubstrateMetadataFields';
 import { CopyBlock, CodeBlock, dracula } from 'react-code-blocks';
 import 'antd/dist/antd.css';
 import './Fields.scss';
@@ -18,13 +18,14 @@ import './Fields.scss';
 const { Option } = Select;
 
 
-const CollapsibleField = ({ fieldKey, nodeId, edgeId, title, info, toggleTitle, hasToggle,fieldTypes, items=[], selectOptions=[], selectRadioOptions=[], children, value, onChange, onPillsChange, placeholder, onClick, disabled, isTextAreaValue, customContent, buttonName, typesLookup, elementType}) => {
+const CollapsibleField = ({ fieldKey, nodeId, edgeId, title, info, toggleTitle, hasToggle,fieldTypes, items=[], selectOptions=[], selectRadioOptions=[], children, value, onChange, onPillsChange, placeholder, onClick, disabled, isTextAreaValue, customContent, buttonName, typesLookup, fieldTypeObject, fields}) => {
   const [isToggled, setIsToggled] = useState(false);
   const { showPanelTippy, hidePanelTippy, tippyInstance } = usePanelTippy();
   const referenceElement = useRef(null);
   const [droppedItems, setDroppedItems] = useState([]);
   const [pills, setPills] = useState([]);
   const [editableContent, setEditableContent] = useState("");
+  const [compositeValues, setCompositeValues] = useState(value || {});
 
  
   const [{ isOver }, drop] = useDrop({
@@ -205,10 +206,29 @@ const renderSequenceItems = () => {
     }
 }
 
+const handleSubFieldChange = (subFieldName, newValue) => {
+  const updatedValues = { ...compositeValues, [subFieldName]: newValue };
+  setCompositeValues(updatedValues);
+  // Optionally propagate changes up if needed:
+  onChange(nodeId, updatedValues);  // Assuming you want to update some global state
+};
 
 
-  const renderContent = () => {
+
+
+const renderContent = (field, depth = 0) => {
+
+
+    console.log(`Rendering ${field} at depth ${depth}`);
+
+    if (depth > 10) {  // Set a reasonable max depth for recursion
+        console.error('Too deep recursion detected', field);
+        return <div>Complexity Error</div>;
+    }
+
     let content;
+
+
 
     // Handle the toggle condition
     if (isToggled) {
@@ -230,8 +250,42 @@ const renderSequenceItems = () => {
     }
 
   
-    // Dynamic field type rendering based on the fieldType prop
+    // Dynamic field type rendering based on the fieldTypes prop
     switch (fieldTypes) {
+
+      case 'composite':
+        console.log('Rendering composite field', fieldTypeObject);
+        content = (
+          <CompositeField
+            fields={fieldTypeObject.fields}
+            values={value || {}}
+            onChange={onChange}
+            typesLookup={typesLookup}
+            nodeId={nodeId}
+            setPills={setPills}
+            onPillsChange={onPillsChange}
+            onClick={(e) => handleInputClick(e, nodeId)} 
+
+          />
+        );
+        break;
+
+        case 'variant':
+          console.log('Rendering variant field', fieldTypeObject);
+          content = (
+            <VariantField
+              fields={fieldTypeObject.fields}
+              values={value || {}}
+              onChange={onChange}
+              typesLookup={typesLookup}
+              nodeId={nodeId}
+              setPills={setPills}
+              onPillsChange={onPillsChange}
+              onClick={(e) => handleInputClick(e, nodeId)} 
+  
+            />
+          );
+          break;
 
 
         case 'input':
@@ -387,10 +441,37 @@ const renderSequenceItems = () => {
         );
       break
 
-     case 'condition':
+     
+    
 
 
-     const parseNodeIdFromEdgeId = (edgeId) => {
+      case 'sequence':
+        content = (
+            <SequenceField
+                items={value || []}
+                onChange={(newItems) => onChange(newItems)}
+                typesLookup={typesLookup}
+                elementType={fieldTypeObject.elementType}
+                setPills={setPills}
+                onPillsChange={onPillsChange}
+                nodeId={nodeId}
+            />
+        );
+        break;
+
+    case 'sequenceItems':
+          return renderSequenceItems();
+    case 'accordion':
+      
+    break;
+    // case 'sequenceItems':
+    case 'array':
+    case 'variant':
+        return typeRenderer(field.typeId, lookupTypes);
+    case 'condition':
+
+
+    const parseNodeIdFromEdgeId = (edgeId) => {
       console.log('parseNodeIdFromEdgeId', edgeId);
       const parts = edgeId.split('-');
       return parts.length > 1 ? parts[1] : '';
@@ -474,31 +555,7 @@ const renderSequenceItems = () => {
         </div>
       );
       break;
-
-      case 'sequence':
-        content = (
-            <SequenceField
-                items={value || []}
-                onChange={(newItems) => onChange(newItems)}
-                typesLookup={typesLookup}
-                elementType={elementType}
-                setPills={setPills}
-                onPillsChange={onPillsChange}
-                nodeId={nodeId}
-            />
-        );
-        break;
-
-    case 'sequenceItems':
-          return renderSequenceItems();
-    case 'accordion':
-      
-    break;
-    // case 'sequenceItems':
-      case 'array':
-      case 'variant':
-          return typeRenderer(field.typeId, lookupTypes);
-
+     
       default:
         content = <div className="description">{info}</div>;
     }

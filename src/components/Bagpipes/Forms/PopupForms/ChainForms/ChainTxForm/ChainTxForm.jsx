@@ -16,7 +16,7 @@ import { CollapsibleField }  from '../../../fields';
 import { ChainQueryIcon } from '../../../../../Icons/icons';
 import { useTippy } from '../../../../../../contexts/tooltips/TippyContext';
 import { listChains} from '../../../../../../Chains/ChainsInfo';
-import { queryMetadata } from './QueryMetadata';
+import { queryMetadata } from '../QueryMetadata';
 import { parseMetadataPallets, resolveTypeName, resolveFieldType } from '../parseMetadata'
 import { parseLookupTypes } from '../ParseMetadataTypes';
 import { resolveKeyType } from '../resolveKeyType';
@@ -69,16 +69,19 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
   const [isTextAreaValue, setIsTextAreaValue] = useState(false);
 
   const lookupTypes = useMemo(() => {
+    console.log("Complete metadata object available for types parsing:", metadata);
     const typesArray = metadata?.metadata?.V14?.lookup?.types;
-    // console.log('Lookup Types in lookupTypes:', typesArray);
+    console.log('Lookup Types in lookupTypes:', typesArray);
     if (typesArray && Array.isArray(typesArray)) {
         const parsedTypes = parseLookupTypes(typesArray);
-        // console.log("Lookup Parsed Types:", parsedTypes);
+        console.log("Lookup Parsed Types:", parsedTypes);
         return parsedTypes;
+    } else {
+        console.error("Metadata is not valid or types are not available", typesArray);
     }
-    console.error("Metadata is not valid or types are not available");
     return {};
-  }, [metadata]);
+}, [metadata]);
+
 
 
   useEffect(() => {
@@ -276,7 +279,7 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
         hasToggle={true}
         fieldTypes="select"
         nodeId={nodeId}
-        info="Select a pallet to explore"
+        info={formData?.selectedPallet?.docs || "Select a pallet to execute tx."}
         selectOptions={pallets.map(pallet => ({ label: pallet.name, value: pallet.name }))}
         value={formData.selectedPallet || ''}
         onChange={(value) => handlePalletChange(value)}
@@ -311,7 +314,8 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
         customContent={generateCustomContent()}
         fieldTypes="select"
         nodeId={nodeId}
-        info="Select a transaction method to execute"
+        // also add docs from  const newMethod = formData.selectedPalletData?.calls.find(calls => calls.name === methodName);
+        info={formData?.selectedMethod?.docs || "Select a method to execute."}
         selectOptions={methods.map(method => ({ label: method.name, value: method.name }))}
         value={formData?.selectedMethod?.name || ''}
         onChange={(value) => handleMethodChange(value)}
@@ -331,22 +335,22 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
 
     return formData.selectedMethod.fields.map((field, index) => {
         const fieldTypeObject = resolveFieldType(field.type, lookupTypes);
-        console.log('Field Type ID:', fieldTypeObject);
+        console.log(`Rendering field: ${field.name}, Field Type Object:`, fieldTypeObject);
         return (
             <CollapsibleField
                 key={index}
-                title={`${field.name} <${field.typeName || resolveTypeName(field.type, lookupTypes)}> `}
-                info={field.docs || 'No documentation available.'}
-                fieldTypes={fieldTypeObject.type}  
+                title={`${field?.name} <${field?.typeName || resolveTypeName(field?.type, lookupTypes)}> `}
+                info={field?.docs || 'No documentation available.'}
+                fieldTypes={fieldTypeObject?.type}  
                 customContent={customContent}
                 hasToggle={true}
-                nodeId={formData.nodeId}
-                value={formData.params?.[field.name] || ''}
+                nodeId={formData?.nodeId}
+                value={formData?.params?.[field.name] || ''}
                 onChange={(newFieldValue) => handleMethodFieldChange(field.name, newFieldValue)} // Pass the onChange handler
                 placeholder={`Enter ${field.name}`}
                 // Pass typesLookup if needed for dynamic rendering within the field
                 typesLookup={lookupTypes}
-                elementType={fieldTypeObject.elementType}
+                fieldTypeObject={fieldTypeObject}
             />
         );
     });

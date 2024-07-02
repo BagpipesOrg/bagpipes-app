@@ -9,7 +9,7 @@ import { processScenarioData, validateDiagramData, processAndSanitizeFormData, g
 import { getOrderedList } from '../../../../hooks/utils/scenarioExecutionUtils';
 
 
-import { queryMetadata } from './QueryMetadata';
+import { queryMetadata } from '../QueryMetadata';
 import { parseMetadataPallets } from '../parseMetadata'
 import { parseLookupTypes } from '../ParseMetadataTypes';
 import { resolveKeyType } from '../resolveKeyType';
