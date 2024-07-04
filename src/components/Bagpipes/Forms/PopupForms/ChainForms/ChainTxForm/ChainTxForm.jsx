@@ -17,7 +17,7 @@ import { ChainQueryIcon } from '../../../../../Icons/icons';
 import { useTippy } from '../../../../../../contexts/tooltips/TippyContext';
 import { listChains} from '../../../../../../Chains/ChainsInfo';
 import { queryMetadata } from '../QueryMetadata';
-import { parseMetadataPallets, resolveTypeName, resolveFieldType } from '../parseMetadata'
+import { parseMetadataPallets, resolveTypeName, resolveFieldType, resolveFieldTypeShallow } from '../parseMetadata'
 import { parseLookupTypes } from '../ParseMetadataTypes';
 import { resolveKeyType } from '../resolveKeyType';
 import ChainRpcService from '../../../../../../services/ChainRpcService';
@@ -176,18 +176,21 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
   };
 
 
-  const handleMethodFieldChange = (fieldName, newFieldValue) => {
+  const handleMethodFieldChange = (fieldName, newFieldValue, additionalData = null) => {
     // Update the specific field inside formData.params
     const updatedParams = {
-        ...formData.params, 
-        [fieldName]: newFieldValue
+      ...formData.params, 
+      [fieldName]: newFieldValue
     };
+  
+    // Optionally integrate additional data into the form state if present
     const updatedValues = {
-        ...formData,
-        params: updatedParams
+      ...formData,
+      params: updatedParams,
+      ...additionalData  
     };
     saveNodeFormData(activeScenarioId, nodeId, updatedValues);
-};
+  };
 
   // handlers for the form fields
 
@@ -324,18 +327,27 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
   };
   
 
+  const handleFieldExpansion = (fieldType, fieldId) => {
+    if (fieldType === 'variant') {
+      // Logic to load more details for a variant field
+      loadVariantDetails(fieldId).then(details => {
+        handleMethodFieldChange(fieldId, formData.params[fieldId], { additionalFields: details });
+      });
+    }
+  };
+  
   const renderMethodFields = () => {
     if (!formData.selectedMethod) {
-        return null;  
+      return null;  
     }
-
+  
     const customContent = Object.keys(lookupTypes).length === 0 
                           ? <div>Loading data or incomplete metadata...</div>
                           : null;
-
+  
     return formData.selectedMethod.fields.map((field, index) => {
-        const fieldTypeObject = resolveFieldType(field.type, lookupTypes);
-        console.log(`Rendering field: ${field.name}, Field Type Object:`, fieldTypeObject);
+      const fieldTypeObject = resolveFieldType(field.type, lookupTypes);
+      console.log(`Rendering field: ${field.name}, Field Type Object:`, fieldTypeObject);
         return (
             <CollapsibleField
                 key={index}
@@ -346,15 +358,16 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
                 hasToggle={true}
                 nodeId={formData?.nodeId}
                 value={formData?.params?.[field.name] || ''}
-                onChange={(newFieldValue) => handleMethodFieldChange(field.name, newFieldValue)} // Pass the onChange handler
+                onChange={(newFieldValue) => handleMethodFieldChange(field.name, newFieldValue)} 
                 placeholder={`Enter ${field.name}`}
-                // Pass typesLookup if needed for dynamic rendering within the field
                 typesLookup={lookupTypes}
                 fieldTypeObject={fieldTypeObject}
+                onClick={() => handleFieldExpansion(field.type, field.id)}
             />
         );
     });
-};
+  };
+  
 
 
 const renderSignAndSendTx = () => {

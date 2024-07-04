@@ -6,12 +6,21 @@ export interface TypeDef {
     Array?: {
       len: number;
       type: string;
+      needsLoading?: boolean;
+
     };
     Sequence?: {
       type: string;
+      needsLoading?: boolean;
+      elementType: string;
+
     };
     Variant?: {
-      variants: Variant[];
+      variants: VariantObject[];
+      needsLoading?: boolean;
+      type: string;
+      typeId: string;
+
     };
     Tuple?: {
       map(arg0: (tupleTypeId: any) => any): unknown;
@@ -29,11 +38,16 @@ export interface TypeDef {
     docs: string[];
   }
   
-  export interface Variant {
+  export interface VariantObject {
+    type: any;
     name: string;
     fields: Field[];
     index: number;
     docs: string[];
+    needsLoading?: boolean;
+    typeId: string;
+
+
   }
   
   export interface Type {
@@ -127,32 +141,9 @@ export interface TypeDef {
   export interface ParsedTypeDefinition {
     path: string[];
     params: any[];
-    def: TypeDefDetail;
+    def: TypeDef;
     docs: string;
-  }
-
-
-  export interface TypeDefDetail {
-    Primitive?: string;
-    Composite?: {
-      fields: Field[];
-    };
-    Sequence?: {
-      elementType: string;
-    };
-    Array?: {
-      elementType: string;
-      len: number;
-    };
-    Variant?: {
-      variants: Variant[];
-    };
-    Tuple?: {
-      elements: string[];  // Array of type IDs
-    };
-    Compact?: {
-      type: any; 
-    };
+    typeId?: string;
   }
 
 

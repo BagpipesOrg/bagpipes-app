@@ -22,10 +22,10 @@ export function parseTypeDefinition(type: Type): ParsedTypeDefinition {
     };
   } else if (type.def.Sequence) {
     def.Sequence = {
-      elementType: type.def.Sequence.type
+      elementType: type.def.Sequence.type,
+      typeId: type.def.Sequence.type,
     };
   } else if (type.def.Variant) {
-    console.log(`Parsing Variant type for ID: ${type} with variants: ${type.def.Variant.variants}`);
     def.Variant = {
       variants: type.def.Variant.variants.map(variant => ({
         name: variant.name,
@@ -40,7 +40,7 @@ export function parseTypeDefinition(type: Type): ParsedTypeDefinition {
     };
   } else if (type.def.Tuple) {
     def.Tuple = {
-      elements: type.def.Tuple.map(tupleTypeId => tupleTypeId) // Assuming tuple contains an array of typeIds
+      elements: type.def.Tuple.map((tupleTypeId: any) => tupleTypeId) // Assuming tuple contains an array of typeIds
     };
   } 
   // Inside parseTypeDefinition function
