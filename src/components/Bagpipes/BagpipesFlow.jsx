@@ -616,8 +616,10 @@ const BagpipesFlow = () => {
 
     const { source, target } = node.formData.actionData;
     console.log(`isActionDataComplete: `, node.formData.actionData);
-        if (node.formData.actionData){
-      if (node.formData.actionData.actionType == "remark"){
+   
+   
+    if (node.formData.actionData){
+      if (node.formData.actionData.actionType == "remark" ||      node.formData.actionData.actionType === "vote"){
         return true;
       }
     }

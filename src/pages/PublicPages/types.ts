@@ -32,7 +32,6 @@ export interface HowTo {
 export interface Link {
   title: string;
   url: string;
-
 }
 
 export interface Hashtag {
@@ -65,6 +64,6 @@ export interface Community {
   };
   howTos: HowTo[];
   features: Feature[];
-  hashTags: string[]; 
-  mostActiveCreators: string[]; 
+  hashTags: string[];
+  mostActiveCreators: string[];
 }
