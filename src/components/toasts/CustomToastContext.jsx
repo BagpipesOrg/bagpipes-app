@@ -2,6 +2,8 @@ import React from 'react';
 import SwapSVG from '/swap.svg';
 import RemarkSVG from '/remark.svg';
 import xTransferSVG from '/xTransfer.svg';
+import VoteSVG from '/vote.svg';
+
 import { HttpIcon, WebhookIcon } from '../Icons/icons';
 import { listChains } from '../../Chains/ChainsInfo';
 
@@ -36,6 +38,10 @@ export const ActionToastContent = ({ type, message, signedExtrinsic }) => {
         imageSrc = RemarkSVG;
         altText = "System remark"
     } 
+    else if (type === 'vote') {
+      imageSrc = VoteSVG;
+      altText = "Vote"
+    }
     else if (type === 'xTransfer') {
         imageSrc = xTransferSVG;
         altText = 'xTransfer Action';

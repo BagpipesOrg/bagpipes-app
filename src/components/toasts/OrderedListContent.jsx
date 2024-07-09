@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
 import RemarkSVG from '/remark.svg';
+import VoteSVG from '/vote.svg';
 import { listChains } from '../../Chains/ChainsInfo';
 import { toast } from 'react-hot-toast';
 import ThemeContext from '../../contexts/ThemeContext';
@@ -110,7 +111,17 @@ const OrderedListContent = ({ list }) => {
                         return (
                             <img key={index} src={imageSrc} alt={altText} className="toast-icon" />
                         );
-                    } else if (item.action === 'xTransfer') {
+
+                    } 
+               else if (item.action === 'Vote' || item.action === 'vote') {
+                    imageSrc = VoteSVG;
+                    altText = "Vote";
+                    return (
+                        <img key={index} src={imageSrc} alt={altText} className="toast-icon" />
+                    );
+                }
+                    
+                    else if (item.action === 'xTransfer') {
                         console.log('OrderedListContent item action', item.action);
                         imageSrc = xTransferSVG;
                         altText = 'xTransfer Action';
