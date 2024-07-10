@@ -92,6 +92,9 @@ function handlexTransfer(formData) {
         },
 ///hydra2moonbeam, interlay2moonbeam, polkadot2moonbeam, assethubassethub2moonbeam
         'polkadot:moonbeam': () => {
+            if (!isEthereumAddress(target.address)) { //  evm account check
+                throw new Error("Invalid address, select your evm account");
+            };
             return polkadot2moonbeam(submittableAmount, target.address);
         },
         'moonbeam:polkadot': () => {
