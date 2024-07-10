@@ -95,7 +95,20 @@ function handlexTransfer(formData) {
             return polkadot2moonbeam(submittableAmount, target.address);
         },
         'moonbeam:polkadot': () => {
-            return moon2polkadot(target.address, submittableAmount);
+            // todo check dot address
+            console.log(`moonbeam2polkadot!!`);
+            if (source.assetId != "42259,045,809,535,163,221,576,417,993,425,387,648"){
+                toast("You can only send DOT to the Polkadot relay chain");
+                
+                throw new Error("Wrong asset");
+            };
+            if (isEthereumAddress(target.address)) { //  evm account check
+                throw new Error("Invalid address, select a polkadot address not evm");
+            };
+            console.log(`source:`, source);
+            console.log(`source amount:`, source.amount);
+            const correct_dot_amount = source.amount * (10**10);
+            return moon2polkadot(target.address, correct_dot_amount);
         },
         'moonbeam:assetHub': () => {
             console.log(`moon2assethub`);
