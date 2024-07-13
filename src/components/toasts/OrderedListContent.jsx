@@ -13,8 +13,8 @@ const OrderedListContent = ({ list }) => {
     const chains = listChains();
     const { theme } = useContext(ThemeContext);
 
-    console.log('OrderedListContent chains', chains);
-    console.log('OrderedListContent SwapSVG', SwapSVG);
+    // console.log('OrderedListContent chains', chains);
+    // console.log('OrderedListContent SwapSVG', SwapSVG);
 
     return (
         <div className={`ordered-list-content-container flex justify-left w-full ${theme}`}>
@@ -24,7 +24,7 @@ const OrderedListContent = ({ list }) => {
                     // console.log(`OrderedListContent item is:`, item);
                     if (item.type === 'chain') {
                         const chainInfo = Object.values(chains).find(chain => chain.name === item.name);
-                        console.log('OrderedListContent chainInfo', chainInfo);
+                        // console.log('OrderedListContent chainInfo', chainInfo);
                         return (
                             <img
                                 key={index}
@@ -36,7 +36,7 @@ const OrderedListContent = ({ list }) => {
                     }  
                     if (item.type === 'chainQuery') {
                         const chainQueryInfo = Object.values(chains).find(chain => chain.name === item.name);
-                        console.log('OrderedListContent chainQueryInfo', chainQueryInfo);
+                        // console.log('OrderedListContent chainQueryInfo', chainQueryInfo);
                         return (
                             <div key={index} className="toast-icon">
                                 {chainQueryInfo?.name ? (
@@ -99,7 +99,7 @@ const OrderedListContent = ({ list }) => {
                         );
                     }
                     if (item.action === 'swap') {
-                        console.log('OrderedListContent item action', item.action);
+                        // console.log('OrderedListContent item action', item.action);
                         imageSrc = SwapSVG;
                         altText = 'Swap Action';
                         return (

@@ -1,5 +1,5 @@
 import { Type, TypeEntry, TypeDefinitions, Field, Pallet, MethodOutput, RawMetadata, CallOutput, StorageOutput, TypeLookup, ResolvedType } from './TypeDefinitions';
-
+import { TypeDef } from './ParseMetadataTypes';
 
 
 export function parseMetadataPallets(rawMetadata: RawMetadata): MethodOutput[] {
@@ -100,8 +100,8 @@ export function resolveTypeName(typeId: string, typesLookup: any): string {
     return `Array[${def.Array.len}] of ${resolveTypeName(def.Array.type, typesLookup)}`;
   } else if (def.Variant) {
     return `Variant`;
-  } else if (def.Tuple) {
-    return `Tuple of (${def.Tuple.map((t: string) => resolveTypeName(t, typesLookup)).join(', ')})`;
+    } else if (def.Tuple) {
+      return `Tuple(${def.Tuple.elements?.map((element: string) => resolveTypeName(element, typesLookup)).join(', ')})`;
   } else if (def.Compact) {
       return `Compact<${resolveTypeName(def.Compact.type, typesLookup)}>`;
   } else {
@@ -109,99 +109,154 @@ export function resolveTypeName(typeId: string, typesLookup: any): string {
   }
 }
 
+// this resolves field types using the type id from the metadata.
 
-export function resolveFieldType(typeId: string, typesLookup: TypeLookup, depth = 0, path = []) {
+
+export function resolveFieldType(typeId: string, typesLookup: TypeLookup, depth = 0, path: string[] = [], cache: Record<string, ResolvedType> = {}): ResolvedType {
   console.log(`Resolving type for typeId: ${typeId} at recursion depth: ${depth}, path: ${path.join(' -> ')}`);
 
-  if (depth > 20) {
-    console.warn(`Excessive recursion at depth ${depth} for typeId ${typeId}`);
-    return { type: 'complex', path };
+  if (cache[typeId]) {
+      console.log(`Using cached result for typeId: ${typeId}`);
+      return cache[typeId];
+  }
+
+  if (depth > 40) {
+      console.warn(`Excessive recursion at depth ${depth} for typeId ${typeId}`);
+      return { type: 'complex', path };
   }
 
   const typeInfo = typesLookup[typeId];
-  console.log(`Type info for typeId ${typeId}:`, typeInfo);
   if (!typeInfo || !typeInfo.def) {
-    console.error(`Type information is undefined or missing definition for typeId: ${typeId}`);
-    return { type: 'input', path };
+      console.error(`Type information is undefined or missing definition for typeId: ${typeId}`);
+      return { type: 'input', path };
   }
 
-  const currentType = Object.keys(typeInfo.def)[0];
-  console.log(`Current type: ${currentType}`);
-  path.push(currentType);
-  console.log(`Current type path: ${path.join(' -> ')}`);
+  const typeName = resolveTypeName(typeId, typesLookup);
 
-  switch (currentType) {
-    case 'Primitive':
-      return { type: 'input', path: path.concat(typeInfo.def.Primitive) }; // Append Primitive type for clarity
+  const currentType = Object.keys(typeInfo.def)[0] as keyof TypeDef;
+  const newPath = [...path, currentType];
 
-    case 'Composite':
-      console.log(`Type ${typeId} is a Composite, processing fields...`);
-      return {
-        type: 'composite',
-        path,
-        fields: typeInfo.def.Composite.fields.map(field => ({
-          name: field.name,
-          type: resolveFieldType(field.type, typesLookup, depth + 1, path.concat(field.name)),
-          typeId: field.type
-        }))
-      };
+  let result: ResolvedType = {
+    type: currentType,
+    path: newPath,
+    typeName: typeName 
+    
+};
 
-    case 'Compact':
-      if (typeInfo.def.Compact && typeInfo.def.Compact.type) {
-        console.log(`Type ${typeId} is a Compact type, resolving its base type: ${typeInfo.def.Compact.type}`);
-        // Directly resolve the base type of Compact without adding 'Compact' redundantly to the path
-        return resolveFieldType(typeInfo.def.Compact.type, typesLookup, depth + 1, path);
-      } else {
-        console.error(`Compact type at ID ${typeId} does not specify a base type`);
-        return { type: 'complex', path };
-      }
+switch (currentType) {
+      case 'Primitive':
+          result = { type: 'input', path: newPath, typeName: typeName };
+          break;
+
+      case 'Composite':
+        console.log(`Resolving composite type: ${typeId}`);
+          result = {
+              type: 'composite',
+              path: newPath,
+              typeName: typeName,
+              typeId: typeInfo.def.Composite!.type,
+              fields: typeInfo.def.Composite!.fields.map(field => ({
+                  name: field.name || 'Composite field',
+                  type: 'compositeField',
+                  resolvedType: resolveFieldType(field.type, typesLookup, depth + 1, [...newPath, field.name || 'Unnamed field'], cache),
+                  typeName: typeName ,
+                  typeId: field.type
+              }))
+          };
+          break;
+
+      case 'Compact':
+          result = resolveFieldType(typeInfo.def.Compact!.type, typesLookup, depth + 1, newPath, cache);
+          break;
 
       case 'Sequence':
-        console.log(`Type ${typeId} is a Sequence, element type: ${typeInfo.def.Sequence.elementType}`);
-        const elementType = resolveFieldTypeShallow(typeInfo.def.Sequence.elementType, typesLookup, path.concat('Sequence'));
-        return {
-          path,
-          elementType: elementType,
+        // Specifically for 'Sequence', handle path update correctly.
+        const sequencePath = [...newPath, 'Sequence']; // Only add 'Sequence' here, not again in the recursive call.
+        const sequencePathElement = [...newPath, 'SequenceElement'];
+        result = {
+            type: 'sequence',
+            typeId: typeInfo.def.Sequence!.type,
+            typeName: typeName,
+
+            path: sequencePath,
+            elementType: resolveFieldType(typeInfo.def.Sequence!.type, typesLookup, depth + 1,sequencePathElement, cache)
         };
+          break;
 
-    case 'Array':
-      console.log(`Type ${typeId} is an Array, element type: ${typeInfo.def.Array.type}, length: ${typeInfo.def.Array.len}`);
-      return {
-        type: 'array',
-        path,
-        elementType: resolveFieldType(typeInfo.def.Array.type, typesLookup, depth + 1, path.concat('Array')),
-        length: typeInfo.def.Array.len
-      };
+      case 'Array':
+          result = {
+              type: 'array',
+              path: newPath,
+              typeId: typeInfo.def.Array!.type,
+              elementType: resolveFieldType(typeInfo.def.Array!.type, typesLookup, depth + 1, [...newPath, 'Array'], cache),
+              length: typeInfo.def.Array!.len
+          };
+          break;
 
-    case 'Variant':
-      console.log(`Type ${typeId} is a Variant, processing variants...`);
-      return {
-        type: 'variant',
-        path,
-        variants: typeInfo.def.Variant.variants.map(variant => ({
-          name: variant.name || 'unnamed variant',
-          index: variant.index,
-          fields: variant.fields.map(field => ({
-            name: field.name || 'unnamed field',
-            type: resolveFieldTypeShallow(field.type, typesLookup, path.concat('Variant')),
-            typeId: field.type
-          }))
-        }))
-      };
+      case 'Variant':
+          result = {
+              type: 'variant',
+              path: newPath,
+              typeName: typeName,
+              variants: typeInfo.def.Variant!.variants.map(variant => ({
+                  name: variant.name,
+                  index: variant.index,
+                  typeId: variant.type,
+                  type: 'variants',
+                  fields: variant.fields.map(field => ({
+                      name: field.name,
+                      type: 'variantField', 
+                      resolvedType: resolveFieldType(field.type, typesLookup, depth + 1, [...newPath, variant.name, field.name || 'Unnamed field'], cache),
+                      typeName: typeName,
+                      typeId: field.type
+                  }))
+              }))
+          };
+          break;
 
-    case 'Tuple':
-      console.log(`Type ${typeId} is a Tuple`);
-      return {
-        type: 'tuple',
-        path,
-        elements: typeInfo.def.Tuple.elements.map(element => resolveFieldType(element, typesLookup, depth + 1, path))
-      };
+      case 'Tuple':
+          result = {
+              type: 'tuple',
+              typeName: typeName,
+              path: newPath,
+              elements: typeInfo.def.Tuple!.elements?.map(element => resolveFieldType(element, typesLookup, depth + 1, [...newPath, 'Tuple'], cache))
+          };
+          break;
 
-    default:
-      console.log(`Type ${typeId} is classified as Complex`);
-      return { type: 'complex', path };
+          // case 'Tuple':
+          //   if (typeInfo.def.Tuple?.elements) {
+          //       result = {
+          //           type: 'tuple',
+          //           path: newPath,
+          //           elements: typeInfo.def.Tuple.elements.map(elementId => ({
+          //               typeId: elementId,
+          //               type: 'unresolved'  // This line marks the element as unresolved.
+          //           }))
+          //       };
+          //   } else {
+          //       console.warn('Tuple type defined without elements', typeId);
+          //       result = {
+          //           type: 'tuple',
+          //           path: newPath,
+          //           elements: []  // Provide an empty array as a fallback.
+          //       };
+          //   }
+          //   break;
+        
+
+      default:
+          console.log(`Type ${typeId} is classified as 'Unknown'`);
+          result = { type: 'unknown', path: newPath, typeName: 'Unknown'};
+          break;
   }
+
+  cache[typeId] = result; // Cache the result before returning
+  return result;
 }
+
+
+
+
 
 
 

@@ -23,7 +23,7 @@ import { resolveKeyType } from '../resolveKeyType';
 import ChainRpcService from '../../../../../../services/ChainRpcService';
 import FormHeader from '../../../FormHeader';
 import FormFooter from '../../../FormFooter';
-import RecursiveFieldRenderer from '../../../fields/RecursiveFieldRenderer';
+
 import '../types';
 
 import Tippy from '@tippyjs/react';
@@ -68,13 +68,10 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const [isTextAreaValue, setIsTextAreaValue] = useState(false);
 
-
-
-
   const lookupTypes = useMemo(() => {
     console.log("Complete metadata object available for types parsing:", metadata);
     const typesArray = metadata?.metadata?.V14?.lookup?.types;
-    console.log('Lookup Types in lookupTypes:', typesArray)
+    console.log('Lookup Types in lookupTypes:', typesArray);
     if (typesArray && Array.isArray(typesArray)) {
         const parsedTypes = parseLookupTypes(typesArray);
         console.log("Lookup Parsed Types:", parsedTypes);
@@ -83,8 +80,7 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
         console.error("Metadata is not valid or types are not available", typesArray);
     }
     return {};
-}, [metadata]); // useMemo for memoization of the lookupTypes object to prevent unnecessary re-renders
-
+}, [metadata]);
 
 
 
@@ -166,84 +162,35 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     }
     saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedPalletData: newPallet, selectedPallet: palletName, selectedMethod: null, params: null});
   };
-  const [localResolvedFields, setLocalResolvedFields] = useState([]);
 
-  useEffect(() => {
-    if (formData.selectedMethod) {
-        const fields = formData.selectedMethod.fields.map(field => 
-            resolveFieldType(field.type, lookupTypes));
-        setLocalResolvedFields(fields);
-    }
-}, [formData.selectedMethod, lookupTypes]);
-  
-
-const handleMethodChange = (methodName) => {
+  const handleMethodChange = (methodName) => {
     const newMethod = formData.selectedPalletData?.calls.find(calls => calls.name === methodName);
     console.log('handleMethodChange New Method:', newMethod);
-
-
-
     if (newMethod && newMethod !== selectedMethod) {
-        const resolvedFields = formData?.selectedMethod?.fields?.map(field =>
-            resolveFieldType(field.type, lookupTypes)
-        );
-
-        console.log('handleMethodChange Resolved Fields:', resolvedFields);
-
-
         setSelectedMethod(newMethod);
         setSelectedParams({});
-        setLocalResolvedFields(resolvedFields);
     }
     // setSelectedMethod(newMethod);
 
-    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedMethod: newMethod, params: {}});
+    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedMethod: newMethod, params: null});
   };
 
 
-
-
-// const handleMethodFieldChange = (fieldName, newValue) => {
-//   console.log('handleMethodFieldChange fieldName:', fieldName, 'newFieldValue:', newValue);
-
-//   if (!fieldName) {
-//       console.error("Field name is undefined.");
-//       return;
-//   }
-
-//   let updatedParams = {
-//       ...formData.params,
-//       [fieldName]: newValue  // Directly set the new value
-//   };
-
-//   console.log(`Updated params for field ${fieldName}:`, updatedParams);
-//   saveNodeFormData(activeScenarioId, nodeId, {...formData, params: updatedParams});
-// };
-
-const handleMethodFieldChange = (fieldName, newValue, fieldType) => {
-  console.log('handleMethodFieldChange', fieldName, newValue, fieldType);
-
-  if (!fieldName) {
-      console.error("Field name is undefined.");
-      return;
-  }
-
-  let updatedParams = {...formData.params};
-
-  if (fieldType === 'variant') {
-    console.log('handleMethodFieldChange updating variant:', fieldName, newValue);
-      updatedParams[fieldName] = newValue; // Handle variant updates
-  } else {
-      updatedParams[fieldName] = newValue; // Handle all other updates as before
-  }
-
-  console.log(`Updated params for field ${fieldName}:`, updatedParams);
-  saveNodeFormData(activeScenarioId, nodeId, {...formData, params: updatedParams});
-};
-
-
-
-
+  const handleMethodFieldChange = (fieldName, newFieldValue, additionalData = null) => {
+    // Update the specific field inside formData.params
+    const updatedParams = {
+      ...formData.params, 
+      [fieldName]: newFieldValue
+    };
+  
+    // Optionally integrate additional data into the form state if present
+    const updatedValues = {
+      ...formData,
+      params: updatedParams,
+      ...additionalData  
+    };
+    saveNodeFormData(activeScenarioId, nodeId, updatedValues);
+  };
 
   // handlers for the form fields
 
@@ -380,60 +327,46 @@ const handleMethodFieldChange = (fieldName, newValue, fieldType) => {
   };
   
 
-
+  const handleFieldExpansion = (fieldType, fieldId) => {
+    if (fieldType === 'variant') {
+      // Logic to load more details for a variant field
+      loadVariantDetails(fieldId).then(details => {
+        handleMethodFieldChange(fieldId, formData.params[fieldId], { additionalFields: details });
+      });
+    }
+  };
   
   const renderMethodFields = () => {
     if (!formData.selectedMethod) {
       return null;  
     }
-
-    if (!lookupTypes || Object.keys(lookupTypes).length === 0 || !localResolvedFields) {
-      console.log("Waiting for data...");
-      return <div>Loading...</div>;
-  }
   
     const customContent = Object.keys(lookupTypes).length === 0 
                           ? <div>Loading data or incomplete metadata...</div>
                           : null;
   
-        
-
-    if (!localResolvedFields || localResolvedFields.length !== formData.selectedMethod.fields.length) {
-        console.warn("Mismatch or missing data in localResolvedFields");
-        return <div>Error or incomplete data.</div>;
-    }
-
-    return formData.selectedMethod.fields.map((fieldObject, index) => {
-      console.log('index fieldObject:', index, fieldObject);  
-   
-          const resolvedFields = localResolvedFields;
-          const resolvedField = localResolvedFields?.[index];
-          console.log('Resolved Field and Fields:', resolvedField, resolvedFields);
-console.log 
-
-      return (
-        <CollapsibleField
-            key={index}
-            title={`${fieldObject.name} <${fieldObject.typeName || resolvedFields.typeName}>`}
-            info={fieldObject?.docs || ''}
-            customContent={customContent}
-            hasToggle={true}
-            nodeId={formData?.nodeId}
-            // onChange={(newFieldValue) => handleMethodFieldChange(fieldObject.name, newFieldValue)} 
-            placeholder={`Enter ${fieldObject.name}`}
-        >
-            <RecursiveFieldRenderer
-                fieldName={fieldObject.name}
-                fieldObject={resolvedField}
-                values={formData.params?.[fieldObject.name] || {}}
-                onChange={(newFieldValue) => handleMethodFieldChange(fieldObject.name, newFieldValue, resolvedField.type)}
-                nodeId={formData.nodeId}
+    return formData.selectedMethod.fields.map((field, index) => {
+      const fieldTypeObject = resolveFieldType(field.type, lookupTypes);
+      console.log(`Rendering field: ${field.name}, Field Type Object:`, fieldTypeObject);
+        return (
+            <CollapsibleField
+                key={index}
+                title={`${field?.name} <${field?.typeName || resolveTypeName(field?.type, lookupTypes)}> `}
+                info={field?.docs || 'No documentation available.'}
+                fieldTypes={fieldTypeObject?.type}  
+                customContent={customContent}
+                hasToggle={true}
+                nodeId={formData?.nodeId}
+                value={formData?.params?.[field.name] || ''}
+                onChange={(newFieldValue) => handleMethodFieldChange(field.name, newFieldValue)} 
+                placeholder={`Enter ${field.name}`}
+                typesLookup={lookupTypes}
+                fieldTypeObject={fieldTypeObject}
+                onClick={() => handleFieldExpansion(field.type, field.id)}
             />
-        </CollapsibleField>
-      );
+        );
     });
   };
-  
   
 
 

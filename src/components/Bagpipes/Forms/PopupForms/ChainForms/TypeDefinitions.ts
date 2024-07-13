@@ -1,52 +1,20 @@
-export interface TypeDef {
-    Composite?: {
-      fields: Field[];
-    };
-    Primitive?: string;
-    Array?: {
-      len: number;
-      type: string;
-      needsLoading?: boolean;
-
-    };
-    Sequence?: {
-      type: string;
-      needsLoading?: boolean;
-      elementType: string;
-
-    };
-    Variant?: {
-      variants: VariantObject[];
-      needsLoading?: boolean;
-      type: string;
-      typeId: string;
-
-    };
-    Tuple?: {
-      map(arg0: (tupleTypeId: any) => any): unknown;
-      elements: string[];
-    };
-    Compact?: {
-      type: string;
-    };
-  }
+import { TypeDef } from './ParseMetadataTypes';
   
   export interface Field {
     name: string;
     typeName: string;
     type: string;
     docs: string[];
+    typeId?: string;
   }
   
   export interface VariantObject {
-    type: any;
     name: string;
     fields: Field[];
     index: number;
     docs: string[];
     needsLoading?: boolean;
-    typeId: string;
-
+    type: string;
 
   }
   
@@ -148,11 +116,17 @@ export interface TypeDef {
 
 
   export interface ResolvedType {
-    type: string; // The resolved type, like 'input', 'composite', etc.
-    path: string[]; // The path of type resolution, indicating the type chain
-    elements?: ResolvedType[]; // Optional, used for tuples and other composite structures
-    elementType?: string; // Optional, used for sequences and arrays
-}
+    type: string; 
+    path?: string[];
+    fields?: any[]; 
+    elementType?: any;
+    length?: number; 
+    variants?: any[];
+    elements?: ResolvedType[]; 
+    typeId?: string;
+    typeName?: string;
+    name?: string;
+  }
 
 
   

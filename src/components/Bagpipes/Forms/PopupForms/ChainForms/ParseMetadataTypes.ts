@@ -1,70 +1,110 @@
-import {  Type, TypeEntry, ParsedTypeDefinition, TypeDefinitions } from './TypeDefinitions';
+import {  Field, VariantObject, Type, TypeEntry, ParsedTypeDefinition, TypeDefinitions } from './TypeDefinitions';
 
+
+export interface TypeDef {
+  Composite?: {
+    fields: Field[];
+    type?: string
+  };
+  Primitive?: string;
+  Array?: {
+    len: number;
+    type: string;
+    needsLoading?: boolean;
+    typeId?: string;
+
+  };
+  Sequence?: {
+    type: string;
+    typeId?: string;
+    needsLoading?: boolean;
+    elementType: string;
+
+  };
+  Variant?: {
+    variants: VariantObject[];
+    needsLoading?: boolean;
+    type: string;
+    typeId?: string;
+    
+
+  };
+  Tuple?: {
+    // map(arg0: (tupleTypeId: any) => any): unknown;
+    elements: string[];
+  };
+  Compact?: {
+    type: string;
+    typeId?: string;
+  };
+  Unknown?: {};
+
+}
 
 export function parseTypeDefinition(type: Type): ParsedTypeDefinition {
-  let def: any = {};
+  let def: TypeDef = {};
 
   if (type.def.Composite) {
     def.Composite = {
+      type: type.def.Composite.type,
       fields: type.def.Composite.fields.map(field => ({
         name: field.name,
         typeName: field.typeName,
         type: field.type,
-        docs: field.docs.join(' ')
+        docs: field.docs // Keep as an array of strings
       }))
     };
   } else if (type.def.Primitive) {
     def.Primitive = type.def.Primitive;
   } else if (type.def.Array) {
     def.Array = {
-      length: type.def.Array.len,
-      elementType: type.def.Array.type
+      len: type.def.Array.len,
+      type: type.def.Array.type
     };
   } else if (type.def.Sequence) {
     def.Sequence = {
-      elementType: type.def.Sequence.type,
-      typeId: type.def.Sequence.type,
+      type: type.def.Sequence.type,
+      elementType: type.def.Sequence.type
     };
   } else if (type.def.Variant) {
     def.Variant = {
+      type: type.def.Variant.type,
+      typeId: type.def.Variant.typeId,
       variants: type.def.Variant.variants.map(variant => ({
         name: variant.name,
         index: variant.index,
+        docs: variant.docs,
+        type: type.def.Variant!.type, 
+        typeId: type.def.Variant!.typeId,
         fields: variant.fields.map(field => ({
           name: field.name,
           type: field.type,
           typeName: field.typeName,
-          docs: field.docs.join(' ')
+          docs: field.docs 
         }))
       }))
     };
   } else if (type.def.Tuple) {
     def.Tuple = {
-      elements: type.def.Tuple.map((tupleTypeId: any) => tupleTypeId) // Assuming tuple contains an array of typeIds
+      elements: type.def.Tuple.elements, // Assuming tuple contains an array of typeIds
     };
-  } 
-  // Inside parseTypeDefinition function
-  else if (type.def.Compact) {
-    console.log(`Parsing Compact type for ID: ${type} with base type: ${type.def.Compact.type}`);
-    if (!type.def.Compact.type) {
-        console.error(`Compact type at ID ${type} is missing its base type`);
-        def.Compact = { type: 'Undefined' }; // Use an explicit error state or fallback
-    } else {
-        def.Compact = {
-            type: type.def.Compact.type
-        };
-    }
+  } else if (type.def.Compact) {
+    def.Compact = {
+      type: type.def.Compact.type
+    };
   } else {
-    def.Unknown = {}; // Handle unclassified or unhandled types
+    def.Unknown = {}; 
   }
 
   return {
-    path: type.path, 
+    path: type.path,
     params: type.params,
-    def, // Using the direct keys from the metadata
+    def,
     docs: type.docs.join(' ')
   };
 }
+
+
 
 
 
