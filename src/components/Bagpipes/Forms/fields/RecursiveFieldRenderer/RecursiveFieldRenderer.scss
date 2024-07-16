@@ -1,0 +1,60 @@
+@import '../../../../../variables.scss';
+
+.sequence-container, .composite-container, .array-container, .variant-container {
+    display: flex;
+    flex-direction: column;
+    margin-left: 5px;
+    margin-top: 10px;
+    padding: 5px;
+    border: 1px dashed rgb(223, 223, 223);
+    border-radius: 5px;
+
+    .sequence-item, .composite-field, .variant-field {
+        margin-left: 6px
+    }
+
+    .sequence-field-label, .array-field-label {
+        font-weight: 600;
+        margin-bottom: 5px;
+    color: gray;
+    }
+}
+
+.composite-field {
+
+}
+
+
+.add-remove-box {
+
+    font-weight: 300;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+
+
+    .sequence-button, .array-button {
+        display: flex;
+        align-items: center;
+        
+        
+       
+
+        .add-button, .remove-button {
+
+            width: 30px;
+            padding: 3px;
+            background: rgb(39, 39, 254);
+            color: white;
+            font-weight: 700;
+            margin-right: 5px;
+            border-radius: 100%;
+        }
+    }
+
+    }
+    
+
+
+

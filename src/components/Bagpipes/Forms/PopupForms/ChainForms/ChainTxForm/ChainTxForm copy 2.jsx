@@ -23,7 +23,7 @@ import { resolveKeyType } from '../resolveKeyType';
 import ChainRpcService from '../../../../../../services/ChainRpcService';
 import FormHeader from '../../../FormHeader';
 import FormFooter from '../../../FormFooter';
-import RecursiveFieldRenderer from '../../../fields/RecursiveFieldRenderer';
+import RecursiveFieldRenderer from '../../../fields/RecursiveFieldRenderer/RecursiveFieldRenderer';
 import '../types';
 
 import Tippy from '@tippyjs/react';

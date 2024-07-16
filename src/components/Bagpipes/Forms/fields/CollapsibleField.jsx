@@ -21,7 +21,7 @@ const { Option } = Select;
 
 const CollapsibleField = ({ fieldKey, nodeId, edgeId, title, info, toggleTitle, hasToggle,fieldTypes, items=[], selectOptions=[], selectRadioOptions=[], children, value, onChange, onPillsChange, placeholder, onClick, disabled, isTextAreaValue, customContent, buttonName, typesLookup, fieldTypeObject, fields}) => {
   const [isToggled, setIsToggled] = useState(false);
-  const { showPanelTippy, hidePanelTippy, tippyInstance } = usePanelTippy();
+  const { showPanelTippy, hidePanelTippy, tippyPanelInstance } = usePanelTippy();
   const referenceElement = useRef(null);
   const [droppedItems, setDroppedItems] = useState([]);
   const [pills, setPills] = useState([]);
@@ -79,7 +79,7 @@ const handleInputClick = (event, nodeId) => {
 const handleContentChange = () => {
 
   // Notify that content has changed
-  if (tippyInstance.current && tippyInstance.current.popperInstance) {
+  if (tippyPanelInstance.current && tippyPanelInstance.current.popperInstance) {
     tippyInstance.current.popperInstance.update();
   }
 };

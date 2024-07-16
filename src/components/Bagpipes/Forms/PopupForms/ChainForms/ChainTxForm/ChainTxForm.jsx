@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useContext } from 'react';
+import React, { useState, useEffect, useMemo, useContext, useRef } from 'react';
 import useAppStore from '../../../../../../store/useAppStore';
 import { WalletContext } from '../../../../../Wallet/contexts';
 import { getAssetBalanceForChain } from '../../../../../../Chains/Helpers/AssetHelper';
@@ -23,7 +23,8 @@ import { resolveKeyType } from '../resolveKeyType';
 import ChainRpcService from '../../../../../../services/ChainRpcService';
 import FormHeader from '../../../FormHeader';
 import FormFooter from '../../../FormFooter';
-import RecursiveFieldRenderer from '../../../fields/RecursiveFieldRenderer';
+import RecursiveFieldRenderer from '../../../fields/RecursiveFieldRenderer/RecursiveFieldRenderer';
+import DynamicFieldRenderer from './DynamicFieldRenderer';
 import '../types';
 
 import Tippy from '@tippyjs/react';
@@ -221,7 +222,7 @@ const handleMethodChange = (methodName) => {
 // };
 
 const handleMethodFieldChange = (fieldName, newValue, fieldType) => {
-  console.log('handleMethodFieldChange', fieldName, newValue, fieldType);
+  console.log('handleMethodFieldChange about to change values', fieldName, newValue, fieldType);
 
   if (!fieldName) {
       console.error("Field name is undefined.");
@@ -409,16 +410,27 @@ const handleMethodFieldChange = (fieldName, newValue, fieldType) => {
           const resolvedFields = localResolvedFields;
           const resolvedField = localResolvedFields?.[index];
           console.log('Resolved Field and Fields:', resolvedField, resolvedFields);
-console.log 
 
       return (
-        <CollapsibleField
+        <>
+          <DynamicFieldRenderer
+            key={index}
+            fieldObject={fieldObject}
+            index={index}
+            localResolvedFields={localResolvedFields}
+            customContent={customContent}
+            nodeId={nodeId}
+            formData={formData}
+            handleMethodFieldChange={handleMethodFieldChange}
+          />
+
+        {/* <CollapsibleField
             key={index}
             title={`${fieldObject.name} <${fieldObject.typeName || resolvedFields.typeName}>`}
             info={fieldObject?.docs || ''}
             customContent={customContent}
             hasToggle={true}
-            nodeId={formData?.nodeId}
+            nodeId={nodeId}
             // onChange={(newFieldValue) => handleMethodFieldChange(fieldObject.name, newFieldValue)} 
             placeholder={`Enter ${fieldObject.name}`}
         >
@@ -427,9 +439,10 @@ console.log
                 fieldObject={resolvedField}
                 values={formData.params?.[fieldObject.name] || {}}
                 onChange={(newFieldValue) => handleMethodFieldChange(fieldObject.name, newFieldValue, resolvedField.type)}
-                nodeId={formData.nodeId}
+                nodeId={nodeId}
             />
-        </CollapsibleField>
+        </CollapsibleField> */}
+        </>
       );
     });
   };
@@ -637,7 +650,7 @@ const renderSignAndSendTx = () => {
 
 
 return (
-  <div onScroll={handleScroll} className=''>
+  <div onScroll={handleScroll} className='chain-tx-container'>
       <FormHeader onClose={handleCancel} title='Chain Tx Form' logo={<ChainQueryIcon className='h-4 w-4' fillColor='black' />} />  
 
       <div className='standard-form'>

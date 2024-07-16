@@ -113,7 +113,7 @@ export function resolveTypeName(typeId: string, typesLookup: any): string {
 
 
 export function resolveFieldType(typeId: string, typesLookup: TypeLookup, depth = 0, path: string[] = [], cache: Record<string, ResolvedType> = {}): ResolvedType {
-  console.log(`Resolving type for typeId: ${typeId} at recursion depth: ${depth}, path: ${path.join(' -> ')}`);
+  // console.log(`Resolving type for typeId: ${typeId} at recursion depth: ${depth}, path: ${path.join(' -> ')}`);
 
   if (cache[typeId]) {
       console.log(`Using cached result for typeId: ${typeId}`);
@@ -156,9 +156,9 @@ switch (currentType) {
               typeName: typeName,
               typeId: typeInfo.def.Composite!.type,
               fields: typeInfo.def.Composite!.fields.map(field => ({
-                  name: field.name || 'Composite field',
+                  name: field.name || '',
                   type: 'compositeField',
-                  resolvedType: resolveFieldType(field.type, typesLookup, depth + 1, [...newPath, field.name || 'Unnamed field'], cache),
+                  resolvedType: resolveFieldType(field.type, typesLookup, depth + 1, [...newPath, field.name || ''], cache),
                   typeName: typeName ,
                   typeId: field.type
               }))
@@ -177,20 +177,51 @@ switch (currentType) {
             type: 'sequence',
             typeId: typeInfo.def.Sequence!.type,
             typeName: typeName,
-
             path: sequencePath,
             elementType: resolveFieldType(typeInfo.def.Sequence!.type, typesLookup, depth + 1,sequencePathElement, cache)
         };
           break;
 
       case 'Array':
+        console.log(`Resolving array type inside: ${typeId}`, typeInfo.def.Array);
+        //in array there are cases where the array is of length 32 and element type is U8 which should be a single input field. We dont want to render 32 input fields of U8
+
+      const elementType = resolveFieldType(typeInfo.def.Array!.type, typesLookup, depth + 1, [...newPath, 'Array'], cache);
+      // Check if the array is of length 32 and element type is U8
+
+
+      if (typeInfo.def.Array!.len === '32') {
+        console.log(`Resolving array type special 32 length found: ${typeId}`),
+
+        result = {
+          type: 'input',
+          path: newPath,
+          typeName: '[u8;32]', 
+        };
+      } else if (typeInfo.def.Array!.len === 32 && typeInfo.def.Array!.type === '2') {
+        console.log(`Resolving array type special: ${typeId}`),
+          result = {
+              type: 'input',
+              path: newPath,
+              typeName: '[u8;32]', // or however you'd like to describe this special type
+          };
+      } else {
           result = {
               type: 'array',
               path: newPath,
               typeId: typeInfo.def.Array!.type,
-              elementType: resolveFieldType(typeInfo.def.Array!.type, typesLookup, depth + 1, [...newPath, 'Array'], cache),
+              elementType: elementType,
               length: typeInfo.def.Array!.len
           };
+      }
+
+          // result = {
+          //     type: 'array',
+          //     path: newPath,
+          //     typeId: typeInfo.def.Array!.type,
+          //     elementType: resolveFieldType(typeInfo.def.Array!.type, typesLookup, depth + 1, [...newPath, 'Array'], cache),
+          //     length: typeInfo.def.Array!.len
+          // };
           break;
 
       case 'Variant':

@@ -8,7 +8,7 @@ export interface TypeDef {
   };
   Primitive?: string;
   Array?: {
-    len: number;
+    len: string;
     type: string;
     needsLoading?: boolean;
     typeId?: string;

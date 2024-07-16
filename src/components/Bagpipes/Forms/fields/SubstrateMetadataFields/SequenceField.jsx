@@ -3,24 +3,18 @@ import FieldRenderer from '../../PopupForms/ChainForms/FieldRenderer';
 import { findFieldByKey } from '../fieldUtils';
 import { isFieldVisible } from '../../PopupForms/formUtils';
 import CustomInput from '../CustomInput';
+import RecursiveFieldRenderer from '../RecursiveFieldRenderer/RecursiveFieldRenderer';
 
-const SequenceField = ({ items, onChange, typesLookup, elementType, setPills, onPillsChange, nodeId }) => {    console.log("SequenceField items:", items);
+
+const SequenceField = ({ items, onChange, setPills, onPillsChange, nodeId, values, fieldObject }) => {    
+    console.log("SequenceField items:", items);
     const handleAddItem = () => {
-        if (elementType === 'input') {
-            // For Vec<u8>, treat as a single input field for byte data.
-            const newItem = ''; // initialize as empty string or appropriate byte data structure
+        console.log("SequenceField handleAddItem fieldObject:", fieldObject);
+
+            const newItem = // we need to do something here, probable something form field object
             onChange([...items, newItem]);
-        if (!items.length && elementType === 'tuple') {
-            console.log("SequenceField tuple Adding new item of type:", elementType);
-            // If no items and type is tuple, initialize properly
-            handleAddItem(); // This will add an initial tuple to the sequence
-        }
-        } else {
-            // For other types, initialize based on specific needs
-            console.log("SequenceField Adding new item of type:", elementType);
-            const newItem = { typeId: elementType, value: getDefaultForType(elementType) };
-            onChange([...items, newItem]);
-        }
+            handleAddItem()
+
     };
 
     const handleRemoveItem = (index) => {
@@ -31,47 +25,27 @@ const SequenceField = ({ items, onChange, typesLookup, elementType, setPills, on
         const updatedItems = items.map((item, idx) => idx === index ? newValue : item);
         onChange(updatedItems);
     };
-
+        // Render individual items with add/remove capabilities for other types
     return (
         <div className='flex flex-col'>
-            {elementType === 'input' ? (
-                <>
 
-        <div className='flex flex-col'>
-            {items.map((item, index) => (
-                <div key={index} className='flex flex-row items-center'>
-                    <CustomInput 
-                        value={item.value}
-                        onChange={(newValue) => handleChangeItem(index, newValue)}
-                        fieldKey={item.key}
-                        onPillsChange={onPillsChange}
-                        pills={item.pills}
-                        setPills={setPills}
-                        nodeId={nodeId}
-                        placeholder="Enter value"
-                        className="custom-input"
-                    />
-                    <button onClick={() => handleRemoveItem(index)}>Remove</button>
-                </div>
-            ))}
-            <button onClick={handleAddItem}>Add New Item</button>
-        </div>
-                </>
-            ) : (
-                // Render individual items with add/remove capabilities for other types
-                items.map((item, index) => (
+                
+               { items.map((item, index) => (
                     <div key={index} className='flex flex-row items-center'>
-                        <FieldRenderer
+                        <RecursiveFieldRenderer
                             field={item}
                             formData={items}
                             onChange={(newValue) => handleChangeItem(index, newValue)}
-                            typesLookup={typesLookup}
-                            // isFieldVisible={checkFieldVisibility}
+                            fieldObject={fieldObject}
+                            values={values}
+                            nodeId={nodeId}
+                            setPills={setPills} 
+                            onPillsChange={onPillsChange}
                             />
                         <button onClick={() => handleRemoveItem(index)}>Remove</button>
                     </div>
                 ))
-            )}
+            }
             <button onClick={handleAddItem}>Add New Item</button>
         </div>
     );
@@ -79,14 +53,3 @@ const SequenceField = ({ items, onChange, typesLookup, elementType, setPills, on
 
 
 export default SequenceField;
-
-
-function getDefaultForType(elementType) {
-    switch(elementType) {
-        case 'input': return ''; // Default for byte data
-        case 'composite': return {}; // Default for composite types
-        case 'sequence': return []; // Default for sequences
-        case 'tuple': return [['test', 'test']];  // Default for tuples, initialize each part of the tuple
-        // more cases as necessary
-    }
-}
