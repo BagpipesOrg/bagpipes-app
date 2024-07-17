@@ -120,7 +120,7 @@ export function resolveFieldType(typeId: string, typesLookup: TypeLookup, depth 
       return cache[typeId];
   }
 
-  if (depth > 40) {
+  if (depth > 45) {
       console.warn(`Excessive recursion at depth ${depth} for typeId ${typeId}`);
       return { type: 'complex', path };
   }
@@ -190,29 +190,53 @@ switch (currentType) {
       // Check if the array is of length 32 and element type is U8
 
 
-      if (typeInfo.def.Array!.len === '32') {
-        console.log(`Resolving array type special 32 length found: ${typeId}`),
-
-        result = {
-          type: 'input',
-          path: newPath,
-          typeName: '[u8;32]', 
-        };
-      } else if (typeInfo.def.Array!.len === 32 && typeInfo.def.Array!.type === '2') {
+      if (typeInfo.def.Array!.len === '4' && typeInfo.def.Array!.type === '2') {
         console.log(`Resolving array type special: ${typeId}`),
           result = {
               type: 'input',
               path: newPath,
-              typeName: '[u8;32]', // or however you'd like to describe this special type
+              typeName: '[u8;4]', 
           };
-      } else {
+
+        } else if (typeInfo.def.Array!.len === '8' && typeInfo.def.Array!.type === '2') {
+            console.log(`Resolving array type special: ${typeId}`),
+              result = {
+                  type: 'input',
+                  path: newPath,
+                  typeName: '[u8;8]', 
+              };
+
+        } else if (typeInfo.def.Array!.len === '16' && typeInfo.def.Array!.type === '2') {
+          console.log(`Resolving array type special: ${typeId}`),
+            result = {
+                type: 'input',
+                path: newPath,
+                typeName: '[u8;8]', 
+            };
+      
+        } else if (typeInfo.def.Array!.len === '20' && typeInfo.def.Array!.type === '2') {
+           console.log(`Resolving array type special: ${typeId}`),
           result = {
-              type: 'array',
+              type: 'input',
               path: newPath,
-              typeId: typeInfo.def.Array!.type,
-              elementType: elementType,
-              length: typeInfo.def.Array!.len
+              typeName: '[u8;20]', 
           };
+
+        } else if (typeInfo.def.Array!.len === '32' && typeInfo.def.Array!.type === '2') {
+          console.log(`Resolving array type special: ${typeId}`),
+            result = {
+                type: 'input',
+                path: newPath,
+                typeName: '[u8;32]',
+            };
+        } else {
+            result = {
+                type: 'array',
+                path: newPath,
+                typeId: typeInfo.def.Array!.type,
+                elementType: elementType,
+                length: typeInfo.def.Array!.len
+            };
       }
 
           // result = {

@@ -120,7 +120,7 @@ import { TypeDef } from './ParseMetadataTypes';
     path?: string[];
     fields?: any[]; 
     elementType?: any;
-    length?: number; 
+    length?: string; 
     variants?: any[];
     elements?: ResolvedType[]; 
     typeId?: string;

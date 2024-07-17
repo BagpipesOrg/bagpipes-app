@@ -9,33 +9,23 @@ import '../../PopupForms/ChainForms/ChainTxForm/DynamicFieldRenderer';
 import './RecursiveFieldRenderer.scss';
 
 const { Option } = Select;
+    // TODO 1: (DONE) CURRENT ISSUES: VARIANT AND THEN COMPOSITE FIELD RENDERS. HOWEVER VARIANT DOES NOT RENDER ANOTHER VARIANT FIELD COULD BE AN ISSUE WITH FORM VALUES 
+    // TODO 2: (NOT NEEDED) None and Some (in AccountKey20) is an "Option". And option can be something that is included or not. If none then it is not included, if yes then it is included. 
+    // TODO 3: (DONE) Also AccountKey20 looks like it is an array of 20 inputs of u8, so we need to add a condition in array. 
+    // TODO 4: (DOING) Also when we select a variant field it can change the parent variant, this is probably because of non-unique keys. 
 
-const RecursiveFieldRenderer = ({ index, localResolvedFields, fieldObject, formValues, onChange, nodeId, pills, setPills, onPillsChange, fieldName }) => {
-    // TODO: CURRENT ISSUES: VARIANT AND THEN COMPOSITE FIELD RENDERS. HOWEVER VARIANT DOES NOT RENDER ANOTHER VARIANT FIELD
-
-    // console.log('RecursiveFieldRenderer - fieldObject:', fieldObject);
+const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pills, setPills, onPillsChange, fieldName }) => {
     
-    
-    const resolvedField = localResolvedFields?.[index];
-    console.log('RecursiveFieldRenderer - resolvedField:', resolvedField);
-
-    
-    console.log(`RecursiveFieldRenderer - fieldObject, formValues, fieldName, nodeId`, { fieldObject, formValues, fieldName, nodeId });
-
+    console.log(`RecursiveFieldRenderer - CYCLE CHECK fieldObject, formValues, fieldName, nodeId`, { fieldObject, formValues, fieldName, nodeId });
 
     // For the Panel Form... Notify that content has changed
     const { tippyPanelInstance } = usePanelTippy();
     const handleContentChange = () => {  if (tippyPanelInstance.current && tippyPanelInstance.current.popperInstance) { tippyPanelInstance.current.popperInstance.update(); } };
     const { handleInputClick } = useTooltipClick(nodeId, handleContentChange);
 
-
-
     const fieldType = fieldObject.type;
-    console.log('RecursiveFieldRenderer - fieldType:', fieldType);
 
-    // const fieldName = fieldObject.name;
-
-    const handleChange = (fieldKey, newValue, fieldType) => {
+    const handleChange = (fieldName, newValue, fieldType) => {
         console.log('RecursiveFieldRenderer - handleChange about to change:', fieldName, newValue);
         console.log(`RecursiveFieldRenderer - handleChange about to change formValues:`, { formValues, fieldName, newValue, fieldType });   
         const updatedValues = { ...formValues, [fieldName]: newValue };
@@ -46,41 +36,31 @@ const RecursiveFieldRenderer = ({ index, localResolvedFields, fieldObject, formV
 
     switch (fieldType) {
         case 'input':
-            console.log('RecursiveFieldRenderer - input:', fieldName);
-            console.log('RecursiveFieldRenderer - input, formValues:', formValues);
-            console.log('RecursiveFieldRenderer - input, fieldObject:', fieldObject);
-
-            
+            console.log('RecursiveFieldRenderer - input formValues,, fieldObject:', fieldName, formValues, fieldObject);        
             return (
-                <>
                 <div className='mt-2 mb-4'>
-                <label className='font-semibold'>
-
-                {fieldName ? `input: ${fieldName || "input"} <${fieldObject.typeName}>` : `input: <${fieldObject.typeName}>`}
-                
-                    </label>
-                <CustomInput
-                    key={fieldObject.typeName}
-                    value={formValues?.[fieldObject.typeName] || ''}
-                    onChange={(newValue) => handleChange(fieldObject.typeName, newValue, 'fromInput')}
-                    fieldKey={fieldObject.typeName}
-                    onPillsChange={onPillsChange}
-                    placeholder={`Enter ${fieldObject.typeName}`}
-                    className='custom-input'
-                    pills={pills}
-                    setPills={setPills}
-                    nodeId={nodeId}
-                    onClick={handleInputClick} 
-
-                />
-                input
+                    <label className='font-semibold'>{fieldName ? `input: ${fieldName || "input"} <${fieldObject.typeName}>` : `input: <${fieldObject.typeName}>`}</label>
+                    <CustomInput
+                        key={fieldObject.typeName}
+                        value={formValues?.[fieldObject.typeName] || ''}
+                        onChange={(newValue) => handleChange(fieldObject.typeName, newValue, 'fromInput')}
+                        fieldKey={fieldObject.typeName}
+                        onPillsChange={onPillsChange}
+                        placeholder={`Enter ${fieldObject.typeName}`}
+                        className='custom-input'
+                        pills={pills}
+                        setPills={setPills}
+                        nodeId={nodeId}
+                        onClick={handleInputClick} 
+                    />
                 </div>
-
-                </>
             );
 
+
+            
+        
     case 'variant':
-        console.log(`RecursiveFieldRenderer - handleChange about to change formValues variant:`, fieldObject.formValues?.name, { fieldObject, formValues});
+        console.log(`RecursiveFieldRenderer - handleChange about to change formValues variant:`,{ fieldObject, formValues});
 
         const handleSelectChange = selectedValue => {
             console.log('RecursiveFieldRenderer - variant handleSelectChange:', selectedValue);
@@ -97,135 +77,40 @@ const RecursiveFieldRenderer = ({ index, localResolvedFields, fieldObject, formV
             <div className='variant-container'>
                 <div className='variant-selector'>
                     <Select
-                        value={formValues.name}
+                        value={formValues[fieldName]?.index}
                         onChange={handleSelectChange}
                         className='w-full font-semibold custom-select'
                         placeholder="Select option"
                         getPopupContainer={trigger => trigger.parentNode}
                     >
-                        {fieldObject.variants.map(variant => (
+                        {fieldObject.variants.map(variant => { 
+                            console.log('RecursiveFieldRenderer - variant selection:', variant);
+                        return(
                             <Option key={variant.index} value={variant.index}>{variant.name}</Option>
-                        ))}
+                        )})}
                     </Select>
                 </div>
 
             {formValues.index && fieldObject.variants.find(variant => variant.index === formValues.index)?.fields.map((field, index) => (
-                console.log('RecursiveFieldRenderer - variant field new:', field),
+                console.log('RecursiveFieldRenderer - variant field new field, fieldName:', field, fieldName),
               <div className='variant-field' key={index}>
                 <label className='font-semibold'>variant field: {`${field?.name} <${field?.resolvedType?.typeName}>`} </label>
                 <RecursiveFieldRenderer
                     key={index}
                     fieldObject={field.resolvedType}
-                    formValues={formValues[field.name] || {}}
+                    formValues={formValues[fieldName] || {}}
                     fieldName={field.name}
-                    onChange={(newValue) => handleChange(fieldName, newValue, 'fromVariant')}
+                    onChange={(newValue) => handleChange(fieldName, newValue, 'fromVariantField')}
                     nodeId={nodeId}
                 />
+                variant
                 </div>
             ))}
 
             </div>
         );
 
-        case 'variantField':
-            console.log('RecursiveFieldRenderer - variantField fieldObject, fieldName:', fieldObject, fieldName);
-            // Handle individual fields within a selected variant
-            return (
-                <> 
-                <RecursiveFieldRenderer
-                    fieldObject={fieldObject.resolvedType}
-                    formValues={formValues[fieldName] || {}}
-                    onChange={onChange}
-                    nodeId={nodeId}
-                    fieldName={field.name}
-
-                /> variant field
-                </>
-            );
-    
         
-
-
-
-
-            // case 'variant':
-
-
-            //     console.log('RecursiveFieldRenderer - variant:', fieldObject);
-            //     console.log('RecursiveFieldRenderer - variant formValues:', formValues);
-
-            //     // console.log('RecursiveFieldRenderer - variant fieldName:', fieldName);
-                
-            //     const handleSelectChange = selectedValue => {
-            //         console.log('RecursiveFieldRenderer - variant handleSelectChange:', selectedValue);
-
-            //         const selectedVariant = fieldObject.variants.find(variant => variant.index === selectedValue);
-            //         console.log('RecursiveFieldRenderer - variant selectedVariant:', selectedVariant);
-            //         if (selectedVariant) {
-            //             const newValue = {
-            //                 index: selectedVariant.index,
-            //                 name: selectedVariant.name,
-                  
-            //             };
-            //             console.log(`Selected Variant Change - New Value:`, newValue);
-            //             onChange(newValue); 
-            //         }
-            //     };
-
-            //     // Render fields of the selected variant
-            //     const renderAdditionalFields = () => {
-  
-
-            //         console.log('RecursiveFieldRenderer - in renderAdditionalFields - formValues:', formValues);
-            //         console.log('RecursiveFieldRenderer formValues field name:', fieldName);
-            //         // const variantData = formValues;
-            //         if (!formValues) return null;
-            //         console.log('RecursiveFieldRenderer - renderAdditionalFields we are past the check mark, formValues', formValues);
-                    
-            //         const selectedVariant = fieldObject.variants.find(variant => variant.index === formValues.index);
-            //         console.log('RecursiveFieldRenderer - renderAdditionalFields - selectedVariant :', selectedVariant);
-            //         if (!selectedVariant) return null;
-                    
-            //         return selectedVariant.fields.map((field, index) => (
-            //             console.log('RecursiveFieldRenderer - renderAdditionalFields - variants.field field:', field),
-            //             console.log('RecursiveFieldRenderer - renderAdditionalFields - formValues field.name:', formValues[field.name]),
-
-            //             console.log('RecursiveFieldRenderer - renderAdditionalFields - variants.field field.name:', field.name),
-            //             console.log('RecursiveFieldRenderer - renderAdditionalFields - formValues inside the map:', formValues),
-
-            //             <RecursiveFieldRenderer
-            //                 key={index}
-            //                 fieldObject={field}
-            //                 formValues={formValues.name || {}}
-            //                 onChange={(newValue) => handleChange(fieldName, newValue)}
-            //                 nodeId={nodeId}
-            //             />
-            //         ));
-            //     };
-                
-                
-
-            //     return (
-            //         <>variant
-            //             <Select
-            //                 value={formValues.name}
-            //                 onChange={handleSelectChange}
-            //                 className='w-full font-semibold custom-select'
-            //                 getPopupContainer={trigger => trigger.parentNode}
-            //                 placeholder="Select option"
-            //             >
-            //                 {fieldObject.variants.map(variant => (
-            //                     <Option key={variant.index} value={variant.index}>{variant.name}</Option>
-            //                 ))}
-            //             </Select>
-            //             {/* Render additional fields here */}
-            //             <div>{renderAdditionalFields()}</div>
-            //         </>
-            //     );
-
-
-
-
 
 
         case 'composite':
@@ -239,18 +124,12 @@ const RecursiveFieldRenderer = ({ index, localResolvedFields, fieldObject, formV
             console.log('RecursiveFieldRenderer - composite formValues:', fieldName);
             return (
                 <div className="composite-container">
-                
                     {fieldObject.fields.map((field, index) => {
-                        
-
                         console.log('RecursiveFieldRenderer - mapped - composite field:', field, formValues);
-                        
-                        
                         return (
-                        
                         <>
                         <div key={index} className="composite-field">
-                            <label className='font-semibold'>composite: {field.name} </label>
+                            <label className='font-semibold'>composite: {`${field?.name} <${field?.resolvedType?.typeName}>`} </label>
                             <RecursiveFieldRenderer
                                 fieldObject={field}
                                 formValues={formValues[field.name] || {}}
@@ -381,7 +260,180 @@ const RecursiveFieldRenderer = ({ index, localResolvedFields, fieldObject, formV
                         ))}
                     </div>
                 );
+
+
+                case 'tuple':
+
+                console.log('RecursiveFieldRenderer - tuple:', fieldObject);
             
+                // Initializing state for each tuple element if it's not already defined in formValues
+                const initialTupleValues = fieldObject.elements.map((element, index) => formValues[fieldName] ? formValues[fieldName][index] : undefined);
+                const [tupleItems, setTupleItems] = useState(initialTupleValues);
+            
+                const handleTupleItemChange = (index, newValue) => {
+                    console.log(`Changing tuple item at index ${index}:`, newValue);
+                    const updatedTupleItems = [...tupleItems];
+                    updatedTupleItems[index] = newValue;
+                    setTupleItems(updatedTupleItems);
+            
+                    // Propagate the change up to the form's main state
+                    onChange({...formValues, [fieldName]: updatedTupleItems});
+                };
+            
+                return (
+                    <div className='tuple-container'>
+                        {fieldObject.elements.map((element, index) => (
+                            <div key={index} className='tuple-item'>
+                                <label className='tuple-item-label'>{`Element ${index}: <${element.typeName || element.type}>`}</label>
+                                <RecursiveFieldRenderer
+                                    fieldObject={element}
+                                    formValues={tupleItems[index]}
+                                    onChange={(newValue) => handleTupleItemChange(index, newValue)}
+                                    nodeId={nodeId}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                );
+            
+        
+                default:
+                    return <div key={fieldName}>Unsupported field type: {fieldType}</div>;
+            }
+        };
+        
+    export default RecursiveFieldRenderer;
+        
+        
+                    // const handleSelectChange = selectedValue => {
+        //     console.log('RecursiveFieldRenderer - variant handleSelectChange:', selectedValue);
+        //     const selectedVariant = fieldObject.variants.find(variant => variant.index === selectedValue);
+        //     if (selectedVariant) {
+        //         const newValue = { ...formValues, [fieldName]: {index: selectedVariant.index, name: selectedVariant.name} };
+        //         console.log(`Selected Variant Change - New Value:`, newValue);
+        //         onChange(newValue);  // This now sends an updated object that includes existing formValues with updates only applied to the current variant field
+        //     }
+        // };
+
+       // const handleSelectChange = selectedValue => {
+        //     console.log('RecursiveFieldRenderer - variant handleSelectChange:', selectedValue);
+
+        //     const selectedVariant = fieldObject.variants.find(variant => variant.index === selectedValue);
+        //     if (selectedVariant) {
+        //         // Structure the new value to fit into the current formValues hierarchy
+        //         const newValue = { ...formValues, [fieldName]: { index: selectedVariant.index, name: selectedVariant.name } };
+        //         console.log(`Selected Variant Change - New Value:`, newValue);
+        //         onChange(fieldName, newValue);
+        //     }
+        // };
+
+
+                        
+    //     case 'composite':
+    // console.log('RecursiveFieldRenderer - composite:', fieldObject);
+    // return (
+    //     <div className="composite-container">
+    //         {fieldObject.fields.map((field, index) => {
+    //             const fieldValues = formValues[field.name] || {};
+    //             return (
+    //                 <div key={index} className="composite-field">
+    //                     <label className='font-semibold'>composite: {field.name}</label>
+    //                     <RecursiveFieldRenderer
+    //                         fieldObject={field}
+    //                         formValues={fieldValues}
+    //                         fieldName={field.name}
+    //                         onChange={(subFieldValue) => { 
+    //                             const updatedValues = { ...formValues, [field.name]: subFieldValue };
+    //                             onChange(updatedValues, 'fromComposite');
+    //                         }}
+    //                         nodeId={nodeId}
+    //                     />
+    //                 </div>
+    //             );
+    //         })}
+    //     </div>
+    // );
+
+
+
+
+
+            // case 'variant':
+
+
+            //     console.log('RecursiveFieldRenderer - variant:', fieldObject);
+            //     console.log('RecursiveFieldRenderer - variant formValues:', formValues);
+
+            //     // console.log('RecursiveFieldRenderer - variant fieldName:', fieldName);
+                
+            //     const handleSelectChange = selectedValue => {
+            //         console.log('RecursiveFieldRenderer - variant handleSelectChange:', selectedValue);
+
+            //         const selectedVariant = fieldObject.variants.find(variant => variant.index === selectedValue);
+            //         console.log('RecursiveFieldRenderer - variant selectedVariant:', selectedVariant);
+            //         if (selectedVariant) {
+            //             const newValue = {
+            //                 index: selectedVariant.index,
+            //                 name: selectedVariant.name,
+                  
+            //             };
+            //             console.log(`Selected Variant Change - New Value:`, newValue);
+            //             onChange(newValue); 
+            //         }
+            //     };
+
+            //     // Render fields of the selected variant
+            //     const renderAdditionalFields = () => {
+  
+
+            //         console.log('RecursiveFieldRenderer - in renderAdditionalFields - formValues:', formValues);
+            //         console.log('RecursiveFieldRenderer formValues field name:', fieldName);
+            //         // const variantData = formValues;
+            //         if (!formValues) return null;
+            //         console.log('RecursiveFieldRenderer - renderAdditionalFields we are past the check mark, formValues', formValues);
+                    
+            //         const selectedVariant = fieldObject.variants.find(variant => variant.index === formValues.index);
+            //         console.log('RecursiveFieldRenderer - renderAdditionalFields - selectedVariant :', selectedVariant);
+            //         if (!selectedVariant) return null;
+                    
+            //         return selectedVariant.fields.map((field, index) => (
+            //             console.log('RecursiveFieldRenderer - renderAdditionalFields - variants.field field:', field),
+            //             console.log('RecursiveFieldRenderer - renderAdditionalFields - formValues field.name:', formValues[field.name]),
+
+            //             console.log('RecursiveFieldRenderer - renderAdditionalFields - variants.field field.name:', field.name),
+            //             console.log('RecursiveFieldRenderer - renderAdditionalFields - formValues inside the map:', formValues),
+
+            //             <RecursiveFieldRenderer
+            //                 key={index}
+            //                 fieldObject={field}
+            //                 formValues={formValues.name || {}}
+            //                 onChange={(newValue) => handleChange(fieldName, newValue)}
+            //                 nodeId={nodeId}
+            //             />
+            //         ));
+            //     };
+                
+                
+
+            //     return (
+            //         <>variant
+            //             <Select
+            //                 value={formValues.name}
+            //                 onChange={handleSelectChange}
+            //                 className='w-full font-semibold custom-select'
+            //                 getPopupContainer={trigger => trigger.parentNode}
+            //                 placeholder="Select option"
+            //             >
+            //                 {fieldObject.variants.map(variant => (
+            //                     <Option key={variant.index} value={variant.index}>{variant.name}</Option>
+            //                 ))}
+            //             </Select>
+            //             {/* Render additional fields here */}
+            //             <div>{renderAdditionalFields()}</div>
+            //         </>
+            //     );
+
+
             
         // case 'array':
 
@@ -430,47 +482,5 @@ const RecursiveFieldRenderer = ({ index, localResolvedFields, fieldObject, formV
         //     );
         
         
-
-        case 'tuple':
-
-        console.log('RecursiveFieldRenderer - tuple:', fieldObject);
-    
-        // Initializing state for each tuple element if it's not already defined in formValues
-        const initialTupleValues = fieldObject.elements.map((element, index) => formValues[fieldName] ? formValues[fieldName][index] : undefined);
-        const [tupleItems, setTupleItems] = useState(initialTupleValues);
-    
-        const handleTupleItemChange = (index, newValue) => {
-            console.log(`Changing tuple item at index ${index}:`, newValue);
-            const updatedTupleItems = [...tupleItems];
-            updatedTupleItems[index] = newValue;
-            setTupleItems(updatedTupleItems);
-    
-            // Propagate the change up to the form's main state
-            onChange({...formValues, [fieldName]: updatedTupleItems});
-        };
-    
-        return (
-            <div className='tuple-container'>
-                {fieldObject.elements.map((element, index) => (
-                    <div key={index} className='tuple-item'>
-                        <label className='tuple-item-label'>{`Element ${index}: <${element.typeName || element.type}>`}</label>
-                        <RecursiveFieldRenderer
-                            fieldObject={element}
-                            formValues={tupleItems[index]}
-                            onChange={(newValue) => handleTupleItemChange(index, newValue)}
-                            nodeId={nodeId}
-                        />
-                    </div>
-                ))}
-            </div>
-        );
-    
-
-        default:
-            return <div key={fieldName}>Unsupported field type: {fieldType}</div>;
-    }
-};
-
-export default RecursiveFieldRenderer;
 
 
