@@ -479,7 +479,7 @@ const renderContent = (field, depth = 0) => {
     break;
     // case 'sequenceItems':
     case 'array':
-    case 'variant':
+    // case 'variant':
         return typeRenderer(field.typeId, lookupTypes);
     case 'condition':
 

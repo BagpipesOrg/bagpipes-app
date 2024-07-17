@@ -116,6 +116,7 @@ import { TypeDef } from './ParseMetadataTypes';
 
 
   export interface ResolvedType {
+    id: string;
     type: string; 
     path?: string[];
     fields?: any[]; 

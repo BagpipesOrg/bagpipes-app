@@ -1,6 +1,6 @@
 import { Type, TypeEntry, TypeDefinitions, Field, Pallet, MethodOutput, RawMetadata, CallOutput, StorageOutput, TypeLookup, ResolvedType } from './TypeDefinitions';
 import { TypeDef } from './ParseMetadataTypes';
-
+import generateCustomId from './generateCustomId';
 
 export function parseMetadataPallets(rawMetadata: RawMetadata): MethodOutput[] {
   const metadata = rawMetadata.metadata;
@@ -122,13 +122,13 @@ export function resolveFieldType(typeId: string, typesLookup: TypeLookup, depth 
 
   if (depth > 45) {
       console.warn(`Excessive recursion at depth ${depth} for typeId ${typeId}`);
-      return { type: 'complex', path };
+      return { type: 'complex', path, typeName: 'Complex Type', id: generateCustomId('complexDepth')};
   }
 
   const typeInfo = typesLookup[typeId];
   if (!typeInfo || !typeInfo.def) {
       console.error(`Type information is undefined or missing definition for typeId: ${typeId}`);
-      return { type: 'input', path };
+      return { type: 'input', path, id: generateCustomId('inputError')};
   }
 
   const typeName = resolveTypeName(typeId, typesLookup);
@@ -139,34 +139,46 @@ export function resolveFieldType(typeId: string, typesLookup: TypeLookup, depth 
   let result: ResolvedType = {
     type: currentType,
     path: newPath,
-    typeName: typeName 
+    typeName: typeName,
+    id: generateCustomId(currentType)
     
 };
 
 switch (currentType) {
       case 'Primitive':
-          result = { type: 'input', path: newPath, typeName: typeName };
+          result = { type: 'input', path: newPath, typeName: typeName, id: generateCustomId('input'), };
           break;
 
       case 'Composite':
         console.log(`Resolving composite type: ${typeId}`);
+
+        const compositePathField = [...newPath, 'CompositeField'];
+
           result = {
               type: 'composite',
               path: newPath,
               typeName: typeName,
               typeId: typeInfo.def.Composite!.type,
+              id: generateCustomId('composite'),
               fields: typeInfo.def.Composite!.fields.map(field => ({
                   name: field.name || '',
                   type: 'compositeField',
-                  resolvedType: resolveFieldType(field.type, typesLookup, depth + 1, [...newPath, field.name || ''], cache),
-                  typeName: typeName ,
+                  id: generateCustomId('compositeField'),
+                  resolvedType: resolveFieldType(field.type, typesLookup, depth + 1, compositePathField, cache),
+                  typeName: typeName,
                   typeId: field.type
               }))
           };
           break;
 
       case 'Compact':
-          result = resolveFieldType(typeInfo.def.Compact!.type, typesLookup, depth + 1, newPath, cache);
+        const compactElementType = resolveFieldType(typeInfo.def.Compact!.type, typesLookup, depth + 1, newPath, cache)
+          result = {
+              ...compactElementType,
+              path: newPath,
+              type: 'compact',
+              id: generateCustomId('compact'),
+          }
           break;
 
       case 'Sequence':
@@ -174,6 +186,7 @@ switch (currentType) {
         const sequencePath = [...newPath, 'Sequence']; // Only add 'Sequence' here, not again in the recursive call.
         const sequencePathElement = [...newPath, 'SequenceElement'];
         result = {
+            id: generateCustomId('sequence'),
             type: 'sequence',
             typeId: typeInfo.def.Sequence!.type,
             typeName: typeName,
@@ -193,6 +206,7 @@ switch (currentType) {
       if (typeInfo.def.Array!.len === '4' && typeInfo.def.Array!.type === '2') {
         console.log(`Resolving array type special: ${typeId}`),
           result = {
+              id: generateCustomId('input'),
               type: 'input',
               path: newPath,
               typeName: '[u8;4]', 
@@ -201,6 +215,8 @@ switch (currentType) {
         } else if (typeInfo.def.Array!.len === '8' && typeInfo.def.Array!.type === '2') {
             console.log(`Resolving array type special: ${typeId}`),
               result = {
+                id: generateCustomId('input'),
+
                   type: 'input',
                   path: newPath,
                   typeName: '[u8;8]', 
@@ -209,6 +225,8 @@ switch (currentType) {
         } else if (typeInfo.def.Array!.len === '16' && typeInfo.def.Array!.type === '2') {
           console.log(`Resolving array type special: ${typeId}`),
             result = {
+              id: generateCustomId('input'),
+
                 type: 'input',
                 path: newPath,
                 typeName: '[u8;8]', 
@@ -217,6 +235,8 @@ switch (currentType) {
         } else if (typeInfo.def.Array!.len === '20' && typeInfo.def.Array!.type === '2') {
            console.log(`Resolving array type special: ${typeId}`),
           result = {
+            id: generateCustomId('input'),
+
               type: 'input',
               path: newPath,
               typeName: '[u8;20]', 
@@ -225,12 +245,16 @@ switch (currentType) {
         } else if (typeInfo.def.Array!.len === '32' && typeInfo.def.Array!.type === '2') {
           console.log(`Resolving array type special: ${typeId}`),
             result = {
+              id: generateCustomId('input'),
+
                 type: 'input',
                 path: newPath,
                 typeName: '[u8;32]',
             };
         } else {
             result = {
+              id: generateCustomId('array'),
+
                 type: 'array',
                 path: newPath,
                 typeId: typeInfo.def.Array!.type,
@@ -239,29 +263,31 @@ switch (currentType) {
             };
       }
 
-          // result = {
-          //     type: 'array',
-          //     path: newPath,
-          //     typeId: typeInfo.def.Array!.type,
-          //     elementType: resolveFieldType(typeInfo.def.Array!.type, typesLookup, depth + 1, [...newPath, 'Array'], cache),
-          //     length: typeInfo.def.Array!.len
-          // };
+
           break;
 
       case 'Variant':
+
+      const variantPathField = [...newPath, 'VariantField'];
           result = {
+              id: generateCustomId('variant'),
+
               type: 'variant',
               path: newPath,
               typeName: typeName,
               variants: typeInfo.def.Variant!.variants.map(variant => ({
+                id: generateCustomId('variants'),
+
                   name: variant.name,
                   index: variant.index,
                   typeId: variant.type,
                   type: 'variants',
                   fields: variant.fields.map(field => ({
+                    id: generateCustomId('variantField'),
+
                       name: field.name,
                       type: 'variantField', 
-                      resolvedType: resolveFieldType(field.type, typesLookup, depth + 1, [...newPath, variant.name, field.name || 'Unnamed field'], cache),
+                      resolvedType: resolveFieldType(field.type, typesLookup, depth + 1, variantPathField, cache),
                       typeName: typeName,
                       typeId: field.type
                   }))
@@ -271,6 +297,7 @@ switch (currentType) {
 
       case 'Tuple':
           result = {
+              id: generateCustomId('tuple'),
               type: 'tuple',
               typeName: typeName,
               path: newPath,
@@ -278,30 +305,12 @@ switch (currentType) {
           };
           break;
 
-          // case 'Tuple':
-          //   if (typeInfo.def.Tuple?.elements) {
-          //       result = {
-          //           type: 'tuple',
-          //           path: newPath,
-          //           elements: typeInfo.def.Tuple.elements.map(elementId => ({
-          //               typeId: elementId,
-          //               type: 'unresolved'  // This line marks the element as unresolved.
-          //           }))
-          //       };
-          //   } else {
-          //       console.warn('Tuple type defined without elements', typeId);
-          //       result = {
-          //           type: 'tuple',
-          //           path: newPath,
-          //           elements: []  // Provide an empty array as a fallback.
-          //       };
-          //   }
-          //   break;
-        
+ 
 
       default:
           console.log(`Type ${typeId} is classified as 'Unknown'`);
-          result = { type: 'unknown', path: newPath, typeName: 'Unknown'};
+          result = { type: 'unknown', path: newPath, typeName: 'Unknown',  id: generateCustomId('unknown'),
+        };
           break;
   }
 

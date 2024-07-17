@@ -295,6 +295,9 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
                         ))}
                     </div>
                 );
+
+                case 'compact':
+                    return <span>compact</span>;
             
         
                 default:
