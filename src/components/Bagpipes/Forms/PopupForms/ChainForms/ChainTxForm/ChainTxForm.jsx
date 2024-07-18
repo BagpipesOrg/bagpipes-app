@@ -77,6 +77,7 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     const typesArray = metadata?.metadata?.V14?.lookup?.types;
     console.log('Lookup Types in lookupTypes:', typesArray)
     if (typesArray && Array.isArray(typesArray)) {
+      console.log("Lookup Types Array:", typesArray);
         const parsedTypes = parseLookupTypes(typesArray);
         console.log("Lookup Parsed Types:", parsedTypes);
         return parsedTypes;

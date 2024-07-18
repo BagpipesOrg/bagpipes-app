@@ -1,4 +1,4 @@
-import {  Field, VariantObject, Type, TypeEntry, ParsedTypeDefinition, TypeDefinitions } from './TypeDefinitions';
+import {  TupleElement,  Field, VariantObject, Type, TypeEntry, ParsedTypeDefinition, TypeDefinitions } from './TypeDefinitions';
 
 
 export interface TypeDef {
@@ -29,10 +29,9 @@ export interface TypeDef {
     
 
   };
-  Tuple?: {
-    // map(arg0: (tupleTypeId: any) => any): unknown;
-    elements: string[];
-  };
+
+  Tuple?: string[];
+
   Compact?: {
     type: string;
     typeId?: string;
@@ -42,6 +41,7 @@ export interface TypeDef {
 }
 
 export function parseTypeDefinition(type: Type): ParsedTypeDefinition {
+  console.log("Parsing type definition", type);
   let def: TypeDef = {};
 
   if (type.def.Composite) {
@@ -67,6 +67,7 @@ export function parseTypeDefinition(type: Type): ParsedTypeDefinition {
       elementType: type.def.Sequence.type
     };
   } else if (type.def.Variant) {
+    console.log("Variant type found", type.def.Variant);
     def.Variant = {
       type: type.def.Variant.type,
       typeId: type.def.Variant.typeId,
@@ -85,9 +86,9 @@ export function parseTypeDefinition(type: Type): ParsedTypeDefinition {
       }))
     };
   } else if (type.def.Tuple) {
-    def.Tuple = {
-      elements: type.def.Tuple.elements, // Assuming tuple contains an array of typeIds
-    };
+    console.log("Tuple type found", type.def.Tuple);
+    def.Tuple = type.def.Tuple.map(typeId => typeId.toString());
+
   } else if (type.def.Compact) {
     def.Compact = {
       type: type.def.Compact.type

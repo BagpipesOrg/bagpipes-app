@@ -17,12 +17,16 @@ import { TypeDef } from './ParseMetadataTypes';
     type: string;
 
   }
+
+  export interface TupleElement {
+    type: string;
+  }
   
   export interface Type {
     path: string[];
-    params: any[];
+    params?: any[];
     def: TypeDef;
-    docs: string[];
+    docs?: string[];
   }
   
   export interface TypeEntry {
@@ -114,11 +118,18 @@ import { TypeDef } from './ParseMetadataTypes';
     typeId?: string;
   }
 
+  export interface PathSegment {
+    type: string;
+    id: string;
+    typeName?: string;  // Optional, include if you want to keep the type name in the path for debugging or other purposes
+}
+
+
 
   export interface ResolvedType {
     id: string;
     type: string; 
-    path?: string[];
+    path?: PathSegment[];
     fields?: any[]; 
     elementType?: any;
     length?: string; 

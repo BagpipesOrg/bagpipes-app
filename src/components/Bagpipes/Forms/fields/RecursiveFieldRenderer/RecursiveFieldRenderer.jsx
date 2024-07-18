@@ -77,7 +77,7 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
             <div className='variant-container'>
                 <div className='variant-selector'>
                     <Select
-                        value={formValues[fieldName]?.index}
+                        value={formValues?.[fieldName]?.index}
                         onChange={handleSelectChange}
                         className='w-full font-semibold custom-select'
                         placeholder="Select option"
@@ -91,7 +91,7 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
                     </Select>
                 </div>
 
-            {formValues.index && fieldObject.variants.find(variant => variant.index === formValues.index)?.fields.map((field, index) => (
+            {formValues?.index && fieldObject.variants.find(variant => variant.index === formValues.index)?.fields.map((field, index) => (
                 console.log('RecursiveFieldRenderer - variant field new field, fieldName:', field, fieldName),
               <div className='variant-field' key={index}>
                 <label className='font-semibold'>variant field: {`${field?.name} <${field?.resolvedType?.typeName}>`} </label>
@@ -261,46 +261,88 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
                     </div>
                 );
 
-
                 case 'tuple':
+                    const handleTupleChange = (index, newValue) => {
+                        // Create a new copy of the tupleItems with updated value at the specified index
+                        const updatedTupleItems = [...formValues[fieldName] || []];
+                        updatedTupleItems[index] = newValue;
+                
+                        // Update the tuple in the main form values object
+                        onChange({...formValues, [fieldName]: updatedTupleItems});
+                    };
+                
+                    console.log('RecursiveFieldRenderer - tuple:', fieldObject);
+                    return (
+                        <div className="tuple-container">
+                            {fieldObject.elements.map((element, index) => {
+                                return (
+                                    <div key={index} className="tuple-item">
+                                        <label className='font-semibold'>{`Element ${index}: <${element.resolvedType.typeName || element.type}>`}</label>
+                                        <RecursiveFieldRenderer
+                                            fieldObject={element.resolvedType}
+                                            formValues={(formValues[fieldName] || [])[index]}
+                                            onChange={(newValue) => handleTupleChange(index, newValue)}
+                                            nodeId={nodeId}
+                                        />
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    );
+                
+                case 'tupleElement':  // This case might be similar to how fields within composites are handled
+                    console.log('RecursiveFieldRenderer - tupleElement:', fieldObject);
+                    // Assume tuple elements behave similarly to fields, potentially wrapping additional logic or styling if needed
+                    return (
+                        <RecursiveFieldRenderer
+                            fieldObject={fieldObject.resolvedType}
+                            formValues={formValues}
+                            onChange={onChange}
+                            nodeId={nodeId}
+                            fieldName={fieldName}
+                            />
+                        );
+                
 
-                console.log('RecursiveFieldRenderer - tuple:', fieldObject);
-            
-                // Initializing state for each tuple element if it's not already defined in formValues
-                const initialTupleValues = fieldObject.elements.map((element, index) => formValues[fieldName] ? formValues[fieldName][index] : undefined);
-                const [tupleItems, setTupleItems] = useState(initialTupleValues);
-            
-                const handleTupleItemChange = (index, newValue) => {
-                    console.log(`Changing tuple item at index ${index}:`, newValue);
-                    const updatedTupleItems = [...tupleItems];
-                    updatedTupleItems[index] = newValue;
-                    setTupleItems(updatedTupleItems);
-            
-                    // Propagate the change up to the form's main state
-                    onChange({...formValues, [fieldName]: updatedTupleItems});
-                };
-            
-                return (
-                    <div className='tuple-container'>
-                        {fieldObject.elements.map((element, index) => (
-                            <div key={index} className='tuple-item'>
-                                <label className='tuple-item-label'>{`Element ${index}: <${element.typeName || element.type}>`}</label>
-                                <RecursiveFieldRenderer
-                                    fieldObject={element}
-                                    formValues={tupleItems[index]}
-                                    onChange={(newValue) => handleTupleItemChange(index, newValue)}
-                                    nodeId={nodeId}
-                                />
-                            </div>
-                        ))}
-                    </div>
-                );
+                // case 'tuple':
 
-                case 'compact':
-                    return <span>compact</span>;
+                // console.log('RecursiveFieldRenderer - tuple:', fieldObject);
+            
+                // // Initializing state for each tuple element if it's not already defined in formValues
+                // const initialTupleValues = fieldObject.elements?.map((element, index) => formValues[fieldName] ? formValues[fieldName][index] : undefined);
+                // const [tupleItems, setTupleItems] = useState(initialTupleValues);
+            
+                // const handleTupleItemChange = (index, newValue) => {
+                //     console.log(`Changing tuple item at index ${index}:`, newValue);
+                //     const updatedTupleItems = [...tupleItems];
+                //     updatedTupleItems[index] = newValue;
+                //     setTupleItems(updatedTupleItems);
+            
+                //     // Propagate the change up to the form's main state
+                //     onChange({...formValues, [fieldName]: updatedTupleItems});
+                // };
+            
+                // return (
+                //     <div className='tuple-container'>
+                //         {fieldObject.elements?.map((element, index) => (
+                //             <div key={index} className='tuple-item'>
+                //                 <label className='tuple-item-label'>{`Element ${index}: <${element.typeName || element.type}>`}</label>
+                //                 <RecursiveFieldRenderer
+                //                     fieldObject={element}
+                //                     formValues={tupleItems[index]}
+                //                     onChange={(newValue) => handleTupleItemChange(index, newValue)}
+                //                     nodeId={nodeId}
+                //                 />
+                //             </div>
+                //         ))}
+                //     </div>
+                // );
+
+
             
         
                 default:
+                    console.log('RecursiveFieldRenderer - default:', fieldObject);
                     return <div key={fieldName}>Unsupported field type: {fieldType}</div>;
             }
         };
