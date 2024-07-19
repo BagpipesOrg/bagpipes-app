@@ -80,7 +80,7 @@ const handleContentChange = () => {
 
   // Notify that content has changed
   if (tippyPanelInstance.current && tippyPanelInstance.current.popperInstance) {
-    tippyInstance.current.popperInstance.update();
+    tippyPanelInstance.current.popperInstance.update();
   }
 };
 
