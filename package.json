@@ -42,7 +42,6 @@
     "@polkadot/keyring": "^12.6.2",
     "@polkadot/networks": "^12.6.2",
     "@polkadot/phishing": "^0.22.6",
-    "@polkadot/react-components": "^0.39.1",
     "@polkadot/rpc-augment": "^11.0.2",
     "@polkadot/rpc-core": "^11.0.2",
     "@polkadot/rpc-provider": "^11.0.2",
