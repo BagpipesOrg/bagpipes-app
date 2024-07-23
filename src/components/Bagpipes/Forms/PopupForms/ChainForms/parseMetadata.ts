@@ -1,6 +1,5 @@
 import { Type, TypeEntry, TypeDefinitions, Field, Pallet, MethodOutput, RawMetadata, CallOutput, StorageOutput, TypeLookup, ResolvedType, PathSegment} from './TypeDefinitions';
 import { TypeDef } from './ParseMetadataTypes';
-import generateCustomId from './generateCustomId';
 
 export function parseMetadataPallets(rawMetadata: RawMetadata): MethodOutput[] {
   const metadata = rawMetadata.metadata;
@@ -92,7 +91,6 @@ export function resolveTypeName(typeId: string, typesLookup: any): string {
   if (def.Primitive) {
     return def.Primitive;
   } else if (def.Composite) {
-    console.log(`Resolving type name composite: ${def.Composite.fields}`);
     return `Composite(${def.Composite.fields.map((f: { type: string; }) => resolveTypeName(f.type, typesLookup)).join(', ')})`;
   } else if (def.Sequence) {
     // Adjust here to use `elementType` for sequences
@@ -102,7 +100,6 @@ export function resolveTypeName(typeId: string, typesLookup: any): string {
   } else if (def.Variant) {
     return `Variant`;
     } else if (def.Tuple) {
-      console.log(`Resolving type name Tuple: ${def.Tuple}`);
       return `Tuple(${def.Tuple.map((typeId: string) => resolveTypeName(typeId, typesLookup)).join(', ')})`;
     } else if (def.Compact) {
       return `Compact<${resolveTypeName(def.Compact.type, typesLookup)}>`;
@@ -114,7 +111,7 @@ export function resolveTypeName(typeId: string, typesLookup: any): string {
 // this resolves field types using the type id from the metadata.
 export function resolveFieldType(typeId: string, typesLookup: TypeLookup, depth = 0, path: PathSegment[] = [], cache: Record<string, ResolvedType> = {}): ResolvedType {
   // console.log(`Resolving type for typeId: ${typeId} at recursion depth: ${depth}, path: ${path.join(' -> ')}`);
-
+console.log('Resolving type and here is the path and the depth', path, depth);
   if (cache[typeId]) {
     // console.log(`Using cached result for typeId: ${typeId}`);
     return cache[typeId];
@@ -122,56 +119,62 @@ export function resolveFieldType(typeId: string, typesLookup: TypeLookup, depth 
 
 if (depth > 45) {
     console.warn(`Excessive recursion at depth ${depth} for typeId ${typeId}`);
-    return { type: 'complex', path, typeName: 'Complex Type', id: generateCustomId('complexDepth')};
+    return { type: 'complex', path, typeName: 'Complex Type', id: `complexDepth-${depth}`};
 }
 
 const typeInfo = typesLookup[typeId];
 if (!typeInfo || !typeInfo.def) {
-    console.error(`Type information is undefined or missing definition for typeId: ${typeId}`);
-    return { type: 'input', path, id: generateCustomId('inputError')};
+    console.error(`Type information is undefined or missing definition for typeId: ${typeId} and depth: ${depth} at path: ${path.join(' -> ')} `);
+    return { type: 'input', path, id: `inputError-${depth}`};
 }
 
 
 const typeName = resolveTypeName(typeId, typesLookup);
 const currentType = Object.keys(typeInfo.def)[0] as keyof TypeDef;
-const newPath = [...path, { type: currentType, id: generateCustomId(currentType), typeName: typeName }];
+
+const typeLower = currentType.toLowerCase();
+const typeID = `${typeLower}-${depth}`;
+
+const newPathSegment = { type: currentType, id: typeID, typeName: typeName };
+const newPath = [...path, newPathSegment];
+
 
   let result: ResolvedType = {
-
     type: currentType,
     path: newPath,
     typeName: typeName,
-    id: generateCustomId(currentType)
+    id: typeID
     
 };
 
 switch (currentType) {
       case 'Primitive':
-          result = { type: 'input', path: newPath, typeName: typeName, id: generateCustomId('input'), };
+          result = { type: 'input', path: newPath, typeName: typeName, id: typeID, };
           break;
 
           case 'Composite':
-            // Creating a new path segment for the composite itself
-            const compositeId = generateCustomId('composite');
-            const compositePathSegment = { type: 'composite', id: compositeId, typeName: typeName };
-            const compositePath = [...newPath, compositePathSegment];
-        
+
             result = {
                 type: 'composite',
-                path: compositePath,
+                path: newPath,
                 typeName: typeName,
                 typeId: typeInfo.def.Composite!.type,
-                id: compositeId,  // Use the generated ID for the composite itself
+                id: typeID,  
                 fields: typeInfo.def.Composite!.fields.map(field => {
-                    // Generate a new path segment for each field within the composite
-                    const fieldPathSegment = { type: 'compositeField', id: generateCustomId('compositeField'), typeName: resolveTypeName(field.type, typesLookup) };
+                    // Generate unique ID only for each field within the composite
+                    const fieldID = `compositeField-${depth + 1}`;
+                    const fieldPathSegment = { type: 'compositeField', id: fieldID, typeName: resolveTypeName(field.type, typesLookup) };
+                    
+                    const fieldPath = [...newPath, fieldPathSegment];
+
                     return {
                         name: field.name || '',
                         type: 'compositeField',
-                        id: fieldPathSegment.id,
-                        resolvedType: resolveFieldType(field.type, typesLookup, depth + 1, [...compositePath, fieldPathSegment], cache),
+                        id: fieldID,
+                        resolvedType: resolveFieldType(field.type, typesLookup, depth + 2, fieldPath, cache),
                         typeName: fieldPathSegment.typeName,
-                        typeId: field.type
+                        typeId: field.type,
+                        path: fieldPath
                     };
                 })
             };
@@ -184,64 +187,64 @@ switch (currentType) {
               ...compactElementType,
               path: newPath,
               type: 'input',
-              id: generateCustomId('compact'),
+              id: typeID,
           }
           break;
 
-          case 'Sequence':
-            const sequenceId = generateCustomId('sequence');
-            const sequencePathSegment = { type: 'sequence', id: sequenceId, typeName: typeName };
-            const sequencePath = [...newPath, sequencePathSegment];
+      case 'Sequence':
 
-            const sequenceFieldId = generateCustomId('sequenceField');
-            const sequenceFieldPathSegment = { type: 'sequenceField', id: sequenceFieldId, typeName: typeName };
-            const sequenceFieldPath = [...newPath, sequenceFieldPathSegment];
+      if (typeInfo.def.Sequence!.type === '2') {
+        console.log(`Resolving array type special: ${typeId}`),
+          result = {
+              id: `input-${depth}`,
+              type: 'input',
+              path: newPath,
+              typeName: 'Bytes', 
+        } 
+      } else {
 
-            result = {
-                id: sequenceId,
-                type: 'sequence',
-                typeId: typeInfo.def.Sequence!.type,
-                typeName: typeName,
-                path: sequencePath,
-                elementType: resolveFieldType(typeInfo.def.Sequence!.type, typesLookup, depth + 1, sequenceFieldPath, cache)
-            };
-            break;
+        const childDepthId = `sequenceField-${depth + 1}`; 
+        const sequenceFieldPathSegment = { type: 'sequenceField', id: childDepthId, typeName: typeName };
+        const sequenceFieldPath = [...newPath, sequenceFieldPathSegment]; 
+
+        result = {
+            id: typeID,
+            type: 'sequence',
+            typeId: typeInfo.def.Sequence!.type,
+            typeName: typeName,
+            path: newPath,
+            elementType: resolveFieldType(typeInfo.def.Sequence!.type, typesLookup, depth + 1, sequenceFieldPath, cache)
+        };
+      }
+        break;
         
-
       case 'Array':
         console.log(`Resolving array type inside: ${typeId}`, typeInfo.def.Array);
 
-        const arrayId = generateCustomId('array');
-        //in array there are cases where the array is of length 32 and element type is U8 which should be a single input field. We dont want to render 32 input fields of U8
-      const arrayPathSegment = { type: 'arrayElement', id: arrayId, typeName: typeName };
-      const arrayPath = [...newPath, arrayPathSegment];
-      const elementType = resolveFieldType(typeInfo.def.Array!.type, typesLookup, depth + 1, arrayPath, cache);
-      // Check if the array is of length 32 and element type is U8
 
-
-      if (typeInfo.def.Array!.len === '4' && typeInfo.def.Array!.type === '2') {
-        console.log(`Resolving array type special: ${typeId}`),
-          result = {
-              id: generateCustomId('input'),
-              type: 'input',
-              path: newPath,
-              typeName: '[u8;4]', 
+        // Check if the array is of length 32 and element type is U8
+        if (typeInfo.def.Array!.len === '4' && typeInfo.def.Array!.type === '2') {
+          console.log(`Resolving array type special: ${typeId}`),
+            result = {
+                id: `input-${depth}`,
+                type: 'input',
+                path: newPath,
+                typeName: '[u8;4]', 
           };
 
         } else if (typeInfo.def.Array!.len === '8' && typeInfo.def.Array!.type === '2') {
             console.log(`Resolving array type special: ${typeId}`),
               result = {
-                id: generateCustomId('input'),
+                id:`input-${depth}`,
 
                   type: 'input',
                   path: newPath,
                   typeName: '[u8;8]', 
               };
-
         } else if (typeInfo.def.Array!.len === '16' && typeInfo.def.Array!.type === '2') {
           console.log(`Resolving array type special: ${typeId}`),
             result = {
-              id: generateCustomId('input'),
+              id: `input-${depth}`,
 
                 type: 'input',
                 path: newPath,
@@ -251,7 +254,7 @@ switch (currentType) {
         } else if (typeInfo.def.Array!.len === '20' && typeInfo.def.Array!.type === '2') {
            console.log(`Resolving array type special: ${typeId}`),
           result = {
-            id: generateCustomId('input'),
+            id: `input-${depth}`,
 
               type: 'input',
               path: newPath,
@@ -261,52 +264,60 @@ switch (currentType) {
         } else if (typeInfo.def.Array!.len === '32' && typeInfo.def.Array!.type === '2') {
           console.log(`Resolving array type special: ${typeId}`),
             result = {
-              id: generateCustomId('input'),
+              id: `input-${depth}`,
 
                 type: 'input',
                 path: newPath,
                 typeName: '[u8;32]',
             };
         } else {
+
+         
+
+          const arrayElementId = `arrayElement-${depth + 1}`;
+          const arrayElementPathSegment = { type: 'arrayElement', id: arrayElementId, typeName: typeName };
+
+          const arrayElementPath = [...newPath, arrayElementPathSegment];
+          const elementType = resolveFieldType(typeInfo.def.Array!.type, typesLookup, depth + 2, arrayElementPath, cache);
+
+          
             result = {
-                id: arrayId,
+                id: typeID,
                 type: 'array',
-                path: arrayPath,
+                path: newPath,
                 typeId: typeInfo.def.Array!.type,
                 elementType: elementType,
                 length: typeInfo.def.Array!.len
             };
-      }
+        }
 
 
           break;
 
-          case 'Variant':
+      case 'Variant':
             // Create a path segment for the variant itself
-            const variantId = generateCustomId('variant');
-            const variantPathSegment = { type: 'variant', id: variantId, typeName: typeName };
-            const variantPath = [...newPath, variantPathSegment];
         
             result = {
-                id: variantId,  // Use the unique ID for the variant structure
+                id: typeID, 
                 type: 'variant',
-                path: variantPath,
+                path: newPath,
                 typeName: typeName,
                 variants: typeInfo.def.Variant!.variants.map(variant => {
                     // Each entry in the variants is considered a distinct variant
-                    const variantsId = generateCustomId('variants');
+                    const variantsId = `variants-${depth + 1}`;
                     const variantEntryPathSegment = { type: 'variants', id: variantsId, typeName: typeName };
-                    const variantEntryPath = [...variantPath, variantEntryPathSegment];
+                    const variantEntryPath = [...newPath, variantEntryPathSegment];
         
                     return {
                         id: variantsId,  // ID for this particular variant entry
                         name: variant.name,
                         index: variant.index,
+                        path: variantEntryPath,
                         typeId: variant.type,
                         type: 'variants',  // Use 'variants' to indicate a group within a variant
                         fields: variant.fields.map(field => {
                             // Fields within a variant are treated as variantField
-                            const variantFieldId = generateCustomId('variantField');
+                            const variantFieldId = `variantField-${depth + 2}`;
                             const fieldPathSegment = { type: 'variantField', id: variantFieldId, typeName: typeName };
                             const fieldPath = [...variantEntryPath, fieldPathSegment];
         
@@ -314,57 +325,49 @@ switch (currentType) {
                                 id: variantFieldId,
                                 name: field.name,
                                 type: 'variantField',
-                                resolvedType: resolveFieldType(field.type, typesLookup, depth + 1, fieldPath, cache),
+                                resolvedType: resolveFieldType(field.type, typesLookup, depth + 3, fieldPath, cache),
                                 typeName: typeName,
-                                typeId: field.type
+                                typeId: field.type,
+                                path: fieldPath
                             };
                         })
                     };
                 })
             };
             break;
-        
-        
-    
 
-            case 'Tuple':
+      case 'Tuple':
               
-              console.log(`Resolving tuple type inside: ${typeId}`, typeInfo.def.Tuple);
-              const tupleId = generateCustomId('tuple');
-              const tuplePathSegment = { type: 'tuple', id: tupleId, typeName: typeName };
-              const tuplePath = [...newPath, tuplePathSegment];
         
               result = {
                 type: 'tuple',
-                path: tuplePath,
+                path: newPath,
                 typeName: typeName,
-                id: tupleId,
+                id: typeID,
                 elements: typeInfo.def.Tuple.map(tupleTypeId => {
                   console.log(`Resolving tuple element type: ${tupleTypeId}`);
                   console.log(`Tuple type id ${tupleTypeId} tupleElement`);
-                  const tupleTypePathSegmentElement = { type: 'tupleElement', id: generateCustomId('tupleElement'), typeName: resolveTypeName(tupleTypeId, typesLookup) };
+                  const tupleTypePathSegmentElement = { type: 'tupleElement', id: `tupleElement-${depth + 1}`, typeName: resolveTypeName(tupleTypeId, typesLookup) };
                   return {
                     type: 'tupleElement',
                     id: tupleTypePathSegmentElement.id,
-                    resolvedType: resolveFieldType(tupleTypeId, typesLookup, depth + 1, [...tuplePath, tupleTypePathSegmentElement], cache),
+                    resolvedType: resolveFieldType(tupleTypeId, typesLookup, depth + 1, [...newPath, tupleTypePathSegmentElement], cache),
                     typeName: tupleTypePathSegmentElement.typeName,
-                    typeId: tupleTypeId
+                    typeId: tupleTypeId,
+                    path: [...newPath, tupleTypePathSegmentElement]
                   };
                 })
               };
               break;
           
-
- 
-
       default:
           console.log(`Type ${typeId} is classified as 'Unknown'`);
-          result = { type: 'unknown', path: newPath, typeName: 'Unknown',  id: generateCustomId('unknown'),
+          result = { type: 'unknown', path: newPath, typeName: 'Unknown',  id: `unknown-${depth}`,
         };
           break;
-  }
+}
 
-  cache[typeId] = result; // Cache the result before returning
+  cache[typeId] = result; 
   return result;
 }
 

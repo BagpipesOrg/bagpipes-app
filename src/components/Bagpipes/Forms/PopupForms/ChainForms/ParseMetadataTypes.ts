@@ -41,7 +41,6 @@ export interface TypeDef {
 }
 
 export function parseTypeDefinition(type: Type): ParsedTypeDefinition {
-  console.log("Parsing type definition", type);
   let def: TypeDef = {};
 
   if (type.def.Composite) {

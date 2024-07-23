@@ -9,3 +9,7 @@ the fieldObject we pass into RecursiveFieldRenderer is the resolvedFields. resol
 
 ## Naming fields 
 
+
+## When variant does not render
+
+There have been multiple time sthat the selected variant already nested in an object does not render its fields. And it is typically related to the selected variant not matching with the formData, which is because it may be nested within the formData incorrectly. 

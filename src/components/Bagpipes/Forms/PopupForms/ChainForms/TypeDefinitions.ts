@@ -121,8 +121,8 @@ import { TypeDef } from './ParseMetadataTypes';
   export interface PathSegment {
     type: string;
     id: string;
-    typeName?: string;  // Optional, include if you want to keep the type name in the path for debugging or other purposes
-}
+    typeName?: string;  
+  }
 
 
 

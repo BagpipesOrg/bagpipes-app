@@ -10,6 +10,7 @@ import toast  from 'react-hot-toast';
 import { ChainToastContent, ActionToastContent, CustomToastContext } from '../../../../../toasts/CustomToastContext'
 
 import { processScenarioData, validateDiagramData, processAndSanitizeFormData, getUpstreamNodeIds } from '../../../../utils/scenarioUtils';
+import { generatePathKey } from '../../../fields/utils';
 import { getOrderedList } from '../../../../hooks/utils/scenarioExecutionUtils';
 
 import { CollapsibleField }  from '../../../fields';
@@ -222,26 +223,49 @@ const handleMethodChange = (methodName) => {
 //   saveNodeFormData(activeScenarioId, nodeId, {...formData, params: updatedParams});
 // };
 
-const handleMethodFieldChange = (fieldName, newValue, fieldType) => {
-  console.log('handleMethodFieldChange about to change values', fieldName, newValue, fieldType);
 
-  if (!fieldName) {
-      console.error("Field name is undefined.");
+
+
+
+const handleMethodFieldChange = (path, newValue, fieldType) => {
+  console.log('handleMethodFieldChange about to change values', path, newValue, fieldType);
+
+  if (!path || !path.length) {
+      console.error("path is not array.");
       return;
   }
 
-  let updatedParams = {...formData.params};
+  // a unique key from the path for identifying the field in the state
+  const pathKey = generatePathKey(path);
 
-  if (fieldType === 'variant') {
-    console.log('handleMethodFieldChange updating variant:', fieldName, newValue);
-      updatedParams[fieldName] = newValue; // Handle variant updates
-  } else {
-      updatedParams[fieldName] = newValue; // Handle all other updates as before
-  }
+  let updatedParams = {...formData.params, [pathKey]: newValue};
 
-  console.log(`Updated params for field ${fieldName}:`, updatedParams);
+  console.log(`Updated params for path ${path}:`, updatedParams);
   saveNodeFormData(activeScenarioId, nodeId, {...formData, params: updatedParams});
 };
+
+
+
+// const handleMethodFieldChange = (fieldName, newValue, fieldType) => {
+//   console.log('handleMethodFieldChange about to change values', fieldName, newValue, fieldType);
+
+//   if (!fieldName) {
+//       console.error("Field name is undefined.");
+//       return;
+//   }
+
+//   let updatedParams = {...formData.params};
+
+//   if (fieldType === 'variant') {
+//     console.log('handleMethodFieldChange updating variant:', fieldName, newValue);
+//       updatedParams[fieldName] = newValue; // Handle variant updates
+//   } else {
+//       updatedParams[fieldName] = newValue; // Handle all other updates as before
+//   }
+
+//   console.log(`Updated params for field ${fieldName}:`, updatedParams);
+//   saveNodeFormData(activeScenarioId, nodeId, {...formData, params: updatedParams});
+// };
 
 
 

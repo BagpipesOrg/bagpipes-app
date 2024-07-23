@@ -346,3 +346,10 @@ export function setCaretAtSpecificPosition(parentNode, referenceNode) {
 }
 
 
+export function generatePathKey(pathSegments) {
+  console.log("generatePathKey path:", pathSegments);
+  // Concatenate IDs to form a unique path key
+ const keyPath = pathSegments.map(segment => `${segment.id}`).join('/');
+  console.log("generatePathKey keyPath:", keyPath);
+  return keyPath;
+}
