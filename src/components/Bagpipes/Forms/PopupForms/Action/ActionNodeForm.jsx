@@ -80,6 +80,8 @@ export default function ActionNodeForm({ children, data, isConnectable }) {
     if (selectedAction.action === 'xTransfer') return xTransferSVG;
     if (selectedAction.action === "remark") return RemarkSVG;
     if (selectedAction.action === "Remark") return RemarkSVG;
+    if (selectedAction.action === "stake") return RemarkSVG;
+    if (selectedAction.action === "delegate") return RemarkSVG;
     if (selectedAction.action === "vote") return VoteSVG;
 
     return null;

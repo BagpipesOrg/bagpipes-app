@@ -17,6 +17,12 @@ export async function extrinsicHandler(actionType, formData) {
         case 'swap':
             console.log("Inside extrinsicHandler for swap");
             return await handleSwap(formData);
+        case 'stake':
+            console.log(`stake handling`);
+            return handleVote(formData);
+        case 'delegate':
+            console.log(`delegate handling`);
+            return handleVote(formData);                    
         case 'vote':
             console.log(`vote handling`);
             return handleVote(formData);

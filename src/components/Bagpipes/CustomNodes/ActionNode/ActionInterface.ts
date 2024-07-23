@@ -26,7 +26,17 @@ export interface VoteAction {
   target: ActionData;
 }
 
+export interface StakeAction {
+  actionType: 'stake';
+  source: ActionData;
+  target: ActionData;
+}
 
+export interface DelegateAction {
+  actionType: 'delegate';
+  source: ActionData;
+  target: ActionData;
+}
 
 export interface RemarkAction {
   actionType: 'remark';
@@ -52,4 +62,4 @@ export interface TransferAction {
   target: ActionData;
 }
 
-export type ActionType = SwapAction | VoteAction | xTransferAction | RemarkAction | TransferAction;
+export type ActionType = SwapAction | DelegateAction | StakeAction | VoteAction | xTransferAction | RemarkAction | TransferAction;
