@@ -11,6 +11,17 @@ export interface ActionData {
   symbol?: string; 
   nodeId?: string;
   votedata?: votedata;
+  stake?: stakedata;
+  delegate?: delegatedata;
+}
+
+interface stakedata {
+  pool_id: number;
+}
+
+interface delegatedata {
+  conviction: string;
+  to_address: string;
 }
 
 interface votedata {

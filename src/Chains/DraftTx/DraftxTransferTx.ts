@@ -53,20 +53,20 @@ tracks:
 [33] Medium Spender
 [34] Big Spender
 */
-async function delegate_polkadot(
+export async function delegate_polkadot(
   to_address: string,
   amount: number,
-  conviction: string,
+  conviction: string, // 0-6
 ) {
   const tracks = [0, 1, 2, 10, 11, 12, 13, 14, 15, 20, 21, 30, 31, 32, 33, 34];
   var call_list: any[] = [];
-
+  const real_conviction = number2lock(Number(conviction));
   const api = await getApiInstance("polkadot");
   for (const track in tracks) {
     const item = api.tx.convictionVoting.delegate(
       track.toString(),
       { Id: to_address },
-      conviction,
+      real_conviction,
       amount,
     );
     call_list.push(item);
@@ -75,6 +75,28 @@ async function delegate_polkadot(
   const final_tx = api.tx.utility.batchAll(call_list);
   return final_tx;
 }
+
+export function number2lock(inputen: number) {
+  var lockperiod = "Locked1x";
+  switch (inputen) {
+    case 0:
+      lockperiod = null;
+    case 1:
+      lockperiod = "Locked1x";
+    case 2:
+      lockperiod = "Locked2x";
+    case 3:
+      lockperiod = "Locked3x";
+    case 4:
+      lockperiod = "Locked4x";
+    case 5:
+      lockperiod = "Locked5x";
+    case 6:
+      lockperiod = "Locked6x";
+  }
+  return lockperiod;
+}
+
 
 // 0x5c041400690a008600ca9a3b000000000000000000000000
 export async function polkadot_vote(
