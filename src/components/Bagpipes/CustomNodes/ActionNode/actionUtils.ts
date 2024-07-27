@@ -1,6 +1,7 @@
 import { ActionData, SwapAction, xTransferAction, TransferAction, ActionType }  from './ActionInterface';
 
 export function convertFormStateToActionType(formState: any, assetIn: any, assetOut: any): ActionType | null {
+  console.log(`convertFormStateToActionType: `, formState);
   if (!formState.action) return null;
   
   const actionDataIn: ActionData = {
@@ -13,6 +14,8 @@ export function convertFormStateToActionType(formState: any, assetIn: any, asset
     target: assetIn?.target,
     source: assetIn?.source,
     votedata: assetIn?.votedata,
+    stake: assetIn?.stake,
+    delegate: assetIn?.delegate,
     actionType: assetIn?.actionType
   };
   
@@ -48,6 +51,12 @@ export function convertFormStateToActionType(formState: any, assetIn: any, asset
         source: actionDataIn,
         target: actionDataOut
     };
+    case 'stake':
+      return {
+        actionType: 'stake',
+        source: actionDataIn,
+        data: { pool_id: 0},
+      }
     case 'vote':
         return {
           actionType: 'vote',

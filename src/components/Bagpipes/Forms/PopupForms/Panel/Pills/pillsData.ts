@@ -96,7 +96,7 @@ function composeFunctionStartName(baseName: string): string {
 function createFunctionBlock(functionName: string, numArgs: number, pillBlockTypes: PillBlockTypes, overrides?: Partial<PillBlockType>): FunctionBlockItem[] {
   const functionMainName = functionName;
   const composedName = composeFunctionStartName(functionName);
-  console.log("composedName", composedName);
+ // console.log("composedName", composedName);
 
   // Apply overrides or use defaults for function start
     const functionStartOverrides = overrides ? { ...pillBlockTypes.functionStart, ...overrides, name: composedName } : { ...pillBlockTypes.functionStart, name: composedName };

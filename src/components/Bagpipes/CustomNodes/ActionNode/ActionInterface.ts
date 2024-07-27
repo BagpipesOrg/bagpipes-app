@@ -40,7 +40,7 @@ export interface VoteAction {
 export interface StakeAction {
   actionType: 'stake';
   source: ActionData;
-  target: ActionData;
+  data: stakedata;
 }
 
 export interface DelegateAction {

@@ -226,6 +226,7 @@ export default function ActionNode({ children, data, isConnectable }) {
     
     // Here we want to create the action form data object to pass for processing 
     useEffect(() => {
+      console.log(`newactiondata called`);
       const newActionData = convertFormStateToActionType(formState, assetInFormData, assetOutFormData); 
       if (newActionData) {
         setActionData({ [nodeId]: newActionData });
@@ -233,18 +234,38 @@ export default function ActionNode({ children, data, isConnectable }) {
       }
     }, [formState, assetInFormData, assetOutFormData]);
 
+
+    const setRemark2 = (value) => {
+      const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+      console.log(`currentNodeFormData: `, currentNodeFormData);
+
+      const currentActionData = currentNodeFormData.actionData || {};
+      const currentSource = currentActionData.source || {};
+    
+      const updatedActionData = {
+        ...currentActionData,
+        source: {
+          ...currentSource,
+          target: value.target.value
+        }
+      };
+    
+      // Update the local state
+      setActionData(updatedActionData);
+      
+      // Save the updated action data to the global state and local storage
+      saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
+    
+      console.log("[setRemark] Updated action data : ", updatedActionData);
+    };
+  
 // store the system remark message
   const setRemark = (value) => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
     console.log(`currentNodeFormData: `, currentNodeFormData);
     console.log(`setting remark value `);
     var newone = currentNodeFormData.actionData;
-    if (!newone){
-      newone = {};
-    }
-    if (!newone.source){
-      newone.source = {};
-    }
+
     newone.source.target = value.target.value; // append the message as source.target value
     console.log(`newone newActionData: `, newone);
     console.log(`got input value: `, value.target.value);
@@ -254,13 +275,33 @@ export default function ActionNode({ children, data, isConnectable }) {
   if (newone) {
 
   //  setActionData(newone); 
-     setActionData({ [nodeId]: newone });
+     setActionData(newone);
     console.log("[setRemark] Constructed action data : ", newone);
      console.log("[setRemark] current  data : ", scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData);
   }
 
   };
 
+  /*
+
+
+const setRemark = (value) => {
+  const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+  console.log(`currentNodeFormData: `, currentNodeFormData);
+  console.log(`setting remark value `);
+  const newone = currentNodeFormData.actionData;
+  newone.source.target = value.target.value; // append the message as source.target value
+  console.log(`newone newActionData: `, newone);
+  console.log(`got input value: `, value.target.value);
+console.log(`wrote new`);
+if (newone) {
+  setActionData({ [nodeId]: newone });
+  console.log("[setRemark] Constructed action data : ", newone);
+}
+
+};
+
+*/
   const setDelegateConviction = (value) => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
     var inputen = value.target.value;
@@ -278,25 +319,25 @@ export default function ActionNode({ children, data, isConnectable }) {
   };
 
   const setStake = (value) => {
+    console.log(`set stake called`);
+    console.log(`SET STAKE`, scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId));
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
     var pool_id = value.target.value;
 
-    var newone = currentNodeFormData.actionData; 
-    if (!newone){
-      newone = {};
-    }
-    if (!newone.source){
-      newone.source = {};
-    }
-    if (!newone.source.stake){
-      newone.source.stake = {};
-    }
-    newone.source.stake.pool_id = pool_id;
+    console.log(`currentNodeFormData: `, currentNodeFormData);
 
- // if (newone) { }
-    setActionData({ [nodeId]: newone });
-    console.log(`setStake ok`);
- 
+    const currentActionData = currentNodeFormData.actionData || {};
+  
+    const updatedActionData = {
+      ...currentActionData,
+      stake: {
+        pool_id: value.target.value
+      }
+    };
+  
+    setActionData(updatedActionData);
+    saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
+  
 
   };
 
@@ -306,21 +347,23 @@ export default function ActionNode({ children, data, isConnectable }) {
     var newone = currentNodeFormData.actionData;
     console.log(`settodel:`, newone);
     console.log(`currentNodeFormData: `, currentNodeFormData);
-    if (!newone){
-      newone = {};
-    }
-    if (!newone.source){
-      newone.source = {};
-    }
-    if (!newone.source.delegate){
-      newone.source.delegate = {};
-    }
-    newone.source.delegate.to_address = value.target.value; //value.target.value; // append the message as source.target value
+    const currentActionData = currentNodeFormData.actionData || {};
+    const currentSource = currentActionData.delegate || {};
 
-  if (newone) {
-    setActionData({ [nodeId]: newone });
-    console.log(`settodel set to: `, newone);
-  }
+    const updatedActionData = {
+      ...currentActionData,
+      delegate: {
+        ...currentSource,
+        to_address: value.target.value
+      }
+    };
+  
+    setActionData(updatedActionData);
+    saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
+  
+
+   // newone.source.delegate.to_address = value.target.value; //value.target.value; // append the message as source.target value
+
 
   };
 
@@ -347,6 +390,7 @@ export default function ActionNode({ children, data, isConnectable }) {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
 
     var newone = currentNodeFormData.actionData;
+    /*
     if (!newone){
       newone = {};
     }
@@ -356,6 +400,7 @@ export default function ActionNode({ children, data, isConnectable }) {
     if (!newone.source.delegate){
       newone.source.delegate = {};
     }
+      */
     newone.source.delegate.conviction = value; // append the message as source.target value
 
   if (newone) {
@@ -369,43 +414,69 @@ export default function ActionNode({ children, data, isConnectable }) {
   const setLock = (value) => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
     console.log(`currentNodeFormData: `, currentNodeFormData);
-    console.log(`setRef called `);
-    const newone = currentNodeFormData.actionData;
-    if (!newone.source.votedata){
-      newone.source.votedata = {};
-    }
-    newone.source.votedata.lock = value; //value.target.value; // append the message as source.target value
-    console.log(`newone newActionData: `, newone);
+    console.log(`setLock called `);
+  
+    if (!currentNodeFormData) return;
+  
+    const currentActionData = currentNodeFormData.actionData || {};
+    const currentSource = currentActionData.source || {};
+    const currentVoteData = currentSource.votedata || {};
+  
+    currentVoteData.lock = value; // value.target.value; // append the message as source.target value
+  
+    const updatedActionData = {
+      ...currentActionData,
+      source: {
+        ...currentSource,
+        votedata: currentVoteData
+      }
+    };
+  
+    console.log(`updatedActionData: `, updatedActionData);
     console.log(`got input value: `, value);
-  console.log(`wrote new`);
-  if (newone) {
-    setActionData({ [nodeId]: newone });
-    console.log("[setRef] Constructed action data : ", newone);
-  }
-
+  
+    // Update the local state
+    setActionData({ [nodeId]: updatedActionData });
+  
+    // Save the updated action data to the global state and local storage
+    saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
+  
+    console.log("[setLock] Constructed action data : ", updatedActionData);
   };
-
 
 
   const setRef = (value) => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
     console.log(`currentNodeFormData: `, currentNodeFormData);
     console.log(`setRef called `);
-    const newone = currentNodeFormData.actionData;
-    if (!newone.source.votedata){
-      newone.source.votedata = {};
-    }
-    newone.source.votedata.refnr = value; //value.target.value; // append the message as source.target value
-    console.log(`newone newActionData: `, newone);
+  
+    if (!currentNodeFormData) return;
+  
+    const currentActionData = currentNodeFormData.actionData || {};
+    const currentSource = currentActionData.source || {};
+    const currentVoteData = currentSource.votedata || {};
+  
+    currentVoteData.refnr = value; // value.target.value; // append the message as source.target value
+  
+    const updatedActionData = {
+      ...currentActionData,
+      source: {
+        ...currentSource,
+        votedata: currentVoteData
+      }
+    };
+  
+    console.log(`updatedActionData: `, updatedActionData);
     console.log(`got input value: `, value);
-  console.log(`wrote new`);
-  if (newone) {
-    setActionData({ [nodeId]: newone });
-    console.log("[setRef] Constructed action data : ", newone);
-  }
-
+  
+    // Update the local state
+    setActionData({ [nodeId]: updatedActionData });
+  
+    // Save the updated action data to the global state and local storage
+    saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
+  
+    console.log("[setRef] Constructed action data : ", updatedActionData);
   };
-
 
 
   const handleDropdownClick = (value) => {
@@ -534,7 +605,7 @@ export default function ActionNode({ children, data, isConnectable }) {
       {formState && formState.action === 'Remark' && (
 
             <div className="in-node-border rounded m-2 p-2 ">System Remark
-            <input  onChange={(newValue) => setRemark(newValue)}  type="text" id="contact-name"  placeholder="Message" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
+            <input  onChange={(newValue) => setRemark2(newValue)}  type="text" id="contact-name"  placeholder="Message" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
             </div>
       )}
 
