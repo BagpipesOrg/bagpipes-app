@@ -58,7 +58,7 @@ export default function ActionNodeForm({ children, data, isConnectable }) {
   const [actionData, setActionData] = useState({});
   const currentNode = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId);
   const currentActionData = currentNode?.formData?.actionData;
-  console.log('ActionNode currentActionData:', currentActionData);
+  console.log('01 ActionNode currentActionData:', currentActionData);
   const nodeRef = useRef(null);
 
   const assetInFormData = useMemo(() => {
@@ -80,6 +80,8 @@ export default function ActionNodeForm({ children, data, isConnectable }) {
     if (selectedAction.action === 'xTransfer') return xTransferSVG;
     if (selectedAction.action === "remark") return RemarkSVG;
     if (selectedAction.action === "Remark") return RemarkSVG;
+    if (selectedAction.action === "stake") return RemarkSVG;
+    if (selectedAction.action === "delegate") return RemarkSVG;
     if (selectedAction.action === "vote") return VoteSVG;
 
     return null;

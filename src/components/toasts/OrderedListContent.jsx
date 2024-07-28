@@ -120,7 +120,26 @@ const OrderedListContent = ({ list }) => {
                         <img key={index} src={imageSrc} alt={altText} className="toast-icon" />
                     );
                 }
+                 
+                else if (item.action === 'stake' || item.action === 'stake') {
+                    imageSrc = VoteSVG;
+                    altText = "Stake DOT";
+                    return (
+                        <img key={index} src={imageSrc} alt={altText} className="toast-icon" />
+                    );
+                }
+                         
+
+                else if (item.action === 'delegate' || item.action === 'delegate') {
+                    imageSrc = VoteSVG;
+                    altText = "delegate voting power";
+                    return (
+                        <img key={index} src={imageSrc} alt={altText} className="toast-icon" />
+                    );
+                }
                     
+
+
                     else if (item.action === 'xTransfer') {
                         console.log('OrderedListContent item action', item.action);
                         imageSrc = xTransferSVG;

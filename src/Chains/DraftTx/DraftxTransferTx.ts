@@ -27,6 +27,76 @@ export function getRawAddress(ss58Address: string): Uint8Array {
   }
 }
 
+// example input, stake 2 dot to pool 161: const pooltx = await stake_to_dot_pool(20000000000, 161);
+export async function stake_to_dot_pool(amount: number, pool_id: number) {
+  const api = await getApiInstance("polkadot");
+  const outtx = api.tx.nominationPools.join(amount, pool_id);
+  return outtx;
+}
+
+/*
+tracks:
+[0] Root
+[1] Whitelisted Caller
+[2] Wish For Change
+[10] Staking Admin
+[11] Treasurer
+[12] Lease Admin
+[13] Fellowship Admin
+[14] General Admin
+[15] Auction Admin
+[20] Referendum Canceller
+[21] Referendum Killer
+[30] Small Tipper
+[31] Big Tipper
+[32] Small Spender
+[33] Medium Spender
+[34] Big Spender
+*/
+export async function delegate_polkadot(
+  to_address: string,
+  amount: number,
+  conviction: string // 0-6
+) {
+  const tracks = [0, 1, 2, 10, 11, 12, 13, 14, 15, 20, 21, 30, 31, 32, 33, 34];
+  var call_list: any[] = [];
+  const real_conviction = number2lock(Number(conviction));
+  const api = await getApiInstance("polkadot");
+  for (const track in tracks) {
+    const item = api.tx.convictionVoting.delegate(
+      track.toString(),
+      { Id: to_address },
+      real_conviction,
+      amount
+    );
+    call_list.push(item);
+  }
+
+  const final_tx = api.tx.utility.batchAll(call_list);
+  return final_tx;
+}
+
+export function number2lock(inputen: number) {
+  var lockperiod = "Locked1x";
+  switch (inputen) {
+    case 0:
+      lockperiod = null;
+    case 1:
+      lockperiod = "Locked1x";
+    case 2:
+      lockperiod = "Locked2x";
+    case 3:
+      lockperiod = "Locked3x";
+    case 4:
+      lockperiod = "Locked4x";
+    case 5:
+      lockperiod = "Locked5x";
+    case 6:
+      lockperiod = "Locked6x";
+  }
+  return lockperiod;
+}
+
 // 0x5c041400690a008600ca9a3b000000000000000000000000
 export async function polkadot_vote(
   amount: number,

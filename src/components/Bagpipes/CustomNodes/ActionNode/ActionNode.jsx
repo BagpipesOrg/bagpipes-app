@@ -7,7 +7,8 @@ import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
 import RemarkSVG from '/remark.svg';
 import VoteSVG from '/vote.svg';
-
+import DelegateSVG from '/delegate.svg';
+import StakeSVG from '/stake.svg';
 
 // $DED animation
 import DEDPNG from './../../../../assets/DED.png';
@@ -63,18 +64,18 @@ export default function ActionNode({ children, data, isConnectable }) {
   const [actionData, setActionData] = useState({});
   const currentNode = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId);
   const currentActionData = currentNode?.formData?.actionData;
-  console.log('ActionNode currentActionData:', currentActionData);
+  console.log('000 ActionNode currentActionData:', currentActionData);
   const nodeRef = useRef(null);
 
   const assetInFormData = useMemo(() => {
     const nodeData = nodes.find(node => node.id === assetInNodeId);
-    // console.log('ActionNode assetInFormData inside useMemo:', nodeData?.formData);
+   console.log('ActionNode assetInFormData inside useMemo:', nodeData?.formData);
     return nodeData?.formData;
   }, [assetInNodeId, nodes]);
   
   const assetOutFormData = useMemo(() => {
     const nodeData = nodes.find(node => node.id === assetOutNodeId);
-    // console.log('ActionNode assetOutFormData inside useMemo:', nodeData?.formData);
+     console.log('ActionNode assetOutFormData inside useMemo:', nodeData?.formData);
     return nodeData?.formData;
   }, [assetOutNodeId, nodes]);
   const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -85,6 +86,8 @@ export default function ActionNode({ children, data, isConnectable }) {
     if (formState.action === 'xTransfer') return xTransferSVG;
     if (formState.action === "remark") return RemarkSVG;
     if (formState.action === "Remark") return RemarkSVG;
+    if (formState.action === "stake") return StakeSVG;
+    if (formState.action === "delegate") return DelegateSVG;
     if (formState.action === "vote") return VoteSVG;
 
     return null;
@@ -133,6 +136,7 @@ export default function ActionNode({ children, data, isConnectable }) {
 
         // Set actionData outside of the action-specific blocks
         // Create action data based on the selected value
+        console.log(`newActionData`);
         const newActionData = convertFormStateToActionType(
           { ...formState, action: formState.action }, 
           assetInFormData, 
@@ -188,6 +192,7 @@ export default function ActionNode({ children, data, isConnectable }) {
     useEffect(() => {
       const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
       if (currentNodeFormData) {
+        console.log(`currentNodeFormData set`);
         setFormState(currentNodeFormData);
       }
     }, []);
@@ -221,6 +226,7 @@ export default function ActionNode({ children, data, isConnectable }) {
     
     // Here we want to create the action form data object to pass for processing 
     useEffect(() => {
+      console.log(`newactiondata called`);
       const newActionData = convertFormStateToActionType(formState, assetInFormData, assetOutFormData); 
       if (newActionData) {
         setActionData({ [nodeId]: newActionData });
@@ -228,23 +234,140 @@ export default function ActionNode({ children, data, isConnectable }) {
       }
     }, [formState, assetInFormData, assetOutFormData]);
 
+
+    const setRemark2 = (value) => {
+      const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+      console.log(`currentNodeFormData: `, currentNodeFormData);
+
+      const currentActionData = currentNodeFormData.actionData || {};
+      const currentSource = currentActionData.source || {};
+    
+      const updatedActionData = {
+        ...currentActionData,
+        source: {
+          ...currentSource,
+          target: value.target.value
+        }
+      };
+    
+      // Update the local state
+      setActionData(updatedActionData);
+      
+      // Save the updated action data to the global state and local storage
+      saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
+    
+      console.log("[setRemark] Updated action data : ", updatedActionData);
+    };
+  
 // store the system remark message
   const setRemark = (value) => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
     console.log(`currentNodeFormData: `, currentNodeFormData);
     console.log(`setting remark value `);
-    const newone = currentNodeFormData.actionData;
-    newone.source.target = value.target.value; // append the message as source.target value
-    console.log(`newone newActionData: `, newone);
-    console.log(`got input value: `, value.target.value);
-    const newActionData = false;
- // newActionData.source.target = value;
-  console.log(`wrote new`);
+    const nodes = scenarios[activeScenarioId]?.diagramData?.nodes || [];
+    const currentNodeIndex = nodes.findIndex(node => node.id === nodeId);
+    const previousNode = currentNodeIndex > 0 ? nodes[currentNodeIndex - 1] : null;
+    const previousNodeFormData = previousNode ? previousNode.formData : null;
+    var currentActionData = currentNodeFormData.actionData || {};
+    currentActionData.actionType = 'remark';
+
+
+    const updatedActionData = {
+      ...currentActionData,
+      source: previousNodeFormData,
+      extra: value.target.value,
+    };
+    setActionData(updatedActionData);
+    saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
+  
+
+
+  };
+
+  /*
+
+
+const setRemark = (value) => {
+  const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+  console.log(`currentNodeFormData: `, currentNodeFormData);
+  console.log(`setting remark value `);
+  const newone = currentNodeFormData.actionData;
+  newone.source.target = value.target.value; // append the message as source.target value
+  console.log(`newone newActionData: `, newone);
+  console.log(`got input value: `, value.target.value);
+console.log(`wrote new`);
+if (newone) {
+  setActionData({ [nodeId]: newone });
+  console.log("[setRemark] Constructed action data : ", newone);
+}
+
+};
+
+*/
+  const setDelegateConviction = (value) => {
+    const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+    var inputen = value.target.value;
+
+    const newone = currentNodeFormData.actionData; 
+    if (!newone.source.delegate){
+      newone.source.delegate = {};
+    }
+    newone.source.delegate.conviction = inputen;
+
   if (newone) {
     setActionData({ [nodeId]: newone });
-    console.log("[setRemark] Constructed action data : ", newone);
   }
 
+  };
+
+  const setStake = (value) => {
+    console.log(`set stake called`);
+    console.log(`SET STAKE`, scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId));
+    const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+    const nodes = scenarios[activeScenarioId]?.diagramData?.nodes || [];
+const currentNodeIndex = nodes.findIndex(node => node.id === nodeId);
+const previousNode = currentNodeIndex > 0 ? nodes[currentNodeIndex - 1] : null;
+const previousNodeFormData = previousNode ? previousNode.formData : null;
+
+console.log('previousNodeFormData: ', previousNodeFormData);
+
+    console.log(`currentNodeFormData: `, currentNodeFormData);
+
+    var currentActionData = currentNodeFormData.actionData || {};
+    currentActionData.actionType = 'stake';
+
+
+    const updatedActionData = {
+      ...currentActionData,
+      source: previousNodeFormData,
+      stake: {
+        pool_id: value.target.value
+      }
+    };
+  
+    setActionData(updatedActionData);
+    saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
+  
+
+  };
+
+  const setToDel = (value) => {
+    const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+    var newone = currentNodeFormData.actionData;
+    console.log(`settodel:`, newone);
+    console.log(`currentNodeFormData: `, currentNodeFormData);
+    const currentActionData = currentNodeFormData.actionData || {};
+    const currentSource = currentActionData.delegate || {};
+    const updatedActionData = {
+      ...currentActionData,
+      delegate: {
+        ...currentSource,
+        to_address: value.target.value
+      }
+    };
+  
+    setActionData(updatedActionData);
+    saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
   };
 
 
@@ -266,49 +389,97 @@ export default function ActionNode({ children, data, isConnectable }) {
 
   };
 
+  const setDelLock = (value) => {
+    const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
 
+    var newone = currentNodeFormData.actionData;
+    /*
+    if (!newone){
+      newone = {};
+    }
+    if (!newone.source){
+      newone.source = {};
+    }
+    if (!newone.source.delegate){
+      newone.source.delegate = {};
+    }
+      */
+    newone.source.delegate.conviction = value; // append the message as source.target value
+
+  if (newone) {
+    setActionData({ [nodeId]: newone });
+    console.log(`setDelLock set`);
+  }
+
+  };
 
 
   const setLock = (value) => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
     console.log(`currentNodeFormData: `, currentNodeFormData);
-    console.log(`setRef called `);
-    const newone = currentNodeFormData.actionData;
-    if (!newone.source.votedata){
-      newone.source.votedata = {};
-    }
-    newone.source.votedata.lock = value; //value.target.value; // append the message as source.target value
-    console.log(`newone newActionData: `, newone);
+    console.log(`setLock called `);
+  
+    if (!currentNodeFormData) return;
+  
+    const currentActionData = currentNodeFormData.actionData || {};
+    const currentSource = currentActionData.source || {};
+    var currentVoteData = currentSource.votedata || {};
+  
+    currentVoteData.lock = value; // value.target.value; // append the message as source.target value
+  
+    const updatedActionData = {
+      ...currentActionData,
+      source: {
+        ...currentSource,
+        votedata: currentVoteData
+      }
+    };
+  
+    console.log(`updatedActionData: `, updatedActionData);
     console.log(`got input value: `, value);
-  console.log(`wrote new`);
-  if (newone) {
-    setActionData({ [nodeId]: newone });
-    console.log("[setRef] Constructed action data : ", newone);
-  }
-
+  
+    // Update the local state
+    setActionData({ [nodeId]: updatedActionData });
+  
+    // Save the updated action data to the global state and local storage
+    saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
+  
+    console.log("[setLock] Constructed action data : ", updatedActionData);
   };
-
 
 
   const setRef = (value) => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
     console.log(`currentNodeFormData: `, currentNodeFormData);
     console.log(`setRef called `);
-    const newone = currentNodeFormData.actionData;
-    if (!newone.source.votedata){
-      newone.source.votedata = {};
-    }
-    newone.source.votedata.refnr = value; //value.target.value; // append the message as source.target value
-    console.log(`newone newActionData: `, newone);
+  
+    if (!currentNodeFormData) return;
+  
+    const currentActionData = currentNodeFormData.actionData || {};
+    const currentSource = currentActionData.source || {};
+    var currentVoteData = currentSource.votedata || {};
+  
+    currentVoteData.refnr = value; // value.target.value; // append the message as source.target value
+  
+    const updatedActionData = {
+      ...currentActionData,
+      source: {
+        ...currentSource,
+        votedata: currentVoteData
+      }
+    };
+  
+    console.log(`updatedActionData: `, updatedActionData);
     console.log(`got input value: `, value);
-  console.log(`wrote new`);
-  if (newone) {
-    setActionData({ [nodeId]: newone });
-    console.log("[setRef] Constructed action data : ", newone);
-  }
-
+  
+    // Update the local state
+    setActionData({ [nodeId]: updatedActionData });
+  
+    // Save the updated action data to the global state and local storage
+    saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
+  
+    console.log("[setRef] Constructed action data : ", updatedActionData);
   };
-
 
 
   const handleDropdownClick = (value) => {
@@ -396,6 +567,8 @@ export default function ActionNode({ children, data, isConnectable }) {
           xTransferSVG={xTransferSVG}
           RemarkSVG={RemarkSVG}
           VoteSVG={VoteSVG}
+          DelegateSVG={DelegateSVG}
+          StakeSVG={StakeSVG}
           dropdownVisible={dropdownVisible}
           ref={dropdownRef}
           handleOnClick={true}
@@ -404,6 +577,33 @@ export default function ActionNode({ children, data, isConnectable }) {
         </div>
       </div>
 
+      {formState && formState.action === 'delegate' && (
+
+<div className="in-node-border rounded m-2 p-2 ">Delegate voting power on all Polkadot tracks
+<input  onChange={(newValue) => setToDel(newValue)}  type="text" id="contact-name"  placeholder="Address" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
+
+<select
+            onChange={(e) => setDelLock(e.target.value)}
+            id="vote-locks"
+            className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+          >
+            <option value="0">0.1x voting balance, no lockup period</option>
+            <option value="1">1x voting balance, locked for 7 days</option>
+            <option value="2">2x voting balance, locked for 14 days</option>
+            <option value="3">3x voting balance, locked for 28 days</option>
+            <option value="4">4x voting balance, locked for 56 days</option>
+            <option value="5">5x voting balance, locked for 112 days</option>
+            <option value="6">6x voting balance, locked for 224 days</option>
+          </select>
+</div>
+)}
+     {formState && formState.action === 'stake' && (
+
+<div className="in-node-border rounded m-2 p-2 ">Stake dot to a nomination pool
+
+<input  onChange={(newValue) => setStake(newValue)}  type="number" min="1" id="contact-name"  placeholder="Nomination pool id" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
+</div>
+)}
 
       {formState && formState.action === 'Remark' && (
 

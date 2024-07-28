@@ -1,4 +1,4 @@
-import { dotToHydraDx, polkadot_vote, moon2polkadot,  generic_system_remark, moon2parachain, moon2hydra2, hydra2moonbeam, interlay2moonbeam, polkadot2moonbeam, assethub2moonbeam, turing2moonriver, moonriver2turing, mangata2turing, polkadot_assethub_to_assetHub_kusama, hydraDxToParachain, turing2mangata, generic_kusama_to_parachain, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
+import { delegate_polkadot, stake_to_dot_pool, dotToHydraDx, polkadot_vote, moon2polkadot,  generic_system_remark, moon2parachain, moon2hydra2, hydra2moonbeam, interlay2moonbeam, polkadot2moonbeam, assethub2moonbeam, turing2moonriver, moonriver2turing, mangata2turing, polkadot_assethub_to_assetHub_kusama, hydraDxToParachain, turing2mangata, generic_kusama_to_parachain, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
 import { getTokenDecimalsByAssetName, get_moonbeam_asset_decimals, getTokenDecimalsByChainName, get_hydradx_asset_symbol_decimals } from "../../../../Chains/Helpers/AssetHelper";
 import toast from "react-hot-toast";
 import { isEthereumAddress } from '@polkadot/util-crypto';
@@ -9,7 +9,7 @@ import { account } from "@polkadot/api-derive/balances";
 import { evm } from "@polkadot/types/interfaces/definitions";
 
 export async function extrinsicHandler(actionType, formData) {
-    
+    console.log(`extrinsicHandler:`, actionType, formData);
     switch(actionType) {
         case 'xTransfer':
             console.log("Inside extrinsicHandler for xTransfer formData:", formData);
@@ -17,6 +17,12 @@ export async function extrinsicHandler(actionType, formData) {
         case 'swap':
             console.log("Inside extrinsicHandler for swap");
             return await handleSwap(formData);
+        case 'stake':
+            console.log(`stake handling`);
+            return handleStake(formData);
+        case 'delegate':
+            console.log(`delegate handling`);
+            return handleDelegate(formData);                    
         case 'vote':
             console.log(`vote handling`);
             return handleVote(formData);
@@ -27,6 +33,31 @@ export async function extrinsicHandler(actionType, formData) {
             throw new Error("Unsupported action type.");
         }
 };
+
+function handleStake(formdata) {
+    console.log(`handlestake: `, formdata);
+    const source = formdata.source;
+    if (!source.chain == "polkadot") {
+        throw new Error("Staking only support on Polkadot");
+    }
+    const tokenDecimals = getTokenDecimalsByChainName(source.chain);
+    const pool_id = formdata.stake.pool_id;
+    const amount = source.amount * (10 ** tokenDecimals);
+    return stake_to_dot_pool(amount, pool_id);
+}
+
+function handleDelegate(formdata) {
+    const source = formdata.source;
+    if (!source.chain == "polkadot") {
+        throw new Error("Delegate Voting only support on Polkadot");
+    }
+    const tokenDecimals = getTokenDecimalsByChainName(source.chain);
+    const conviction = source.delegate.conviction; // string number
+    const dest = source.delegate.to_address;
+ 
+    const amount = source.amount * (10 ** tokenDecimals);
+    return delegate_polkadot(dest, amount, conviction);
+}
 
 function handleVote(formData) {
     const source = formData.source;
@@ -44,8 +75,11 @@ function handleVote(formData) {
 
 function handleRemark(formData) {
     const source = formData.source;
-    const msg = source.target;
+    const msg = formData.extra;
     const chain = source.chain;
+       if (!msg) {
+        throw new Error("Set remark message");
+    }
     console.log(`source: `, source);
     console.log(`handle Remark form data:`, formData);
     return generic_system_remark(chain, msg);
