@@ -13,6 +13,7 @@ export interface ActionData {
   votedata?: votedata;
   stake?: stakedata;
   delegate?: delegatedata;
+  extra?: string;
 }
 
 interface stakedata {

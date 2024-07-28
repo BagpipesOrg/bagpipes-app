@@ -75,8 +75,11 @@ function handleVote(formData) {
 
 function handleRemark(formData) {
     const source = formData.source;
-    const msg = source.target;
+    const msg = formData.extra;
     const chain = source.chain;
+       if (!msg) {
+        throw new Error("Set remark message");
+    }
     console.log(`source: `, source);
     console.log(`handle Remark form data:`, formData);
     return generic_system_remark(chain, msg);

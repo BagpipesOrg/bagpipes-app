@@ -18,7 +18,7 @@ export const prepareTransactionsForReview = (diagramData, orderedList) => {
       const stakedata = actionData?.stake;
       const votedata = actionData?.votedata;
       const delegate = actionData?.delegate;
-
+      const extra = actionData?.extra;
 
 
       const sourcedatan = {
@@ -34,6 +34,7 @@ export const prepareTransactionsForReview = (diagramData, orderedList) => {
         stake: stakedata,
         votedata: votedata,
         delegate: delegate,
+        extra: extra,
         target: {
           ...actionData.target,
           symbol: targetSymbol // attaching the symbol

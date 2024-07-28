@@ -264,21 +264,23 @@ export default function ActionNode({ children, data, isConnectable }) {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
     console.log(`currentNodeFormData: `, currentNodeFormData);
     console.log(`setting remark value `);
-    var newone = currentNodeFormData.actionData;
+    const nodes = scenarios[activeScenarioId]?.diagramData?.nodes || [];
+    const currentNodeIndex = nodes.findIndex(node => node.id === nodeId);
+    const previousNode = currentNodeIndex > 0 ? nodes[currentNodeIndex - 1] : null;
+    const previousNodeFormData = previousNode ? previousNode.formData : null;
+    var currentActionData = currentNodeFormData.actionData || {};
+    currentActionData.actionType = 'remark';
 
-    newone.source.target = value.target.value; // append the message as source.target value
-    console.log(`newone newActionData: `, newone);
-    console.log(`got input value: `, value.target.value);
-    const newActionData = false;
- // newActionData.source.target = value;
-  console.log(`wrote new: `, newone);
-  if (newone) {
 
-  //  setActionData(newone); 
-     setActionData(newone);
-    console.log("[setRemark] Constructed action data : ", newone);
-     console.log("[setRemark] current  data : ", scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData);
-  }
+    const updatedActionData = {
+      ...currentActionData,
+      source: previousNodeFormData,
+      extra: value.target.value,
+    };
+    setActionData(updatedActionData);
+    saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
+  
+
 
   };
 
@@ -606,7 +608,7 @@ console.log('previousNodeFormData: ', previousNodeFormData);
       {formState && formState.action === 'Remark' && (
 
             <div className="in-node-border rounded m-2 p-2 ">System Remark
-            <input  onChange={(newValue) => setRemark2(newValue)}  type="text" id="contact-name"  placeholder="Message" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
+            <input  onChange={(newValue) => setRemark(newValue)}  type="text" id="contact-name"  placeholder="Message" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
             </div>
       )}
 
