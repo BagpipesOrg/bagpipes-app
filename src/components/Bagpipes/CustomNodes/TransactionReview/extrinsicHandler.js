@@ -9,7 +9,7 @@ import { account } from "@polkadot/api-derive/balances";
 import { evm } from "@polkadot/types/interfaces/definitions";
 
 export async function extrinsicHandler(actionType, formData) {
-    
+    console.log(`extrinsicHandler:`, actionType, formData);
     switch(actionType) {
         case 'xTransfer':
             console.log("Inside extrinsicHandler for xTransfer formData:", formData);
@@ -35,12 +35,13 @@ export async function extrinsicHandler(actionType, formData) {
 };
 
 function handleStake(formdata) {
+    console.log(`handlestake: `, formdata);
     const source = formdata.source;
     if (!source.chain == "polkadot") {
         throw new Error("Staking only support on Polkadot");
     }
     const tokenDecimals = getTokenDecimalsByChainName(source.chain);
-    const pool_id = source.stake.pool_id;
+    const pool_id = formdata.stake.pool_id;
     const amount = source.amount * (10 ** tokenDecimals);
     return stake_to_dot_pool(amount, pool_id);
 }

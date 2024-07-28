@@ -15,6 +15,11 @@ export const prepareTransactionsForReview = (diagramData, orderedList) => {
 
       const assetOutNode = diagramData.nodes.find(node => node.id === orderedList[i + 1]);
       const targetSymbol = assetOutNode?.formData?.asset?.symbol;
+      const stakedata = actionData?.stake;
+      const votedata = actionData?.votedata;
+      const delegate = actionData?.delegate;
+
+
 
       const sourcedatan = {
         ...actionData.source,
@@ -26,6 +31,9 @@ export const prepareTransactionsForReview = (diagramData, orderedList) => {
         nodeId,
         actionType: actionData.actionType,
         source: sourcedatan,
+        stake: stakedata,
+        votedata: votedata,
+        delegate: delegate,
         target: {
           ...actionData.target,
           symbol: targetSymbol // attaching the symbol
@@ -33,7 +41,8 @@ export const prepareTransactionsForReview = (diagramData, orderedList) => {
       };
 
       extrinsicsToAccept.push(extrinsicFromAction);
-    } else if (currentNode?.type === 'chainTx' && currentNode?.formData) {
+    } 
+    else if (currentNode?.type === 'chainTx' && currentNode?.formData) {
       const chainTxData = currentNode.formData;
 
       // Grabbing symbols from the previous and next nodes

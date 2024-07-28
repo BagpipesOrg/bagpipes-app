@@ -322,14 +322,22 @@ if (newone) {
     console.log(`set stake called`);
     console.log(`SET STAKE`, scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId));
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
-    var pool_id = value.target.value;
+    const nodes = scenarios[activeScenarioId]?.diagramData?.nodes || [];
+const currentNodeIndex = nodes.findIndex(node => node.id === nodeId);
+const previousNode = currentNodeIndex > 0 ? nodes[currentNodeIndex - 1] : null;
+const previousNodeFormData = previousNode ? previousNode.formData : null;
+
+console.log('previousNodeFormData: ', previousNodeFormData);
 
     console.log(`currentNodeFormData: `, currentNodeFormData);
 
-    const currentActionData = currentNodeFormData.actionData || {};
-  
+    var currentActionData = currentNodeFormData.actionData || {};
+    currentActionData.actionType = 'stake';
+
+
     const updatedActionData = {
       ...currentActionData,
+      source: previousNodeFormData,
       stake: {
         pool_id: value.target.value
       }
@@ -343,13 +351,11 @@ if (newone) {
 
   const setToDel = (value) => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
-
     var newone = currentNodeFormData.actionData;
     console.log(`settodel:`, newone);
     console.log(`currentNodeFormData: `, currentNodeFormData);
     const currentActionData = currentNodeFormData.actionData || {};
     const currentSource = currentActionData.delegate || {};
-
     const updatedActionData = {
       ...currentActionData,
       delegate: {
@@ -360,11 +366,6 @@ if (newone) {
   
     setActionData(updatedActionData);
     saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
-  
-
-   // newone.source.delegate.to_address = value.target.value; //value.target.value; // append the message as source.target value
-
-
   };
 
 
@@ -420,7 +421,7 @@ if (newone) {
   
     const currentActionData = currentNodeFormData.actionData || {};
     const currentSource = currentActionData.source || {};
-    const currentVoteData = currentSource.votedata || {};
+    var currentVoteData = currentSource.votedata || {};
   
     currentVoteData.lock = value; // value.target.value; // append the message as source.target value
   
@@ -454,7 +455,7 @@ if (newone) {
   
     const currentActionData = currentNodeFormData.actionData || {};
     const currentSource = currentActionData.source || {};
-    const currentVoteData = currentSource.votedata || {};
+    var currentVoteData = currentSource.votedata || {};
   
     currentVoteData.refnr = value; // value.target.value; // append the message as source.target value
   
