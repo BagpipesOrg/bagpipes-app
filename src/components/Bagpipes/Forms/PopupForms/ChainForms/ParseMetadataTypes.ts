@@ -26,6 +26,7 @@ export interface TypeDef {
     needsLoading?: boolean;
     type: string;
     typeId?: string;
+    name?: string;
     
 
   };
@@ -69,6 +70,7 @@ export function parseTypeDefinition(type: Type): ParsedTypeDefinition {
     console.log("Variant type found", type.def.Variant);
     def.Variant = {
       type: type.def.Variant.type,
+      name: type.def.Variant.name,
       typeId: type.def.Variant.typeId,
       variants: type.def.Variant.variants.map(variant => ({
         name: variant.name,

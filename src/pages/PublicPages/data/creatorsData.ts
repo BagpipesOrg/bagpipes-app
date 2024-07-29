@@ -6,7 +6,7 @@ export const creators: Creator[] = [
     id: "1",
     name: "Ramsey",
     username: "ramsey",
-    title: "Bagpipes Builder and Blockchain Protocol Developer",
+    title: "Bagpipes Builder and Blockchain Protocol Engineer",
     image: "/users/ramsey.png",
     description: "Ramsey is a creative engineer covering different layers of abstraction from building the Bagpipes platform to building blockchain protocols.",
     templates: ["ava-bagpipes-2", "ava-ui-2"]
@@ -24,7 +24,7 @@ export const creators: Creator[] = [
     id: "3",
     name: "Chris",
     username: "chris",
-    title: "Protocol founder",
+    title: "Blockchain founder",
     image: "/users/chris.png",
     description: "Chris is the founder of the Ava protocol, bringing automation on-chain.",
     templates: ["polkadot-bagpipes-1", "polkadot-ui-1"]

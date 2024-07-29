@@ -160,7 +160,7 @@ switch (currentType) {
                 typeName: typeName,
                 typeId: typeInfo.def.Composite!.type,
                 id: typeID,  
-                fields: typeInfo.def.Composite!.fields.map(field => {
+                fields: typeInfo.def.Composite!.fields.map((field, index) => {
                     // Generate unique ID only for each field within the composite
                     const fieldID = `compositeField-${depth + 1}`;
                     const fieldPathSegment = { type: 'compositeField', id: fieldID, typeName: resolveTypeName(field.type, typesLookup) };
@@ -170,7 +170,7 @@ switch (currentType) {
                     return {
                         name: field.name || '',
                         type: 'compositeField',
-                        id: fieldID,
+                        id: `${fieldID}-[${index}]`,
                         resolvedType: resolveFieldType(field.type, typesLookup, depth + 2, fieldPath, cache),
                         typeName: fieldPathSegment.typeName,
                         typeId: field.type,
@@ -213,7 +213,7 @@ switch (currentType) {
             typeId: typeInfo.def.Sequence!.type,
             typeName: typeName,
             path: newPath,
-            elementType: resolveFieldType(typeInfo.def.Sequence!.type, typesLookup, depth + 1, sequenceFieldPath, cache)
+            elementType: resolveFieldType(typeInfo.def.Sequence!.type, typesLookup, depth + 2, sequenceFieldPath, cache)
         };
       }
         break;
@@ -300,29 +300,30 @@ switch (currentType) {
             result = {
                 id: typeID, 
                 type: 'variant',
+                name: typeInfo.def.Variant!.name || '',
                 path: newPath,
                 typeName: typeName,
-                variants: typeInfo.def.Variant!.variants.map(variant => {
-                    // Each entry in the variants is considered a distinct variant
-                    const variantsId = `variants-${depth + 1}`;
+                variants: typeInfo.def.Variant!.variants.map((variant, index ) => {
+
+                  const variantsId = `variants-${depth + 1}`;
                     const variantEntryPathSegment = { type: 'variants', id: variantsId, typeName: typeName };
                     const variantEntryPath = [...newPath, variantEntryPathSegment];
         
                     return {
-                        id: variantsId,  // ID for this particular variant entry
+                        id: `${variantsId}-[${index}]`, 
                         name: variant.name,
                         index: variant.index,
                         path: variantEntryPath,
                         typeId: variant.type,
                         type: 'variants',  // Use 'variants' to indicate a group within a variant
-                        fields: variant.fields.map(field => {
+                        fields: variant.fields.map((field, index) => {
                             // Fields within a variant are treated as variantField
                             const variantFieldId = `variantField-${depth + 2}`;
                             const fieldPathSegment = { type: 'variantField', id: variantFieldId, typeName: typeName };
                             const fieldPath = [...variantEntryPath, fieldPathSegment];
         
                             return {
-                                id: variantFieldId,
+                                id: `${variantFieldId}-[${index}]` ,
                                 name: field.name,
                                 type: 'variantField',
                                 resolvedType: resolveFieldType(field.type, typesLookup, depth + 3, fieldPath, cache),
@@ -344,13 +345,13 @@ switch (currentType) {
                 path: newPath,
                 typeName: typeName,
                 id: typeID,
-                elements: typeInfo.def.Tuple.map(tupleTypeId => {
+                elements: typeInfo.def.Tuple.map((tupleTypeId, index) => {
                   console.log(`Resolving tuple element type: ${tupleTypeId}`);
                   console.log(`Tuple type id ${tupleTypeId} tupleElement`);
                   const tupleTypePathSegmentElement = { type: 'tupleElement', id: `tupleElement-${depth + 1}`, typeName: resolveTypeName(tupleTypeId, typesLookup) };
                   return {
                     type: 'tupleElement',
-                    id: tupleTypePathSegmentElement.id,
+                    id:`${tupleTypePathSegmentElement.id}-[${index}]`,
                     resolvedType: resolveFieldType(tupleTypeId, typesLookup, depth + 1, [...newPath, tupleTypePathSegmentElement], cache),
                     typeName: tupleTypePathSegmentElement.typeName,
                     typeId: tupleTypeId,
