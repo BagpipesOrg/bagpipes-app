@@ -41,7 +41,8 @@ function handleStake(formdata) {
         throw new Error("Staking only support on Polkadot");
     }
     const tokenDecimals = getTokenDecimalsByChainName(source.chain);
-    const pool_id = formdata.stake.pool_id;
+    const stake = formdata.stake;
+    const pool_id = stake.pool_id;
     const amount = source.amount * (10 ** tokenDecimals);
     return stake_to_dot_pool(amount, pool_id);
 }
