@@ -51,24 +51,27 @@ function handleDelegate(formdata) {
     if (!source.chain == "polkadot") {
         throw new Error("Delegate Voting only support on Polkadot");
     }
+    const delegate = formdata.delegate;
     const tokenDecimals = getTokenDecimalsByChainName(source.chain);
-    const conviction = source.delegate.conviction; // string number
-    const dest = source.delegate.to_address;
+    const conviction = delegate.conviction; // string number
+    const dest = delegate.to_address;
  
     const amount = source.amount * (10 ** tokenDecimals);
     return delegate_polkadot(dest, amount, conviction);
 }
 
 function handleVote(formData) {
+//    console.log(`handleVote input: `, formData);
     const source = formData.source;
     if (!source.chain == "polkadot") {
         throw new Error("Voting only support on Polkadot");
     }
     const tokenDecimals = getTokenDecimalsByChainName(source.chain);
-    const lock = source.votedata.lock;
-    const refnr = source.votedata.refnr;
-    const aye_or_nay = source.votedata.aye_or_nay;
-    const amount = source.amount * (10 ** tokenDecimals);
+    const votedata = formData.votedata;
+    const lock = votedata.lock;
+    const refnr = votedata.refnr;
+    const aye_or_nay = votedata.aye_or_nay;
+    const amount = Number(source.amount) * (10 ** tokenDecimals);
     return polkadot_vote(amount, lock, refnr, aye_or_nay);
 }
 

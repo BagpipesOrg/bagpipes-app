@@ -234,30 +234,14 @@ export default function ActionNode({ children, data, isConnectable }) {
       }
     }, [formState, assetInFormData, assetOutFormData]);
 
+function get_previous_node() {
+  const nodes = scenarios[activeScenarioId]?.diagramData?.nodes || [];
+  const currentNodeIndex = nodes.findIndex(node => node.id === nodeId);
+  const previousNode = currentNodeIndex > 0 ? nodes[currentNodeIndex - 1] : null;
+  const previousNodeFormData = previousNode ? previousNode.formData : null;
+  return previousNodeFormData;
+}
 
-    const setRemark2 = (value) => {
-      const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
-      console.log(`currentNodeFormData: `, currentNodeFormData);
-
-      const currentActionData = currentNodeFormData.actionData || {};
-      const currentSource = currentActionData.source || {};
-    
-      const updatedActionData = {
-        ...currentActionData,
-        source: {
-          ...currentSource,
-          target: value.target.value
-        }
-      };
-    
-      // Update the local state
-      setActionData(updatedActionData);
-      
-      // Save the updated action data to the global state and local storage
-      saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
-    
-      console.log("[setRemark] Updated action data : ", updatedActionData);
-    };
   
 // store the system remark message
   const setRemark = (value) => {
@@ -284,26 +268,6 @@ export default function ActionNode({ children, data, isConnectable }) {
 
   };
 
-  /*
-
-
-const setRemark = (value) => {
-  const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
-  console.log(`currentNodeFormData: `, currentNodeFormData);
-  console.log(`setting remark value `);
-  const newone = currentNodeFormData.actionData;
-  newone.source.target = value.target.value; // append the message as source.target value
-  console.log(`newone newActionData: `, newone);
-  console.log(`got input value: `, value.target.value);
-console.log(`wrote new`);
-if (newone) {
-  setActionData({ [nodeId]: newone });
-  console.log("[setRemark] Constructed action data : ", newone);
-}
-
-};
-
-*/
   const setDelegateConviction = (value) => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
     var inputen = value.target.value;
@@ -353,19 +317,18 @@ console.log('previousNodeFormData: ', previousNodeFormData);
 
   const setToDel = (value) => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
-    var newone = currentNodeFormData.actionData;
-    console.log(`settodel:`, newone);
     console.log(`currentNodeFormData: `, currentNodeFormData);
     const currentActionData = currentNodeFormData.actionData || {};
     const currentSource = currentActionData.delegate || {};
+    currentActionData.actionType = 'delegate';
     const updatedActionData = {
       ...currentActionData,
+      source: get_previous_node(),
       delegate: {
         ...currentSource,
         to_address: value.target.value
       }
     };
-  
     setActionData(updatedActionData);
     saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
   };
@@ -377,44 +340,59 @@ console.log('previousNodeFormData: ', previousNodeFormData);
     if (value === 'aye'){
       aye_or_nay = true;
     }
-    const newone = currentNodeFormData.actionData;
-    if (!newone.source.votedata){
-      newone.source.votedata = {};
-    }
-    newone.source.votedata.aye_or_nay = aye_or_nay; //value.target.value; // append the message as source.target value
 
-  if (newone) {
-    setActionData({ [nodeId]: newone });
-  }
+    var currentActionData = currentNodeFormData.actionData || {};
+    const currentSource = currentActionData.votedata || {};
+    currentActionData.actionType = 'vote';
+
+    var currentVoteData = currentSource.votedata || {};
+    currentVoteData.aye_or_nay = aye_or_nay;
+
+    currentVoteData.refnr = value; // value.target.value; // append the message as source.target value
+    const previousNodeFormData = get_previous_node();
+    
+    const updatedActionData = {
+      ...currentActionData,
+      source: previousNodeFormData,
+      votedata: {
+        ...currentSource,
+        aye_or_nay: aye_or_nay
+      }
+    };
+
+
+    setActionData(updatedActionData);
+    saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
 
   };
 
   const setDelLock = (value) => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+    const currentActionData = currentNodeFormData.actionData || {};
 
-    var newone = currentNodeFormData.actionData;
-    /*
-    if (!newone){
-      newone = {};
-    }
-    if (!newone.source){
-      newone.source = {};
-    }
-    if (!newone.source.delegate){
-      newone.source.delegate = {};
-    }
-      */
-    newone.source.delegate.conviction = value; // append the message as source.target value
+    const currentDelData = currentActionData.delegate || {};
+    currentActionData.actionType = 'delegate';
+    const updatedActionData = {
+      ...currentActionData,
+      source: get_previous_node(),
+      delegate: {
+        ...currentDelData,
+        conviction: value,
+      }
+    };
 
-  if (newone) {
-    setActionData({ [nodeId]: newone });
-    console.log(`setDelLock set`);
-  }
+  // Update the local state
+  setActionData(updatedActionData);
+  saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
+
+
 
   };
 
 
   const setLock = (value) => {
+  
+ 
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
     console.log(`currentNodeFormData: `, currentNodeFormData);
     console.log(`setLock called `);
@@ -422,62 +400,52 @@ console.log('previousNodeFormData: ', previousNodeFormData);
     if (!currentNodeFormData) return;
   
     const currentActionData = currentNodeFormData.actionData || {};
-    const currentSource = currentActionData.source || {};
-    var currentVoteData = currentSource.votedata || {};
-  
-    currentVoteData.lock = value; // value.target.value; // append the message as source.target value
-  
+
+    const currentVoteData = currentActionData.votedata || {};
+    currentActionData.actionType = 'vote';
+    const previousNodeFormData = get_previous_node(); 
     const updatedActionData = {
       ...currentActionData,
-      source: {
-        ...currentSource,
-        votedata: currentVoteData
+      source: previousNodeFormData,
+      votedata: {
+        ...currentVoteData,
+        lock: value,
       }
     };
-  
-    console.log(`updatedActionData: `, updatedActionData);
-    console.log(`got input value: `, value);
+
   
     // Update the local state
-    setActionData({ [nodeId]: updatedActionData });
-  
-    // Save the updated action data to the global state and local storage
+    setActionData(updatedActionData);
     saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
-  
-    console.log("[setLock] Constructed action data : ", updatedActionData);
+
   };
 
 
   const setRef = (value) => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
-    console.log(`currentNodeFormData: `, currentNodeFormData);
-    console.log(`setRef called `);
+
   
-    if (!currentNodeFormData) return;
-  
-    const currentActionData = currentNodeFormData.actionData || {};
-    const currentSource = currentActionData.source || {};
-    var currentVoteData = currentSource.votedata || {};
-  
+    var currentActionData = currentNodeFormData.actionData || {};
+
+    var currentVoteData = currentActionData.votedata || {};
+    currentActionData.actionType = 'vote';
+
     currentVoteData.refnr = value; // value.target.value; // append the message as source.target value
-  
+
+    const previousNodeFormData = get_previous_node(); 
     const updatedActionData = {
       ...currentActionData,
-      source: {
-        ...currentSource,
-        votedata: currentVoteData
+      source: previousNodeFormData,
+      votedata: {
+        ...currentVoteData,
+        lock: value,
       }
     };
-  
-    console.log(`updatedActionData: `, updatedActionData);
-    console.log(`got input value: `, value);
-  
+
     // Update the local state
-    setActionData({ [nodeId]: updatedActionData });
-  
-    // Save the updated action data to the global state and local storage
+    setActionData(updatedActionData);
     saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
-  
+
     console.log("[setRef] Constructed action data : ", updatedActionData);
   };
 
@@ -615,7 +583,7 @@ console.log('previousNodeFormData: ', previousNodeFormData);
 {formState && formState.action === 'vote' && (
 
 <div className="in-node-border rounded m-2 p-2 ">Vote
-<input  onChange={(newValue) => setRef(newValue.target.value)}  type="number" id="contact-name"  placeholder="Referendum Number" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
+<input  onChange={(newValue) => setRef(newValue.target.value)} min="1"  type="number" id="contact-name"  placeholder="Referendum Number" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
 <select
             onChange={(e) => setAye(e.target.value)}
             id="vote-aye"
