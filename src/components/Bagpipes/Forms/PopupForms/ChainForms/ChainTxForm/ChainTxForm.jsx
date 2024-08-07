@@ -5,6 +5,7 @@ import { getAssetBalanceForChain } from '../../../../../../Chains/Helpers/AssetH
 import BalanceTippy from './BalanceTippy';
 
 import { broadcastToChain } from '../../../../../../Chains/api/broadcastToChain';
+import { decodeCallData } from '../../../../../../Chains/api/decodeCallData';
 
 import toast  from 'react-hot-toast';
 import { ChainToastContent, ActionToastContent, CustomToastContext } from '../../../../../toasts/CustomToastContext'
@@ -16,16 +17,21 @@ import { getOrderedList } from '../../../../hooks/utils/scenarioExecutionUtils';
 import { CollapsibleField }  from '../../../fields';
 import { ChainQueryIcon } from '../../../../../Icons/icons';
 import { useTippy } from '../../../../../../contexts/tooltips/TippyContext';
+import { usePanelTippy } from '../../../../../../contexts/tooltips/TippyContext';
+import useTooltipClick from '../../../../../../contexts/tooltips/tooltipUtils/useTooltipClick';
 import { listChains} from '../../../../../../Chains/ChainsInfo';
 import { queryMetadata } from '../QueryMetadata';
-import { parseMetadataPallets, resolveTypeName, resolveFieldType, resolveFieldTypeShallow } from '../parseMetadata'
-import { parseLookupTypes } from '../ParseMetadataTypes';
+import { parseMetadataPallets, resolveFieldType, resolveTypeName } from '../parseMetadata'
+import { parseLookupTypes } from '../parseMetadata/ParseMetadataTypes';
 import { resolveKeyType } from '../resolveKeyType';
 import ChainRpcService from '../../../../../../services/ChainRpcService';
+import CustomInput from '../../../fields/CustomInput';
 import FormHeader from '../../../FormHeader';
 import FormFooter from '../../../FormFooter';
-import RecursiveFieldRenderer from '../../../fields/RecursiveFieldRenderer/RecursiveFieldRenderer';
+import RecursiveFieldRenderer from '../../../fields/RecursiveFieldRenderer/RecursiveFieldRendererNew';
 import DynamicFieldRenderer from './DynamicFieldRenderer';
+import { generatePath } from '../../../fields/RecursiveFieldRenderer/utils';
+
 import '../types';
 
 import Tippy from '@tippyjs/react';
@@ -37,7 +43,7 @@ import '../../Popup.scss';
 import '../../../../../../index.css';
 
 
-const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
+const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId, pills, setPills, onPillsChange }) => {
   const { scenarios, activeScenarioId, saveNodeFormData, clearSignedExtrinsic, markExtrinsicAsUsed, updateNodeResponseData } = useAppStore(state => ({ 
     scenarios: state.scenarios,
     activeScenarioId: state.activeScenarioId,
@@ -195,12 +201,14 @@ const handleMethodChange = (methodName) => {
 
 
         setSelectedMethod(newMethod);
-        setSelectedParams({});
+        // setSelectedParams({});
         setLocalResolvedFields(resolvedFields);
     }
     // setSelectedMethod(newMethod);
 
-    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedMethod: newMethod, params: {}});
+    // saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedMethod: newMethod, params: []});
+    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedMethod: newMethod});
+
   };
 
 
@@ -227,20 +235,10 @@ const handleMethodChange = (methodName) => {
 
 
 
-const handleMethodFieldChange = (path, newValue, fieldType) => {
-  console.log('handleMethodFieldChange about to change values', path, newValue, fieldType);
+const handleMethodFieldChange = (updatedParams) => {
+  console.log('saveNodeFormData handleMethodFieldChange about to change values', updatedParams);
 
-  if (!path || !path.length) {
-      console.error("path is not array.");
-      return;
-  }
-
-  // a unique key from the path for identifying the field in the state
-  const pathKey = generatePathKey(path);
-
-  let updatedParams = {...formData.params, [pathKey]: newValue};
-
-  console.log(`Updated params for path ${path}:`, updatedParams);
+  
   saveNodeFormData(activeScenarioId, nodeId, {...formData, params: updatedParams});
 };
 
@@ -311,7 +309,7 @@ const handleMethodFieldChange = (path, newValue, fieldType) => {
         hasToggle={true}
         fieldTypes="select"
         customContent={renderCustomContent()}
-        nodeId="address-dropdown"
+        nodeId={nodeId}
         info="Select an address that will sign the transaction."
         selectOptions={addressOptions}
         value={formData.selectedAddress || ''}
@@ -436,37 +434,52 @@ const handleMethodFieldChange = (path, newValue, fieldType) => {
           const resolvedField = localResolvedFields?.[index];
           console.log('Resolved Field and Fields:', resolvedField, resolvedFields);
 
-      return (
-        <>
-          <DynamicFieldRenderer
-            key={index}
-            fieldObject={fieldObject}
-            index={index}
-            localResolvedFields={localResolvedFields}
-            customContent={customContent}
-            nodeId={nodeId}
-            formData={formData}
-            handleMethodFieldChange={handleMethodFieldChange}
-          />
+          if (!resolvedField) {
+              console.warn("Mismatch or missing data in localResolvedFields");
+              return <div>Error or incomplete data.</div>;
+          }
 
-        {/* <CollapsibleField
-            key={index}
-            title={`${fieldObject.name} <${fieldObject.typeName || resolvedFields.typeName}>`}
-            info={fieldObject?.docs || ''}
-            customContent={customContent}
-            hasToggle={true}
-            nodeId={nodeId}
-            // onChange={(newFieldValue) => handleMethodFieldChange(fieldObject.name, newFieldValue)} 
-            placeholder={`Enter ${fieldObject.name}`}
-        >
-            <RecursiveFieldRenderer
-                fieldName={fieldObject.name}
-                fieldObject={resolvedField}
-                values={formData.params?.[fieldObject.name] || {}}
-                onChange={(newFieldValue) => handleMethodFieldChange(fieldObject.name, newFieldValue, resolvedField.type)}
-                nodeId={nodeId}
-            />
-        </CollapsibleField> */}
+          const chain = `${formData.selectedChain}`;
+          const pallet = `${formData.selectedPallet}`;
+          const method = `${formData.selectedMethod.name}`;
+          const fieldName = `${fieldObject.name}`;
+          console.log('RecursiveFieldRenderer - chain pallet method fieldName:', chain, pallet, method, fieldName);
+          const chainPalletMethod = `{${chain}}_{${pallet}}_{${method}}`;
+
+          const initialPath = generatePath(chainPalletMethod, fieldName, 'initialBase');
+          console.log(" generatePath initialPath", { initialPath, fieldName, resolvedField } );
+
+          console.log('formData.params', formData.params, initialPath, resolvedField);
+            // if the initial path doesnt exist in formData.params then save the inital path in params
+          if (!formData.params?.[chainPalletMethod]) {
+            console.log('formData.params[chainPalletMethod] does not exist creating new param section:', formData.params, chainPalletMethod);
+            // we need to save the chainPalletMethod as the key of an object with fieldName added as the key of a nested object. 
+            saveNodeFormData(activeScenarioId, nodeId, {...formData, params: {...formData.params, [chainPalletMethod]: {}}});
+            // the above function will create a new object with the chainPalletMethod as the key and an empty object as the value.
+          }
+          return (
+            <>
+              <CollapsibleField
+                  title={`${fieldObject.name} <${fieldObject.typeName || resolvedField.typeName}>`}
+                  info={fieldObject?.docs || ''}
+                  customContent={customContent}
+                  hasToggle={true}
+                  nodeId={nodeId}
+                  placeholder={`Enter ${fieldObject.name}`}
+              >
+               <RecursiveFieldRenderer
+                      index={index}
+                      localResolvedFields={localResolvedFields}
+                      fieldName={resolvedField.name}
+                      fieldObject={resolvedField}
+                      formValues={formData?.params?.[resolvedField?.name] || []}
+                      nodeId={nodeId}
+                      formData={formData}
+                      fieldPath={initialPath}
+                      onChange={(updatedParams) => handleMethodFieldChange(updatedParams)}
+                  />
+              </CollapsibleField>
+        
         </>
       );
     });
@@ -475,26 +488,26 @@ const handleMethodFieldChange = (path, newValue, fieldType) => {
   
 
 
-const renderSignAndSendTx = () => {
-  if (!formData.selectedMethod) {
-      return null;
-  }
-    return (
-      <CollapsibleField
-      title={`Sign and Send Tx`}
-      info={'Sign and send a transaction just within this node. If you use pills then it will use the data from the previous scenario workflow execution that was made.'}
-      fieldTypes="buttonTextArea"
-      buttonName="Submit Tx"
-      nodeId={nodeId}
-      value={result}
-      isTextAreaValue={isTextAreaValue}
-      onClick={handleSignMethodClick}
-      // onPillsChange={(updatedPills) => handlePillsChange(updatedPills, field.name)}
-      placeholder={`Enter`}
-      disabled={!formData.selectedMethod}
-  />
-    );
-};
+  const renderSignAndSendTx = () => {
+    if (!formData.selectedMethod) {
+        return null;
+    }
+      return (
+        <CollapsibleField
+            title={`Sign and Send Tx`}
+            info={'Sign and send a transaction just within this node. If you use pills then it will use the data from the previous scenario workflow execution that was made.'}
+            fieldTypes="buttonTextArea"
+            buttonName="Submit Tx"
+            nodeId={nodeId}
+            value={result}
+            isTextAreaValue={isTextAreaValue}
+            onClick={handleSignMethodClick}
+            // onPillsChange={(updatedPills) => handlePillsChange(updatedPills, field.name)}
+            placeholder={`Enter`}
+            disabled={!formData.selectedMethod}
+        />
+      );
+  };
   
   
 
@@ -528,7 +541,7 @@ const renderSignAndSendTx = () => {
       const upstreamNodeIds = getUpstreamNodeIds(orderedList, nodeId);
       const parsedFormData = processAndSanitizeFormData(formData, lastExecution, upstreamNodeIds);
 
-      const presignPack = `Draft Tx ready to sign: \naddress: ${parsedFormData.selectedAddress}, \nchain: ${parsedFormData.selectedChain}, \npallet: ${parsedFormData.selectedPallet}, \nmethod: ${parsedFormData.selectedMethod.name}, \nparams: ${Object.values(parsedFormData.params)}\n`;
+      const presignPack = `Draft Tx ready to sign: \naddress: ${parsedFormData.selectedAddress}, \nchain: ${parsedFormData.selectedChain}, \npallet: ${parsedFormData.selectedPallet}, \nmethod: ${parsedFormData.selectedMethod.name}, \nparams: ${parsedFormData.params}\n`;
       setResult(presignPack);
 
       console.log('Parsed Form Data:', parsedFormData);
@@ -540,7 +553,7 @@ const renderSignAndSendTx = () => {
             chainKey: parsedFormData.selectedChain,
             palletName: parsedFormData.selectedPallet,
             methodName: parsedFormData.selectedMethod.name,
-            params: Object.values(parsedFormData.params || {}),
+            params: parsedFormData.params,
             signer: walletContext?.wallet?.signer,
             signerAddress: parsedFormData.selectedAddress
         });
@@ -550,7 +563,7 @@ const renderSignAndSendTx = () => {
             signedExtrinsic: signedExtrinsic,
             isSigned: true
         });
-        const resultPack = `Chain Tx signed for: \naddress: ${parsedFormData.selectedAddress}, \nchain: ${parsedFormData.selectedChain}, \npallet: ${parsedFormData.selectedPallet}, \nmethod: ${parsedFormData.selectedMethod.name}, \nparams: ${Object.values(parsedFormData.params)}\n`;
+        const resultPack = `Chain Tx signed for: \naddress: ${parsedFormData.selectedAddress}, \nchain: ${parsedFormData.selectedChain}, \npallet: ${parsedFormData.selectedPallet}, \nmethod: ${parsedFormData.selectedMethod.name}, \nparams: ${parsedFormData.params}\n`;
         const nextSteps = `Transaction signed successfully and is now being submitted to the chain...\n`;
         const submittingTransaction = `Submitting transaction...\n`;
         setResult(resultPack);
@@ -674,6 +687,43 @@ const renderSignAndSendTx = () => {
   };
 
 
+   const [encodedData, setEncodedData] = useState('0x');
+  const [decodedData, setDecodedData] = useState('');
+  const [error, setError] = useState('');
+
+  const handleDecodeCallData = async () => {
+    console.log('handleDecodeCallData selectedChain:', selectedChain, 'encodedData:', encodedData);
+    if (!encodedData) {
+      setError('Please enter encoded data to decode.');
+      return;
+    }
+
+    try {
+      const result = await decodeCallData(selectedChain, encodedData);
+      console.log('handleDecodeCallData Decoded Data:', result);
+      setDecodedData(result);
+      setError('');
+    } catch (err) {
+      setError(`Failed to decode data: ${err.message}`);
+      setDecodedData('');
+    }
+  };
+
+
+const encodedCustomContent = () => (
+  <div>
+  <button className='button' onClick={handleDecodeCallData}>Decode</button>
+  <div>
+    {error && <p style={{ color: 'red' }}>{error}</p>}
+    {decodedData && (
+      <div>
+        <h3>Decoded Data:</h3>
+        <pre>{JSON.stringify(decodedData, null, 2)}</pre>
+      </div>
+    )}
+  </div>
+</div>
+)
 return (
   <div onScroll={handleScroll} className='chain-tx-container'>
       <FormHeader onClose={handleCancel} title='Chain Tx Form' logo={<ChainQueryIcon className='h-4 w-4' fillColor='black' />} />  
@@ -689,6 +739,37 @@ return (
 
 
     </div>
+
+    
+      {/* <CustomInput
+        type="text"
+        value={encodedData}
+        onChange={(e) => setEncodedData(e.target.value)}
+        placeholder="Enter encoded call data"
+        key={'encodedData'}
+        fieldKey={'encodedData'}
+        className='custom-input'
+        pills={pills}
+        setPills={setPills}
+        nodeId={nodeId}
+        onClick={handleInputClick} 
+        onPillsChange={onPillsChange}
+
+      /> */}
+
+<CollapsibleField 
+        key="encodedData"
+        title="Decode Call Data"
+        hasToggle={true}
+        fieldTypes="input"
+        nodeId={nodeId}
+        info="Add scale encoded call data to decode into the input field so that it can be decoded into pallet, method and field arguments."
+        value={encodedData}
+        onChange={(newValue) => setEncodedData(newValue)}
+        customContent={encodedCustomContent()}
+      >
+     
+    </CollapsibleField>
 
 
       <FormFooter onClose={handleCancel} onSave={handleSave} showToggle={true} onToggleChange={handleAdvancedSettingsToggle} />

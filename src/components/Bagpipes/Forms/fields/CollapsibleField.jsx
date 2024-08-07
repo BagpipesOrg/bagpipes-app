@@ -9,7 +9,7 @@ import PanelForm from '../PopupForms/Panel/PanelForm';
 import { v4 as uuidv4 } from 'uuid';
 import { useDrop, useDrag } from 'react-dnd';
 import CustomInput from './CustomInput';
-import { SequenceField, CompositeField, VariantField } from './SubstrateMetadataFields';
+import { SequenceField, CompositeField } from './SubstrateMetadataFields';
 import { CopyBlock, CodeBlock, dracula } from 'react-code-blocks';
 import FieldRenderer from '../PopupForms/ChainForms/FieldRenderer';
 import 'antd/dist/antd.css';
@@ -271,31 +271,31 @@ const renderContent = (field, depth = 0) => {
         );
         break;
 
-        case 'variant':
-          console.log('Rendering variant field in collapsible field', fieldTypeObject);
+        // case 'variant':
+        //   console.log('Rendering variant field in collapsible field', fieldTypeObject);
           
-          content = (
-            <div>
-            <VariantField
-              fields={fieldTypeObject.fields}
-              // values={value || {}}
-              onChange={onChange}              
-              typesLookup={typesLookup}
-              nodeId={nodeId}
-              setPills={setPills}
-              onPillsChange={onPillsChange}
-              onClick={onClick} 
-              value={value}
-              variants={fieldTypeObject.variants}
-              // onChange={(selectedVariant) => onChange({ ...field, value: selectedVariant })}
+        //   content = (
+        //     <div>
+        //     <VariantField
+        //       fields={fieldTypeObject.fields}
+        //       // values={value || {}}
+        //       onChange={onChange}              
+        //       typesLookup={typesLookup}
+        //       nodeId={nodeId}
+        //       setPills={setPills}
+        //       onPillsChange={onPillsChange}
+        //       onClick={onClick} 
+        //       value={value}
+        //       variants={fieldTypeObject.variants}
+        //       // onChange={(selectedVariant) => onChange({ ...field, value: selectedVariant })}
   
   
 
-            />
+        //     />
 
-            </div>
-          );
-          break;
+        //     </div>
+        //   );
+    
 
           case 'sequence':
             content = (
@@ -314,6 +314,7 @@ const renderContent = (field, depth = 0) => {
 
 
         case 'input':
+          console.log(' decodeCallData Rendering input field');
             content = (
               <CustomInput 
                 value={value}

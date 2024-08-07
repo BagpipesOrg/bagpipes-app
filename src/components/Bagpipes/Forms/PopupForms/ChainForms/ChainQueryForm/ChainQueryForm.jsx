@@ -10,9 +10,7 @@ import { getOrderedList } from '../../../../hooks/utils/scenarioExecutionUtils';
 
 
 import { queryMetadata } from '../QueryMetadata';
-import { parseMetadataPallets } from '../parseMetadata'
-import { parseLookupTypes } from '../ParseMetadataTypes';
-import { resolveKeyType } from '../resolveKeyType';
+import { parseMetadataPallets, parseLookupTypes, resolveTypeName } from '../parseMetadata'
 import ChainRpcService from '../../../../../../services/ChainRpcService';
 import ExtrinsicCountTester from './ExtrinsicCountTester'; // Import the ExtrinsicCountTester component
 
@@ -268,9 +266,9 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     let keyTypeInfo = { displayName: 'Unknown' };
     if (storageItem.type?.Map) {
         const keyField = storageItem.type.Map.key;
-        keyTypeInfo = resolveKeyType(keyField, lookupTypes);
+        keyTypeInfo = resolveTypeName(keyField, lookupTypes);
     } else if (storageItem.type?.Plain) {
-        keyTypeInfo = resolveKeyType(storageItem.type.Plain, lookupTypes);
+        keyTypeInfo = resolveTypeName(storageItem.type.Plain, lookupTypes);
     }
 
 

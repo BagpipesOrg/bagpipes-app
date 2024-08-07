@@ -67,7 +67,6 @@ export function parseTypeDefinition(type: Type): ParsedTypeDefinition {
       elementType: type.def.Sequence.type
     };
   } else if (type.def.Variant) {
-    console.log("Variant type found", type.def.Variant);
     def.Variant = {
       type: type.def.Variant.type,
       name: type.def.Variant.name,
@@ -87,7 +86,6 @@ export function parseTypeDefinition(type: Type): ParsedTypeDefinition {
       }))
     };
   } else if (type.def.Tuple) {
-    console.log("Tuple type found", type.def.Tuple);
     def.Tuple = type.def.Tuple.map(typeId => typeId.toString());
 
   } else if (type.def.Compact) {
