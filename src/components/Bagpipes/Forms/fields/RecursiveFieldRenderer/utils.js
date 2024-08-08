@@ -55,7 +55,7 @@
   
     // Utility to recursively initialize default values based on type
     export  const initializeDefaultValues = (field, path, fromType = 'default') => {
-        console.log('RecursiveFieldRenderer - initialize initializeDefaultValues, path:', field, path);
+        console.log('RecursiveFieldRenderer - initialize initializeDefaultValues, path:', field, path, fromType);
         let defaultValue;
         switch (field.type) {
             case 'variant':
@@ -106,20 +106,30 @@
                     });
                 }
                 break;
+
             case 'sequence':
-                console.log('RecursiveFieldRenderer - initialize sequence initializeDefaultValues sequence:', path);
                 // sequence is an array of objects
                 defaultValue = [];
+                console.log('RecursiveFieldRenderer - initialize sequence initializeDefaultValues sequence:', path, defaultValue, field, fromType);
 
+            break;
             default:
+                // how can we enforce the switch statement to catch all cases?
+
+                if (field.type === null || field.type === undefined || field.type === ""    ) {
                 defaultValue = null; // Default fallback
+                console.log('RecursiveFieldRenderer - initialize default initializeDefaultValues default:', path, defaultValue, field, fromType);
+                } else {
+                    console.log('RecursiveFieldRenderer - initialize default initializeDefaultValues should retry default:', field.type, path, field, 'retrying');
+                    // initializeDefaultValues(field, path, 'retrying');
+                }
         }
         return defaultValue;
     };
 
 
-    export const generatePath = (base, segment, type) => {
-        console.log(`RecursiveFieldRenderer -  ${type} 0. generatePath ${type} base, segment, type:`, base, segment, type);
+    export const generatePath = (base, segment, type, from) => {
+        console.log(`RecursiveFieldRenderer -  ${type} 0. generatePath ${type} base, segment, type:`, base, segment, type, from);
     
         // If the segment is undefined or empty, decide how to handle based on the type
         if (segment === undefined || segment === null || segment === "") {
@@ -147,7 +157,9 @@
             case 'variant':
             case 'variantField':
                 // Standard handling using dot notation if base is present
-                return base ? `${base}.${segment}` : segment;
+                const result = base ? `${base}.${segment}` : segment;
+                console.log(`RecursiveFieldRenderer -  ${type} 0a. generatePath composite result:`, result);
+                return result;
             case 'input':
                 // Input fields do not need modification of path; return base
                 return base;
@@ -165,5 +177,45 @@
                 // Fallback for unexpected types
                 return `${base}.${segment}`;
         }
+    };
+
+
+
+    export const handleChange = (path, newValue, replace = false, type, formData) => {
+        console.log(`RecursiveFieldRenderer - ${type} 2d. handleChange path, newValue, replace, type:`,{ path, newValue, replace, type });
+
+       let updatedParams = { ...formData.params }; // Clone the existing params
+        console.log(`RecursiveFieldRenderer - ${type} 2e. handleChange updatedParams before handleChange:`, updatedParams);
+       if (replace) {
+        // we need to make sure that we replace every single value in the object with the new value. but we need to use the path to know where to replace the value.
+        _.set(updatedParams, path, newValue);
+
+
+        // saveNodeFormData(activeScenarioId, nodeId, { ...formData, params: updatedParams });
+        //    _.set(updatedParams, path, newValue);
+      
+       } else {
+           console.log(`RecursiveFieldRenderer - ${type}2f. handleChange updatedParams before handleChange:`, {  updatedParams, path });
+            let currentValue = _.get(updatedParams, path, {});
+           console.log(`RecursiveFieldRenderer - ${type}   2g. handleChange currentValue:`, currentValue);
+            if (typeof currentValue !== 'object' && typeof newValue === 'object') {
+             //   console.log(RecursiveFieldRenderer - ${type}  2h. handleChange currentValue:, currentValue);
+            currentValue = {};
+            }
+
+            else if (type === 'composite') {
+                console.log(`RecursiveFieldRenderer - ${type} 2i. handleChange we're in composite area... currentValue, newValue:`, { currentValue, newValue, path  });
+                _.set(updatedParams, path, { ...currentValue, ...newValue });
+
+            } else if (type === 'variant') {
+                // For variants, you might want to replace the entire value or handle it differently
+                _.set(updatedParams, path, newValue);
+            } else if (type === 'input') {
+                // For inputs, you might want to handle the value differently
+                _.set(updatedParams, path, newValue);
+            }
+            // _.set(updatedParams, path, { ...currentValue, ...newValue });
+        //  saveNodeFormData(activeScenarioId, nodeId, { ...formData, params: updatedParams });
+       }
     };
     

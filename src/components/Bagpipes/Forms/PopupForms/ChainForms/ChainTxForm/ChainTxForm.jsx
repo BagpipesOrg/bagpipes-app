@@ -69,6 +69,8 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId, pills, setPill
   const [selectedPallet, setSelectedPallet] = useState(formData.selectedPallet || null);
   const [selectedMethod, setSelectedMethod] = useState(formData.selectedMethod || null);
   const [selectedParams, setSelectedParams] = useState(formData.selectedParams || null);
+  const [localResolvedFields, setLocalResolvedFields] = useState([]);
+
 
   const [result, setResult] = useState('');
 
@@ -175,25 +177,33 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId, pills, setPill
     }
     saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedPalletData: newPallet, selectedPallet: palletName, selectedMethod: null, params: null});
   };
-  const [localResolvedFields, setLocalResolvedFields] = useState([]);
 
   useEffect(() => {
     if (formData.selectedMethod) {
         const fields = formData.selectedMethod.fields.map(field => 
             resolveFieldType(field.type, lookupTypes));
         setLocalResolvedFields(fields);
+        console.log('useEffect formData.selectedMethod:', formData.selectedMethod, 'fields:', fields);
     }
 }, [formData.selectedMethod, lookupTypes]);
+
+
+useEffect(() => {
+  if (localResolvedFields) {
+      console.log('useEffect resolvedFields:', localResolvedFields);
+  }
+}, [localResolvedFields]);
   
 
 const handleMethodChange = (methodName) => {
     const newMethod = formData.selectedPalletData?.calls.find(calls => calls.name === methodName);
+    let resolvedFields;
     console.log('handleMethodChange New Method:', newMethod);
 
 
 
     if (newMethod && newMethod !== selectedMethod) {
-        const resolvedFields = formData?.selectedMethod?.fields?.map(field =>
+        resolvedFields = formData?.selectedMethod?.fields?.map(field =>
             resolveFieldType(field.type, lookupTypes)
         );
 
@@ -203,6 +213,7 @@ const handleMethodChange = (methodName) => {
         setSelectedMethod(newMethod);
         // setSelectedParams({});
         setLocalResolvedFields(resolvedFields);
+
     }
     // setSelectedMethod(newMethod);
 
@@ -427,32 +438,33 @@ const handleMethodFieldChange = (updatedParams) => {
         return <div>Error or incomplete data.</div>;
     }
 
-    return formData.selectedMethod.fields.map((fieldObject, index) => {
-      console.log('index fieldObject:', index, fieldObject);  
+    return formData.selectedMethod.fields.map((field, index) => {
+      console.log('renderMethodFields index field:', index, field);  
    
           const resolvedFields = localResolvedFields;
           const resolvedField = localResolvedFields?.[index];
-          console.log('Resolved Field and Fields:', resolvedField, resolvedFields);
+          console.log('renderMethodFields Resolved Field and Fields:', { resolvedField, resolvedFields });
 
           if (!resolvedField) {
               console.warn("Mismatch or missing data in localResolvedFields");
               return <div>Error or incomplete data.</div>;
           }
 
-          const chain = `${formData.selectedChain}`;
-          const pallet = `${formData.selectedPallet}`;
-          const method = `${formData.selectedMethod.name}`;
-          const fieldName = `${fieldObject.name}`;
-          console.log('RecursiveFieldRenderer - chain pallet method fieldName:', chain, pallet, method, fieldName);
+          const chain     =    `${formData.selectedChain}`;
+          const pallet    =    `${formData.selectedPallet}`;
+          const method    =    `${formData.selectedMethod.name}`;
+          const fieldName =    `${field.name}`;
+
+          console.log('renderMethodFields RecursiveFieldRenderer - chain pallet method fieldName:', chain, pallet, method, fieldName);
           const chainPalletMethod = `{${chain}}_{${pallet}}_{${method}}`;
 
           const initialPath = generatePath(chainPalletMethod, fieldName, 'initialBase');
-          console.log(" generatePath initialPath", { initialPath, fieldName, resolvedField } );
+          console.log("renderMethodFields  generatePath initialPath", { initialPath, fieldName, resolvedField } );
 
-          console.log('formData.params', formData.params, initialPath, resolvedField);
+          console.log('renderMethodFields formData.params', formData.params, initialPath, resolvedField);
             // if the initial path doesnt exist in formData.params then save the inital path in params
           if (!formData.params?.[chainPalletMethod]) {
-            console.log('formData.params[chainPalletMethod] does not exist creating new param section:', formData.params, chainPalletMethod);
+            console.log('renderMethodFields formData.params[chainPalletMethod] does not exist creating new param section:', formData.params, chainPalletMethod);
             // we need to save the chainPalletMethod as the key of an object with fieldName added as the key of a nested object. 
             saveNodeFormData(activeScenarioId, nodeId, {...formData, params: {...formData.params, [chainPalletMethod]: {}}});
             // the above function will create a new object with the chainPalletMethod as the key and an empty object as the value.
@@ -460,12 +472,12 @@ const handleMethodFieldChange = (updatedParams) => {
           return (
             <>
               <CollapsibleField
-                  title={`${fieldObject.name} <${fieldObject.typeName || resolvedField.typeName}>`}
-                  info={fieldObject?.docs || ''}
+                  title={`${field.name} <${field.typeName || resolvedField.typeName}>`}
+                  info={field?.docs || ''}
                   customContent={customContent}
                   hasToggle={true}
                   nodeId={nodeId}
-                  placeholder={`Enter ${fieldObject.name}`}
+                  placeholder={`Enter ${field.name}`}
               >
                <RecursiveFieldRenderer
                       index={index}
@@ -477,6 +489,7 @@ const handleMethodFieldChange = (updatedParams) => {
                       formData={formData}
                       fieldPath={initialPath}
                       onChange={(updatedParams) => handleMethodFieldChange(updatedParams)}
+                      fromType={'default'}
                   />
               </CollapsibleField>
         
