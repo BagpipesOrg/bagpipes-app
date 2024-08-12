@@ -16,7 +16,8 @@ export const updateVariantFields = (selectedVariant, fieldPath, formData) => {
     console.log('RecursiveFieldRenderer - variant 2b. selectedVariant:', selectedVariant);
 
     updatedParams = handleChange(fieldPath, defaultName, true, 'variant', formData);
-  console.log('RecursiveFieldRenderer - variant 2b. updatedParams:', updatedParams);
+    
+    console.log('RecursiveFieldRenderer - variant 2b. updatedParams:', updatedParams);
 
     // The below is for the fields of the variant that has been selected.
 

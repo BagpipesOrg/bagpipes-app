@@ -180,3 +180,38 @@
     };
 
 
+
+
+  export   const determineInitialIndex = (existingFieldData, variants) => {
+        if (!existingFieldData) {
+            const r = variants[0].index;
+            console.log('RecursiveFieldRenderer - variant 2a. determineInitialIndex r:', r);
+            return r; // default or fallback value
+
+        }
+    
+        if (typeof existingFieldData === 'string') {
+            console.log('RecursiveFieldRenderer - variant 2a. determineInitialIndex existingFieldData:', existingFieldData);
+            // Assuming existingFieldData is the name of the variant
+            const r = variants.findIndex(variant => variant.name === existingFieldData);
+            const s = variants[r]?.index
+
+            console.log('RecursiveFieldRenderer - variant 2d. determineInitialIndex r string:',s, r, existingFieldData);
+            return s;
+        } else if (typeof existingFieldData === 'object') {
+            // If it's an object, we assume it might have a key that corresponds to a variant name
+     
+            const firstKeyName = Object.keys(existingFieldData)[0]; // Get the first key
+
+            console.log('RecursiveFieldRenderer - variant 2c. determineInitialIndex firstKeyName:', firstKeyName, existingFieldData, variants );
+            // i think we need to convert firstKetName to an integer
+            const r = variants.findIndex(variant => variant.name === firstKeyName);
+            const s = variants[r]?.index
+            
+            console.log('RecursiveFieldRenderer - variant 2d. determineInitialIndex r:', s, r, firstKeyName, existingFieldData);
+        
+            return s;
+        }
+    
+        return ''; // fallback if data type is unexpected
+    };
