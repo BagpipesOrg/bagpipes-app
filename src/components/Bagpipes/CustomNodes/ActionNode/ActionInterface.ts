@@ -49,6 +49,12 @@ export interface DelegateAction {
   source: ActionData;
   target: ActionData;
 }
+export interface InkAction {
+  actionType: 'ink';
+  source: ActionData;
+  target: ActionData;
+}
+
 
 export interface RemarkAction {
   actionType: 'remark';
@@ -74,4 +80,6 @@ export interface TransferAction {
   target: ActionData;
 }
 
-export type ActionType = SwapAction | DelegateAction | StakeAction | VoteAction | xTransferAction | RemarkAction | TransferAction;
+
+export type ActionType = SwapAction | InkAction | DelegateAction | StakeAction | VoteAction | xTransferAction | RemarkAction | TransferAction;
+

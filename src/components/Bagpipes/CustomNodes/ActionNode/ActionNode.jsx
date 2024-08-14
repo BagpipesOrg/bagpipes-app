@@ -8,6 +8,7 @@ import xTransferSVG from '/xTransfer.svg';
 import RemarkSVG from '/remark.svg';
 import VoteSVG from '/vote.svg';
 import DelegateSVG from '/delegate.svg';
+import InkSVG from '/ink.svg';
 import StakeSVG from '/stake.svg';
 
 // $DED animation
@@ -88,6 +89,8 @@ export default function ActionNode({ children, data, isConnectable }) {
     if (formState.action === "Remark") return RemarkSVG;
     if (formState.action === "stake") return StakeSVG;
     if (formState.action === "delegate") return DelegateSVG;
+    if (formState.action === "ink") return DelegateSVG;
+    
     if (formState.action === "vote") return VoteSVG;
 
     return null;
@@ -536,6 +539,7 @@ console.log('previousNodeFormData: ', previousNodeFormData);
           RemarkSVG={RemarkSVG}
           VoteSVG={VoteSVG}
           DelegateSVG={DelegateSVG}
+          InkSVG={InkSVG}
           StakeSVG={StakeSVG}
           dropdownVisible={dropdownVisible}
           ref={dropdownRef}
@@ -579,6 +583,27 @@ console.log('previousNodeFormData: ', previousNodeFormData);
             <input  onChange={(newValue) => setRemark(newValue)}  type="text" id="contact-name"  placeholder="Message" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
             </div>
       )}
+
+{formState && formState.action === 'ink' && (
+
+<div className="in-node-border rounded m-2 p-2 ">Contract address:
+<input  onChange={(newValue) => setRemark(newValue)}  type="text" id="contact-name"  placeholder="Smart contract address" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
+<label htmlFor="contract-json" className="mt-2">Upload Contract JSON:</label>
+  <input
+    onChange={(e) => handleFileUpload(e)}
+    type="file"
+    id="contract-json"
+    accept=".json"
+    placeholder="contract.json"
+    className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+  />
+</div>
+
+
+
+)}
+
+
 
 {formState && formState.action === 'vote' && (
 

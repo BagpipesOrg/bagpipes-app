@@ -181,6 +181,19 @@ export function listChains() {
         symbol: 'KSM'
       };
       chainList[2] = Kusama;
+      const RococoContracts: ChainInfo = {
+        name: 'rococo_contracts',
+        display: 'Contracts (Rococo)',
+        paraid: 0,
+        prefix: 0,
+        token_decimals: 12,
+        logo: '/chains/rococo.jpeg',
+        parachain: false,
+        relay: true,
+        symbol: 'ROC'
+
+      };
+      chainList[101] = RococoContracts;
 
       const Rococo: ChainInfo = {
         name: 'rococo',

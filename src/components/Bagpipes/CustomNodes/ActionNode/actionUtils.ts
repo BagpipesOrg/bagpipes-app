@@ -45,6 +45,13 @@ export function convertFormStateToActionType(formState: any, assetIn: any, asset
         source: actionDataIn,
         target: actionDataOut
       };
+      case 'ink':
+        return {
+          actionType: 'ink',
+          source: actionDataIn,
+          target: actionDataOut
+        };
+
     case 'delegate': 
       return {
         actionType: 'delegate',
