@@ -194,7 +194,7 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     
   const renderPalletSelection = () => {
     // console.log('renderPalletSelection pallets:', pallets);
-    if (!selectedChain || pallets.length === 0) return null;
+    if (!selectedChain || pallets?.length === 0) return null;
   
     return (
       <CollapsibleField
@@ -285,7 +285,7 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
                 nodeId={nodeId}
                 value={formData.methodInput || ''}
                 onChange={(value) => handleMethodFieldChange( value)}
-                placeholder={`${keyTypeInfo.path[keyTypeInfo.path.length - 1]}`}
+                placeholder={`${keyTypeInfo?.path?.[keyTypeInfo?.path?.length - 1]}`}
                 // onPillsChange={(updatedPills) => handlePillsChange(updatedPills, 'methodInput')}
 
             />
@@ -405,7 +405,7 @@ return (
           {renderMethodSelection()}
           {renderMethodFields()}
           {renderRunMethod()}
-            <ExtrinsicCountTester chainKey='polkadot' />
+            {/* <ExtrinsicCountTester chainKey='polkadot' /> */}
           {renderBlockHashInput()}
 
     </div>
