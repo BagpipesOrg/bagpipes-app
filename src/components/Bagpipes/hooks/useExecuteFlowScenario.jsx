@@ -330,7 +330,7 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                     const parsedFormData = processAndSanitizeFormData(currentNode.formData, activeExecutionData, upstreamNodeIds);
                     console.log('chainTx Parsed Form Data:', parsedFormData);
 
-                    const callData = constructCallData(parsedFormData.selectedPallet, parsedFormData, parsedFormData.selectedPallet, parsedFormData.selectedMethod.name);
+                    const callData = constructCallData(parsedFormData);
                     console.log('constructCallData params call data', { callData } );
               
                     const formattedCallData = formatCallData(callData);

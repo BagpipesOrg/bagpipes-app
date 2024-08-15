@@ -55,11 +55,19 @@ export function formatCallData(callDataArray) {
 
 
 
+// export function toCamelCase(str) {
+//     return str
+//         .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => index === 0 ? word.toLowerCase() : word.toUpperCase())
+//         .replace(/[\s_]+/g, '');
+// }
+
 export function toCamelCase(str) {
     return str
         .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => index === 0 ? word.toLowerCase() : word.toUpperCase())
         .replace(/[\s_]+/g, '');
 }
+
+
 
 // Example usage:
 // const callData = constructCallData(formData, "AutomationTime", "schedule_xcmp_task");
