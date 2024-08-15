@@ -121,6 +121,10 @@
                             defaultValue[subField.name] = initializeDefaultValues(subField.resolvedType, `${path}.${subField.name}`, 'variant');
                             // add something here
                             console.log(`initializeDefaultValues - initialize ${field.type} 03b initializeDefaultValues variant defaultValue:`, subField, defaultValue, `${path}.${subField.name}`, fromType);
+                        } else if (subField.resolvedType.type === 'input') {
+                            defaultValue[subField.name] =  initializeDefaultValues(subField.resolvedType, `${path}.${subField.name}`, 'input');
+                        } else {
+                            defaultValue[subField.name] =  initializeDefaultValues(subField.resolvedType, `${path}.${subField.name}`, subField.resolvedType.type);
                         }
                     });
                 }

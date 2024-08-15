@@ -78,6 +78,8 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId, pills, setPill
   const { hideTippy } = useTippy();
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const [isTextAreaValue, setIsTextAreaValue] = useState(false);
+  const [isDecodedTextAreaValue, setDecodedTextAreaValue] = useState(false);
+
 
 
 
@@ -166,6 +168,7 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId, pills, setPill
     }
     saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedChain: chainName, selectedMethod: null, selectedPallet: null, params: null});
   };
+
 
     
   const handlePalletChange = (palletName) => {
@@ -532,6 +535,30 @@ const handleMethodFieldChange = (updatedParams) => {
       );
   };
   
+
+  const renderDecodeCallData = () => {
+    if (!formData.selectedMethod) {
+        return null;
+    }
+      return (
+        <CollapsibleField 
+        key="encodedData"
+        title="Decode Call Data"
+        hasToggle={true}
+        fieldTypes="input"
+        nodeId={nodeId}
+        info="Add scale encoded call data to decode into the input field so that it can be decoded into pallet, method and field arguments."
+        value={encodedData}
+        isTextAreaValue={isTextAreaValue}
+        onChange={(newValue) => setEncodedData(newValue)}
+        customContent={encodedCustomContent()}
+      >
+
+     
+    </CollapsibleField>
+      );
+  };
+  
   
 
 
@@ -564,13 +591,17 @@ const handleMethodFieldChange = (updatedParams) => {
       const upstreamNodeIds = getUpstreamNodeIds(orderedList, nodeId);
       const parsedFormData = processAndSanitizeFormData(formData, lastExecution, upstreamNodeIds);
 
-      const callData = constructCallData(pallets, formData, parsedFormData.selectedPallet, parsedFormData.selectedMethod.name);
+      const callData = constructCallData(parsedFormData);
       console.log('constructCallData params call data', { callData } );
 
       const formattedCallData = formatCallData(callData);
-      console.log('constructCallData params call data', { callData, formattedCallData } );
+      console.log('constructCallData params call data formattedParams', { callData, formattedCallData } );
 
-      const presignPack = `Draft Tx ready to sign: \naddress: ${parsedFormData.selectedAddress}, \nchain: ${parsedFormData.selectedChain}, \npallet: ${parsedFormData.selectedPallet}, \nmethod: ${parsedFormData.selectedMethod.name}, \nparams: ${parsedFormData.params}\n`;
+      const formatArguments = (args) => {
+        return args.map(arg => JSON.stringify(arg, null, 2)).join(',\n');
+      }
+
+      const presignPack = `Draft Tx ready to sign: \naddress: ${parsedFormData.selectedAddress}, \nchain: ${parsedFormData.selectedChain}, \npallet: ${formattedCallData.section}, \nmethod: ${formattedCallData.method}, \n params: ${formatArguments(formattedCallData.arguments)}\n`;
       setResult(presignPack);
 
       console.log('Parsed Form Data:', parsedFormData);
@@ -716,7 +747,7 @@ const handleMethodFieldChange = (updatedParams) => {
   };
 
 
-   const [encodedData, setEncodedData] = useState('0x');
+  const [encodedData, setEncodedData] = useState('0x');
   const [decodedData, setDecodedData] = useState('');
   const [error, setError] = useState('');
 
@@ -765,6 +796,7 @@ return (
           {renderMethodSelection()}
           {renderMethodFields()}
           {renderSignAndSendTx()}
+          {renderDecodeCallData()}
 
 
     </div>
@@ -786,19 +818,7 @@ return (
 
       /> */}
 
-<CollapsibleField 
-        key="encodedData"
-        title="Decode Call Data"
-        hasToggle={true}
-        fieldTypes="input"
-        nodeId={nodeId}
-        info="Add scale encoded call data to decode into the input field so that it can be decoded into pallet, method and field arguments."
-        value={encodedData}
-        onChange={(newValue) => setEncodedData(newValue)}
-        customContent={encodedCustomContent()}
-      >
-     
-    </CollapsibleField>
+
 
 
       <FormFooter onClose={handleCancel} onSave={handleSave} showToggle={true} onToggleChange={handleAdvancedSettingsToggle} />

@@ -1,13 +1,15 @@
-export function constructCallData(pallets, formData, palletName, methodName) {
-    console.log(`constructCallData - pallets, formData, palletName, methodName:`, { pallets, formData, palletName, methodName });
+export function constructCallData(formData) {
+    console.log(`constructCallData - pallets, formData, palletName, methodName:`, { formData });
     // Find the pallet and method
-    const pallet = pallets.find(p => toCamelCase(p.name) === toCamelCase(palletName));
+    // const pallet = pallets.find(p => toCamelCase(p.name) === toCamelCase(palletName));
+    // the pallet is passed in as Snake case, so we need to convert it to camel case
+    const pallet =  toCamelCase(formData.selectedPallet);
     if (!pallet) throw new Error("Pallet not found");
-    const method = pallet.calls.find(m => toCamelCase(m.name) === toCamelCase(methodName));
-    if (!method) throw new Error("Method not found");
+    const camelCaseMethod =  toCamelCase(formData.selectedMethod.name);
+    if (!camelCaseMethod) throw new Error("Method not found");
 
-    const fieldsOrder = method.fields.map(field => field.name);
-    const paramsKey = Object.keys(formData.params).find(key => toCamelCase(key).includes(toCamelCase(methodName)));
+    const fieldsOrder = formData.selectedMethod.fields.map(field => field.name);
+    const paramsKey = Object.keys(formData.params).find(key => toCamelCase(key).includes(camelCaseMethod));
     if (!paramsKey) throw new Error("Parameters for the method not found in formData");
 
     const methodParams = formData.params[paramsKey];
@@ -22,8 +24,8 @@ export function constructCallData(pallets, formData, palletName, methodName) {
     });
 
     return {
-        method: toCamelCase(methodName),
-        section: toCamelCase(palletName),
+        method: camelCaseMethod,
+        section: pallet,
         arguments: callData
     };
 }
