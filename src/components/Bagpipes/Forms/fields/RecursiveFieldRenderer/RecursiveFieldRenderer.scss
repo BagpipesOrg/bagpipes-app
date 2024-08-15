@@ -1,22 +1,26 @@
 @import '../../../../../variables.scss';
 
-.sequence-container, .composite-container, .array-container, .variant-container {
+.sequence-container, .composite-container, .array-container, .variant-container, .input-container {
     display: flex;
     flex-direction: column;
     margin-left: 5px;
     margin-top: 10px;
+    margin-bottom: 10px;
     padding: 5px;
     border: 1px dashed rgb(223, 223, 223);
     border-radius: 5px;
 
-    .sequence-item, .composite-field, .variant-field {
-        margin-left: 6px
+    .sequence-item, .composite-field, .variant-field, .input-field {
+        margin-top: 6px;
+        margin-left: 6px;
+        margin-bottom: 6px;
+        
     }
 
     .sequence-field-label, .array-field-label {
         font-weight: 600;
         margin-bottom: 5px;
-    color: gray;
+        color: gray;
     }
 }
 
@@ -37,7 +41,7 @@
     .sequence-button, .array-button {
         display: flex;
         align-items: center;
-        
+        cursor: pointer;
         
        
 
@@ -55,6 +59,17 @@
 
     }
     
+.field-name {
+    font-weight: 600;
+    color: rgb(53, 53, 53);
+    margin-bottom: 5px;
+}
 
+.type-name {
+    font-weight: 600;
+    color: rgb(164, 164, 164);
+    margin-bottom: 5px;
+    font-size: 0.8em;     
+}
 
 

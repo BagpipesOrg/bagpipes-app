@@ -221,7 +221,8 @@ switch (currentType) {
                             const fieldPath = [...variantEntryPath, fieldPathSegment];
         
                             return {
-                                id: `${variantFieldId}-[${index}]` ,
+                                id: `${variantFieldId}-[${index}]`,
+                                index: index.toString(),
                                 name: field.name,
                                 type: 'variantField',
                                 resolvedType: resolveFieldType(field.type, typesLookup, depth + 3, fieldPath, cache),

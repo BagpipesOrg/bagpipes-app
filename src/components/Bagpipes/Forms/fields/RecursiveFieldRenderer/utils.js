@@ -55,53 +55,72 @@
   
     // Utility to recursively initialize default values based on type
     export  const initializeDefaultValues = (field, path, fromType = 'default') => {
-        console.log('RecursiveFieldRenderer - initialize initializeDefaultValues, path:', field, path, fromType);
+        console.log('initializeDefaultValues - initialize initializeDefaultValues, path:', field, path, fromType);
         let defaultValue;
         switch (field.type) {
             case 'variant':
-                console.log('RecursiveFieldRenderer - initialize variant 2bi. initialize initializeDefaultValues variant:', path);
-                // for varaint the default value is the first variant in the list
+                console.log('initializeDefaultValues - initialize initializeDefaultValues variant 1:', field, path);
                 const defaultVariant = field.variants[0];
-                console.log('RecursiveFieldRenderer - initialize variant 2bi. Initializing default values for variant:', { path, defaultVariant, fromType });
-    
-                // if the variant has fields, initialize them, else if variant has no fields make the default variant name a string value of the defaultValue key 
-
                 if (defaultVariant.fields.length === 0) {
-                    console.log('RecursiveFieldRenderer - initialize variant 2bia. initializeDefaultValues variant defaultVariant.name:', defaultVariant.name);
+                    // No subfields, initialize as a simple string value
                     defaultValue = defaultVariant.name;
                 } else {
-                    defaultValue = {
-                        [defaultVariant.name]: {}
-                    };
+                    console.log('initializeDefaultValues - initialize initializeDefaultValues variant 2:', field, path);
+                    // Check the type of the first subfield to determine structure
+                    const firstSubFieldType = defaultVariant.fields[0].resolvedType.type;
+                    if (firstSubFieldType === 'composite') {
+                        // Initialize as an object with subfields
+                        defaultValue = {
+                            [defaultVariant.name]: {}
+                        };
+                        defaultVariant.fields.forEach(subField => {
+                            defaultValue[defaultVariant.name][subField.name] = initializeDefaultValues(subField.resolvedType, `${path}.${subField.name}`, 'composite');
+                        });
+                    } else if (firstSubFieldType === 'variant') {
+                        // we need to initialize the variant as an array
+                        // defaultValue = [];
+                        console.log('variant initializeDefaultValues - initialize initializeDefaultValues variant 3:', defaultValue, path);
 
-                     // Initialize each field in the default variant
-                    defaultVariant.fields.forEach(subField => {
-                        defaultValue[defaultVariant.name][subField.name] = initializeDefaultValues(subField.resolvedType, `${path}.${subField.name}`, 'variant');
-                        console.log('RecursiveFieldRenderer - initialize variant initializeDefaultValues variant defaultValue:', defaultValue, `${path}.${subField.name}` );
-                    });
+                        // Initialize as an array with each element being an object representing a variant
+                        defaultValue = defaultVariant.fields.map(subField => {
+                             console.log('initializeDefaultValues - initialize initializeDefaultValues variant 4:', subField, path);
+                            return {
+                                [subField.name]: initializeDefaultValues(subField.resolvedType, `${path}.${subField.name}`, 'variant')
+                            };
+                        });
+                    }
                 }
-    
                 break;
 
             case 'input':
-                console.log('RecursiveFieldRenderer - initialize initializeDefaultValues input:', path);
+                console.log('initializeDefaultValues - initialize initializeDefaultValues input:', path);
                 defaultValue = "0";
                 break;
 
-            case 'variantField':    
+            case 'variantField': 
+            
+                console.log('initializeDefaultValues - initialize initializeDefaultValues variantField:', path);
+            
             case 'composite':
-                console.log('RecursiveFieldRenderer - initialize composite 01 initializeDefaultValues composite:', { field, path, fromType });
+                console.log('initializeDefaultValues - initialize composite 01 initializeDefaultValues composite:', { field, path, fromType });
                 defaultValue = {};
                 if (field.fields) {
-                    console.log('RecursiveFieldRenderer - initialize composite 02 initializeDefaultValues composite field.fields:', field.fields, fromType);
+                    console.log('initializeDefaultValues - initialize composite 02 initializeDefaultValues composite field.fields:', field.fields, fromType);
                     field.fields.forEach(subField => {
+                        console.log('initializeDefaultValues - initialize composite 02a initializeDefaultValues composite subField:', subField, fromType);
                         // if subfield is a sequence then initialize it as an array
                         if (subField.resolvedType.type === 'sequence') {
                             defaultValue = [];
-                            console.log('RecursiveFieldRenderer - initialize composite 03 sequence initializeDefaultValues composite defaultValue:', subField, defaultValue, `${path}.${subField.name}`, fromType);
-                        } else {
+                            console.log(`initializeDefaultValues - initialize composite ${field.type} 03a sequence initializeDefaultValues composite defaultValue:`, subField, defaultValue, `${path}.${subField.name}`, fromType);
+                        } else if (subField.resolvedType.type === 'composite') {
                         defaultValue[subField.name] = initializeDefaultValues(subField.resolvedType, `${path}.${subField.name}`, 'composite');
-                        console.log('RecursiveFieldRenderer - initialize composite 03 initializeDefaultValues composite defaultValue:', subField, defaultValue, `${path}.${subField.name}`, fromType);
+                        console.log(`initializeDefaultValues - initialize ${field.type} 03b initializeDefaultValues composite defaultValue:`, subField, defaultValue, `${path}.${subField.name}`, fromType);
+                        } else if (subField.resolvedType.type === 'variant') {
+
+                            console.log(`initializeDefaultValues - initialize ${field.type} 03a initializeDefaultValues variant defaultValue:`, subField, defaultValue, `${path}.${subField.name}`, fromType);
+                            defaultValue[subField.name] = initializeDefaultValues(subField.resolvedType, `${path}.${subField.name}`, 'variant');
+                            // add something here
+                            console.log(`initializeDefaultValues - initialize ${field.type} 03b initializeDefaultValues variant defaultValue:`, subField, defaultValue, `${path}.${subField.name}`, fromType);
                         }
                     });
                 }
@@ -110,7 +129,7 @@
             case 'sequence':
                 // sequence is an array of objects
                 defaultValue = [];
-                console.log('RecursiveFieldRenderer - initialize sequence initializeDefaultValues sequence:', path, defaultValue, field, fromType);
+                console.log('initializeDefaultValues - initialize sequence initializeDefaultValues sequence:', path, defaultValue, field, fromType);
 
             break;
             default:
@@ -118,9 +137,9 @@
 
                 if (field.type === null || field.type === undefined || field.type === ""    ) {
                 defaultValue = null; // Default fallback
-                console.log('RecursiveFieldRenderer - initialize default initializeDefaultValues default:', path, defaultValue, field, fromType);
+                console.log('initializeDefaultValues - initialize default initializeDefaultValues default:', path, defaultValue, field, fromType);
                 } else {
-                    console.log('RecursiveFieldRenderer - initialize default initializeDefaultValues should retry default:', field.type, path, field, 'retrying');
+                    console.log('initializeDefaultValues - initialize default initializeDefaultValues should retry default:', field.type, path, field, 'retrying');
                     // initializeDefaultValues(field, path, 'retrying');
                 }
         }
@@ -128,8 +147,8 @@
     };
 
 
-    export const generatePath = (base, segment, type, from) => {
-        console.log(`RecursiveFieldRenderer -  ${type} 0. generatePath ${type} base, segment, type:`, base, segment, type, from);
+    export const generatePath = (base, segment, type, from, isParentVariantAndAllSiblings, index) => {
+        console.log(`generatePath -  ${type} 0. generatePath ${type} base, segment, type:`, base, segment, type, from);
     
         // If the segment is undefined or empty, decide how to handle based on the type
         if (segment === undefined || segment === null || segment === "") {
@@ -138,6 +157,17 @@
                 case 'input':
                     // For input, the path should not be modified; return base
                     return base;
+                case 'variant':
+                    console.log(`generatePath -  ${type} 0a. generatePath variant base, segment, type no segment:`, base, segment, type, isParentVariantAndAllSiblings, index);
+                    if (isParentVariantAndAllSiblings) {
+                        const r = base?  `${base}[${index}]` : `[${index}]`;
+                        console.log(`generatePath -  ${type} 0a. generatePath variant base, segment, type result:`, { r, base, segment, type, isParentVariantAndAllSiblings, index });
+                        return r
+                    } else {
+                        return base;
+
+                    }
+                    // return isParentVariantAndAllSiblings ? `${base}[${index}]` : base;
                 case 'sequence':
                 case 'array':
                     // For sequences and arrays, append empty brackets to suggest possible dynamic addition later
@@ -153,12 +183,25 @@
     
         // For cases where segment is not empty
         switch (type) {
-            case 'composite':
             case 'variant':
+                console.log(`generatePath -  ${type} 0a. generatePath variant base, segment, type:`, { base, segment, type, isParentVariantAndAllSiblings, index });
+                if (isParentVariantAndAllSiblings) {
+                    // If all siblings are variants, include the index in the path
+                    if (base) {
+                        return `${base}.${segment}[${index}]`;  // Use dot notation to combine base and segment, then append index
+                    } else {
+                        return `${segment}[${index}]`;  // If no base, start directly with segment and index
+                    }
+                } else {
+                    // If not all siblings are variants, return the standard path without indexing
+                    return base ? `${base}.${segment}` : segment;
+                }
+
+            case 'composite':
             case 'variantField':
                 // Standard handling using dot notation if base is present
                 const result = base ? `${base}.${segment}` : segment;
-                console.log(`RecursiveFieldRenderer -  ${type} 0a. generatePath composite result:`, result);
+                console.log(`generatePath -  ${type} 0b. generatePath composite result:`, result);
                 return result;
             case 'input':
                 // Input fields do not need modification of path; return base
@@ -171,7 +214,7 @@
             case 'initialBase':
                 // For initialBase, create an array notation only when base is provided
                 const r = base ? `${base}[${segment}]` : `[${segment}]`;
-                console.log(`RecursiveFieldRenderer -  ${type} 0b. generatePath initialBase r:`, r);
+                console.log(`RecursiveFieldRenderer -  ${type} 0c. generatePath initialBase r:`, r);
                 return r;
             default:
                 // Fallback for unexpected types

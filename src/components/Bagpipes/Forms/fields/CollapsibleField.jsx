@@ -19,7 +19,7 @@ import './Fields.scss';
 const { Option } = Select;
 
 
-const CollapsibleField = ({ fieldKey, nodeId, edgeId, title, info, toggleTitle, hasToggle,fieldTypes, items=[], selectOptions=[], selectRadioOptions=[], children, value, onChange, onPillsChange, placeholder, onClick, disabled, isTextAreaValue, customContent, buttonName, typesLookup, fieldTypeObject, fields}) => {
+const CollapsibleField = ({ fieldKey, nodeId, edgeId, title, info, toggleTitle, hasToggle,fieldTypes, items=[], selectOptions=[], selectRadioOptions=[], children, value, onChange, onPillsChange, placeholder, onClick, disabled, isTextAreaValue, customContent, buttonName, typesLookup, fieldTypeObject, fields, hoverInfo}) => {
   const [isToggled, setIsToggled] = useState(false);
   const { showPanelTippy, hidePanelTippy, tippyPanelInstance } = usePanelTippy();
   const referenceElement = useRef(null);
@@ -585,6 +585,7 @@ const renderContent = (field, depth = 0) => {
   const header = (
     <div className='font-semibold text-sm text-gray-600 mt-1'>
       <div>{title}</div>
+      <div className='text-xs text-gray-500 mt-3'>{hoverInfo}</div>
       
     </div>
   );
@@ -605,7 +606,7 @@ const renderContent = (field, depth = 0) => {
         <div className='flex justify-between'>
           {renderContent()}
         </div>
-        <div className='text-xxs text-gray-500 mt-3'>{info}</div>
+        <div className='custom-info'>{info}</div>
       </Collapse.Panel>
     </Collapse>
     </div>

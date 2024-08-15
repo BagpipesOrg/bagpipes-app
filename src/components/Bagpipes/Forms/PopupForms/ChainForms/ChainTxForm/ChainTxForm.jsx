@@ -5,12 +5,13 @@ import { getAssetBalanceForChain } from '../../../../../../Chains/Helpers/AssetH
 import BalanceTippy from './BalanceTippy';
 
 import { broadcastToChain } from '../../../../../../Chains/api/broadcastToChain';
-import { decodeCallData } from '../../../../../../Chains/api/decodeCallData';
+import { decodeCallData } from '../../../../../../Chains/api/codecForCallData';
 
 import toast  from 'react-hot-toast';
 import { ChainToastContent, ActionToastContent, CustomToastContext } from '../../../../../toasts/CustomToastContext'
 
 import { processScenarioData, validateDiagramData, processAndSanitizeFormData, getUpstreamNodeIds } from '../../../../utils/scenarioUtils';
+import { constructCallData, formatCallData } from '../../../../utils/callDataUtils';
 import { generatePathKey } from '../../../fields/utils';
 import { getOrderedList } from '../../../../hooks/utils/scenarioExecutionUtils';
 
@@ -142,6 +143,7 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId, pills, setPill
       setPallets(parsedData);
     }
   }, [metadata]);
+
 
 
 
@@ -472,8 +474,16 @@ const handleMethodFieldChange = (updatedParams) => {
           return (
             <>
               <CollapsibleField
-                  title={`${field.name} <${field.typeName || resolvedField.typeName}>`}
-                  info={field?.docs || ''}
+                  title={
+                    <>
+                    <span className="field-name">{field.name}</span>
+                    <span className="type-name">
+                      {' <'}{field.typeName || resolvedField.typeName}{'>'}
+                    </span>
+                  </>
+                  }
+                  // info={field?.docs || ''}
+                  hoverInfo={field?.docs || ''}
                   customContent={customContent}
                   hasToggle={true}
                   nodeId={nodeId}
@@ -554,6 +564,12 @@ const handleMethodFieldChange = (updatedParams) => {
       const upstreamNodeIds = getUpstreamNodeIds(orderedList, nodeId);
       const parsedFormData = processAndSanitizeFormData(formData, lastExecution, upstreamNodeIds);
 
+      const callData = constructCallData(pallets, formData, parsedFormData.selectedPallet, parsedFormData.selectedMethod.name);
+      console.log('constructCallData params call data', { callData } );
+
+      const formattedCallData = formatCallData(callData);
+      console.log('constructCallData params call data', { callData, formattedCallData } );
+
       const presignPack = `Draft Tx ready to sign: \naddress: ${parsedFormData.selectedAddress}, \nchain: ${parsedFormData.selectedChain}, \npallet: ${parsedFormData.selectedPallet}, \nmethod: ${parsedFormData.selectedMethod.name}, \nparams: ${parsedFormData.params}\n`;
       setResult(presignPack);
 
@@ -562,11 +578,11 @@ const handleMethodFieldChange = (updatedParams) => {
         ...formData,
         isSigned: false
     });
-        const signedExtrinsic = await ChainRpcService.executeChainTxMethod({
+        const signedExtrinsic = await ChainRpcService.executeChainTxRenderedMethod({
             chainKey: parsedFormData.selectedChain,
             palletName: parsedFormData.selectedPallet,
             methodName: parsedFormData.selectedMethod.name,
-            params: parsedFormData.params,
+            params: formattedCallData,
             signer: walletContext?.wallet?.signer,
             signerAddress: parsedFormData.selectedAddress
         });

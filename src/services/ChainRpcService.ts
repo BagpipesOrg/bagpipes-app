@@ -1,18 +1,32 @@
 import { ApiPromise } from '@polkadot/api';
-import { SubmittableExtrinsic } from '@polkadot/api/types';
+import { SubmittableExtrinsic, SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import { getApiInstance } from '../Chains/api/connect';
 import { signExtrinsicUtil } from '../components/Bagpipes/utils/signExtrinsicUtil';
 import { Codec, ISubmittableResult } from '@polkadot/types/types';
+import { TypeRegistry } from '@polkadot/types';
+const registry = new TypeRegistry();
+
+
+const createParam = (type, value) => {
+  return registry.createType(type, value);
+};
+
 
 interface MethodParams {
   chainKey: string;
   palletName: string;
   methodName: string;
-  params: any[];
+  params: Arguments;
   atBlock?: string;
   signerAddress?: string; // Include only for transactions that need signing
   signer?: any; // Include only for transactions that need signing
 }
+
+interface Arguments {
+  [key: string]: any;
+}
+
+
 
 class ChainRpcService {
 
@@ -54,8 +68,61 @@ class ChainRpcService {
       throw error;
     }
   }
+
+  static async executeChainTxRenderedMethod({ chainKey, palletName, methodName, params, signerAddress, signer }: MethodParams): Promise<any> {
+    console.log(`executeChainTxRenderedMethod: chainKey, palletName, methodName, params: `, chainKey, palletName, methodName, params);
+    const api = await getApiInstance(chainKey);
+    console.log(`executeChainTxRenderedMethod: now about to resole method:...`);
+    const method = this.resolveMethod(api, palletName, methodName, true);
+    console.log(`executeChainTxRenderedMethod: method resolved:...`, method);
+
+    if (!signerAddress) throw new Error("Signer address is required for transaction signing.");
+
+    try {
+
+      // lets find conviction with the params arguments which is an array of objects inside each object is the key where conviction is what we are looking for
+      const conviction = params.arguments.find(arg => Object.keys(arg)[0] === 'conviction');
+      console.log('executeChainTxRenderedMethod conviction:', conviction);
+
+      const convictionParam = params.arguments ? createParam('Option<AccountId32>', params.arguments.conviction) : createParam('Option<AccountId32>', null);
+      console.log('executeChainTxRenderedMethod scheduleAs:', params, params.arguments.conviction, convictionParam.toHuman());
+
+     
+      const formattedParams = params && params.arguments ? params.arguments.map(arg => {
+        const key = Object.keys(arg)[0];
+        const value = Object.values(arg)[0];
+        const typeInfo = method.meta.args.find(a => a.name.toString() === key);
+        const paramType = typeInfo.type.toString();
+         // Check if the type is optional and the value is "None"
+         if (paramType.startsWith('Option<') && value === "None") {
+          return null; // Convert "None" to null for optional types
+      } else if (paramType.startsWith('Option<') && value === "Some") {
+          return createParam(paramType, value);
+      }
+
+      // Create the parameter using the appropriate type from the registry
+      return api.registry.createType(paramType, value);
+    }) : [];
+        
+        
+        
+        console.log('executeChainTxRenderedMethod formattedParams:', formattedParams);
+      console.log('executeChainTxRenderedMethod now about to create extrinsic...')
+
+      const extrinsic = formattedParams.length > 0 ? method(...formattedParams) : method();
+      console.log('executeChainTxRenderedMethod extrinsic:', extrinsic);
+
+      const signedExtrinsic = await signExtrinsicUtil(api, signer, extrinsic, signerAddress);
+      return signedExtrinsic;
+    } catch (error) {
+      console.error('Error executing chain tx method:', error);
+      throw error;
+    }
+}
+
   
-  
+
+
 
 
   // /// Execute a query method on a chain
@@ -118,7 +185,7 @@ class ChainRpcService {
 
     const method = api.tx[camelPalletName][camelMethodName];
     const formattedParams = this.formatParams(params);
-console.log('formattedParams:', formattedParams);
+    console.log('formattedParams:', formattedParams);
     const extrinsic = method(...formattedParams) as SubmittableExtrinsic<'promise', ISubmittableResult>;
     const encodedCallData = extrinsic.method.toHex();
 
@@ -127,12 +194,13 @@ console.log('formattedParams:', formattedParams);
 
   private static resolveMethod(api: ApiPromise, palletName: string, methodName: string, isTx: boolean): any {
     const camelPalletName = this.toCamelCase(palletName);
+    console.log(`executeChainTxRenderedMethod Resolving method: ${methodName} on pallet: ${palletName}`);
     const camelMethodName = this.toCamelCase(methodName);
     const namespace = isTx ? api.tx : api.query;
 
-    console.log(`Resolving method: ${methodName} on pallet: ${palletName}`);
-    console.log(`Camel Case Pallet Name: ${camelPalletName}, Camel Case Method Name: ${camelMethodName}`);
-    console.log(`Namespace details:`, namespace);
+    console.log(`executeChainTxRenderedMethod Resolving method: ${methodName} on pallet: ${palletName}`);
+    console.log(`executeChainTxRenderedMethod Camel Case Pallet Name: ${camelPalletName}, Camel Case Method Name: ${camelMethodName}`);
+    console.log(`executeChainTxRenderedMethod Namespace details:`, namespace);
 
     if (!namespace[camelPalletName]) {
       console.error(`Pallet ${camelPalletName} is not available in the namespace.`);
@@ -140,9 +208,10 @@ console.log('formattedParams:', formattedParams);
     }
 
     const method = namespace[camelPalletName][camelMethodName];
+    console.log(`executeChainTxRenderedMethod Method details:`, method);
 
     if (typeof method === 'function') {
-      console.log(`Direct method access successful for: ${camelMethodName}`);
+      console.log(`executeChainTxRenderedMethod Direct method access successful for: ${camelMethodName}`);
       return method;
     } else {
       console.error(`The method ${camelMethodName} is not available on the pallet ${palletName} as a function, checked as ${camelMethodName}.`);
@@ -200,14 +269,20 @@ private static formatParams(params: any): any[] {
     return atBlock; // Otherwise, it's already a block hash
   }
 
-  private static toCamelCase(str: string): string {
+  // private static toCamelCase(str: string): string {
+  //   return str
+  //     .replace(/(?:^\w|[A-Z]|\b\w)/g, function(word, index) {
+  //       return index == 0 ? word.toLowerCase() : word.toUpperCase();
+  //     })
+  //     .replace(/\s+/g, '');
+  // }
+
+
+    private static toCamelCase(str: string): string {
     return str
-      .replace(/(?:^\w|[A-Z]|\b\w)/g, function(word, index) {
-        return index == 0 ? word.toLowerCase() : word.toUpperCase();
-      })
-      .replace(/\s+/g, '');
-  }
-  
+        .replace(/(_\w)/g, (match) => match[1].toUpperCase())
+        .replace(/^([A-Z])/, (match) => match.toLowerCase());
+}
 }
 
 export default ChainRpcService;
