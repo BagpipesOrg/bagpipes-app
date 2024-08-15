@@ -3,11 +3,13 @@ import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { Handle, Position, useNodeId } from 'reactflow';
 import useAppStore from '../../../../store/useAppStore';
 import { getHydraDxSellPrice } from '../../../../Chains/Helpers/PriceHelper';
+import { query_contract } from '../../../../Chains/DraftTx/DraftInk';
 import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
 import RemarkSVG from '/remark.svg';
 import VoteSVG from '/vote.svg';
 import DelegateSVG from '/delegate.svg';
+import InkSVG from '/ink.svg';
 import StakeSVG from '/stake.svg';
 
 // $DED animation
@@ -17,6 +19,7 @@ import DEDPNG from './../../../../assets/DED.png';
 import { getOrderedList } from '../../hooks/utils/scenarioExecutionUtils';
 import { convertFormStateToActionType } from './actionUtils';
 import PriceInfo from '../PriceInfo';
+import InkInfo from '../InkInfo';
 import Selector, { useOutsideAlerter } from './Selector';
 import ActionNodeForm from '../../Forms/PopupForms/Action/ActionNodeForm';
 import toast from 'react-hot-toast';
@@ -88,6 +91,8 @@ export default function ActionNode({ children, data, isConnectable }) {
     if (formState.action === "Remark") return RemarkSVG;
     if (formState.action === "stake") return StakeSVG;
     if (formState.action === "delegate") return DelegateSVG;
+    if (formState.action === "ink") return DelegateSVG;
+    
     if (formState.action === "vote") return VoteSVG;
 
     return null;
@@ -125,6 +130,41 @@ export default function ActionNode({ children, data, isConnectable }) {
             }));
             setLastUpdated(new Date());
         }
+       
+        if(formState.action === 'ink') {
+          setIsFetchingActionData(true); // Start the loading state
+          await sleep(1000);
+          const fetchedPriceInfo = {
+            "type": "Sell",
+            "amountIn": "1",
+            "amountOut": "0.005668",
+            "spotPrice": "0.005699451151",
+            "tradeFee": "0.000015",
+            "tradeFeePct": 0.3,
+            "priceImpactPct": -0.29,
+            "swaps": [
+                {
+                    "poolAddress": "7JRrXBpB1K2JUapwojTYLZPoMvLPMQUDyiEyJb5hj7wad1of",
+                    "pool": "Xyk",
+                    "assetIn": "0",
+                    "assetOut": "10",
+                    "amountIn": "1",
+                    "calculatedOut": "0.005683",
+                    "amountOut": "0.005668",
+                    "spotPrice": "0.005699451151",
+                    "tradeFeePct": 0.3,
+                    "priceImpactPct": -0.29,
+                    "errors": []
+                }
+            ]
+        };
+          setPriceInfoMap(prevMap => ({
+            ...prevMap,
+            [nodeId]: fetchedPriceInfo
+        }));
+          console.log('fetchActionInfo Fetching for ink');
+          setLastUpdated(new Date());
+      }
 
         if(formState.action === 'xTransfer') {
             setIsFetchingActionData(true); // Start the loading state
@@ -334,6 +374,72 @@ console.log('previousNodeFormData: ', previousNodeFormData);
   };
 
 
+  const handleFileUpload = (event) => {
+    console.log(`handle fileupload`);
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const fileContent = JSON.parse(e.target.result);
+      // Do something with fileContent
+      const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+      var currentActionData = currentNodeFormData.actionData || {};
+      const currentSource = currentActionData.inkdata || {};
+      currentActionData.actionType = 'ink';
+  
+      var currentInkData = currentSource.inkdata || {};
+      currentInkData.abi = fileContent;
+      const previousNodeFormData = get_previous_node(); 
+  
+  
+      const updatedActionData = {
+        ...currentActionData,
+        source: previousNodeFormData,
+        inkdata: {
+          ...currentSource,
+          abi: fileContent
+        }
+      };
+  setActionData(updatedActionData);
+
+      saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
+
+
+     // console.log(fileContent);
+    };
+    reader.readAsText(file);
+    console.log(`handle fileupload ok`);
+  };
+
+  const setInkAddress = (value) => {
+    console.log(`set ink address start`);
+    const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+    var currentActionData = currentNodeFormData.actionData || {};
+    const currentSource = currentActionData.inkdata || {};
+    currentActionData.actionType = 'ink';
+
+    var currentInkData = currentSource.inkdata || {};
+    currentInkData.contract = value.target.value;
+    const previousNodeFormData = get_previous_node(); 
+
+
+    const updatedActionData = {
+      ...currentActionData,
+      source: previousNodeFormData,
+      inkdata: {
+        ...currentSource,
+        contract: value.target.value
+      }
+    };
+
+    console.log(`set 2 ink`);
+    setActionData(updatedActionData);
+    console.log(`set 3 ink`);
+    console.log(`updatedActionData: `, updatedActionData);
+    saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
+    console.log(`set ink address done`);
+
+  };
+
   const setAye = (value) => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
     var aye_or_nay = false;
@@ -536,6 +642,7 @@ console.log('previousNodeFormData: ', previousNodeFormData);
           RemarkSVG={RemarkSVG}
           VoteSVG={VoteSVG}
           DelegateSVG={DelegateSVG}
+          InkSVG={InkSVG}
           StakeSVG={StakeSVG}
           dropdownVisible={dropdownVisible}
           ref={dropdownRef}
@@ -580,6 +687,27 @@ console.log('previousNodeFormData: ', previousNodeFormData);
             </div>
       )}
 
+{formState && formState.action === 'ink' && (
+
+<div className="in-node-border rounded m-2 p-2 ">Contract address:
+<input  onChange={(newValue) => setInkAddress(newValue)}  type="text" id="contact-name"  placeholder="Smart contract address" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
+<label htmlFor="contract-json" className="mt-2">Upload Contract JSON file:</label>
+  <input
+    onChange={(e) => handleFileUpload(e)}
+    type="file"
+    id="contract-json"
+    accept=".json"
+    placeholder="contract.json"
+    className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+  />
+</div>
+
+
+
+)}
+
+
+
 {formState && formState.action === 'vote' && (
 
 <div className="in-node-border rounded m-2 p-2 ">Vote
@@ -609,7 +737,18 @@ console.log('previousNodeFormData: ', previousNodeFormData);
 
 </div>
 )}
-
+  {formState && formState.action === 'ink' && (
+        isFetchingActionData ? (
+            <InkInfo sourceInfo='0' targetInfo='0' priceInfo='0' />
+          ) : (
+            // Placeholder for when no price info is available
+            <div className="in-node-border rounded m-2 p-2 ">!ink<br/>
+            Contract address: {formState.inkdata && formState.inkdata.contract ? formState.inkdata.contract : 'Not set'}
+            </div>
+            
+          )
+        )
+      }
 
       {formState && formState.action === 'swap' && (
         isFetchingActionData ? (

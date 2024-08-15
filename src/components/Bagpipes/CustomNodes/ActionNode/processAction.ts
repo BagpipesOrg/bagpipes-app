@@ -10,6 +10,8 @@ export function processAction(action: ActionType) {
         break;
       case 'remark':
         break;
+      case 'ink':
+        break
       case 'delegate':
         break
       case 'stake':

@@ -11,6 +11,7 @@ export interface ActionData {
   symbol?: string; 
   nodeId?: string;
   votedata?: votedata;
+  inkdata?: inkdata;
   stake?: stakedata;
   delegate?: delegatedata;
   extra?: string;
@@ -32,6 +33,12 @@ interface votedata {
   aye_or_nay: boolean;
 }
 
+interface inkdata {
+  abi: any;
+  address: string;
+  output?: any;
+}
+
 export interface VoteAction {
   actionType: 'vote';
   source: ActionData;
@@ -49,6 +56,12 @@ export interface DelegateAction {
   source: ActionData;
   target: ActionData;
 }
+export interface InkAction {
+  actionType: 'ink';
+  source: ActionData;
+  target: ActionData;
+}
+
 
 export interface RemarkAction {
   actionType: 'remark';
@@ -74,4 +87,6 @@ export interface TransferAction {
   target: ActionData;
 }
 
-export type ActionType = SwapAction | DelegateAction | StakeAction | VoteAction | xTransferAction | RemarkAction | TransferAction;
+
+export type ActionType = SwapAction | InkAction | DelegateAction | StakeAction | VoteAction | xTransferAction | RemarkAction | TransferAction;
+

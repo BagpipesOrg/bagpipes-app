@@ -25,6 +25,11 @@ const actions = [
       information: 'Stake to nomination pool'
     },
     {
+      name: 'ink',
+      logo: '/ink.svg',
+      information: '!ink Smart Contracts'
+    },
+    {
       name: 'vote',
       logo: '/vote.svg',
       information: 'vote in opengov'
