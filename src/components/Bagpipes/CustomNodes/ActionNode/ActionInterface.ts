@@ -11,6 +11,7 @@ export interface ActionData {
   symbol?: string; 
   nodeId?: string;
   votedata?: votedata;
+  inkdata?: inkdata;
   stake?: stakedata;
   delegate?: delegatedata;
   extra?: string;
@@ -30,6 +31,12 @@ interface votedata {
   amount: number; 
   lock: number;
   aye_or_nay: boolean;
+}
+
+interface inkdata {
+  abi: any;
+  address: string;
+  output?: any;
 }
 
 export interface VoteAction {
