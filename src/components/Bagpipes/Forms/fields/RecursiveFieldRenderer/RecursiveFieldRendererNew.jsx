@@ -86,24 +86,27 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
     switch (fieldType) {
         case 'input':
 
-        const getFormDataForInput = _.get(formData, `params.${fieldPath}`, null)
-        console.log('RecursiveFieldRenderer - input getFormDataForInput:', getFormDataForInput, fieldPath);
+            const getFormDataForInput = _.get(formData, `params.${fieldPath}`, null)
+            console.log('RecursiveFieldRenderer - input getFormDataForInput:', getFormDataForInput, fieldPath);
 
-        // if we have made every input an object that contains typeName as well as the value
+            // if we have made every input an object that contains typeName as well as the value
 
-        if (!getFormDataForInput) {
-            console.log('RecursiveFieldRenderer - input 1. no getFormDataForInput:', fieldObject, getFormDataForInput, fieldPath);
-            const initialValue = initializeDefaultValues(fieldObject, fieldPath, 'fromInput');
+            if (!getFormDataForInput) {
+                console.log('RecursiveFieldRenderer - input 1. no getFormDataForInput:', fieldObject, getFormDataForInput, fieldPath);
+                const initialValue = initializeDefaultValues(fieldObject, fieldPath, 'fromInput');
 
-            const updatedParams = handleChange(fieldPath, initialValue, false, 'input', formData);
-            console.log('RecursiveFieldRenderer - input 3. updatedParams:', { updatedParams, fieldPath, initialValue });
-            saveNodeFormData(activeScenarioId, nodeId, { ...formData, params: updatedParams });
+                const updatedParams = handleChange(fieldPath, initialValue, false, 'input', formData);
+                console.log('RecursiveFieldRenderer - input 3. updatedParams:', { updatedParams, fieldPath, initialValue });
+                saveNodeFormData(activeScenarioId, nodeId, { ...formData, params: updatedParams });
 
-        }
+            }
 
             console.log('RecursiveFieldRenderer - input formValues, fieldObject:', { fieldPath, fieldName, formValues, fieldObject, fieldType });   
             console.log('RecursiveFieldRenderer - input fieldPath formValues:', { fieldPath, formValues }); 
 
+            const inputStyle = fieldObject.typeName === "Bytes" && (getFormDataForInput === '0' || getFormDataForInput === '0x')
+            ? 'background-bytes'
+            : '';
             // we wan to get the prev id of the field path, so we can use it to get the previous value.
             const prevId = fieldObject?.path?.[fieldObject.path.length - 2]?.id;
             console.log('RecursiveFieldRenderer - input prevId:', prevId);
@@ -118,7 +121,7 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
                         onChange={newValue => handleInputChange(fieldPath, newValue)}
                         onPillsChange={onPillsChange}
                         placeholder={`Enter ${fieldObject.typeName}`}
-                        className='custom-input'
+                        className={`custom-input ${inputStyle}`}
                         pills={pills}
                         setPills={setPills}
                         nodeId={nodeId}
