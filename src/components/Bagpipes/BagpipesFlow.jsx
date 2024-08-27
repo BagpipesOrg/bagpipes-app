@@ -296,36 +296,50 @@ const BagpipesFlow = () => {
      * Callback function that gets triggered when the nodes state changes.
      * @param changes {object} - Contains the changes made to the node state.
      */
-          const onNodesChange = useCallback((changes) => {
-            // console.log("Active Scenario ID:", activeScenarioId);
-            // console.log("Changes received:", changes); // Add this line to log changes
+      const onNodesChange = useCallback((changes) => {
+        // console.log("Active Scenario ID:", activeScenarioId);
+        // console.log("Changes received:", changes); // Add this line to log changes
+      
+        if (!Array.isArray(changes)) {
+          console.error("Changes should be an array but received:", changes);
+          return;
+        }
           
-            if (!Array.isArray(changes)) {
-              console.error("Changes should be an array but received:", changes);
-              return;
-            }
-          
-             
-       
-            // Use the Zustand action instead
-            setNodes((prevNodes) => {
-            const updatedNodes = applyNodeChanges(changes, prevNodes);
-            
-              // Update the nodes in the current scenario
-              updateNodesInScenario(activeScenarioId, updatedNodes);
-          
-              return updatedNodes;
-            });
-          }, [  activeScenarioId]);
+        // Use the Zustand action instead
+        setNodes((prevNodes) => {
+        const updatedNodes = applyNodeChanges(changes, prevNodes);
+        
+          // Update the nodes in the current scenario
+          updateNodesInScenario(activeScenarioId, updatedNodes);
+      
+          return updatedNodes;
+        });
+      }, [activeScenarioId, setNodes, updateNodesInScenario]);
 
-          
+      
+      const handleAddNode = useCallback((nodeType) => {
+        const newNode = {
+          id: Date.now().toString(),
+          type: nodeType,
+          position: { x: Math.random() * 250, y: Math.random() * 250 },
+          data: { label: `${nodeType} Node` }
+        };
+      
+        setNodes(prevNodes => {
+          const newNodes = prevNodes.concat(newNode);
+          updateNodesInScenario(activeScenarioId, newNodes);
+          return newNodes;
+        });
+      }, [activeScenarioId, setNodes, updateNodesInScenario]);
+
+      
     
-    const handleEdgesChange = onEdgesChange(setEdges, setInputVariablesByEdgeId, inputVariablesByEdgeId, activeScenarioId, addEdgeToScenario, scenarios,  );
-    // const handleEdgesChange = useOnEdgesChange(appStore.setState, appStore.getState, setInputVariablesByEdgeId, inputVariablesByEdgeId, handleEdgesOperation, activeScenarioId,  );
+      const handleEdgesChange = onEdgesChange(setEdges, setInputVariablesByEdgeId, inputVariablesByEdgeId, activeScenarioId, addEdgeToScenario, scenarios,  );
+      // const handleEdgesChange = useOnEdgesChange(appStore.setState, appStore.getState, setInputVariablesByEdgeId, inputVariablesByEdgeId, handleEdgesOperation, activeScenarioId,  );
 
-    const handleConnect = (params) => {
-      onConnect(currentScenarioEdges, nodeConnections, setEdges, setNodeConnections, activeScenarioId, addEdgeToScenario)(params);
-    };
+      const handleConnect = (params) => {
+        onConnect(currentScenarioEdges, nodeConnections, setEdges, setNodeConnections, activeScenarioId, addEdgeToScenario)(params);
+      };
         
       /**
      * Function to get the closest edge to a node.
@@ -816,7 +830,7 @@ const handleStopScenario = (instance) => {
 
             <ScenarioInfo />
             <TopBar createScenario={createScenario} handleExecuteFlowScenario={handleExecuteFlowScenario} handleStartScenario={handleStartScenario} handleStopScenario={handleStopScenario} shouldExecuteFlowScenario={shouldExecuteFlowScenario} draftingNodesPresent={draftingNodesPresent}  />
-            <Toolbar />
+            <Toolbar onAddNode={handleAddNode} />
             {/* <AppsToolbar /> */}
 
             </ReactFlowStyled>

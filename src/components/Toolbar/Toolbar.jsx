@@ -27,11 +27,43 @@ const AppsSubMenu = ({ onDragStart, theme }) => {
     schedule: 'Schedule',
     websocket: 'Socket',
     tools: 'Tools',
-    chainQuery: 'Query Chain',
     chainTx: 'Chain TX',
-
-
+    chainQuery: 'Chain Query',
+   
   };
+
+  const ChainSubMenu = ({ onDragStart, theme }) => {
+    const chainsNodes = {
+     chain: 'Chain',
+     chainTx: 'Chain TX',
+     chainQuery: 'Chain Query',
+    };
+  }
+
+    const HttpSubMenu = ({ onDragStart, theme }) => {
+      const httpNodes = {
+        webhook: 'Hook',
+        http: 'HTTP',  
+     };
+    }
+
+    const onClickAddNode = (nodeType) => {
+      // Example position where the node will appear
+      const newNode = {
+        id: Date.now().toString(),  // Unique ID for the node
+        type: nodeType,            // Type of node
+        position: { x: 250, y: 250 },  // Default position or could be calculated dynamically
+        data: { label: `${nodeType} Node` } // Data for the node
+      };
+    
+      // Assuming setNodes and updateNodesInScenario from your context or props
+      setNodes((prevNodes) => {
+        const newNodes = prevNodes.concat(newNode);
+        updateNodesInScenario(activeScenarioId, newNodes);
+        return newNodes;
+      });
+    };
+    
 
   const getNodeIcon = (nodeKey) => {
     switch (nodeKey) {
@@ -43,7 +75,6 @@ const AppsSubMenu = ({ onDragStart, theme }) => {
       case 'code': return <CodeIcon fillColor='black' />;
       case 'openAi': return <OpenAIIcon fillColor='black' />;
       case 'chatGpt': return <OpenAIIcon fillColor='black' />;
-
       case 'chainQuery': return <ChainQueryIcon fillColor='black' />;
       case 'chainTx': return <ChainQueryIcon fillColor='black' />;
       default: return null;
@@ -64,11 +95,14 @@ const AppsSubMenu = ({ onDragStart, theme }) => {
   );
 };
 
-const Toolbar = () => {
+const Toolbar = ({ onAddNode }) => {
   const { theme } = useContext(ThemeContext);
   const onDragStart = (event, nodeType) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
     event.dataTransfer.effectAllowed = 'move';
+  };
+  const onClickAddNode = (nodeType) => {
+    onAddNode(nodeType);  
   };
 
 
@@ -109,7 +143,9 @@ const Toolbar = () => {
 
     return (
       <Tippy theme="light" placement="bottom" className='tippy-node' interactive={true} content={nodeDescriptions[nodeKey]}>
-        <div className={`toolbar-icon ${theme}`} onDragStart={(event) => onDragStart(event, nodeKey)} draggable>
+        <div className={`toolbar-icon ${theme}`} 
+          onClick={() => onClickAddNode(nodeKey)}
+          onDragStart={(event) => onDragStart(event, nodeKey)} draggable>
           {IconComponent}
           <span>{nodeNames[nodeKey]}</span>
         </div>

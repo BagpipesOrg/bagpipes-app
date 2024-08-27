@@ -519,7 +519,7 @@ const useAppStore = create(
                 [scenarioId]: { ...scenario, diagramData: { ...scenario.diagramData, nodes } },
             };
 
-            console.log("[saveNodeFormData] Updated scenarios [params] temp LOG:", nodes[0].formData.params, scenarioId);
+            console.log("[saveNodeFormData] Updated scenarios [params] temp LOG:", nodes[0].formData?.params, scenarioId);
             return { scenarios: updatedScenarios };
         });
     },
