@@ -110,6 +110,22 @@ export function listChains() {
       };
       chainList[2034] = HydraDX;
 
+      const Ethereum: ChainInfo = {
+        name: 'ethereum',
+        display: 'Ethereum',
+        paraid: 0,
+        prefix: 1,
+        token_decimals: 12,
+        logo: '/chains/ethereum.svg',
+        relayParent: 'Ethereum',
+        parachain: true,
+        symbol: 'ETH'
+        
+      };
+      chainList[100000] = Ethereum;
+
+
+
       const Interlay: ChainInfo = {
         name: 'interlay',
         display: 'Interlay',
