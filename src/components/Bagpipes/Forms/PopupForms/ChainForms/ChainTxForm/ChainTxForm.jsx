@@ -544,6 +544,7 @@ const handleMethodFieldChange = (updatedParams) => {
         <CollapsibleField 
         key="encodedData"
         title="Decode Call Data"
+        
         hasToggle={true}
         fieldTypes="input"
         nodeId={nodeId}

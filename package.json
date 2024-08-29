@@ -31,6 +31,7 @@
     "@galacticcouncil/sdk": "^3.0.0",
     "@metamask/providers": "^11.1.1",
     "@metamask/types": "^1.1.0",
+    "@polkadot-api/descriptors": "file:.papi/descriptors",
     "@polkadot/api": "^12.2.1",
     "@polkadot/api-augment": "^12.2.1",
     "@polkadot/api-base": "^12.2.1",
@@ -42,7 +43,6 @@
     "@polkadot/keyring": "^13.0.2",
     "@polkadot/networks": "^13.0.2",
     "@polkadot/phishing": "^0.23.1",
-
     "@polkadot/rpc-augment": "^12.2.1",
     "@polkadot/rpc-core": "^12.2.1",
     "@polkadot/rpc-provider": "^12.2.1",
@@ -75,6 +75,7 @@
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.21",
     "pako": "^2.1.0",
+    "polkadot-api": "^1.1.0",
     "quill": "^1.3.7",
     "react": "^18.2.0",
     "react-code-blocks": "^0.1.6",

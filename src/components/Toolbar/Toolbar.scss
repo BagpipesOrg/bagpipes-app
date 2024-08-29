@@ -26,13 +26,13 @@
   color: white;
 
     svg {
-      width: 24px; // Adjust as needed
-      height: 24px; // Adjust as needed
+      width: 24px; 
+      height: 24px; 
       margin-bottom: 4px;
     }
 
     &:hover {
-      transform: translateY(-5px); // Lift effect on hover
+      transform: translateY(5px); // Lift effect on hover
       // color: var(----color); // Change color on hover for better visibility
     }
 }
@@ -48,13 +48,13 @@
   color: white;
 
     svg {
-      width: 24px; // Adjust as needed
-      height: 24px; // Adjust as needed
+      width: 24px;
+      height: 24px;
       margin-bottom: 4px;
     }
 
     &:hover {
-      transform: translateY(-5px); // Lift effect on hover
+      transform: translateY(5px); // Lift effect on hover
       // color: var(----color); // Change color on hover for better visibility
     }
 }
@@ -67,7 +67,7 @@
 }
 
 .tippy-node {
-  // min-width:500px;
+  min-width: 300px;
 }
 
 .action-image {

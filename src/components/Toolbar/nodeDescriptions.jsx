@@ -21,6 +21,19 @@ export const nodeDescriptions = {
           <p>Drag and drop an action to make an action (transfer, xTransfer, Swap, etc.).</p>
           <img className='action-image'src='./screenshots/ActionNodeScreenshot.png'></img>
       </div>,
+       chainTx: 
+       <div className='m-4 tippy-node'>
+           <div className='flex justify-between'>  
+             <h1 className='text-xl font-bold'>Chain TX </h1>     
+             <ChainIcon className='h-6 w-6 ml-3'fillColor='black' />
+           </div>
+           <h3 className='font-semibold'> (Advanced users)</h3>
+           <p>Drag and drop a chain Tx node on to the canvas to select the chain you want to use.</p>
+           <p>View the docs for more info about the <a href='https://docs.bagpipes.io/docs/nodes/chainTx'>Chain Tx</a> node.</p>
+
+           <img src='./screenshots/ChainTxNodeScreenshot.png'></img>
+   
+       </div>,
         http: 
         <div className='m-4 tippy-node'>
           <div className='flex justify-between'>
