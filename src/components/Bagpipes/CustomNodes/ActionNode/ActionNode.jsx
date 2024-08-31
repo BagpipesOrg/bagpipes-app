@@ -91,7 +91,7 @@ export default function ActionNode({ children, data, isConnectable }) {
     if (formState.action === "Remark") return RemarkSVG;
     if (formState.action === "stake") return StakeSVG;
     if (formState.action === "delegate") return DelegateSVG;
-    if (formState.action === "ink") return DelegateSVG;
+    if (formState.action === "ink") return InkSVG;
     
     if (formState.action === "vote") return VoteSVG;
 
@@ -383,11 +383,10 @@ console.log('previousNodeFormData: ', previousNodeFormData);
       // Do something with fileContent
       const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
       var currentActionData = currentNodeFormData.actionData || {};
-      const currentSource = currentActionData.inkdata || {};
+      var currentSource = currentActionData.inkdata || {};
       currentActionData.actionType = 'ink';
-  
-      var currentInkData = currentSource.inkdata || {};
-      currentInkData.abi = fileContent;
+
+      currentSource.abi = fileContent;
       const previousNodeFormData = get_previous_node(); 
   
   
@@ -399,6 +398,8 @@ console.log('previousNodeFormData: ', previousNodeFormData);
           abi: fileContent
         }
       };
+      console.log(`abi saved`);
+      console.log(`abi is: `, fileContent);
   setActionData(updatedActionData);
 
       saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
@@ -581,7 +582,7 @@ console.log('previousNodeFormData: ', previousNodeFormData);
     // setDropdownVisible(false);
   }, []);
 
-
+  console.log(`Actionnode formstate:`, formState);
 // useOutsideAlerter(dropdownRef, handleOutsideClick);
 
 
@@ -739,11 +740,13 @@ console.log('previousNodeFormData: ', previousNodeFormData);
 )}
   {formState && formState.action === 'ink' && (
         isFetchingActionData ? (
-            <InkInfo sourceInfo='0' targetInfo='0' priceInfo='0' />
+            <InkInfo sourceInfo='0' targetInfo='0' priceInfo='0'  contract_address={ formState.actionData?.inkdata?.contract }  abi={formState.actionData?.inkdata?.abi} />
           ) : (
             // Placeholder for when no price info is available
             <div className="in-node-border rounded m-2 p-2 ">!ink<br/>
-            Contract address: {formState.inkdata && formState.inkdata.contract ? formState.inkdata.contract : 'Not set'}
+            Contract address: { formState.actionData?.inkdata?.contract || 'Not set'}<br/>
+            
+            Chain: { formState.actionData?.source?.chain || 'Not set'}
             </div>
             
           )
