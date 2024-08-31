@@ -240,7 +240,7 @@
         if (typeof existingFieldData === 'string') {
             console.log('RecursiveFieldRenderer - variant 2a. determineInitialIndex existingFieldData:', existingFieldData);
             // Assuming existingFieldData is the name of the variant
-            const r = variants.findIndex(variant => variant.name === existingFieldData);
+            const r = variants?.findIndex(variant => variant.name === existingFieldData);
             const s = variants[r]?.index
 
             console.log('RecursiveFieldRenderer - variant 2d. determineInitialIndex r string:',s, r, existingFieldData);

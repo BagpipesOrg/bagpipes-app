@@ -40,6 +40,31 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
     const existingFieldData = _.get(formData.params, fieldPath);
     const [selectedIndex, setSelectedIndex] = useState('');
 
+    // FOR ARRAY
+    // Initialize array items based on existing formValues or provide defaults.
+    const initialArrayItems = formValues?.[fieldName] || Array.from({ length: fieldObject.length }, () => ({}));
+    const [arrayItems, setArrayItems] = useState(initialArrayItems);
+    // For Array
+    // Effect to update arrayItems when the length changes
+    useEffect(() => {
+        // Only reset arrayItems if the length actually changes to avoid unnecessary re-renders
+        if (arrayItems.length !== fieldObject.length) {
+            setArrayItems(Array.from({ length: fieldObject.length }, () => ({})));
+        }
+    }, [fieldObject.length]); // Dependency on fieldObject.length
+
+
+
+    // FOR SEQUENCE
+    // Initialize sequence items safely by checking if the path points to an array
+            // Initialization and state management for sequence items
+            const [items, setItems] = useState(() => {
+                // Assuming formData.params[fieldPath] is directly the array for this sequence
+                return formData.params?.[fieldPath] ? formData.params?.[fieldPath].map((item, index) => ({
+                    value: item,
+                    pathKey: `${fieldPath}[${index}]`, // Directly constructing pathKey
+                })) : [];
+            });
 
     const fieldType = fieldObject.type;
 
@@ -61,6 +86,8 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
         } 
 
     }, [selectedIndex]);
+
+
 
 
     const handleInputChange = (path, newValue) => {
@@ -107,9 +134,20 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
             const inputStyle = fieldObject.typeName === "Bytes" && (getFormDataForInput === '0' || getFormDataForInput === '0x')
             ? 'background-bytes'
             : '';
-            // we wan to get the prev id of the field path, so we can use it to get the previous value.
-            const prevId = fieldObject?.path?.[fieldObject.path.length - 2]?.id;
-            console.log('RecursiveFieldRenderer - input prevId:', prevId);
+
+            let prevId = '';
+            if (fieldObject?.path?.[fieldObject.path.length - 1]?.type === 'composite') {
+            // we want to get the prev id of the field path, so we can use it to get the previous value.
+                 prevId = fieldObject?.path?.[fieldObject.path.length - 2]?.id;
+            console.log('RecursiveFieldRenderer - input prevId in composite:', prevId);
+
+            } else if (fieldObject?.path?.[fieldObject.path.length - 1]?.type === 'variant') {
+                // we want to get the prev id of the field path, so we can use it to get the previous value.
+                 prevId = fieldObject?.path?.[fieldObject.path.length - 1]?.id;
+                console.log('RecursiveFieldRenderer - input prevId in variant:', prevId);
+            } else {
+                prevId = fieldObject?.path?.[fieldObject.path.length - 2]?.id;
+            }
 
             return (
                 <div className='input-container'>
@@ -127,7 +165,7 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
                         nodeId={nodeId}
                         onClick={handleInputClick} 
                     />
-                </div>
+                    </div>
                 </div>
             );
 
@@ -175,7 +213,8 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
 
             const selectedVariant = fieldObject.variants.find(variant => variant.index === selectedIndex);
             const selectedVariantName = selectedVariant?.name;
-            
+            const variantPath = generatePath(fieldPath, selectedVariantName, 'variant', 'variantSecond');
+
 
 
             return (
@@ -200,7 +239,6 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
                         // we need to create a siblings check to see if all the fields are variants. If they are then when generating a path it should be an array. If not all variants then we should make it blank. 
                         const isAllSibilingsVariantThenPassAsParentType = fieldObject.variants.find(variant => variant.index === selectedIndex)?.fields.every(field => field.resolvedType.type === 'variant');
                         console.log('RecursiveFieldRenderer - variant field isAllSibilingsVariantThenPassAsParentType:', isAllSibilingsVariantThenPassAsParentType, fieldPath, field.name, field);
-                        const variantPath = generatePath(fieldPath, selectedVariantName, 'variant', 'variantSecond');
                         const subFieldPath = generatePath(variantPath, field.name, subFieldsType, 'variantThird', isAllSibilingsVariantThenPassAsParentType, field.index);
                         // const fieldVariantPath = `${fieldPath}.${defaultName}`;
                         console.log('RecursiveFieldRenderer - variant field rrr:',{ subFieldPath, field, fieldPath}, field.name, field.resolvedType.type);
@@ -214,6 +252,7 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
                                     fieldPath={subFieldPath}
                                     nodeId={nodeId}
                                     fromType={'variantField'}
+                                    fieldName={field.name}
                                 />
                             </div>
                         );
@@ -267,15 +306,7 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
 
         case 'sequence':             
             console.log('RecursiveFieldRenderer - sequence:', fieldObject);
-            // Initialize sequence items safely by checking if the path points to an array
-            // Initialization and state management for sequence items
-            const [items, setItems] = useState(() => {
-                // Assuming formData.params[fieldPath] is directly the array for this sequence
-                return formData.params?.[fieldPath] ? formData.params?.[fieldPath].map((item, index) => ({
-                    value: item,
-                    pathKey: `${fieldPath}[${index}]`, // Directly constructing pathKey
-                })) : [];
-            });
+            
                             
             // Add new item to the sequence
             const handleAddItem = () => {
@@ -347,17 +378,9 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
         case 'array':
             console.log('RecursiveFieldRenderer - array:', fieldObject);
         
-            // Initialize array items based on existing formValues or provide defaults.
-            const initialArrayItems = formValues?.[fieldName] || Array.from({ length: fieldObject.length }, () => ({}));
-            const [arrayItems, setArrayItems] = useState(initialArrayItems);
+         
         
-            // Effect to update arrayItems when the length changes
-            useEffect(() => {
-                // Only reset arrayItems if the length actually changes to avoid unnecessary re-renders
-                if (arrayItems.length !== fieldObject.length) {
-                    setArrayItems(Array.from({ length: fieldObject.length }, () => ({})));
-                }
-            }, [fieldObject.length]); // Dependency on fieldObject.length
+
         
             // Handle change: propagate up instead of managing locally
             const handleChangeArrayItem = (index, newValue) => {
