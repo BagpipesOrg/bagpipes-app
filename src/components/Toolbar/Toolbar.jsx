@@ -61,8 +61,10 @@ const Toolbar = ({ onAddNode }) => {
       IconComponent = <OpenAIIcon />;
     } else if (nodeKey === 'chainQuery') {
       IconComponent = <ChainQueryIcon />;
-    }else if (nodeKey === 'chainTx') {
+    } else if (nodeKey === 'chainTx') {
       IconComponent = <ChainQueryIcon />;
+    } else if (nodeKey === 'lightClient') {
+      IconComponent = <ChainIcon />;
     }
 
     // return (

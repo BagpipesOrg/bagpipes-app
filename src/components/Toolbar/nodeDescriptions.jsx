@@ -112,6 +112,11 @@ export const nodeDescriptions = {
   <div className='m-4 tippy-node'>
     <h1 className='text-xl font-bold '>Open AI (coming soon) </h1>
     <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
-  </div>
+  </div>,
+    lightClient: 
+    <div className='m-4 tippy-node'>
+      <h1 className='text-xl font-bold '>Light Client (coming soon) </h1>
+      <p>A blockchain light client that runs on your service or in an extension. </p>
+    </div>
   }
   

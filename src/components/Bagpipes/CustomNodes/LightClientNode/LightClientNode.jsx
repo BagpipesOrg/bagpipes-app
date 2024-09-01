@@ -1,12 +1,13 @@
+
 import React, { useState, useRef, useEffect, useContext } from 'react';
 import { Handle, Position, useNodeId } from 'reactflow';
-import { ChainQueryIcon } from '../../../Icons/icons';
+import { ChainIcon } from '../../../Icons/icons';
 import { useTippy } from '../../../../contexts/tooltips/TippyContext';
 import EventNotification from '../../../EventNotifications/EventNotification';
 import useAppStore from '../../../../store/useAppStore';
 import { listChains } from '../../../../Chains/ChainsInfo';
 
-import './ChainTx.scss';
+import './LightClientNode.scss';
 import '../../node.styles.scss';
 
 import 'tippy.js/dist/tippy.css'; 
@@ -18,7 +19,8 @@ import { WalletContext } from '../../../Wallet/contexts';
 import ChainRpcService from '../../../../services/ChainRpcService';
 
 
-export default function ChainTxNode({ data }) {
+
+export default function LightClientNode({ data }) {
   const { scenarios, activeScenarioId, executionId, updateExecutionSigningJob, updateNodeResponseData } = useAppStore(state => ({
     scenarios: state.scenarios,
     activeScenarioId: state.activeScenarioId,
@@ -222,35 +224,50 @@ return(
 
     <div className="relative nodeBody border-4 border-gray-300 rounded-full w-20 h-20 flex items-center justify-center">
 
-      {isLoadingNode ? (
-          <div className="spinner-container">
-              {/* Simple CSS spinner */}
-              <div className="node-spinner" style={{ borderColor: '#f3f3f3', borderTopColor: fillColor }}></div>
-          </div>
-      ) : (
-        <>
-        { selectedChain ? (
-          <img src={selectedChainLogo} className="chain-logo" alt="Chain Logo" />
-        ) : (
-          <ChainQueryIcon className="h-7" fillColor={fillColor} />
-        )}
-        
-         </>
-      )}
+    
+
+      
+      <ChainIcon className='h-7 w-7' fillColor='indigo' />
 
       {/* Title outside the circle below the logo */}
       <div className="node-title-circle ">
-      <div className="node-title chainTx-name">Chain Tx
-      {/* <div className=" font-medium text-xs absolute top-8 right-16 text-gray-500">Get proposal</div> */}
+        <span className="node-title text-gray-500">Light Client</span>
       </div>
-      </div>
-
-
       
       <Handle position={Position.Right} type="source" className=" z-10" />
       <Handle position={Position.Left} type="target" className=" z-10" />
-      </div>
+    </div>
 
     </div>
   );
 }
+
+
+// export default function LightClientNode({ data }) {
+//   const nodeRef = useRef();
+//   const { logo, title, showArrow, instruction } = data;
+
+//   return (
+//   //   <Tippy
+//   //   content={<AntdSelector />}
+//   //   interactive={true}
+//   //   trigger="click"
+//   //   placement="auto"
+//   //   reference={nodeRef}
+//   //   theme="light"
+//   // >
+//     <div className="relative nodeBody bg-white border-4 border-gray-300 rounded-full w-20 h-20 flex items-center justify-center">
+      
+//       <ChainIcon className='h-7 w-7' fillColor='indigo' />
+
+//       {/* Title outside the circle below the logo */}
+//       <div className="node-title-circle ">
+//         <span className="node-title text-gray-500">Light Client</span>
+//       </div>
+      
+//       <Handle position={Position.Right} type="source" className=" z-10" />
+//       <Handle position={Position.Left} type="target" className=" z-10" />
+//     </div>
+//     // </Tippy>
+//   );
+// }

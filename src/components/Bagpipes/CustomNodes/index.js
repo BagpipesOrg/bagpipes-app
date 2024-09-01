@@ -15,7 +15,8 @@ import DelayNode from './DelayNode/DelayNode';
 // import SwitchNode from './SwitchNode/SwitchNode';
 import ChainQueryNode from './ChainQueryNode/ChainQueryNode';
 import ChainTxNode from './ChainTxNode/ChainTxNode';
+import LightClientNode from './LightClientNode/LightClientNode';
 
 
 
-export { ActionNode, ChainNode, RouterNode, WebhookNode, WebsocketNode, APINode, HttpNode, CodeNode, ScheduleNode, DiscordNode, OpenAINode, ChatGptNode, DelayNode, ChainQueryNode, ChainTxNode};
+export { ActionNode, ChainNode, RouterNode, WebhookNode, WebsocketNode, APINode, HttpNode, CodeNode, ScheduleNode, DiscordNode, OpenAINode, ChatGptNode, DelayNode, ChainQueryNode, ChainTxNode, LightClientNode};

@@ -72,6 +72,7 @@ export const ChainSubMenu = ({ onClick, onDragStart, theme }) => {
    chainTx: 'Chain TX',
    chainQuery: 'Chain Query',
    action: 'Action',
+   lightClient: 'Light Client',
 
   };
 
@@ -81,6 +82,8 @@ export const ChainSubMenu = ({ onClick, onDragStart, theme }) => {
       case 'action': return <ActionIcon fillColor='black' />;
       case 'chainQuery': return <ChainQueryIcon fillColor='black' />;
       case 'chainTx': return <ChainIcon fillColor='black' />;
+      case 'lightClient': return <ChainIcon fillColor='black' />;
+
      
 
       

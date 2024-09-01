@@ -17,7 +17,7 @@ import Toolbar from '../Toolbar/Toolbar';
 // import AppsToolbar from '../Toolbar/AppsToolbar';
 import FormGroupNode from './FormGroupNode';
 import CustomEdge from './CustomEdges/CustomEdge';
-import { ChainNode, ActionNode, RouterNode, WebhookNode,WebsocketNode, APINode, HttpNode, CodeNode, ScheduleNode, DiscordNode, OpenAINode, ChatGptNode,  ChainQueryNode, ChainTxNode, DelayNode } from './CustomNodes';
+import { ChainNode, ActionNode, RouterNode, WebhookNode,WebsocketNode, APINode, HttpNode, CodeNode, ScheduleNode, DiscordNode, OpenAINode, ChatGptNode,  ChainQueryNode, ChainTxNode, DelayNode, LightClientNode } from './CustomNodes';
 import { startDraftingProcess, preProcessDraftTransactions } from './utils/startDraftingProcess';
 import { calculateTippyPosition } from './utils/canvasUtils';
 import { MarkerType } from 'reactflow';
@@ -89,6 +89,7 @@ const nodeTypes = {
   chatGpt: ChatGptNode,
   chainQuery: ChainQueryNode,
   chainTx: ChainTxNode,
+  lightClient: LightClientNode,
 
 };
 
