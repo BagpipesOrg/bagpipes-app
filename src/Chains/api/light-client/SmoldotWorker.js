@@ -6,7 +6,7 @@ import { chainSpec } from "polkadot-api/chains/polkadot";
 import { startFromWorker } from "polkadot-api/smoldot/from-worker";
  
 // Using vite
-import SmWorker from "polkadot-api/smoldot/worker?worker";
+import SmWorker from "polkadot-api/smoldot/worker";
 const worker = new SmWorker();
  
 // Using Webpack
