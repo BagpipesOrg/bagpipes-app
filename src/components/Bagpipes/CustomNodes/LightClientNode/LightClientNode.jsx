@@ -13,8 +13,7 @@ import '../../node.styles.scss';
 import 'tippy.js/dist/tippy.css'; 
 import 'tippy.js/themes/light.css';
 
-import ChainTxForm from '../../Forms/PopupForms/ChainForms/ChainTxForm/ChainTxForm';
-import TransactionSignForm from '../../Forms/PopupForms/ChainForms/ChainTxForm/TransactionSignForm';
+import LightClientForm from '../../Forms/PopupForms/LightClientForm/LightClientForm';
 import { WalletContext } from '../../../Wallet/contexts';
 import ChainRpcService from '../../../../services/ChainRpcService';
 
@@ -32,7 +31,7 @@ export default function LightClientNode({ data }) {
   const walletContext = useContext(WalletContext);
 
 
-  const [isChainTxFormVisible, setChainTxFormVisible] = useState(false);
+  const [isLightClientFormVisible, setLightClientFormVisible] = useState(false);
   const { showTippy, hideTippy } = useTippy();
   const nodeId = useNodeId();
   const nodeRef = useRef();
@@ -71,54 +70,8 @@ export default function LightClientNode({ data }) {
     //   y: rect.top
     // }; 
 
-    showTippy(null, nodeId, nodeRef.current, <ChainTxForm onSave={handleSubmit} onClose={handleCloseChainTxForm} nodeId={nodeId} />, shouldFlipToLeft ? 'left-start' : 'right-start');
+    showTippy(null, nodeId, nodeRef.current, <LightClientForm onSave={handleSubmit} onClose={handleCloseLightClientForm} nodeId={nodeId} />, shouldFlipToLeft ? 'left-start' : 'right-start');
   };
-
-  const renderSigningNotification = () => {
-
-    const rect = nodeRef.current.getBoundingClientRect();
-    const viewportWidth = window.innerWidth;
-
-    // Determine if there's enough space to the right; if not, use the left position.
-    const spaceOnRight = viewportWidth - rect.right;
-    const tooltipWidth = 300; // Approximate or dynamically determine your tooltip's width.
-    const shouldFlipToLeft = spaceOnRight < tooltipWidth;
-
-    const calculatedPosition = {
-      x: shouldFlipToLeft ? rect.left : rect.right,
-      y: rect.top
-    }; 
-
-    showTippy(null, nodeId, nodeRef.current, <TransactionSignForm 
-      nodeId={nodeId}
-      nodeRef={nodeRef.current}
-      transactionDetails={signingJob.transactionDetails} 
-      signedResponse={signedResponse}
-      onConfirm={handleSignAndExecute} 
-      onCancel={handleCancelSign} />, 
-      shouldFlipToLeft ? 'left-start' : 'right-start');
-  };
-
-  useEffect(() => {
-    console.log(`ChainTxNode: `, signingJob);
-
-    const isNeedsSigningTrue = signingJob?.transactionDetails?.needsSigning;
-    if (isNeedsSigningTrue) {
-      renderSigningNotification();
-    }
-  }, [signingJob]);
-
-
-  useEffect(() => {
-    console.log(`ChainTxNode: `, signingJob);
-
-    const isNeedsSigningTrue = signingJob?.transactionDetails?.needsSigning;
-    if (isNeedsSigningTrue) {
-      renderSigningNotification();
-    } else if (isNeedsSigningTrue === false) {
-      hideTippy();
-    }
-  }, [signingJob?.transactionDetails?.needsSigning]);
 
 
 
@@ -130,12 +83,6 @@ export default function LightClientNode({ data }) {
 
     fetchChains();
   }, []);
-
-  useEffect(() => {
-    if (isSigningNedded) {
-      renderSigningNotification();
-    }
-  }, [isSigningNedded]);
 
 
 
@@ -201,13 +148,13 @@ export default function LightClientNode({ data }) {
 
   const handleSubmit = (event) => {
     // event.preventDefault();
-    setChainTxFormVisible(false);
+    setLightClientFormVisible(false);
     // Handle form submission
   };
 
 
-  const handleCloseChainTxForm = () => {
-    setChainTxFormVisible(false);
+  const handleCloseLightClientForm = () => {
+    setLightClientFormVisible(false);
   };
 
   const handleScroll = (e) => {

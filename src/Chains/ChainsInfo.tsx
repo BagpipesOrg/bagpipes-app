@@ -276,4 +276,4 @@ export enum supported_Polkadot_Chains {
 // in order to cover tx fee's
 
 
-export { AssetInfo, ChainInfo };
+export type { AssetInfo, ChainInfo };
