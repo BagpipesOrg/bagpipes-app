@@ -70,7 +70,7 @@ export default function LightClientNode({ data }) {
     //   y: rect.top
     // }; 
 
-    showTippy(null, nodeId, nodeRef.current, <LightClientForm onSave={handleSubmit} onClose={handleCloseLightClientForm} nodeId={nodeId} />, shouldFlipToLeft ? 'left-start' : 'right-start');
+    // showTippy(null, nodeId, nodeRef.current, <LightClientForm onSave={handleSubmit} onClose={handleCloseLightClientForm} nodeId={nodeId} />, shouldFlipToLeft ? 'left-start' : 'right-start');
   };
 
 
