@@ -13,7 +13,7 @@ import '../../node.styles.scss';
 import 'tippy.js/dist/tippy.css'; 
 import 'tippy.js/themes/light.css';
 
-import LightClientForm from '../../Forms/PopupForms/LightClientForm/LightClientForm';
+// import LightClientForm from '../../Forms/PopupForms/LightClientForm/LightClientForm';
 import { WalletContext } from '../../../Wallet/contexts';
 import ChainRpcService from '../../../../services/ChainRpcService';
 
