@@ -18,6 +18,9 @@
 
     "useDefineForClassFields": true,
     "module": "ESNext",
+    "paths": {
+      "@polkadot-api/descriptors": [".papi/descriptors/dist/index"]
+    },
 
 
   },
