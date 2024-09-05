@@ -200,7 +200,7 @@ function handlexTransfer(formData) {
         'hydraDx:moonbeam': () => {
             return hydra2moonbeam(target.address, source.assetId, source.amount);
         },
-        'assethub:moonbeam': () => {
+        'assetHub:moonbeam': () => {
             return assethub2moonbeam(source.amount, source.assetId, target.address);
         },
 
