@@ -88,6 +88,17 @@ export const nodeDescriptions = {
     <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
   </div>,
 
+blinks: 
+<div className='m-4 tippy-node'>
+  <div className='flex justify-between'>
+  <h1 className='text-xl font-bold '>Blinks Builder</h1>
+  <CodeIcon className='h-6 w-6 ml-3'fillColor='black' />
+
+  </div>
+  <p>Create a blockchain link "Blink" to share with others. If you paste it into a twitter post, it becomes a Dapp. Learn more in the docs. </p>
+
+</div>,
+
   code: 
   <div className='m-4 tippy-node'>
     <div className='flex justify-between'>

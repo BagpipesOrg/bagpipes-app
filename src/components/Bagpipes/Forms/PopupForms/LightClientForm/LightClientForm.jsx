@@ -1,50 +1,43 @@
 import React, { useState, useEffect, useMemo, useContext, useRef } from 'react';
-import useAppStore from '../../../../../../store/useAppStore';
-import { WalletContext } from '../../../../../Wallet/contexts';
-import { getAssetBalanceForChain } from '../../../../../../Chains/Helpers/AssetHelper';
+import useAppStore from '../../../../../store/useAppStore';
+import { WalletContext } from '../../../../Wallet/contexts';
+import { getAssetBalanceForChain } from '../../../../../Chains/Helpers/AssetHelper';
 import BalanceTippy from './BalanceTippy';
 
-import { broadcastToChain } from '../../../../../../Chains/api/broadcastToChain';
-import { decodeCallData } from '../../../../../../Chains/api/codecForCallData';
+import { broadcastToChain } from '../../../../../Chains/api/broadcastToChain';
+import { decodeCallData } from '../../../../../Chains/api/codecForCallData';
 
 import toast  from 'react-hot-toast';
-import { ChainToastContent, ActionToastContent, CustomToastContext } from '../../../../../toasts/CustomToastContext'
 
-import { processScenarioData, validateDiagramData, processAndSanitizeFormData, getUpstreamNodeIds } from '../../../../utils/scenarioUtils';
-import { constructCallData, formatCallData } from '../../../../utils/callDataUtils';
-import { generatePathKey } from '../../../fields/utils';
-import { getOrderedList } from '../../../../hooks/utils/scenarioExecutionUtils';
+import { processScenarioData, validateDiagramData, processAndSanitizeFormData, getUpstreamNodeIds } from '../../../utils/scenarioUtils';
+import { constructCallData, formatCallData } from '../../../utils/callDataUtils';
+import { generatePathKey } from '../../fields/utils';
+import { getOrderedList } from '../../../hooks/utils/scenarioExecutionUtils';
 
-import { CollapsibleField }  from '../../../fields';
-import { ChainQueryIcon } from '../../../../../Icons/icons';
-import { useTippy } from '../../../../../../contexts/tooltips/TippyContext';
-import { usePanelTippy } from '../../../../../../contexts/tooltips/TippyContext';
-import useTooltipClick from '../../../../../../contexts/tooltips/tooltipUtils/useTooltipClick';
-import { listChains} from '../../../../../../Chains/ChainsInfo';
-import { queryMetadata } from '../QueryMetadata';
-import { parseMetadataPallets, resolveFieldType, resolveTypeName } from '../parseMetadata'
-import { parseLookupTypes } from '../parseMetadata/ParseMetadataTypes';
-import { resolveKeyType } from '../resolveKeyType';
-import ChainRpcService from '../../../../../../services/ChainRpcService';
-import CustomInput from '../../../fields/CustomInput';
-import FormHeader from '../../../FormHeader';
-import FormFooter from '../../../FormFooter';
-import RecursiveFieldRenderer from '../../../fields/RecursiveFieldRenderer/RecursiveFieldRendererNew';
-import DynamicFieldRenderer from './DynamicFieldRenderer';
-import { generatePath } from '../../../fields/RecursiveFieldRenderer/utils';
+import { CollapsibleField }  from '../../fields';
+import { ChainQueryIcon } from '../../../../Icons/icons';
+import { useTippy } from '../../../../../contexts/tooltips/TippyContext';
+import { usePanelTippy } from '../../../../../contexts/tooltips/TippyContext';
+import useTooltipClick from '../../../../../contexts/tooltips/tooltipUtils/useTooltipClick';
+import { listChains} from '../../../../../Chains/ChainsInfo';
+import ChainRpcService from '../../../../../services/ChainRpcService';
+import CustomInput from '../../fields/CustomInput';
+import FormHeader from '../../FormHeader';
+import FormFooter from '../../FormFooter';
+import RecursiveFieldRenderer from '../../fields/RecursiveFieldRenderer/RecursiveFieldRendererNew';
+import { generatePath } from '../../fields/RecursiveFieldRenderer/utils';
 
-import '../types';
 
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css'; 
 import 'tippy.js/themes/light.css';
 
-import '../ChainForm.scss';
-import '../../Popup.scss';
-import '../../../../../../index.css';
+import '../ChainForms/ChainForm.scss';
+import '../Popup.scss';
+import '../../../../../index.css';
 
 
-const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId, pills, setPills, onPillsChange }) => {
+const LightClientForm = ({ onSubmit, onSave, onClose, onEdit, nodeId, pills, setPills, onPillsChange }) => {
   const { scenarios, activeScenarioId, saveNodeFormData, clearSignedExtrinsic, markExtrinsicAsUsed, updateNodeResponseData } = useAppStore(state => ({ 
     scenarios: state.scenarios,
     activeScenarioId: state.activeScenarioId,
@@ -59,10 +52,10 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId, pills, setPill
    const [chainSymbol, setChainSymbol] = useState('');
 
   const formData = scenarios[activeScenarioId]?.diagramData?.nodes.find(node => node.id === nodeId)?.formData || {};
-  console.log('ChainTxForm formData:', formData);
+  console.log('LightClientForm formData:', formData);
 
   const [metadata, setMetadata] = useState(null); 
-  console.log('ChainTxForm metadata:', metadata);
+  console.log('LightClientForm metadata:', metadata);
 
   const [pallets, setPallets] = useState([]);
   const [chains, setChains] = useState([]);
@@ -527,7 +520,7 @@ const handleMethodFieldChange = (updatedParams) => {
             nodeId={nodeId}
             value={result}
             isTextAreaValue={isTextAreaValue}
-            onClick={handleSignExecuteMethodClick}
+            onClick={handleSignMethodClick}
             // onPillsChange={(updatedPills) => handlePillsChange(updatedPills, field.name)}
             placeholder={`Enter`}
             disabled={!formData.selectedMethod}
@@ -544,6 +537,7 @@ const handleMethodFieldChange = (updatedParams) => {
         <CollapsibleField 
         key="encodedData"
         title="Decode Call Data"
+        
         hasToggle={true}
         fieldTypes="input"
         nodeId={nodeId}
@@ -562,7 +556,7 @@ const handleMethodFieldChange = (updatedParams) => {
   
 
 
-  const handleSignExecuteMethodClick = async () => {
+  const handleSignMethodClick = async () => {
     setIsTextAreaValue(true);
     clearSignedExtrinsic(activeScenarioId, nodeId);
 
@@ -827,4 +821,4 @@ return (
 
 };
 
-export default ChainTxForm;
+export default LightClientForm;

@@ -744,9 +744,8 @@ console.log('previousNodeFormData: ', previousNodeFormData);
           ) : (
             // Placeholder for when no price info is available
             <div className="in-node-border rounded m-2 p-2 ">!ink<br/>
-            Contract address: { formState.actionData?.inkdata?.contract || 'Not set'}<br/>
-            
-            Chain: { formState.actionData?.source?.chain || 'Not set'}
+              Contract address: { formState.actionData?.inkdata?.contract || 'Not set'}<br/>
+              Chain: { formState.actionData?.source?.chain || 'Not set'}
             </div>
             
           )

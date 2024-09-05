@@ -1,7 +1,7 @@
 import React from 'react';
 import Tippy from '@tippyjs/react';
 import { nodeDescriptions } from './nodeDescriptions';
-import { AppsIcon, ActionIcon, ChainIcon, ToolsIcon, RouterIcon, WebhookIcon, WebsocketIcon, ScheduleIcon, DelayIcon, APIIcon, CodeIcon, DiscordIcon, OpenAIIcon, HttpIcon, ChainQueryIcon, WebhookNodeIcon } from '../Icons/icons'; 
+import { AppsIcon, ActionIcon, ChainIcon, ToolsIcon, RouterIcon, WebhookIcon, WebsocketIcon, ScheduleIcon, DelayIcon, APIIcon, CodeIcon, DiscordIcon, OpenAIIcon, HttpIcon, ChainQueryIcon, WebhookNodeIcon, BlinkIcon } from '../Icons/icons'; 
 import 'tippy.js/dist/tippy.css'; 
 import './Toolbar.scss'; 
 import { on } from 'process';
@@ -43,6 +43,8 @@ export const AppsSubMenu = ({ onClick, onDragStart, theme }) => {
       case 'chatGpt': return <OpenAIIcon fillColor='black' />;
       case 'chainQuery': return <ChainQueryIcon fillColor='black' />;
       case 'chainTx': return <ChainQueryIcon fillColor='black' />;
+      case 'blinks': return <BlinkIcon fillColor='black' />;
+
       default: return null;
     }
   };
@@ -73,6 +75,7 @@ export const ChainSubMenu = ({ onClick, onDragStart, theme }) => {
    chainQuery: 'Chain Query',
    action: 'Action',
    lightClient: 'Light Client',
+   blinks: 'Blink Builder',
 
   };
 
@@ -83,6 +86,8 @@ export const ChainSubMenu = ({ onClick, onDragStart, theme }) => {
       case 'chainQuery': return <ChainQueryIcon fillColor='black' />;
       case 'chainTx': return <ChainIcon fillColor='black' />;
       case 'lightClient': return <ChainIcon fillColor='black' />;
+      case 'blinks': return <BlinkIcon fillColor='black' />;
+
 
      
 

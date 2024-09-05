@@ -6,7 +6,7 @@ export const creators: Creator[] = [
     id: "1",
     name: "Ramsey",
     username: "ramsey",
-    title: "Bagpipes Builder and Blockchain Protocol Engineer",
+    title: "Bagpipes Builder and Blockchain Engineer",
     image: "/users/ramsey.png",
     description: "Ramsey is a creative engineer covering different layers of abstraction from building the Bagpipes platform to building blockchain protocols.",
     templates: ["ava-bagpipes-2", "ava-ui-2"]

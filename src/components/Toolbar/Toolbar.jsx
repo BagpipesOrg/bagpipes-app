@@ -65,6 +65,8 @@ const Toolbar = ({ onAddNode }) => {
       IconComponent = <ChainQueryIcon />;
     } else if (nodeKey === 'lightClient') {
       IconComponent = <ChainIcon />;
+    } else if (nodeKey === 'blinks') {
+      IconComponent = <BlinkIcon />;
     }
 
     // return (
