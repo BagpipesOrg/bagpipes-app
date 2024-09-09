@@ -88,6 +88,7 @@ const CommunityPage = () => {
                 ))}
               </div>
             </div>
+            {community.uiTemplateShowcase !== false && (
             <div className="template-group">
               <h3>UI Templates</h3>
               <div className="template-flex">
@@ -114,6 +115,7 @@ const CommunityPage = () => {
                 ))}
               </div>
             </div>
+            )}
           </div>
         </section>
         <section className="community-section">
