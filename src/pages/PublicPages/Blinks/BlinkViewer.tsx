@@ -24,7 +24,7 @@ const BlinkViewer: React.FC<BlinkViewerProps> = ({ action }) => {
       )}
       <div className="blink-container">
         <div className="link-section">
-          <BlinkIcon className=" icon ml-0 mr-0 h-3 w-3" fillColor="grey" />
+           <BlinkIcon className=" icon ml-0 mr-0 h-3 w-3" fillColor="grey" />
           <span className="blink-title">https://blink.polkadot.network/</span>
           <VerificationIcon className="icon ml-1 mr-0 h-3 w-3" fillColor="grey" />
         </div>
