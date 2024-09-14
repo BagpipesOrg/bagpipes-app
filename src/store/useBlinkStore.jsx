@@ -10,7 +10,11 @@ const useBlinkStore = create(persist((set, get) => ({
   getBlinkData: (id) => get().blinks[id] || null,
 
   // Save form data for a blink
-  saveBlinkFormData: (id, formData) => set(state => ({
+  saveBlinkFormData: (id, formData) => set(state => (
+    console.log('Saving form data for blink:', id, formData),
+
+    
+    {
     blinks: {
       ...state.blinks,
       [id]: formData

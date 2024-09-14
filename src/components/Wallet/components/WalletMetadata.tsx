@@ -41,7 +41,7 @@ function WalletMetadata (): React.ReactElement {
 
       if (metadata) {
         const newMetaDef: MetadataDef = {
-          chain: 'SubWallet Connect Demo',
+          chain: 'Bagpipes Connect Demo',
           genesisHash: '0x1bf2a278799868de66ea8610f2ce7c8c43706561b6476031315f6640fe38e888',
           icon: 'substrate',
           ss58Format: 0,

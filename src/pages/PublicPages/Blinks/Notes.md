@@ -1,3 +1,42 @@
+// const sortedActions = [...(action?.links?.actions || [])].sort((a, b) => {
+//   const typeA = a.parameters?.some(param => param.type === 'inputAmount') ? 1 : 0;
+//   const typeB = b.parameters?.some(param => param.type === 'inputAmount') ? 1 : 0;
+//   return typeA - typeB;
+// });
+
+
+
+        {/* {sortedActions.length > 0 && (
+          <div className='button-group-style'>
+            <ul>
+              {sortedActions.map((linkedAction, index) => (
+                <li key={index} className={linkedAction.parameters?.some(param => param.type === 'inputAmount') ? 'input-wrapper' : 'fixed-wrapper'}>
+                  <button className='action-button' onClick={() => console.log('Action URL:', linkedAction.href)}>
+                    {linkedAction.label}
+                  </button>
+                  {linkedAction.parameters?.map((param, paramIndex) => (
+                    <div key={paramIndex} className={param.type === 'inputAmount' ? 'input-amount-style' : 'fixed-amount-style'}>
+                      <input placeholder={param.label} defaultValue={param.name} />
+                    </div>
+                  ))}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )} */}
+
+
+
+
+
+
+
+
+
+
+
+ok we have lets inputs be saved for linkedActions. 
+
 import React, { useState, useContext, useEffect } from 'react';
 import './Blinks.scss';
 import { Action } from './BlinkBuilder';
@@ -6,20 +45,11 @@ import { WalletContext } from '../../../components/Wallet/contexts';
 import BalanceTippy from '../../../components/Bagpipes/Forms/PopupForms/ChainForms/ChainTxForm/BalanceTippy';
 import { getAssetBalanceForChain } from '../../../Chains/Helpers/AssetHelper';
 import { listChains} from '../../../Chains/ChainsInfo';
-
 import useBlinkStore from '../../../store/useBlinkStore';
 import { Button, Dropdown, message, Space, Tooltip } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import CreatorIdentity from './CreatorIdentity';
-import { getApiInstance } from 'src/Chains/api/connect';
-import { signExtrinsicUtil } from 'src/components/Bagpipes/utils/signExtrinsicUtil';
-import { broadcastToChain } from '../../../Chains/api/broadcastToChain';
-import { createCallParams } from './executeBlink/createCallParams';
-import toast  from 'react-hot-toast';
-import { actionSubmittableStructure } from './actions';
-import ChainRpcService from '../../../services/ChainRpcService';
-
 export interface BlinkViewerProps {
   action: Action<"action">;
 }
@@ -34,23 +64,17 @@ const BlinkViewer: React.FC<BlinkViewerProps> = ({ action }) => {
    
   }));
 
-  const formData = getBlinkData(activeBlinksId);
 
   const walletContext = useContext(WalletContext);
-  console.log('BlinkViewer walletContext:', walletContext);
   const [isFetchingBalance, setIsFetchingBalance] = useState(false);
   const [chainSymbol, setChainSymbol] = useState('');
   const [balance, setBalance] = useState(null);
-  const [selectedUserAddress, setSelectedUserAddress] = useState(formData?.selectedUserAddress || walletContext.accounts[0]?.address || '');
-  const [selectedUserAddressName, setSelectedUserAddressName] = useState(formData?.selectedUserAddressName || walletContext.accounts[0]?.name || '');
-  const [chain, setChain] = useState(null);
-  // const [selectedCreatorAccount, setSelectedCreatorAccount] = useState(formData?.selectedCreatorAccount || null);
-  let selectedCreatorAccount = formData?.selectedCreatorAccount || null;
+  const [selectedUserAddress, setSelectedUserAddress] = useState(walletContext.accounts[0]?.address || '');
+  const [selectedAccount, setSelectedAccount] = useState(walletContext.accounts[0] || null);
 
-  useEffect(() => {
-    selectedCreatorAccount = formData?.selectedCreatorAccount || null;
-  }
-  , [formData?.selectedCreatorAccount]);
+  const formData = getBlinkData(activeBlinksId);
+  const creatorAddress = formData?.selectedUserAddress || 'Unknown';
+
 
   useEffect(() => {
     console.log('BlinkViewer useEffect selectedUserAddress:', selectedUserAddress, 'formData:', formData);
@@ -58,19 +82,11 @@ const BlinkViewer: React.FC<BlinkViewerProps> = ({ action }) => {
     const signal = controller.signal;
 
     if (selectedUserAddress && formData.selectedChain) {
-      console.log('BlinkViewer useEffect fetchBalance selectedUserAddress:', selectedUserAddress, 'formData:', formData);
-      fetchBalance(signal);
+console.log('BlinkViewer useEffect fetchBalance selectedUserAddress:', selectedUserAddress, 'formData:', formData);
+    fetchBalance(signal);
     }
     return () => controller.abort();
   }, [selectedUserAddress]);
-
-  useEffect(() => {
-    // we should fetch chainInfo from listChains()
-    const chainsArray = Object.values(listChains()); // Convert to array if originally an object
-    const chain = chainsArray.find(c => c.name.toLowerCase() === formData?.selectedChain.toLowerCase());
-    setChain(chain);
-
-      }, [formData?.selectedChain]);
  
   const fetchBalance = async (signal) => {
     // console.log('getAssetBalanceForChain fetchBalance address:', address, 'chain:', chain);
@@ -103,22 +119,19 @@ const BlinkViewer: React.FC<BlinkViewerProps> = ({ action }) => {
     }
   };
 
-  const handleUserButtonClick = (e) => {
+  const handleButtonClick = (e) => {
     message.info(`Selected Address: ${selectedUserAddress}`);
   };
 
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     const selected = walletContext.accounts.find(acc => acc.address === e.key);
-    // setSelectedCreatorAccount(selected || null);
+    setSelectedAccount(selected || null);
     setSelectedUserAddress(selected?.address || '');
-    setSelectedUserAddressName(selected?.name || '');
     message.info(`Selected Address: ${selected?.address || ''}`);
     // Fetch balance for the selected address
     // fetchBalance(selected?.address);
 
-    // we need the 
-
-  saveBlinkFormData(activeBlinksId, {...formData, selectedUserAddress: selected?.address, selectedUserAddressName: selected?.name});
+  saveBlinkFormData(activeBlinksId, {...formData, selectedUserAddress: selected?.address, selectedAccount: selected});
 
 };
  // Create a menu items array based on wallet accounts
@@ -142,7 +155,7 @@ const menuProps = {
       <Space wrap>
       <Dropdown.Button
         menu={menuProps}
-        onClick={handleUserButtonClick}
+        onClick={handleButtonClick}
         className="custom-dropdown-button"
         icon={<UserOutlined />}
         buttonsRender={([rightButton, leftButton]) => [
@@ -154,7 +167,7 @@ const menuProps = {
             >
       {selectedUserAddress ? (
         <span className='account-info'>
-          <span className="font-bold">{selectedUserAddressName}</span>
+          <span className="font-bold">{selectedAccount.name}</span>
           {/* {' - '}
           <span className="font-semibold">{balance?.total} {chainSymbol}</span>  */}
           <span className="text-gray-600"> {selectedUserAddress.slice(0, 4)}...{selectedUserAddress.slice(-4)}</span>
@@ -202,43 +215,6 @@ const menuProps = {
     });
   };
 
-
-
-
-const executeTransaction = async (formData, chain) => {
-  try {
-    const methodData = createCallParams(formData, chain.token_decimals);
-    console.log('executeTransaction methodData:', methodData);
-    const signedExtrinsic = await ChainRpcService.executeChainTxRenderedMethod({
-      chainKey: formData.selectedChain,
-      palletName: methodData.section, 
-      methodName: methodData.method,
-      params: methodData.arguments,
-      signer: walletContext?.wallet?.signer,
-      signerAddress: formData.selectedUserAddress
-    });
-
-    // Now broadcast to chain
-    await broadcastToChain(formData.selectedChain, signedExtrinsic, {
-      onInBlock: (blockHash: any) => {
-        toast.success(`Transaction included at blockHash: ${blockHash}`);
-      },
-      onFinalized: (blockHash: any) => {
-        toast.success(`Transaction finalized at blockHash: ${blockHash}`);
-      },
-      onError: (error: { message: any; }) => {
-        toast.error(`Transaction failed: ${error.message}`);
-      }
-    });
-  } catch (error) {
-    console.error('Transaction failed:', error);
-    toast.error(`Error executing transaction: ${error.message}`);
-  }
-};
-
-
-
-
   
   return (
     <div className='viewerWrapper'>
@@ -256,7 +232,7 @@ const executeTransaction = async (formData, chain) => {
             <span className="blink-title">https://blink.polkadot.network/</span> */}
           </div>
           <div className="creator-section">
-            <CreatorIdentity chain={formData?.selectedChain} accountId={selectedCreatorAccount} />
+            <CreatorIdentity chain={formData?.selectedChain} accountId={creatorAddress} />
           </div>
         </div>
        
@@ -291,7 +267,7 @@ const executeTransaction = async (formData, chain) => {
 
             
 
-              <button className='action-button'onClick={() => executeTransaction(formData, chain)}>
+              <button className='action-button'onClick={() => console.log(linkedAction.href)}>
               {linkedAction.label}
             </button>
           </div>
@@ -311,4 +287,8 @@ const executeTransaction = async (formData, chain) => {
 };
 
 export default BlinkViewer;
+
+
+
+and here is how our formData looks:
 

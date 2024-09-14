@@ -336,7 +336,6 @@ const renderContent = (field, depth = 0) => {
             <Select
               onChange={value => onChange(value)}
               getPopupContainer={trigger => trigger.parentNode}
-
               value={value} 
               className={`{w-full font-semibold custom-select ${selectFieldStyle}`}
               placeholder="Select option"

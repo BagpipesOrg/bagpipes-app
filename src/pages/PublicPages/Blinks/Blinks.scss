@@ -1,3 +1,5 @@
+@import '../../../variables.scss';
+
 .blinkTitleInfo {
   display: flex;
   align-items: left;
@@ -49,11 +51,18 @@ label {
       border-radius: 20px !important;
     }
 
+    .creator-field {
+      padding: 16px;
+      margin-top: 10px;
+      border: 1px dashed #ccc;
+      border-radius: 10px;
+    }
+
 
 
   .blinkForm {
     overflow-y: scroll;
-height: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: left;
@@ -259,7 +268,7 @@ height: 100%;
   font-family: 'Inter', sans-serif;
   border: 1px solid #ccc;
   border-radius: 20px;
-  padding: 20px;
+  padding: 20px 20px 20px 20px;
   margin: auto;
   width: 500px; // Fixed width similar to an embedded Twitter card
   min-height: auto;
@@ -320,9 +329,16 @@ height: 100%;
        
       }
   
-      .blink-title, .creator-name {
+      .blink-title {
         margin-left: 0.25rem;
         color: grey
+      }
+
+      .creator-identity  {
+        margin-left: 0.25rem;
+        color: grey;
+        display: flex;
+        align-items: center;
       }
     }
   
@@ -339,18 +355,61 @@ height: 100%;
   }
   
 
+  .account-widget {
+    float: left;
+    margin-bottom: 10px;
+    
+  }
 
-  .button-group-style {
+  .action-group-style {
     display: flex;
+    flex-direction: column;
     // we want the siblings of the buttons to be on the same row
     justify-content: space-around; /* This will space out buttons evenly */
-    // align-items: center;
+    align-items: center;
     margin-top: auto;    // background: #c2c2c2;
     width: 100%;
-    height: 50px;
-    padding: 0;
     list-style: none;
-    margin: 0;
+    justify-items: center;
+
+
+    .action-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+
+      .label-style {
+        // stay left
+        text-align: left !important;
+      }
+      
+
+      .action-button {
+        width: 100%; 
+        margin: 10px; 
+        padding: 10px; 
+        justify-items: center;
+        align-items: center;
+        cursor: pointer;
+        background: #222222 ;
+
+
+          &:hover {
+            background: darken(#222222, 10%); // Darken on hover
+        }
+
+      }
+  
+      .action-input {
+        padding: 10px;
+        border-radius: 7px;
+        margin: 10px;
+        width: 100%;
+        border: 1px solid #ccc;
+      }
+      
+    }
     
 
     ul {
@@ -368,24 +427,19 @@ height: 100%;
       align-items: center; /* Centers the button vertically within the list item */
 
     }
-    .action-button {
-      width: 100%; /* Ensures the button stretches to fill its list item */
-      margin: 5px; /* Provides space around the button */
-      padding: 10px 0; /* Vertical padding, adjust as necessary */
-  }
+
+
+
     button {
       padding: 7px 12px; // Padding inside the button
       margin: 5px; // Remove margin
       border-radius: 10px; // Rounded corners on the right side only
-      background: #222222 !important;
       color: white;
       border: none;
       cursor: pointer;
       font-weight: bold;
 
-      &:hover {
-          background: darken(#007bff, 10%);
-      }
+     
 
     }
   }
@@ -462,4 +516,40 @@ height: 100%;
 }
 
 
+
+.argInfo {
+  font-weight: 400 !important;
+  color: rgb(116, 116, 116);
+  font-size: 12px;
+}
+
+
+
+.ant-dropdown-button .ant-btn-compact-first-item {
+  border-radius: 10px 0px 0px 10px !important; /* Rounded corners */
+}
+
+.ant-dropdown-button .ant-btn-compact-last-item {
+  border-radius: 0px 10px 10px 0px !important; /* Rounded corners */
+}
+
+.custom-select {
+  width: 300px;
+}
+
+.account-info {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px
+}
+
+.ant-btn .ant-btn:ant-btn-compact-first-item {
+  border-radius: 25px !important; /* Rounded corners */
+  max-width: 100px !important;
+}
+.ant-space-compact-block {
+  max-width: 150px !important;
+}
+.ant-tooltip-open {
+  background: white;
+}
 
