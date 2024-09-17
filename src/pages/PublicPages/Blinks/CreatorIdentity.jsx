@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { TypeRegistry } from '@polkadot/types/create';
+import { getApiInstance } from '../../../Chains/api/connect';
 import './Blinks.scss';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css'; 
@@ -16,21 +17,21 @@ const CreatorIdentity = ({ chain, accountId }) => {
         tooltipInfo: ''
       });
 
-  useEffect(() => {
-    async function fetchIdentity() {
-      const rpcUrl = chain === 'polkadot'
-        ? 'wss://rpc-people-polkadot.luckyfriday.io'
-        : chain === 'kusama'
-        ? 'wss://rpc-people-kusama.luckyfriday.io'
-        : null;
+      useEffect(() => {
+        async function fetchIdentity() {
+          const apiChain =
+            chain === 'polkadot'
+              ? 'people'
+              // : chain === 'kusama'
+              // ? 'people_kusama'
+              : null;
 
-      if (!rpcUrl) {
-        setCreatorName(accountId); // Fallback to the account ID if not Polkadot/Kusama
-        return;
-      }
+              if (!apiChain) {
+                setCreatorInfo({ name: accountId });
+                return;
+              }
 
-      const provider = new WsProvider(rpcUrl);
-      const api = await ApiPromise.create({ provider });
+      const api = await getApiInstance(apiChain);
       const registry = new TypeRegistry();
 
 

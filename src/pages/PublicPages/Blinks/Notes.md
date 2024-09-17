@@ -56,11 +56,11 @@ export interface BlinkViewerProps {
 
 const BlinkViewer: React.FC<BlinkViewerProps> = ({ action }) => {
 
-  const { blinks, activeBlinksId, getBlinkData, saveBlinkFormData  } = useBlinkStore(state => ({ 
+  const { blinks, activeBlinksId, getBlinkMetadata, saveBlinkMetadata  } = useBlinkStore(state => ({ 
     blinks: state.blinks,
     activeBlinksId: state.activeBlinksId,
-    getBlinkData: state.getBlinkData,
-    saveBlinkFormData: state.saveBlinkFormData, 
+    getBlinkMetadata: state.getBlinkMetadata,
+    saveBlinkMetadata: state.saveBlinkMetadata, 
    
   }));
 
@@ -72,7 +72,7 @@ const BlinkViewer: React.FC<BlinkViewerProps> = ({ action }) => {
   const [selectedUserAddress, setSelectedUserAddress] = useState(walletContext.accounts[0]?.address || '');
   const [selectedAccount, setSelectedAccount] = useState(walletContext.accounts[0] || null);
 
-  const formData = getBlinkData(activeBlinksId);
+  const formData = getBlinkMetadata(activeBlinksId);
   const creatorAddress = formData?.selectedUserAddress || 'Unknown';
 
 
@@ -131,7 +131,7 @@ console.log('BlinkViewer useEffect fetchBalance selectedUserAddress:', selectedU
     // Fetch balance for the selected address
     // fetchBalance(selected?.address);
 
-  saveBlinkFormData(activeBlinksId, {...formData, selectedUserAddress: selected?.address, selectedAccount: selected});
+  saveBlinkMetadata(activeBlinksId, {...formData, selectedUserAddress: selected?.address, selectedAccount: selected});
 
 };
  // Create a menu items array based on wallet accounts
@@ -209,7 +209,7 @@ const menuProps = {
    
     console.log('New links:', newLinks);
 
-    saveBlinkFormData(activeBlinksId, {
+    saveBlinkMetadata(activeBlinksId, {
       ...formData,
       links: { ...formData.links, actions: newLinks }
     });

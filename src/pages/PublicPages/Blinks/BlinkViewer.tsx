@@ -26,15 +26,15 @@ export interface BlinkViewerProps {
 
 const BlinkViewer: React.FC<BlinkViewerProps> = ({ action }) => {
 
-  const { blinks, activeBlinksId, getBlinkData, saveBlinkFormData  } = useBlinkStore(state => ({ 
+  const { blinks, activeBlinksId, getBlinkMetadata, saveBlinkMetadata  } = useBlinkStore(state => ({ 
     blinks: state.blinks,
     activeBlinksId: state.activeBlinksId,
-    getBlinkData: state.getBlinkData,
-    saveBlinkFormData: state.saveBlinkFormData, 
+    getBlinkMetadata: state.getBlinkMetadata,
+    saveBlinkMetadata: state.saveBlinkMetadata, 
    
   }));
 
-  const formData = getBlinkData(activeBlinksId);
+  const formData = getBlinkMetadata(activeBlinksId);
 
   const walletContext = useContext(WalletContext);
   console.log('BlinkViewer walletContext:', walletContext);
@@ -67,7 +67,7 @@ const BlinkViewer: React.FC<BlinkViewerProps> = ({ action }) => {
   useEffect(() => {
     // we should fetch chainInfo from listChains()
     const chainsArray = Object.values(listChains()); // Convert to array if originally an object
-    const chain = chainsArray.find(c => c.name.toLowerCase() === formData?.selectedChain.toLowerCase());
+    const chain = chainsArray.find(c => c.name.toLowerCase() === formData?.selectedChain?.toLowerCase());
     setChain(chain);
 
       }, [formData?.selectedChain]);
@@ -118,7 +118,7 @@ const BlinkViewer: React.FC<BlinkViewerProps> = ({ action }) => {
 
     // we need the 
 
-  saveBlinkFormData(activeBlinksId, {...formData, selectedUserAddress: selected?.address, selectedUserAddressName: selected?.name});
+  saveBlinkMetadata(activeBlinksId, {...formData, selectedUserAddress: selected?.address, selectedUserAddressName: selected?.name});
 
 };
  // Create a menu items array based on wallet accounts
@@ -196,7 +196,7 @@ const menuProps = {
    
     console.log('New links:', newLinks);
 
-    saveBlinkFormData(activeBlinksId, {
+    saveBlinkMetadata(activeBlinksId, {
       ...formData,
       links: { ...formData.links, actions: newLinks }
     });
@@ -209,13 +209,14 @@ const executeTransaction = async (formData, chain) => {
   try {
     const methodData = createCallParams(formData, chain.token_decimals);
     console.log('executeTransaction methodData:', methodData);
-    const signedExtrinsic = await ChainRpcService.executeChainTxRenderedMethod({
-      chainKey: formData.selectedChain,
+    const signedExtrinsic = await ChainRpcService.executeChainTxBlinkRenderedMethod({
+      chainKey: formData?.selectedChain,
       palletName: methodData.section, 
       methodName: methodData.method,
       params: methodData.arguments,
-      signer: walletContext?.wallet?.signer,
-      signerAddress: formData.selectedUserAddress
+      signerAddress: formData.selectedUserAddress,
+      signer: walletContext?.wallet?.signer
+      
     });
 
     // Now broadcast to chain
@@ -269,8 +270,8 @@ const executeTransaction = async (formData, chain) => {
 
         <div className='action-group-style'>
          
-          
-          {action.links.actions.map((linkedAction, index) => (
+  
+          {action?.links?.actions?.map((linkedAction, index) => (
             <div key={index} className="action-wrapper">
            
            {linkedAction.parameters.filter(param => param.userEditable).map((param, paramIndex) => (

@@ -32,6 +32,7 @@
     background: rgba(0, 0, 0, 0.067);
     // the background is a local file that is a noise texture noiserectangle.png
     background-image: url('./noiserectangle.png');
+    padding-bottom: 50px;
 }
 
 label {
@@ -43,7 +44,7 @@ label {
     // justify-content: space-around;
     // align-items: flex-start;
     height: 100%;
-    padding: 20px;
+    // padding: 20px;
     width: 40%;
 
 
@@ -68,13 +69,47 @@ label {
     align-items: left;
     min-width: 400px;
     padding: 20px;
-    margin: 7px;
+    // margin: 7px;
     margin-left: 0px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
+    // border: 1px solid #ccc;
+    // border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     background: white;
     // width: 300px;
+
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    // border: 1px solid #ccc;
+    // box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+
+
+    h2 {
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+      min-width: 120px;
+      align-items: center;
+    }
+
+    input, textarea {
+      padding: 8px;
+      margin: 5px 0 20px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      width: 100%;
+      font-weight: normal;
+    }
+
+    textarea {
+      height: 100px;
+    }
+
 
     .actionArea {
       padding: 20px;
@@ -210,36 +245,7 @@ label {
     //   }
     // }
 
-    .action-button {
-      display: flex;
-      align-items: center !important;
-      cursor: pointer;
-      border: 0px;
-      outline: 0px;
-      // width: 200px;
-      
-      &:hover {
-            border: 0px
-          }
     
-      .add-button, .remove-button {
-    
-          width: 30px;
-          padding: 3px;
-          background: rgb(39, 39, 254);
-          color: white;
-          font-weight: 700;
-          margin-right: 5px;
-          border-radius: 100%;
-          align-items: center;
-          text-align: center;
-          
-      }
-
-      .remove-button {
-        background: rgb(254, 39, 39);
-      }
-    }
   }
 }
 
@@ -373,43 +379,7 @@ label {
     justify-items: center;
 
 
-    .action-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
 
-      .label-style {
-        // stay left
-        text-align: left !important;
-      }
-      
-
-      .action-button {
-        width: 100%; 
-        margin: 10px; 
-        padding: 10px; 
-        justify-items: center;
-        align-items: center;
-        cursor: pointer;
-        background: #222222 ;
-
-
-          &:hover {
-            background: darken(#222222, 10%); // Darken on hover
-        }
-
-      }
-  
-      .action-input {
-        padding: 10px;
-        border-radius: 7px;
-        margin: 10px;
-        width: 100%;
-        border: 1px solid #ccc;
-      }
-      
-    }
     
 
     ul {
@@ -553,3 +523,162 @@ label {
   background: white;
 }
 
+.action-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+
+  padding: 10px !important;
+
+  .label-style {
+    // stay left
+    text-align: left !important;
+  }
+  
+
+  .action-button  {
+    width: 100%; 
+    margin: 10px; 
+    padding: 10px; 
+    justify-items: center;
+    align-items: center;
+    cursor: pointer;
+    background: #222222 ;
+
+
+      &:hover {
+        background: darken(#222222, 10%); // Darken on hover
+    }
+
+  }
+
+  .action-input {
+    padding: 10px;
+    border-radius: 7px;
+    margin: 10px;
+    width: 100%;
+    border: 1px solid #ccc;
+  }
+
+
+  .action-field-label {
+    margin:0px;
+    padding:0px;
+
+  }
+
+  .action-field-input {
+    padding: 10px;
+    border-radius: 7px;
+   
+    width: 100%;
+    border: 1px solid #ccc;
+  }
+  
+}
+
+.action-field-wrapper {
+  display: flex;
+  flex-direction: column;
+  // align-items: center;
+  width: 100%;
+  border: 1px dashed #ccc;
+  margin-top: 10px;
+  border-radius: 7px;
+
+  padding: 15px !important;
+}
+
+.generate-button-description {
+  font-size: 12px;
+  color: rgb(137, 137, 137);
+  margin-top: 10px;
+  font-weight: 300 !important;
+}
+
+.generate-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 0px;
+  outline: 0px;
+  border-radius: 8px !important;
+  padding: 16px 16px !important; 
+
+  span {
+    display: block; /* Makes the span a block element to fill height */
+    line-height: normal; /* Adjust this value as needed */
+  }
+
+}
+
+.generate-button-icon {
+  align-self: center;
+}
+
+.ant-btn {
+  display: flex !important;
+  border-radius: 8px !important;
+}
+
+.modal-text {
+  font-size: 14px;
+  color: rgb(102, 102, 102);
+  margin-top: 10px;
+  font-weight: 300 !important;
+}
+
+.blink-url-container {
+  font-size: 12px;
+  color: rgb(255, 255, 255) !important;
+  margin-top: 10px;
+  font-weight: 300 !important;
+  background: rgb(66, 66, 66);
+  padding: 10px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  
+
+}
+
+.ant-modal-footer {
+  display: flex;
+  justify-content: right;}
+
+.ant-modal-content, .ant-modal-header {
+  border-radius: 10px !important;
+}
+
+.generate-button:hover {
+  background-color: #40a9ff;
+}
+
+
+
+
+.url-loading {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  border: 1px solid #d8d8d8;
+  padding: 10px;
+  border-radius: 7px;
+}
+
+.copy-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 0px;
+  outline: 0px;
+  background: none !important;
+  border: none !important;
+}
+
+.blink-url {
+  color: white
+}

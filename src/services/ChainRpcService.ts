@@ -71,6 +71,7 @@ class ChainRpcService {
 
 
   static async executeChainTxRenderedMethod({ chainKey, palletName, methodName, params, signerAddress, signer }: MethodParams): Promise<any> {
+    console.log(`executeChainTxRenderedMethod: chainKey, palletName, methodName, params: `, chainKey, palletName, methodName, params, signerAddress, signer);
     const api = await getApiInstance(chainKey);
     const method = this.resolveMethod(api, palletName, methodName, true);
 
@@ -78,6 +79,7 @@ class ChainRpcService {
     if (!signerAddress) throw new Error("Signer address is required for transaction signing.");
 
     try {
+    
         const formattedParams = this.formatTxParams(api, method, params);
         const extrinsic = method(...formattedParams);
         const signedExtrinsic = await signExtrinsicUtil(api, signer, extrinsic, signerAddress);
@@ -86,6 +88,27 @@ class ChainRpcService {
         console.error('Error executing chain tx method:', error);
         throw error;
     }
+}
+
+static async executeChainTxBlinkRenderedMethod({ chainKey, palletName, methodName, params, signerAddress, signer }: MethodParams): Promise<any> {
+  console.log(`executeChainTxBlinkRenderedMethod: chainKey, palletName, methodName, params: `, chainKey, palletName, methodName, params, signerAddress, signer);
+  const api = await getApiInstance(chainKey);
+  const method = this.resolveMethod(api, palletName, methodName, true);
+  console.log(`executeChainTxBlinkRenderedMethod: method resolved:...`, method);
+
+  if (!method) throw new Error(`Method ${methodName} is not available on pallet ${palletName}.`);
+  if (!signerAddress) throw new Error("Signer address is required for transaction signing.");
+
+  try {
+  
+      const formattedParams = this.formatTxBlinkParams(api, method, params);
+      const extrinsic = method(...formattedParams);
+      const signedExtrinsic = await signExtrinsicUtil(api, signer, extrinsic, signerAddress);
+      return signedExtrinsic;
+  } catch (error) {
+      console.error('Error executing chain tx method:', error);
+      throw error;
+  }
 }
 
 
@@ -165,6 +188,37 @@ static formatTxParams(api: ApiPromise, method: any, params: any): any[] {
       return api.registry.createType(paramType, value);
   });
 }
+
+/**
+ * Formats parameters according to their defined types in Substrate metadata.
+ */
+static formatTxBlinkParams(api: ApiPromise, method: any, params: any): any[] {
+  // with blink params they do not have keys, they just have values in the correct order. 
+  // so we just need to map the values to the correct type
+  return params.map((value, index) => {
+      const typeInfo = method.meta.args[index];
+      const paramType = typeInfo.type.toString();
+      return api.registry.createType(paramType, value);
+  });
+  // return params.arguments.map(arg => {
+  //     const key = Object.keys(arg)[0];
+  //     let value = Object.values(arg)[0];
+  //     const typeInfo = method.meta.args.find(a => a.name.toString() === key);
+  //     const paramType = typeInfo.type.toString();
+
+  //     // Handle optional types
+  //     if (paramType.startsWith('Option<')) {
+  //         if (value === "None") {
+  //             return null; // Convert "None" to null
+  //         } else if (value && typeof value === 'object' && 'Some' in value) {
+  //             value = value.Some; // Unwrap the value from Some
+  //         }
+  //     }
+  //     // Create the parameter using the appropriate type from the registry
+  //     return api.registry.createType(paramType, value);
+  // });
+}
+
 
 
   

@@ -46,11 +46,33 @@ export const CHAIN_METADATA = {
         nativeAccount: true,
 
     },
+    people: {
+        chain: "People",
+        endpoints: [
+            "wss://rpc-people-polkadot.luckyfriday.io",
+
+
+        ],
+        queryBalancePaths: ["system.account"],
+        transferFunction: "xcmPallet.limitedReserveTransferAssets",
+        nativeAccount: true,
+    },
+    people_kusama: {
+        chain: "People (Kusama)",
+        endpoints: [
+            "wss://rpc-people-kusama.luckyfriday.io",
+
+
+        ],
+        queryBalancePaths: ["system.account"],
+        transferFunction: "xcmPallet.limitedReserveTransferAssets",
+        nativeAccount: true,
+    },
     polkadot: {
         chain: "Polkadot",
         endpoints: [
-            "wss://rpc.polkadot.io",
             "wss://polkadot-rpc.dwellir.com",
+            "wss://rpc.polkadot.io",
             "wss://polkadot.api.onfinality.io/public-ws",
 
 

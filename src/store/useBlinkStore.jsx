@@ -8,18 +8,42 @@ const useBlinkStore = create(persist((set, get) => ({
 
   setActiveBlinksId: (blinkId) => set({ activeBlinksId: blinkId }),
   getBlinkData: (id) => get().blinks[id] || null,
+  getBlinkMetadata: (id) => get().blinks[id]?.metadata || {},
+  getOnChainURLs: (id) => get().blinks[id]?.onChainURLs || [],
 
-  // Save form data for a blink
+
   saveBlinkFormData: (id, formData) => set(state => (
     console.log('Saving form data for blink:', id, formData),
 
-    
     {
     blinks: {
       ...state.blinks,
       [id]: formData
     }
   })),
+
+
+    // Save metadata specifically
+    saveBlinkMetadata: (id, metadata) => set(state => ({
+      blinks: {
+        ...state.blinks,
+        [id]: {
+          ...state.blinks[id],
+          metadata,
+        }
+      }
+    })),
+  
+    // Add an on-chain URL to the existing array
+    addOnChainURL: (id, url) => set(state => ({
+      blinks: {
+        ...state.blinks,
+        [id]: {
+          ...state.blinks[id],
+          onChainURLs: [...(state.blinks[id]?.onChainURLs || []), url]
+        }
+      }
+    })),
 
   // Create a new blink and set it as active
   createNewBlink: () => {

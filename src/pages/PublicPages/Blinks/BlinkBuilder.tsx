@@ -13,7 +13,10 @@ import { getAssetBalanceForChain } from '../../../Chains/Helpers/AssetHelper';
 import BalanceTippy from '../../../components/Bagpipes/Forms/PopupForms/ChainForms/ChainTxForm/BalanceTippy';
 import { actionCallsData, chainActions } from './actions';
 import WalletWidget from '../../../components/WalletWidget/WalletWidget';
-
+import { Button, Modal, Spin } from 'antd';
+import { BlinkIcon, CopyIcon } from '../../../components/Icons/icons';  
+import { signAndSendRemark } from './generateBlink';
+import toast from 'react-hot-toast';
 
 export type ActionType = "action" | "completed";
 
@@ -73,14 +76,17 @@ export interface NewActionForm {
 const BlinkBuilder: React.FC = () => {
   const walletContext = useContext(WalletContext);
 
-  const { blinks, activeBlinksId, saveBlinkFormData, createNewBlink, getBlinkData, setActiveBlinksId  } = useBlinkStore(state => ({ 
+  const { blinks, activeBlinksId, saveBlinkMetadata, createNewBlink, getBlinkMetadata, setActiveBlinksId, addOnChainURL, getOnChainURLs } = useBlinkStore(state => ({ 
     blinks: state.blinks,
     activeBlinksId: state.activeBlinksId,
-    saveBlinkFormData: state.saveBlinkFormData,
+    saveBlinkMetadata: state.saveBlinkMetadata,
     createNewBlink: state.createNewBlink,
-    getBlinkData: state.getBlinkData,
-    setActiveBlinksId: state.setActiveBlinksId
+    getBlinkMetadata: state.getBlinkMetadata,
+    setActiveBlinksId: state.setActiveBlinksId,
+    addOnChainURL: state.addOnChainURL,
+    getOnChainURLs: state.getOnChainURLs
   }));
+
 
 
    // State initialization with default values moved into a function
@@ -98,14 +104,14 @@ const BlinkBuilder: React.FC = () => {
     recipient: ''
   });
 
-let formData = getBlinkData(activeBlinksId);
+let formData = getBlinkMetadata(activeBlinksId);
 
 
   useEffect(() => {
     console.log('BlinkBuilder activeBlinksId', activeBlinksId);
     if (activeBlinksId) {
 
-      formData = getBlinkData(activeBlinksId);
+      formData = getBlinkMetadata(activeBlinksId);
       console.log('BlinkBuilder already id loading formData',);
 
     
@@ -129,10 +135,10 @@ let formData = getBlinkData(activeBlinksId);
       const newId = uuidv4();
       setActiveBlinksId(newId);
       const newBlinkData = initializeAction(newId) as Action<"action">;
-      saveBlinkFormData(newId, newBlinkData);
+      saveBlinkMetadata(newId, newBlinkData);
       setAction(newBlinkData);
     }
-  }, [activeBlinksId, createNewBlink, getBlinkData, setActiveBlinksId]);
+  }, [activeBlinksId, createNewBlink, getBlinkMetadata, setActiveBlinksId]);
 
 
   const [action, setAction] = useState<Action<"action">>({
@@ -163,13 +169,42 @@ let formData = getBlinkData(activeBlinksId);
   const [iconUrl, setIconUrl] = useState(formData?.icon || ''); 
   const [formFields, setFormFields] = useState([]);
 
+  const [open, setOpen] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [modalText, setModalText] = useState('');
+  const [generatedUrl, setGeneratedUrl] = useState('');
+  const [urlStatus, setUrlStatus] = useState('wating for signature');
+  const [urlLoading, setUrlLoading] = useState(false);
+  const [loadings, setLoadings] = useState<boolean[]>([]);
 
-  const handleChange = (field: keyof Action<"action">) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const updatedValue = { ...action, [field]: e.target.value };
+  const enterLoading = (index: number) => {
+    setLoadings((prevLoadings) => {
+      const newLoadings = [...prevLoadings];
+      newLoadings[index] = true;
+      return newLoadings;
+    });
+
+    setTimeout(() => {
+      setLoadings((prevLoadings) => {
+        const newLoadings = [...prevLoadings];
+        newLoadings[index] = false;
+        return newLoadings;
+      });
+    }, 6000);
+  };
+
+
+
+  const handleChange = (field: keyof Action<"action">) => (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string
+  ) => {
+    const value = typeof e === 'string' ? e : e.target.value;
+    const updatedValue = { ...action, [field]: value };
+
     setAction(updatedValue);
-    const updatedFormData = { ...formData, [field]: e.target.value };
-    saveBlinkFormData(activeBlinksId, updatedFormData);
-    console.log('handleChange', field, e.target.value, updatedFormData);
+    const updatedFormData = { ...formData, [field]: value };
+    saveBlinkMetadata(activeBlinksId, updatedFormData);
+    console.log('handleChange', field, value, updatedFormData);
   };
 
 
@@ -197,7 +232,7 @@ let formData = getBlinkData(activeBlinksId);
         parameters: form.amountType === "inputAmount" ? [{ name: form.inputName, label: form.label, type: 'inputAmount' }] : []
     }));
     setAction(prev => ({ ...prev, links: { actions: updatedActions } }));
-    saveBlinkFormData(activeBlinksId, 
+    saveBlinkMetadata(activeBlinksId, 
       {...formData, links: { actions: updatedActions }});
   };
 
@@ -291,7 +326,7 @@ const fetchBalance = async (signal) => {
     setSelectedCreatorAccount(newAddress);
     setSelectedCreatorAccountName(newAddressName);
 
-    saveBlinkFormData(activeBlinksId, {...formData, selectedCreatorAccount: newAddress, selectedCreatorAccountName: newAddressName});
+    saveBlinkMetadata(activeBlinksId, {...formData, selectedCreatorAccount: newAddress, selectedCreatorAccountName: newAddressName});
   };
 
   const renderAddressSelection = () => {
@@ -307,8 +342,7 @@ const fetchBalance = async (signal) => {
       }));
 
       const renderCustomContent = () => {
-        
-
+      
       return (
           
         // USE THIS
@@ -348,8 +382,33 @@ const fetchBalance = async (signal) => {
     if (chainName !== selectedChain) {
         setSelectedChain(chainName);
     }
-    saveBlinkFormData(activeBlinksId, {...formData, selectedChain: chainName});
+    saveBlinkMetadata(activeBlinksId, {...formData, selectedChain: chainName});
   };
+
+  const renderChainActionSelection = () => {
+
+    return (
+      <CollapsibleField
+          key="chainActionDropdown"
+          title={<span>
+          Chain Action {actionType} <span className="text-gray-400 text-xs font-light">{actionCallsData[actionType]?.section} {'>'} {actionCallsData[actionType]?.method}</span>
+        </span>} hasToggle={false}
+          fieldTypes="select"
+          nodeId={'blinkBuilderArea'}
+          info="Select a call to action"
+          selectOptions={chainActions}
+          value={actionType}
+          onChange={handleActionTypeChange}
+          customContent={<RenderActionFields actionConfig={actionConfig} />}
+          selectFieldStyle=''
+          collapsibleContainerStyle={`collapsibleField`}
+          fieldKey={undefined} edgeId={undefined} toggleTitle={undefined} onPillsChange={undefined} placeholder={undefined} onClick={undefined} disabled={undefined} isTextAreaValue={undefined} buttonName={undefined} typesLookup={undefined} fieldTypeObject={undefined} fields={undefined} hoverInfo={undefined} children={undefined}  >
+  
+  
+      </CollapsibleField>
+    );
+  
+  }
 
   const renderChainSelection = () => {
 
@@ -371,7 +430,7 @@ const fetchBalance = async (signal) => {
           customContent={renderCustomContent()}
           fieldTypes="select"
           nodeId={'non-node'}
-          info="Choose a blockchain chain to query"
+          info="Choose the blockchain that you want your mini dapp to be executed on."
           selectOptions={chains.map(chain => ({
             label: chain.display || chain.name,
             value: chain.name
@@ -383,30 +442,7 @@ const fetchBalance = async (signal) => {
       );
   };
 
-const renderChainActionSelection = () => {
 
-  return (
-    <CollapsibleField
-      key="chainActionDropdown"
-      title={<span>
-        Chain Action {actionType} <span className="text-gray-400 text-xs font-light">{actionCallsData[actionType]?.section} {'>'} {actionCallsData[actionType]?.method}</span>
-      </span>} hasToggle={false}
-      fieldTypes="select"
-      nodeId={'blinkBuilderArea'}
-      info="Select a call to action"
-      selectOptions={chainActions}
-      value={actionType}
-      onChange={handleActionTypeChange}
-      customContent={<RenderActionFields actionConfig={actionConfig} />}
-      selectFieldStyle=''
-      collapsibleContainerStyle={`collapsibleField`}
-      fieldKey={undefined} edgeId={undefined} toggleTitle={undefined} onPillsChange={undefined} placeholder={undefined} onClick={undefined} disabled={undefined} isTextAreaValue={undefined} buttonName={undefined} typesLookup={undefined} fieldTypeObject={undefined} fields={undefined} hoverInfo={undefined} children={undefined}  >
-
-
-    </CollapsibleField>
-  );
-
-}
 
 
   const handleActionTypeChange = (value: string) => {
@@ -435,20 +471,20 @@ const renderChainActionSelection = () => {
 
 
     setAction(updatedFormData);
-    saveBlinkFormData(activeBlinksId, updatedFormData);
+    saveBlinkMetadata(activeBlinksId, updatedFormData);
   };
 
 
   const RenderActionFields = ({ actionConfig }) => {
     return (
       <>
-   {action.links.actions.map((linkedAction, index) => (
-  <div key={index} className="action-wrapper">
+   {action?.links?.actions?.map((linkedAction, index) => (
+  <div key={index} className="action-field-wrapper">
     {linkedAction.parameters.filter(param => !param.userEditable).map((param, paramIndex) => (
       <div key={paramIndex} className='action-input-wrapper'>
-        <label>{param.label}</label>
+        <label className='action-field-label'>{param.label}</label>
         <input 
-          className='action-input'
+          className='action-field-input'
           placeholder={param.label}
           defaultValue={param.value || ''}  // Set default values specified by the creator
           type={param.type === 'u128' ? 'number' : 'text'}
@@ -494,7 +530,7 @@ const renderChainActionSelection = () => {
         };
 
         // Optionally save the new state to some form of persistent storage
-        saveBlinkFormData(activeBlinksId, newState);
+        saveBlinkMetadata(activeBlinksId, newState);
 
         return newState;
     });
@@ -539,12 +575,155 @@ const renderChainActionSelection = () => {
           actions: [...prev.links.actions, newAction]
         }
       }));
-      saveBlinkFormData (activeBlinksId, {...formData, links: { actions: [...formData.links.actions, newAction] }});
+      saveBlinkMetadata (activeBlinksId, {...formData, links: { actions: [...formData.links.actions, newAction] }});
     }
   };
   
 
+  const handleSaveMetadataOnChain = async () => {
 
+    console.log('handleSaveMetadataOnChain', formData);
+
+    
+    enterLoading(1)
+    setGeneratedUrl('');
+    showModal();
+    setUrlStatus('waiting for signature');
+    setModalText('Waiting for you to sign the transaction to store metadata on-chain (Asset Hub)...');
+    setUrlLoading(true);
+    const accountAddress = formData.selectedCreatorAccount; 
+    const serializedData = JSON.stringify({ Blinks: formData });
+  
+    try {
+      const result = await signAndSendRemark(formData.selectedChain, walletContext, accountAddress, serializedData, {
+        signedExtrinsic: (status: string) => {
+          if (status === 'Signed') {
+            setTimeout(() => {
+              console.log('Transaction signed. Waiting for the transaction to be included in a block...');
+              setModalText('Transaction signed! Waiting for the transaction to be included in a block...');
+              setUrlStatus('transaction signed');
+              setUrlLoading(false);
+            }, 0);
+          } else if (status === 'Cancelled') {
+            console.log('Transaction signing was cancelled.');
+            setModalText('Transaction signing was cancelled.');
+            setUrlStatus('transaction signing cancelled');
+            enterLoading(1);
+            setUrlLoading(false);
+          }
+        },
+        onInBlock: (blockHash: any) => {
+          setTimeout(() => {
+            setModalText(`Transaction included in block:` + `${<span className='font-mono'> {blockHash}</span>}` + `URL is being generated...`);
+            setUrlStatus('Tx in block...');
+          }, 0);        
+        },
+        onFinalized: (blockHash: any) => {
+          setModalText(`Transaction finalized at block:` + `${<span className='font-mono'> {blockHash}</span>}`);
+          setUrlStatus('Transaction Finalized');
+        },
+        onError: (error: { message: React.SetStateAction<string>; }) => {
+          setModalText(`Error during transaction: ${error.message}`);
+          setUrlStatus(error.message);
+        },
+        onUrlGenerated: (generatedUrl: React.SetStateAction<string>) => {
+          console.log("Generated URL:", generatedUrl);
+          addOnChainURL(activeBlinksId, generatedUrl);
+          console.log('setting generated url')
+
+          setTimeout(() => {
+          setGeneratedUrl(generatedUrl);
+          }, 0);
+        }
+      });
+    
+      console.log('Metadata stored on chain:', result);
+      enterLoading(1); 
+    } catch (error) {
+      console.error('Failed to store metadata on chain:', error);
+      enterLoading(1); 
+      setUrlLoading(false);
+    }
+  };
+  
+  const renderTitleField = () => {
+    return (
+     <CollapsibleField 
+     key="blinkTitleField"
+     title={<span>
+     Title
+    </span>} 
+      hasToggle={false}
+     fieldTypes="input"
+     nodeId={'blinkBuilderArea'}
+     info="Enter the title of Blink"
+     
+     value={formData?.title} onChange={(value) => handleChange('title')(value)} placeholder="Enter Title"
+     selectFieldStyle=''
+     collapsibleContainerStyle={`collapsibleField`}
+     fieldKey={undefined}     
+     customContent={undefined} selectOptions={undefined} edgeId={undefined} toggleTitle={undefined} onPillsChange={undefined}  onClick={undefined} disabled={undefined} isTextAreaValue={undefined} buttonName={undefined} typesLookup={undefined} fieldTypeObject={undefined} fields={undefined} hoverInfo={undefined} children={undefined} ></CollapsibleField>
+    );
+  }
+
+  const renderIconField = () => {
+    return (
+     <CollapsibleField 
+     key="blinkIconField"
+     title={<span>
+     Add image
+    </span>} 
+      hasToggle={false}
+     fieldTypes="input"
+     nodeId={'blinkBuilderArea'}
+     info="Paste public link to image or GIF and it will appear in the Blink"
+     
+     value={formData?.icon} onChange={handleChange('icon')} placeholder="https://bagpipes.io/polkadot-blinks.png"      selectFieldStyle=''
+     collapsibleContainerStyle={`collapsibleField`}
+     fieldKey={undefined}     
+     customContent={undefined} selectOptions={undefined} edgeId={undefined} toggleTitle={undefined} onPillsChange={undefined}  onClick={undefined} disabled={undefined} isTextAreaValue={undefined} buttonName={undefined} typesLookup={undefined} fieldTypeObject={undefined} fields={undefined} hoverInfo={undefined} children={undefined} ></CollapsibleField>
+    );
+  }
+
+
+  const renderDescriptionField = () => {
+    return (
+     <CollapsibleField 
+     key="blinkDescriptionField"
+     title={<span>
+    Description
+    </span>} 
+      hasToggle={false}
+     fieldTypes="input"
+     nodeId={'blinkBuilderArea'}
+     info="Enter the description of your Blink"
+     
+     value={formData?.description} onChange={handleChange('description')} placeholder="Brief description here."     
+     selectFieldStyle=''
+     collapsibleContainerStyle={`collapsibleField`}
+     fieldKey={undefined}     
+     customContent={undefined} selectOptions={undefined} edgeId={undefined} toggleTitle={undefined} onPillsChange={undefined}  onClick={undefined} disabled={undefined} isTextAreaValue={undefined} buttonName={undefined} typesLookup={undefined} fieldTypeObject={undefined} fields={undefined} hoverInfo={undefined} children={undefined} ></CollapsibleField>
+    );
+  }
+
+
+  const showModal = () => {
+    setOpen(true);
+  };
+
+  const handleOk = () => {
+    setModalText('closing modal');
+    setConfirmLoading(true);
+    setTimeout(() => {
+      setOpen(false);
+      setConfirmLoading(false);
+    }, 500);
+  };
+
+  const handleCancel = () => {
+    console.log('Clicked cancel button');
+    setOpen(false);
+  };
 
   return (
     <>
@@ -552,7 +731,7 @@ const renderChainActionSelection = () => {
       <div className='blinkHeader'>
 
       <div className='blinkTitleInfo'> 
-        <h1>Blinks Builder</h1>
+        <h1>Blink DApp Builder</h1>
         <span>Blink {activeBlinksId}</span></div>
       </div>
       <div className='blinkMainContainer'>
@@ -564,8 +743,8 @@ const renderChainActionSelection = () => {
         {/* <button onClick={}><span>My Blinks</span></button> */}
         
         
-        <form className='blinkForm' onSubmit={(e) => e.preventDefault()}>
-          <label>
+        <div className='blinkForm'>
+          {/* <label>
             Title:
             <input type="text" value={formData?.title} onChange={handleChange('title')} placeholder="Enter Title" />
           </label>
@@ -576,14 +755,17 @@ const renderChainActionSelection = () => {
           <label>
             Description:
             <textarea value={formData?.description} onChange={handleChange('description')} placeholder="Brief description here." />
-          </label>
+          </label> */}
+          {renderTitleField()}
+          {renderIconField()}
+          {renderDescriptionField()}
+          {renderChainActionSelection()}
           {renderChainSelection()} 
           {renderAddressSelection()} 
+        
 
-          {renderChainActionSelection()}
 
-
-          <div className='actionArea'>
+          {/* <div className='actionArea'>
 
 
           {actionType !== "no action" && actionForms.map((form, index) => (
@@ -623,16 +805,88 @@ const renderChainActionSelection = () => {
         </div>
           ))}
 
+
           {actionType !== "no action" && 
           <button className='action-button' onClick={addNewTransferButton}>
           <div className='add-button'>+</div>
-          {/* <label>Add action</label> */}
-      </button>
-      
+          <label>Add action</label> 
+          </button>} </div> */}
+
+
           
-          }
+          <div className='generateBlink'>
+          <Button
+            type="primary"
+            icon={<BlinkIcon className='h-4 w-4 mr-2' fillColor='white' />}
+            loading={loadings[1]}
+            onClick={handleSaveMetadataOnChain}
+            
+            className='generate-button'
+          >
+            <span className='font-semibold'>Generate Blink</span>
+          
+          </Button>
+
+          
+          <Modal
+            title={`Blink URL | ${urlStatus}`}
+            open={open}
+            onOk={handleOk}
+            confirmLoading={confirmLoading}
+            onCancel={handleCancel}
+
+            footer={
+              generatedUrl ? (
+                <Button type="primary" onClick={handleOk}>
+                  Close
+                </Button>
+              ) : null
+            }
+            centered
+          >
+            <div className='modal-content'>
+              <p className='modal-text'>{modalText}</p>
+
+              <div className=''>
+                {urlLoading && !generatedUrl && (
+                  <div className='url-loading'>
+                    <Spin size="small" className='' />
+                    <div className='ml-2 font-semibold'>Generating URL... {urlStatus} </div>
+                  </div>
+                )}
+                {generatedUrl && !urlLoading && (
+                
+                  <div className='blink-url-container generated-url'>
+                  <Button
+                      icon={<CopyIcon className='h-4 w-4 font-semibold mr-1' fillColor='#FFF' />}
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(generatedUrl);
+                          toast.success(`Copied ${generatedUrl} to clipboard`);
+                        } catch (err) {
+                          toast.error('Failed to copy');
+                          console.error('Failed to copy text: ', err);
+                        }
+                      }}
+                      style={{ marginLeft: 8 }}
+                      className='copy-button'
+                 >
+                 {/* <a className='blink-url' href={generatedUrl} target="_blank" rel="noopener noreferrer">
+                      {generatedUrl}
+                    </a> */}
+                 </Button>
+          
+                 <a className='' href={generatedUrl} target="_blank" rel="noopener noreferrer">
+                      {generatedUrl}
+                    </a>
+                  </div>
+                )}
+              </div>
+            </div>
+          </Modal>
+          <label className='generate-button-description'>Generate the blink on-chain. Make sure that you have an on-chain ID for Polkadot, and also make sure you have some balance on AssetHub where the fees will be paid.</label>
           </div>
-        </form>
+        </div>
 
       </div>
 
@@ -652,7 +906,7 @@ export default BlinkBuilder;
 //   const handleActionTypeChange = (value: string) => {
 //     // Set the new action type
 //     setActionType(value);
-//     saveBlinkFormData(activeBlinksId, {...formData, actionType: value})
+//     saveBlinkMetadata(activeBlinksId, {...formData, actionType: value})
 
 //     // If changing action type to something valid, reset forms and add one default form
 //     if (value !== "no action") {
@@ -671,7 +925,7 @@ export default BlinkBuilder;
 //             actionType: value,
 //             links: { actions: [] }
 //         }));
-//         saveBlinkFormData(activeBlinksId, prev => ({
+//         saveBlinkMetadata(activeBlinksId, prev => ({
 //           ...prev,
 //           actionType: value,
 //           links: { actions: [] }
