@@ -24,7 +24,7 @@ import type { Parameter, Arg, LinkedAction, ActionType, Action, NewActionForm, B
 import { fetchBlinkData } from './helpers';
 
 const BlinkAppViewer: React.FC = () => {
-  const walletContext = useContext(WalletContext);
+//   const walletContext = useContext(WalletContext);
 
   const { blinks, activeBlinksId, saveBlinkMetadata, createNewBlink, getBlinkMetadata, setActiveBlinksId, addOnChainURL, getOnChainURLs, saveFetchedOnChainBlink, getFetchedOnChainBlink} = useBlinkStore(state => ({ 
     blinks: state.blinks,

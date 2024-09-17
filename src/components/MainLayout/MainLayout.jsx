@@ -121,8 +121,8 @@ function MainLayout({ children }) {
                     <Route path="test-flow" element={<ReactTestFlow />} />
                     <Route path="evm-wallet-info" element={<EvmWalletInfo />} />
                     <Route path="settings" element={<Settings />} />
-                    <Route path ="blinks" element={<BlinkBuilder />} />
-                    <Route path="blink/:fullId" element={<BlinkAppViewer />}  />
+                    <Route path ="blink-builder" element={<BlinkBuilder />} />
+                    <Route path=":fullId" element={<BlinkAppViewer />}  />
 
 
 
