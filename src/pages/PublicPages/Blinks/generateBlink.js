@@ -83,7 +83,7 @@ export const signAndSendRemark = async (chainName, walletContext, accountAddress
   
 
   const generateUrl = (chainName, blockNumber, txIndex) => {
-    const baseUrl = "https://blink.bagpipes.io"; // https://blink.bagpipes.io/ if production or http://localhost:3000/ if local
+    const baseUrl = "https://blink.bagpipes.io/#/blinks/"; // https://blink.bagpipes.io/ if production or http://localhost:3000/ if local
     const fullUrl = `${baseUrl}/${chainName}:${blockNumber}:${txIndex}`;
     console.log("Generated URL:", fullUrl);
     return fullUrl;
