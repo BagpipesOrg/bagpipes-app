@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import './Blinks.scss';
-import { Action } from './BlinkBuilder';
+import { BlinkMetadata } from './BlinkBuilder';
 import { BlinkIcon, VerificationIcon } from '../../../components/Icons/icons';
 import { WalletContext } from '../../../components/Wallet/contexts';
 import BalanceTippy from '../../../components/Bagpipes/Forms/PopupForms/ChainForms/ChainTxForm/BalanceTippy';
@@ -18,25 +18,20 @@ import { createCallParams } from './executeBlink/createCallParams';
 import toast  from 'react-hot-toast';
 import { actionSubmittableStructure } from './actions';
 import ChainRpcService from '../../../services/ChainRpcService';
+import { set } from 'lodash';
 
 export interface BlinkViewerProps {
-  action: Action<"action">;
+  action: BlinkMetadata<"action">;
 }
 
-const BlinkViewer: React.FC<BlinkViewerProps> = ({ action }) => {
 
-  const { blinks, activeBlinksId, getBlinkMetadata, saveBlinkMetadata  } = useBlinkStore(state => ({ 
-    blinks: state.blinks,
-    activeBlinksId: state.activeBlinksId,
-    getBlinkMetadata: state.getBlinkMetadata,
-    saveBlinkMetadata: state.saveBlinkMetadata, 
-   
-  }));
+const BlinkMiniApp: React.FC<BlinkViewerProps> = ({ action }) => {
 
-  const formData = getBlinkMetadata(activeBlinksId);
+console.log('BlinkMiniApp action:', action);
+  let formData = action;
 
   const walletContext = useContext(WalletContext);
-  console.log('BlinkViewer walletContext:', walletContext);
+  console.log('BlinkMiniApp walletContext:', walletContext);
   const [isFetchingBalance, setIsFetchingBalance] = useState(false);
   const [chainSymbol, setChainSymbol] = useState('');
   const [balance, setBalance] = useState(null);
@@ -48,16 +43,15 @@ const BlinkViewer: React.FC<BlinkViewerProps> = ({ action }) => {
 
   useEffect(() => {
     selectedCreatorAccount = formData?.selectedCreatorAccount || null;
-  }
-  , [formData?.selectedCreatorAccount]);
+  }, [formData?.selectedCreatorAccount]);
 
   useEffect(() => {
-    console.log('BlinkViewer useEffect selectedUserAddress:', selectedUserAddress, 'formData:', formData);
+    console.log('BlinkMiniApp useEffect selectedUserAddress:', selectedUserAddress, 'formData:', formData);
     const controller = new AbortController();
     const signal = controller.signal;
 
     if (selectedUserAddress && formData.selectedChain) {
-      console.log('BlinkViewer useEffect fetchBalance selectedUserAddress:', selectedUserAddress, 'formData:', formData);
+      console.log('BlinkMiniApp useEffect fetchBalance selectedUserAddress:', selectedUserAddress, 'formData:', formData);
       fetchBalance(signal);
     }
     return () => controller.abort();
@@ -117,7 +111,7 @@ const BlinkViewer: React.FC<BlinkViewerProps> = ({ action }) => {
 
     // we need the 
 
-  saveBlinkMetadata(activeBlinksId, {...formData, selectedUserAddress: selected?.address, selectedUserAddressName: selected?.name});
+  // saveBlinkMetadata(activeBlinksId, {...formData, selectedUserAddress: selected?.address, selectedUserAddressName: selected?.name});
 
 };
  // Create a menu items array based on wallet accounts
@@ -195,10 +189,11 @@ const menuProps = {
    
     console.log('New links:', newLinks);
 
-    saveBlinkMetadata(activeBlinksId, {
-      ...formData,
-      links: { ...formData.links, actions: newLinks }
-    });
+      formData = {...formData, links: { ...formData.links, actions: newLinks }};
+    // saveBlinkMetadata(activeBlinksId, {
+    //   ...formData,
+    //   links: { ...formData.links, actions: newLinks }
+    // });
   };
 
 
@@ -206,6 +201,7 @@ const menuProps = {
 
 const executeTransaction = async (formData, chain) => {
   try {
+    console.log('executeTransaction formData:', formData);
     const methodData = createCallParams(formData, chain.token_decimals);
     console.log('executeTransaction methodData:', methodData);
     const signedExtrinsic = await ChainRpcService.executeChainTxBlinkRenderedMethod({
@@ -303,5 +299,5 @@ const executeTransaction = async (formData, chain) => {
   );
 };
 
-export default BlinkViewer;
+export default BlinkMiniApp;
 

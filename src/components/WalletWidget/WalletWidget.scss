@@ -35,6 +35,7 @@
   border-radius: 7px;
   min-width: 150px;
   border: 1px dashed rgb(169, 169, 169);
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.194);
 
   &:hover {
     background-color: $primary-color;
@@ -80,3 +81,8 @@
 }
 
 
+.status {
+  display: block;
+  font-size: 0.8em;
+  color: gray;
+}

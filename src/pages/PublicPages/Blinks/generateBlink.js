@@ -7,16 +7,6 @@ import toast from 'react-hot-toast';
 
 export const signAndSendRemark = async (chainName, walletContext, accountAddress, data, options) => {
 
-    // const { blinks, activeBlinksId, saveBlinkMetadata } = useBlinkStore(state => ({ 
-    //     blinks: state.blinks,
-    //     activeBlinksId: state.activeBlinksId,
-    //     saveBlinkMetadata: state.saveBlinkMetadata,
-
-    //   }));
-
-      
-    // const [onChainURL, setOnChainURL] = useState(null);
-
     console.log('signAndSendRemark', walletContext, accountAddress, data);
     const api = await getApiInstance('assetHub');
 

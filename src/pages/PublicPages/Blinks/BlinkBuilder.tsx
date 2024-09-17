@@ -27,7 +27,7 @@ export interface Parameter {
   userEditable?: boolean;
   value?: string;
 }
-interface Arg {
+export interface Arg {
   key: string;
   type: 'u128' | 'AccountId' | 'enum' | string; 
   label: string;
@@ -64,6 +64,13 @@ export interface Action<T extends ActionType> {
     actions: LinkedAction[];
   };
   error?: ActionError;
+}
+
+export interface BlinkMetadata<T extends ActionType> extends Action<T> {
+  selectedUserAddress?: string;
+  selectedUserAddressName?: string;
+  selectedCreatorAccount?: string;
+  selectedChain?: string;
 }
 
 export interface NewActionForm {

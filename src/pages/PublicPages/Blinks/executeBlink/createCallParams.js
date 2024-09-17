@@ -25,7 +25,7 @@ export const createCallParams = (formData, chainDecimals) => {
 
     if (!methodData) throw new Error("Action type is not supported or incorrectly defined.");
 
-    const callParams = methodData.arguments.map(arg => params[arg.name]);
+    const callParams = methodData?.arguments?.map(arg => params[arg.name]);
     console.log("createCallParams callParams", callParams);
 
     return methodData;

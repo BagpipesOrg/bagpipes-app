@@ -5,7 +5,8 @@
   align-items: left;
   // we want items to be stacked under each other
   flex-direction: column;
-  margin: 20px;
+  background: rgb(229, 229, 229);
+  padding: 20px;
 
   h1 {
     font-size:32px;
@@ -33,6 +34,15 @@
     // the background is a local file that is a noise texture noiserectangle.png
     background-image: url('./noiserectangle.png');
     padding-bottom: 50px;
+}
+
+.blinkMiniAppContainer {
+  height: 100%;
+  display: flex;
+  background: rgb(229, 229, 229);
+  // the background is a local file that is a noise texture noiserectangle.png
+  // padding-bottom: 50px;
+  
 }
 
 label {
@@ -367,6 +377,8 @@ label {
     
   }
 
+
+
   .action-group-style {
     display: flex;
     flex-direction: column;
@@ -509,7 +521,11 @@ label {
 
 .account-info {
   font-family: 'Inter', sans-serif;
-  font-size: 12px
+  font-size: 12px;
+  align-items: center !important;
+padding: 0px !important;
+  margin: 0px !important;
+  align-self: center;
 }
 
 .ant-btn .ant-btn:ant-btn-compact-first-item {
@@ -621,6 +637,8 @@ label {
 .ant-btn {
   display: flex !important;
   border-radius: 8px !important;
+  align-items: center;
+  justify-content: center;
 }
 
 .modal-text {
@@ -655,8 +673,6 @@ label {
 .generate-button:hover {
   background-color: #40a9ff;
 }
-
-
 
 
 .url-loading {

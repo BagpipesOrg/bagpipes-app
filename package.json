@@ -18,7 +18,9 @@
     "format": "npx prettier --write 'src/*/*/*.ts' && npx prettier --write 'src/*.ts'",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "papi:generate": "npx papi add dot -n polkadot && npx papi"
+    "papi:generate": "npx papi add dot -n polkadot && npx papi",
+    "postinstall": "papi"
+    
 
   },
   "dependencies": {
