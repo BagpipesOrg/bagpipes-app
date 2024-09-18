@@ -3,15 +3,6 @@ import { Select } from 'antd';
 import './Blinks.scss';
 import BlinkMiniApp from './BlinkMiniApp';
 import useBlinkStore from '../../../store/useBlinkStore';
-import { v4 as uuidv4 } from 'uuid';
-import { debounce } from 'lodash'; 
-import { Data } from '@polkadot/types';
-import { WalletContext } from '../../../components/Wallet/contexts';
-import CollapsibleField from '../../../components/Bagpipes/Forms/fields/CollapsibleField';
-import { listChains} from '../../../Chains/ChainsInfo';
-import { getAssetBalanceForChain } from '../../../Chains/Helpers/AssetHelper';
-import BalanceTippy from '../../../components/Bagpipes/Forms/PopupForms/ChainForms/ChainTxForm/BalanceTippy';
-import { actionCallsData, chainActions } from './actions';
 import WalletWidget from '../../../components/WalletWidget/WalletWidget';
 import { Button, Modal, Spin } from 'antd';
 import { BlinkIcon, CopyIcon } from '../../../components/Icons/icons';  
@@ -20,21 +11,15 @@ import toast from 'react-hot-toast';
 import { useLocation } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import type { Parameter, Arg, LinkedAction, ActionType, Action, NewActionForm, BlinkMetadata } from './BlinkBuilder';
+import { generateUrl }  from './generateBlink';
 
 import { fetchBlinkData } from './helpers';
 
 const BlinkAppViewer: React.FC = () => {
 //   const walletContext = useContext(WalletContext);
 
-  const { blinks, activeBlinksId, saveBlinkMetadata, createNewBlink, getBlinkMetadata, setActiveBlinksId, addOnChainURL, getOnChainURLs, saveFetchedOnChainBlink, getFetchedOnChainBlink} = useBlinkStore(state => ({ 
-    blinks: state.blinks,
-    activeBlinksId: state.activeBlinksId,
-    saveBlinkMetadata: state.saveBlinkMetadata,
-    createNewBlink: state.createNewBlink,
-    getBlinkMetadata: state.getBlinkMetadata,
-    setActiveBlinksId: state.setActiveBlinksId,
-    addOnChainURL: state.addOnChainURL,
-    getOnChainURLs: state.getOnChainURLs,
+  const {  saveFetchedOnChainBlink, getFetchedOnChainBlink} = useBlinkStore(state => ({ 
+
     saveFetchedOnChainBlink: state.saveFetchedOnChainBlink,
     getFetchedOnChainBlink: state.getFetchedOnChainBlink
   }));
@@ -79,15 +64,18 @@ const BlinkAppViewer: React.FC = () => {
     const [actionType, setActionType] = useState<string>("select");
     const [amountTypes, setAmountTypes] = useState<string[]>([]); 
     const [loading, setLoading] = useState(false);
+    const [loadingMessage, setLoadingMessage] = useState('fetching blink');
     const [error, setError] = useState<any>();
     const [selectedChain, setSelectedChain] = useState(formData?.selectedChain || '');
     const [selectedCreatorAccount, setSelectedCreatorAccount] = useState('');
+    const [generatedUrl, setGeneratedUrl] = useState('');
 
 
     useEffect(() => {
         async function loadBlinkData() {
     
             if (fullId) {
+               
                 // Split fullId into chain, blockNumber, txIndex
                 const [chain, blockNumStr, txIndexStr] = fullId.split(':');
     
@@ -98,7 +86,8 @@ const BlinkAppViewer: React.FC = () => {
                    
                 if (chain && blockNumStr && txIndexStr) {
     
-    
+                    const genreratedUrl = generateUrl(chain, blockNum, txIdx);
+                    setGeneratedUrl(genreratedUrl);
                     console.log('BlinkAppViewer loading data chain:', chain, 'blockNumber:', blockNum, 'txIndex:', txIdx);
                     // Try to get the blink data from the store
                     formData = getFetchedOnChainBlink(chain, blockNum, txIdx);
@@ -119,7 +108,9 @@ const BlinkAppViewer: React.FC = () => {
                         
                     } else {
                     setLoading(true);
+                    setLoadingMessage(`Fetching blink from asset hub ${blockNum}...`);
                     try {
+                        console.log('BlinkAppViewer fetching data from chain:', chain, 'blockNumber:', blockNum, 'txIndex:', txIdx);
                         // Fetch from chain
                         formData = await fetchBlinkData( blockNum, txIdx);
     
@@ -147,6 +138,7 @@ const BlinkAppViewer: React.FC = () => {
                         setError(error);
                     } finally {
                         setLoading(false);
+                        setLoadingMessage('');
                     }
                     }
                 } else {
@@ -177,8 +169,43 @@ const BlinkAppViewer: React.FC = () => {
         </div>
       </div>
       <div className='blinkMiniAppContainer'>
-    
+
+        <div className='viewerWrapper'>
+
+            <div className='share-blink'>
+                  <Button
+                      icon={<BlinkIcon className='h-4 w-4' fillColor='rgb(35, 35, 35' />}
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(generatedUrl);
+                          toast.success(`Copied ${generatedUrl} to clipboard`);
+                        } catch (err) {
+                          toast.error('Failed to copy');
+                          console.error('Failed to copy text: ', err);
+                        }
+                      }}
+                     
+                      className='share-button'
+                 > <span className='ml-2'>Share</span>
+                 {/* <a className='blink-url' href={generatedUrl} target="_blank" rel="noopener noreferrer">
+                      {generatedUrl}
+                    </a> */}
+                 </Button>
+          
+                 {/* <a className='' href={generatedUrl} target="_blank" rel="noopener noreferrer">
+                      {generatedUrl}
+                    </a> */}
+        </div>
       <BlinkMiniApp action={action} />
+
+      {loading && (
+          <div className='loading flex text-xl font-semibold mt-4 items-center bg-white p-3 rounded'>
+            <Spin size='small' />
+            <div className='ml-3  text-slate-700 '>{loadingMessage}</div>
+            </div>
+        )}
+
+      </div>
 
 
     </div>
