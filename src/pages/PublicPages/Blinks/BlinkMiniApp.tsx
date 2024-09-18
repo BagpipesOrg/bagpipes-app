@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import './Blinks.scss';
 import { BlinkMetadata } from './BlinkBuilder';
-import { BlinkIcon, VerificationIcon } from '../../../components/Icons/icons';
+import { BlinkIcon, VerificationIcon, CopyIcon } from '../../../components/Icons/icons';
 import { WalletContext } from '../../../components/Wallet/contexts';
 import BalanceTippy from '../../../components/Bagpipes/Forms/PopupForms/ChainForms/ChainTxForm/BalanceTippy';
 import { getAssetBalanceForChain } from '../../../Chains/Helpers/AssetHelper';
@@ -19,6 +19,7 @@ import toast  from 'react-hot-toast';
 import { actionSubmittableStructure } from './actions';
 import ChainRpcService from '../../../services/ChainRpcService';
 import { set } from 'lodash';
+
 
 export interface BlinkViewerProps {
   action: BlinkMetadata<"action">;
@@ -38,6 +39,7 @@ console.log('BlinkMiniApp action:', action);
   const [selectedUserAddress, setSelectedUserAddress] = useState(formData?.selectedUserAddress || walletContext.accounts[0]?.address || '');
   const [selectedUserAddressName, setSelectedUserAddressName] = useState(formData?.selectedUserAddressName || walletContext.accounts[0]?.name || '');
   const [chain, setChain] = useState(null);
+
   // const [selectedCreatorAccount, setSelectedCreatorAccount] = useState(formData?.selectedCreatorAccount || null);
   let selectedCreatorAccount = formData?.selectedCreatorAccount || null;
 
@@ -129,7 +131,7 @@ const menuProps = {
 
   const renderAddressBox = () => {
     if (!walletContext || walletContext.accounts.length === 0) {
-      return <div>No wallet accounts available. Please connect Wallet to select account.</div>;
+      return <div className='connect-message '>Please connect Wallet to select account.</div>;
     }
     return (
       <Space wrap>
@@ -237,12 +239,15 @@ const executeTransaction = async (formData, chain) => {
 
   
   return (
-    <div className='viewerWrapper'>
+            
       <div className='blinkViewer'>
      
+
         {action.icon && (
           <img src={action.icon} alt={action.title} className='blink-icon' />
         )}
+
+        
         <div className="blink-container items-center">
           <div className="link-section">
           {renderAddressBox()}
@@ -295,7 +300,7 @@ const executeTransaction = async (formData, chain) => {
 
         {action.error && <p style={{ color: 'red' }}>{action.error.message}</p>}
       </div>
-    </div>
+
   );
 };
 

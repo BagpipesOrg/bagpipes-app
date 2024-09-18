@@ -41,11 +41,12 @@ export async function getApiInstance(chain: string): Promise<ApiPromise> {
   console.log(`Establishing new connection to ${chain}...`);
   const api = await connectToWsEndpoint(chain);
   apiConnections.set(chain, api);
+  console.log(`api connections.`, apiConnections);
   return api;
 }
 
 export async function connectToWsEndpoint(chain: string): Promise<ApiPromise> {
-  console.log("connectToWsEndpoint chain", chain);
+  console.log("connectToWsEndpoint connection chain", chain);
   await cryptoWaitReady();
 
   const metadata = CHAIN_METADATA[chain];
@@ -56,10 +57,12 @@ export async function connectToWsEndpoint(chain: string): Promise<ApiPromise> {
 
   let lastError: any;
   for (const endpoint of metadata.endpoints) {
+
     try {
       console.log("Attempting to connect to endpoint", endpoint);
       const provider = new WsProvider(endpoint);
       const api = await ApiPromise.create({ provider });
+      console.log("api promise connect", api);
       await api.isReady;
 
       api.on("disconnected", async () => {
@@ -72,6 +75,7 @@ export async function connectToWsEndpoint(chain: string): Promise<ApiPromise> {
         try {
           const newApi = await connectToWsEndpoint(chain);
           apiConnections.set(chain, newApi);
+          console.log(`api connections.`, apiConnections);
           console.log(`Reconnected to ${chain} successfully.`);
         } catch (reconnectError) {
           console.error(`Failed to reconnect to ${chain}:`, reconnectError);

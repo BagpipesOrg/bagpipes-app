@@ -42,6 +42,50 @@
   background: rgb(229, 229, 229);
   // the background is a local file that is a noise texture noiserectangle.png
   // padding-bottom: 50px;
+  // the contents of this container should be on top of each other
+  flex-direction: column;
+justify-content: center;
+
+  .share-blink {
+    font-size: 12px;
+    color: rgb(255, 255, 255) !important;
+    margin-top: 10px;
+    font-weight: 300 !important;
+    background: rgb(209, 209, 209);
+    padding: 5px;
+    border-radius: 7px;
+    display: flex;
+    box-shadow: 0 4px 8px rgba(148, 148, 148, 0.1);
+  
+    float: center;
+    margin: auto;
+    margin-bottom: 20px;
+    position: relative;
+
+        //hover 
+        &:hover {
+          background: rgb(229, 229, 229);
+        }
+       
+
+    .share-button {
+      display: flex;
+     
+     
+      cursor: pointer;
+      border: 0px;
+      outline: 0px;
+      background: none !important;
+      border: none !important;
+      width: 100px !important;
+    color: rgb(35, 35, 35);
+
+
+      
+    }
+    // flex-column
+    
+  }
   
 }
 
@@ -277,8 +321,8 @@ label {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
   width: 100%;
+  flex-direction: column;
 
 .blinkViewer {
   font-family: 'Inter', sans-serif;
@@ -288,7 +332,7 @@ label {
   margin: auto;
   width: 500px; // Fixed width similar to an embedded Twitter card
   min-height: auto;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1); // Adding some shadow for depth
+  box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.272); // Adding some shadow for depth
   background: #fff; // Assuming a light mode card, set a white background
   // font-family: Inter,Roboto,Helvetica,sans-serif; 
   // ok we want the position of the viewer to always be floating on the right side and centered vertically
@@ -297,7 +341,7 @@ label {
   // right: 200px;
   //  margin: auto;
   //  overflow: scroll;
-  margin-top: 100px;
+;
    
 
    h1 {
@@ -697,4 +741,14 @@ padding: 0px !important;
 
 .blink-url {
   color: white
+}
+
+
+
+
+.connect-message {
+  font-size: 12px;
+  color: rgb(113, 113, 113);
+  font-weight: 400 !important;
+  align-items: center;
 }

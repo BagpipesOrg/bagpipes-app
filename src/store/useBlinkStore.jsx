@@ -74,8 +74,10 @@ const useBlinkStore = create(persist((set, get) => ({
         const id = `${chain}:${blockNumber}:${txIndex}`;
         console.log('Saving fetched on-chain blink:', id, blinkData);
         return {
-            ...state.fetchedBlinks,
-            [id]: blinkData,
+            fetchedBlinks: {
+              ...state.fetchedBlinks,
+            [id]: blinkData
+            }
         };
       }),
   
