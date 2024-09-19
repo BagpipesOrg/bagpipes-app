@@ -5,7 +5,7 @@ import { actionSubmittableStructure } from '../actions';
 
 export const createCallParams = (formData, chainDecimals) => {
     console.log("createCallParams formData", formData, chainDecimals);
-    const actionData = formData.links.actions[0]; // one action per blink i believe TODO: review this.
+    const actionData = formData.links.actions[0]; // TODO one action per blink i believe TODO: review this.
 
     if (!actionData) throw new Error("No action data available.");
 
@@ -25,7 +25,7 @@ export const createCallParams = (formData, chainDecimals) => {
 
     if (!methodData) throw new Error("Action type is not supported or incorrectly defined.");
 
-    const callParams = methodData?.arguments?.map(arg => params[arg.name]);
+    const callParams = methodData?.arguments?.map(arg => params[arg?.name]);
     console.log("createCallParams callParams", callParams);
 
     return methodData;
