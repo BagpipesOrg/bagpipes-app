@@ -1,19 +1,19 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Select } from 'antd';
-import './Blinks.scss';
-import BlinkMiniApp from './BlinkMiniApp';
-import useBlinkStore from '../../../store/useBlinkStore';
-import WalletWidget from '../../../components/WalletWidget/WalletWidget';
-import { Button, Modal, Spin } from 'antd';
-import { BlinkIcon, CopyIcon } from '../../../components/Icons/icons';  
-import { signAndSendRemark } from './generateBlink';
-import toast from 'react-hot-toast';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import type { Parameter, Arg, LinkedAction, ActionType, Action, NewActionForm, BlinkMetadata } from './BlinkBuilder';
+import { Button, Spin } from 'antd';
+import toast from 'react-hot-toast';
+import useBlinkStore from '../../../store/useBlinkStore';
+import BlinkMiniApp from './BlinkMiniApp';
 import { generateUrl }  from './generateBlink';
-
 import { fetchBlinkData } from './helpers';
+
+import { BlinkIcon } from '../../../components/Icons/icons'; 
+import WalletWidget from '../../../components/WalletWidget/WalletWidget';
+
+import type { Action, NewActionForm} from './types';
+
+
+import './Blinks.scss';
 
 const BlinkAppViewer: React.FC = () => {
 //   const walletContext = useContext(WalletContext);

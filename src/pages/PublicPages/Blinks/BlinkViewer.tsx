@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import './Blinks.scss';
-import { Action } from './BlinkBuilder';
+import type { Action } from './types';
 import { BlinkIcon, VerificationIcon } from '../../../components/Icons/icons';
 import { WalletContext } from '../../../components/Wallet/contexts';
 import BalanceTippy from '../../../components/Bagpipes/Forms/PopupForms/ChainForms/ChainTxForm/BalanceTippy';

@@ -1,25 +1,17 @@
 import React, { useState, useContext, useEffect } from 'react';
-import './Blinks.scss';
-import { BlinkMetadata } from './BlinkBuilder';
-import { BlinkIcon, VerificationIcon, CopyIcon } from '../../../components/Icons/icons';
+import type { BlinkMetadata} from './types';
 import { WalletContext } from '../../../components/Wallet/contexts';
-import BalanceTippy from '../../../components/Bagpipes/Forms/PopupForms/ChainForms/ChainTxForm/BalanceTippy';
 import { getAssetBalanceForChain } from '../../../Chains/Helpers/AssetHelper';
 import { listChains} from '../../../Chains/ChainsInfo';
-import useBlinkStore from '../../../store/useBlinkStore';
-import { Button, Dropdown, message, Space, Tooltip } from 'antd';
+import { Dropdown, message, Space, Tooltip } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import CreatorIdentity from './CreatorIdentity';
-import { getApiInstance } from 'src/Chains/api/connect';
-import { signExtrinsicUtil } from 'src/components/Bagpipes/utils/signExtrinsicUtil';
 import { broadcastToChain } from '../../../Chains/api/broadcastToChain';
 import { createCallParams } from './executeBlink/createCallParams';
 import toast  from 'react-hot-toast';
-import { actionSubmittableStructure } from './actions';
 import ChainRpcService from '../../../services/ChainRpcService';
-import { set } from 'lodash';
-
+import './Blinks.scss';
 
 export interface BlinkViewerProps {
   action: BlinkMetadata<"action">;

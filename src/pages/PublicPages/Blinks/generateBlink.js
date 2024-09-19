@@ -1,5 +1,3 @@
-import React, { useState } from 'react';
-import useBlinkStore from '../../../store/useBlinkStore';
 import { getApiInstance } from '../../../Chains/api/connect';
 import { signExtrinsicUtil } from '../../../components/Bagpipes/utils/signExtrinsicUtil';
 import { broadcastToChain } from '../../../Chains/api/broadcastToChain';
