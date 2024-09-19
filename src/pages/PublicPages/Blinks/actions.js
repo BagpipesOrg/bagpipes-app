@@ -17,7 +17,7 @@ export const chainActions = [
         section: "balances",
         arguments: [
           { Id: params.recipientId },
-          params.amountU128,
+          params.transferAmountU128,
         ]
       },
       stake: {

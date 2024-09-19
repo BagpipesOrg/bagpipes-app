@@ -206,6 +206,7 @@ const menuProps = {
 
 const executeTransaction = async (formData, chain) => {
   try {
+    console.log('executeTransaction formData:', formData);
     const methodData = createCallParams(formData, chain.token_decimals);
     console.log('executeTransaction methodData:', methodData);
     const signedExtrinsic = await ChainRpcService.executeChainTxBlinkRenderedMethod({

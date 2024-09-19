@@ -19,7 +19,6 @@ const BlinkAppViewer: React.FC = () => {
 //   const walletContext = useContext(WalletContext);
 
   const {  saveFetchedOnChainBlink, getFetchedOnChainBlink} = useBlinkStore(state => ({ 
-
     saveFetchedOnChainBlink: state.saveFetchedOnChainBlink,
     getFetchedOnChainBlink: state.getFetchedOnChainBlink
   }));
@@ -31,7 +30,7 @@ const BlinkAppViewer: React.FC = () => {
     const initializeAction = () => ({
         id: 'default',
         type: "action",
-        icon: "https://bagpipes.io/polkadot-blinks.png",
+        icon: "",
         title: "",
         description: "",
         label: "",
@@ -46,7 +45,7 @@ const BlinkAppViewer: React.FC = () => {
     const [action, setAction] = useState<Action<"action">>({
         id: '',
         type: "action",
-        icon: "https://bagpipes.io/polkadot-blinks.png",    
+        icon: "",    
         title: "",
         description: "",
         label: "",
