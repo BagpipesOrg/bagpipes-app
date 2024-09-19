@@ -54,6 +54,7 @@ export class BaseDotSamaWallet implements Wallet {
     const injectedWindow = window as Window & InjectedWindow;
     const injectedExtension =
       injectedWindow?.injectedWeb3?.[this.extensionName];
+      console.log("injectedExtension", injectedExtension);
 
     return !!injectedExtension;
   }
