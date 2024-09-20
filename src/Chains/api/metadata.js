@@ -49,6 +49,7 @@ export const CHAIN_METADATA = {
     people: {
         chain: "People",
         endpoints: [
+            "wss://polkadot-people-rpc.polkadot.io",
             "wss://rpc-people-polkadot.luckyfriday.io",
 
 
@@ -60,6 +61,7 @@ export const CHAIN_METADATA = {
     people_kusama: {
         chain: "People (Kusama)",
         endpoints: [
+            "wss://kusama-people-rpc.polkadot.io",
             "wss://rpc-people-kusama.luckyfriday.io",
 
 

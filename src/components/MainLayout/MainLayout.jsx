@@ -122,7 +122,7 @@ function MainLayout({ children }) {
                     <Route path="evm-wallet-info" element={<EvmWalletInfo />} />
                     <Route path="settings" element={<Settings />} />
                     <Route path ="blinks" element={<BlinkBuilder />} />
-                    <Route path="blink/:fullId" element={<BlinkAppViewer />}  />
+                    <Route path=":fullId" element={<BlinkAppViewer />}  />
 
 
 
