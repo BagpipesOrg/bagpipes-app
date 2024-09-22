@@ -59,7 +59,7 @@ const Sidebar = () => {
 
                 {/* Blinks  */}
                 <div className="sidebar-item">
-          <Link to="/blinks">
+          <Link to="/blink-builder">
             <BlinkIcon fillColor='#757575' />
             {isExpanded && <span className="sidebar-text">Blinks</span>}
           </Link>
