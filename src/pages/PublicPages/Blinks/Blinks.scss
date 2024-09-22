@@ -39,7 +39,7 @@
 .blinkMiniAppContainer {
   height: 100%;
   display: flex;
-  background: rgb(229, 229, 229);
+  background: rgba(229, 229, 229, 0);
   // the background is a local file that is a noise texture noiserectangle.png
   // padding-bottom: 50px;
   // the contents of this container should be on top of each other
@@ -323,6 +323,8 @@ label {
   align-items: center;
   width: 100%;
   flex-direction: column;
+  outline: 5px dashed white;
+
 
 .blinkViewer {
   font-family: 'Inter', sans-serif;

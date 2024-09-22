@@ -15,7 +15,7 @@ import type { Action, NewActionForm} from './types';
 
 import './Blinks.scss';
 
-const BlinkAppViewer: React.FC = () => {
+const BlinkAppPostViewer: React.FC = () => {
 //   const walletContext = useContext(WalletContext);
 
   const {  saveFetchedOnChainBlink, getFetchedOnChainBlink} = useBlinkStore(state => ({ 
@@ -106,13 +106,13 @@ const BlinkAppViewer: React.FC = () => {
     
                     const genreratedUrl = generateUrl(chain, blockNum, txIdx);
                     setGeneratedUrl(genreratedUrl);
-                    console.log('BlinkAppViewer loading data chain:', chain, 'blockNumber:', blockNum, 'txIndex:', txIdx);
+                    console.log('BlinkAppPostViewer loading data chain:', chain, 'blockNumber:', blockNum, 'txIndex:', txIdx);
                     // Try to get the blink data from the store
                     formData = getFetchedOnChainBlink(chain, blockNum, txIdx);
-                    console.log('BlinkAppViewer fetched formData', formData);
+                    console.log('BlinkAppPostViewer fetched formData', formData);
     
                     if (formData) {
-                        console.log('BlinkAppViewer non-fetched formData', formData);
+                        console.log('BlinkAppPostViewer non-fetched formData', formData);
                         setAction(formData);
                         setActionForms(formData?.links?.actions || []);
                         setActionType(formData?.actionType);
@@ -128,7 +128,7 @@ const BlinkAppViewer: React.FC = () => {
                     setLoading(true);
                     setLoadingMessage(`Fetching blink from asset hub ${blockNum}...`);
                     try {
-                        console.log('BlinkAppViewer fetching data from chain:', chain, 'blockNumber:', blockNum, 'txIndex:', txIdx);
+                        console.log('BlinkAppPostViewer fetching data from chain:', chain, 'blockNumber:', blockNum, 'txIndex:', txIdx);
                         // Fetch from chain
                         formData = await fetchBlinkData( blockNum, txIdx);
     
@@ -136,7 +136,7 @@ const BlinkAppViewer: React.FC = () => {
     
                         if (formData) {
                         saveFetchedOnChainBlink(chain, blockNum, txIdx, formData);
-                        console.log('BlinkAppViewer formData from on-chain fetch', formData);
+                        console.log('BlinkAppPostViewer formData from on-chain fetch', formData);
                         setAction(formData);
                         setActionForms(formData?.links?.actions || []);
                         setActionType(formData?.actionType);
@@ -175,11 +175,64 @@ const BlinkAppViewer: React.FC = () => {
       }, [fullId]);
     
 
+      useEffect(() => {
+        const hash = window.location.hash;
+        console.log('miniAppView window.location.hash:', hash);
+      
+        const queryString = hash.split('?')[1];
+      
+        if (queryString) {
+          const urlParams = new URLSearchParams(queryString);
+          const miniAppView = urlParams.get('miniAppView');
+      
+          console.log('miniAppView params:', urlParams);
+      
+          if (miniAppView === 'true') {
+            console.log('miniAppView is enabled');
+      
+            // Instead of hiding everything, only hide specific elements
+            const elementsToHide = document.querySelectorAll('.header, .footer, .sidebar, .blinkTitleInfo'); // Example: Hide header, footer, sidebar
+            elementsToHide.forEach((el) => {
+              if (el instanceof HTMLElement) {
+                el.style.display = 'none'; // Hide specific non-essential elements
+                console.log('Hiding element:', el);
+              }
+            });
+      
+            // Ensure .blinkMiniAppContainer is visible explicitly
+            const blinkMiniAppContainer = document.querySelector('.blinkMiniAppContainer');
+            if (blinkMiniAppContainer instanceof HTMLElement) {
+              blinkMiniAppContainer.style.display = 'block'; 
+              blinkMiniAppContainer.style.visibility = 'visible';
+              blinkMiniAppContainer.style.height = 'auto';
+              blinkMiniAppContainer.style.overflow = 'visible';
+              blinkMiniAppContainer.style.backgroundColor = 'black';
+
+
+              console.log('Explicitly setting .blinkMiniAppContainer to visible:', blinkMiniAppContainer);
+            } else {
+              console.log('.blinkMiniAppContainer not found or not an HTMLElement.');
+            }
+      
+            // Scroll into view in case it's out of the viewport
+            if (blinkMiniAppContainer) {
+              blinkMiniAppContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+          } else {
+            console.log('miniAppView is not enabled');
+          }
+        } else {
+          console.log('No query parameters in the hash');
+        }
+      }, []);
+      
+      
+      
+
+
   return (
     <>
-    <div className='wallet-widget-app-position'>
-      <WalletWidget />
-      </div>
+    
       <div className='blinkHeader'>
 
       <div className='blinkTitleInfo'> 
@@ -192,7 +245,8 @@ const BlinkAppViewer: React.FC = () => {
 
         <div className='viewerWrapper'>
 
-            <div className='share-blink'>
+      <div className='flex justify-between'>
+            <div className=''>
                   <Button
                       icon={<BlinkIcon className='h-4 w-4' fillColor='rgb(35, 35, 35' />}
                       onClick={async () => {
@@ -206,15 +260,19 @@ const BlinkAppViewer: React.FC = () => {
                       }}
                      
                       className='share-button'
-                 > <span className='ml-2'>Share</span>
+                 > 
+            
                  {/* <a className='blink-url' href={generatedUrl} target="_blank" rel="noopener noreferrer">
                       {generatedUrl}
                     </a> */}
                  </Button>
+             
           
                  {/* <a className='' href={generatedUrl} target="_blank" rel="noopener noreferrer">
                       {generatedUrl}
                     </a> */}
+        </div>
+        <WalletWidget showAsButton={false} />
         </div>
       <BlinkMiniApp action={action} />
 
@@ -234,7 +292,7 @@ const BlinkAppViewer: React.FC = () => {
   );
 };
 
-export default BlinkAppViewer;
+export default BlinkAppPostViewer;
 
 
 
