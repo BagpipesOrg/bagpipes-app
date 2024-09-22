@@ -536,8 +536,9 @@ const fetchBalance = async (signal) => {
     enterLoading(1)
     setGeneratedUrl('');
     showModal();
-    setUrlStatus('waiting for signature');
-    setModalText('Waiting for you to sign the transaction to store metadata on-chain (Asset Hub)...');
+    setUrlStatus(`connecting to ${selectedChain}`);
+    setModalText(`Connected to Light Client if available, else RPC.`);
+    
     setUrlLoading(true);
     const accountAddress = formData.selectedCreatorAccount; 
     const serializedData = JSON.stringify({ Blinks: formData });

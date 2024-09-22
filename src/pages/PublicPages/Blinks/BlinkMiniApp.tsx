@@ -12,13 +12,15 @@ import { createCallParams } from './executeBlink/createCallParams';
 import toast  from 'react-hot-toast';
 import ChainRpcService from '../../../services/ChainRpcService';
 import './Blinks.scss';
+import WalletWidget from '../../../components/WalletWidget/WalletWidget';
 
 export interface BlinkViewerProps {
   action: BlinkMetadata<"action">;
+  showConnectWallet?: boolean;
 }
 
 
-const BlinkMiniApp: React.FC<BlinkViewerProps> = ({ action }) => {
+const BlinkMiniApp: React.FC<BlinkViewerProps> = ({ action, showConnectWallet=false }) => {
 
 console.log('BlinkMiniApp action:', action);
   let formData = action;
@@ -233,7 +235,7 @@ const executeTransaction = async (formData, chain) => {
   return (
             
       <div className='blinkViewer'>
-     
+      { showConnectWallet &&  <WalletWidget showAsButton={true} /> }
 
         {action.icon && (
           <img src={action.icon} alt={action.title} className='blink-icon' />

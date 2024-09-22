@@ -2,8 +2,14 @@ import React, { useContext } from 'react';
 import { WalletContext, OpenSelectWallet } from '../Wallet/contexts';
 import { WalletIcon } from '../Icons/icons';
 import './WalletWidget.scss';
+import { title } from 'process';
 
-function WalletWidget(): React.ReactElement {
+interface WalletWidgetProps {
+  showAsButton?: boolean;
+}
+
+
+function WalletWidget({ showAsButton = true }: WalletWidgetProps): React.ReactElement {
   const { open: openSelectWallet } = useContext(OpenSelectWallet);
   const walletContext = useContext(WalletContext);
 
@@ -35,6 +41,23 @@ console.log("WalletWidget", walletTitle, walletLogoSrc, status);
     }
   };
 
+  if (!showAsButton) {
+    // Naked mode, only display the icon
+    return (
+      <button onClick={openSelectWallet} className="">
+        <span className="icon-and-text">
+          <span className="icon">
+            {walletLogoSrc ? (
+              <img src={walletLogoSrc} alt={walletTitle} className="wallet-logo-small" />
+            ) : (
+              <WalletIcon className="h-5 w-5" fillColor="black" />
+            )}
+          </span>
+        </span>   
+      </button>
+    );
+  }
+
 
   return (
     <div className="widget-container">
@@ -48,7 +71,9 @@ console.log("WalletWidget", walletTitle, walletLogoSrc, status);
             )}
           </span>
           <span className="text">
+         
             <span className="connect">{walletTitle}</span>
+          
             {status !== 'connected' && status !== 'disconnected' && (
               <span className="status">{displayStatus()}</span>
             )}
