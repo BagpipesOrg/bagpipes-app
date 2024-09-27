@@ -174,6 +174,7 @@ const BlinkAppPostViewer: React.FC = () => {
         loadBlinkData();
       }, [fullId]);
     
+      let miniAppView = 'false';
 
       useEffect(() => {
         const hash = window.location.hash;
@@ -183,18 +184,18 @@ const BlinkAppPostViewer: React.FC = () => {
       
         if (queryString) {
           const urlParams = new URLSearchParams(queryString);
-          const miniAppView = urlParams.get('miniAppView');
+          miniAppView = urlParams.get('miniAppView');
       
           console.log('miniAppView params:', urlParams);
       
           if (miniAppView === 'true') {
             console.log('miniAppView is enabled');
       
-            // Instead of hiding everything, only hide specific elements
-            const elementsToHide = document.querySelectorAll('.header, .footer, .sidebar, .blinkTitleInfo'); // Example: Hide header, footer, sidebar
+            // only hide specific elements
+            const elementsToHide = document.querySelectorAll(' .sidebar, .blinkTitleInfo, .blinkHeader' ); // this is what to hide. 
             elementsToHide.forEach((el) => {
               if (el instanceof HTMLElement) {
-                el.style.display = 'none'; // Hide specific non-essential elements
+                el.style.display = 'none';
                 console.log('Hiding element:', el);
               }
             });
@@ -204,7 +205,14 @@ const BlinkAppPostViewer: React.FC = () => {
             if (blinkMiniAppContainer instanceof HTMLElement) {
               blinkMiniAppContainer.style.display = 'block'; 
               blinkMiniAppContainer.style.visibility = 'visible';
-              blinkMiniAppContainer.style.height = 'auto';
+              blinkMiniAppContainer.style.height = '600px !important';
+              blinkMiniAppContainer.style.width = '600px';
+              blinkMiniAppContainer.style.padding = '10px';
+              blinkMiniAppContainer.style.overflowY = 'scroll';
+              blinkMiniAppContainer.style.overflowX = 'scroll';
+
+
+
               blinkMiniAppContainer.style.overflow = 'visible';
               blinkMiniAppContainer.style.backgroundColor = 'black';
 
@@ -243,40 +251,18 @@ const BlinkAppPostViewer: React.FC = () => {
       </div>
       <div className='blinkMiniAppContainer'>
 
-        <div className='viewerWrapper'>
 
-      <div className='flex justify-between'>
-            <div className=''>
-                  <Button
-                      icon={<BlinkIcon className='h-4 w-4' fillColor='rgb(35, 35, 35' />}
-                      onClick={async () => {
-                        try {
-                          await navigator.clipboard.writeText(generatedUrl);
-                          toast.success(`Copied ${generatedUrl} to clipboard`);
-                        } catch (err) {
-                          toast.error('Failed to copy');
-                          console.error('Failed to copy text: ', err);
-                        }
-                      }}
-                     
-                      className='share-button'
-                 > 
-            
-                 {/* <a className='blink-url' href={generatedUrl} target="_blank" rel="noopener noreferrer">
-                      {generatedUrl}
-                    </a> */}
-                 </Button>
-             
-          
-                 {/* <a className='' href={generatedUrl} target="_blank" rel="noopener noreferrer">
-                      {generatedUrl}
-                    </a> */}
-        </div>
-        <WalletWidget showAsButton={false} />
-        </div>
-      <BlinkMiniApp action={action} />
+        <div 
+          className='viewerWrapper'
+          style={miniAppView === 'true' ? { margin: '0 auto' } : {}}
+       >
+        
+        <span className='cutOutLabel'>Blink Mini App injected </span>
+      <div className='visibleApp'>
 
-      {loading && (
+        <BlinkMiniApp action={action} generatedUrl={generatedUrl} />
+
+        {loading && (
           <div className='loading flex text-xl font-semibold mt-4 items-center bg-white p-3 rounded'>
             <Spin size='small' />
             <div className='ml-3  text-slate-700 '>{loadingMessage}</div>
@@ -284,7 +270,7 @@ const BlinkAppPostViewer: React.FC = () => {
         )}
 
       </div>
-
+      </div>
 
     </div>
 

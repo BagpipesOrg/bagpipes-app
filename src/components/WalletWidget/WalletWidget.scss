@@ -90,3 +90,23 @@
   font-size: 0.8em;
   color: gray;
 }
+
+.buttonIcon {
+  border: none !important;
+  outline: none !important;
+  padding: 3px;
+
+  // even if hovered or active no border or focus
+  &:hover {
+    border: none !important;
+    outline: none !important;
+  }
+  &:active {
+    border: none !important;
+    outline: none !important;
+  }
+  &:focus {
+    border: none !important;
+    outline: none !important;
+  }
+}

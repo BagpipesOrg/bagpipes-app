@@ -149,7 +149,7 @@ const menuProps = {
 
   const renderAddressBox = () => {
     if (!walletContext || walletContext.accounts.length === 0) {
-      return <div>No wallet accounts available. Please connect Wallet to select account.</div>;
+      return <div>No wallet accounts available. Please connect Wallet.</div>;
     }
     return (
       <Space wrap>

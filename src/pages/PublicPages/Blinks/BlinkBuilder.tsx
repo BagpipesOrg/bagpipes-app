@@ -279,7 +279,7 @@ const fetchBalance = async (signal) => {
 
   const renderAddressSelection = () => {
       if (!walletContext || walletContext.accounts.length === 0) {
-        return <div className='connect-message'>Please connect Wallet to select account.
+        return <div className='connect-message'>Please connect Wallet.
           {/* <button onClick={}>Connect Wallet</button> */}
           
           </div>;
