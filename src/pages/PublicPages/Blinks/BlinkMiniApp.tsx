@@ -233,6 +233,33 @@ const executeTransaction = async (formData, chain) => {
 
 
 
+useEffect(() => {
+  // Listener for messages from parent
+  const handleMessage = (event: MessageEvent) => {
+    // Validate the origin
+    if (event.origin !== 'https://x.com') return; // Replace with actual parent origin
+
+    if (event.data && event.data.type === 'WALLET_CONNECT_RESPONSE') {
+      console.log('Received wallet data from parent:', event.data.payload);
+      const { wallet, walletType } = event.data.payload;
+      walletContext.setWallet(wallet, walletType);
+    }
+  };
+
+  window.addEventListener('message', handleMessage);
+
+  return () => {
+    window.removeEventListener('message', handleMessage);
+  };
+}, [walletContext]);
+
+// Request wallet connection on mount
+useEffect(() => {
+  window.parent.postMessage({
+    type: 'WALLET_CONNECT_REQUEST',
+    payload: { /* any necessary data */ }
+  }, 'https://x.com'); // Replace with actual parent origin
+}, []);
 
   
   return (   

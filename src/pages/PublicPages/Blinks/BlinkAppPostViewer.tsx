@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { WalletContext } from '../../../components/Wallet/contexts';
 import { useParams } from 'react-router-dom';
 import { Button, Spin } from 'antd';
 import toast from 'react-hot-toast';
@@ -16,7 +17,7 @@ import type { Action, NewActionForm} from './types';
 import './Blinks.scss';
 
 const BlinkAppPostViewer: React.FC = () => {
-//   const walletContext = useContext(WalletContext);
+  const walletContext = useContext(WalletContext);
 
   const {  saveFetchedOnChainBlink, getFetchedOnChainBlink} = useBlinkStore(state => ({ 
     saveFetchedOnChainBlink: state.saveFetchedOnChainBlink,
@@ -233,7 +234,60 @@ const BlinkAppPostViewer: React.FC = () => {
           console.log('No query parameters in the hash');
         }
       }, []);
+
+
       
+      useEffect(() => {
+        // Listener for messages from iframe
+        const handleMessage = (event: MessageEvent) => {
+          // Validate the origin
+          if (event.origin !== 'https://blink.bagpipes.io') return;
+    
+          const { type, payload } = event.data;
+    
+          if (type === 'FROM_IFRAME') {
+            console.log('Message from iframe:', payload);
+            // Handle the message as needed
+          }
+    
+          if (type === 'WALLET_CONNECT_REQUEST') {
+            console.log('Wallet connect request:', payload);
+            const { walletKey, walletType } = payload;
+    
+            // Interact with the extension to get wallet data
+            // This depends on how the extension exposes its APIs
+            // Placeholder for actual extension interaction logic
+    
+            // Example: Assuming the extension sends back the wallet data via content script
+            // Here, you might need to implement a way to retrieve the wallet data
+            // For simplicity, let's assume the content script will handle it and send back 'WALLET_CONNECT_RESPONSE'
+    
+            // Optionally, you can emit a custom event or manage state to handle the response
+          }
+    
+          if (type === 'WALLET_CONNECT_RESPONSE') {
+            console.log('Wallet connect response:', payload);
+            const { wallet, walletType } = payload;
+    
+            // Update the wallet context
+            walletContext.setWallet(wallet, walletType);
+    
+            // Optionally, navigate or provide feedback
+            if (walletType === 'substrate') {
+              // navigate('/wallet-info');
+            } else {
+              // navigate('/evm-wallet-info');
+            }
+          }
+        };
+    
+        window.addEventListener('message', handleMessage);
+    
+        return () => {
+          window.removeEventListener('message', handleMessage);
+        };
+      }, [walletContext, saveFetchedOnChainBlink, getFetchedOnChainBlink]);
+    
       
       
 

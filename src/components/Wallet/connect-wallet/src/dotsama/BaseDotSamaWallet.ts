@@ -9,7 +9,7 @@ import { SubscriptionFn, Wallet, WalletAccount, WalletInfo, WalletLogoProps } fr
 import { InjectedAccount, InjectedExtension, InjectedMetadata, InjectedProvider, InjectedWindow } from '@polkadot/extension-inject/types';
 import { Signer } from '@polkadot/types/types';
 
-const DAPP_NAME = 'SubWallet Connect';
+const DAPP_NAME = 'Bagpipes';
 
 export class BaseDotSamaWallet implements Wallet {
   extensionName: string;
@@ -54,7 +54,7 @@ export class BaseDotSamaWallet implements Wallet {
     const injectedWindow = window as Window & InjectedWindow;
     const injectedExtension =
       injectedWindow?.injectedWeb3?.[this.extensionName];
-      console.log("injectedExtension", injectedExtension);
+      console.log("injectedExtension for bagpipes", injectedExtension);
 
     return !!injectedExtension;
   }
