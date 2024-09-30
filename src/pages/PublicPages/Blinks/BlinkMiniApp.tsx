@@ -13,14 +13,17 @@ import toast  from 'react-hot-toast';
 import ChainRpcService from '../../../services/ChainRpcService';
 import './Blinks.scss';
 import WalletWidget from '../../../components/WalletWidget/WalletWidget';
+import { Button } from 'antd';
+import { BlinkIcon } from '../../../components/Icons/icons';
 
 export interface BlinkViewerProps {
   action: BlinkMetadata<"action">;
   showConnectWallet?: boolean;
+  generatedUrl?: string;
 }
 
 
-const BlinkMiniApp: React.FC<BlinkViewerProps> = ({ action, showConnectWallet=false }) => {
+const BlinkMiniApp: React.FC<BlinkViewerProps> = ({ action, showConnectWallet=false, generatedUrl }) => {
 
 console.log('BlinkMiniApp action:', action);
   let formData = action;
@@ -125,7 +128,7 @@ const menuProps = {
 
   const renderAddressBox = () => {
     if (!walletContext || walletContext.accounts.length === 0) {
-      return <div className='connect-message '>Please connect Wallet to select account.</div>;
+      return <div className='connect-message '>Please <span className=''><a className='connectAnchor' href=''>connect</a></span> Wallet.</div>;
     }
     return (
       <Space wrap>
@@ -230,23 +233,70 @@ const executeTransaction = async (formData, chain) => {
 
 
 
+useEffect(() => {
+  // Listener for messages from parent
+  const handleMessage = (event: MessageEvent) => {
+    // Validate the origin
+    if (event.origin !== 'https://x.com') return; // Replace with actual parent origin
+
+    if (event.data && event.data.type === 'WALLET_CONNECT_RESPONSE') {
+      console.log('Received wallet data from parent:', event.data.payload);
+      const { wallet, walletType } = event.data.payload;
+      walletContext.setWallet(wallet, walletType);
+    }
+  };
+
+  window.addEventListener('message', handleMessage);
+
+  return () => {
+    window.removeEventListener('message', handleMessage);
+  };
+}, [walletContext]);
+
+// Request wallet connection on mount
+useEffect(() => {
+  window.parent.postMessage({
+    type: 'WALLET_CONNECT_REQUEST',
+    payload: { /* any necessary data */ }
+  }, 'https://x.com'); // Replace with actual parent origin
+}, []);
 
   
-  return (
-            
-      <div className='blinkViewer'>
-      { showConnectWallet &&  <WalletWidget showAsButton={true} /> }
-
+  return (   
+    <div className='blinkViewer'>
+      <div className='relative'>
+      <div className='miniAppMenu absolute top-0 right-0 p-1'>
+      <Button
+            icon={<BlinkIcon className='h-5 w-5' fillColor='white' />}
+            onClick={async () => {
+              try {
+                await navigator.clipboard.writeText(generatedUrl);
+                toast.success(`Copied ${generatedUrl} to clipboard`);
+              } catch (err) {
+                toast.error('Failed to copy');
+                console.error('Failed to copy text: ', err);
+              }
+            }}
+            type='primary'
+            style={{ backgroundColor: 'black', color: 'white', border: 'none' }}
+            className='share-button bg-black text-white'
+        >
+          {/* <a className='blink-url' href={generatedUrl} target="_blank" rel="noopener noreferrer">
+                  {generatedUrl}
+          </a> */}
+        </Button>
+                 {/* <a className='' href={generatedUrl} target="_blank" rel="noopener noreferrer">
+                      {generatedUrl}
+                    </a> */}
+        <WalletWidget showAsButton={false} />
+      </div>
+      {showConnectWallet &&  <WalletWidget showAsButton={true} /> }
         {action.icon && (
           <img src={action.icon} alt={action.title} className='blink-icon' />
         )}
-
-        
         <div className="blink-container items-center">
           <div className="link-section">
           {renderAddressBox()}
-    
-
             {/* <BlinkIcon className="icon ml-0 mr-0 h-3 w-3" fillColor="grey" />
             <span className="blink-title">https://blink.polkadot.network/</span> */}
           </div>
@@ -254,17 +304,12 @@ const executeTransaction = async (formData, chain) => {
             <CreatorIdentity chain={formData?.selectedChain} accountId={selectedCreatorAccount} />
           </div>
         </div>
-       
 
         <h1 className=''>{action.title}</h1>
         <p>{action.description}</p>
         {/* <button disabled={action.disabled}>{action.label}</button> */}
-      
-       
-
+    
         <div className='action-group-style'>
-         
-  
           {action?.links?.actions?.map((linkedAction, index) => (
             <div key={index} className="action-wrapper">
            
@@ -284,15 +329,15 @@ const executeTransaction = async (formData, chain) => {
               </>
             ))}
 
-              <button className='action-button'onClick={() => executeTransaction(formData, chain)}>
+            <button className='action-button'onClick={() => executeTransaction(formData, chain)}>
               {linkedAction.label}
             </button>
           </div>
-          
         ))}
       </div>
 
         {action.error && <p style={{ color: 'red' }}>{action.error.message}</p>}
+      </div>
       </div>
 
   );

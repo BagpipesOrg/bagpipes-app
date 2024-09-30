@@ -44,7 +44,9 @@
   // padding-bottom: 50px;
   // the contents of this container should be on top of each other
   flex-direction: column;
-justify-content: center;
+  justify-content: center;
+  margin: 0 auto;
+  align-self: center;
 
   .share-blink {
     font-size: 12px;
@@ -323,16 +325,44 @@ label {
   align-items: center;
   width: 100%;
   flex-direction: column;
-  outline: 5px dashed white;
+  outline: 2px dashed rgb(105, 255, 125);
+  border-radius: 25px;
+  background: black ;
+  max-width: 500px;
+  // margin: 0 auto;
 
+
+  .cutOutLabel {
+    // font-mono text-sm align-left m-0 we want mono (not inter) font and small text, and a background and we want to shift it up so it looks like its over the cut out. 
+    font-family: monospace, 'Inter', sans-serif;
+    font-size: 12px;
+
+    color: rgb(105, 255, 125) !important;
+    margin-top: -15px;
+    font-weight: 500 !important;
+    background: rgb(0, 0, 0);
+    padding: 5px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+
+
+  }
+
+  .visibleApp {
+    padding-bottom: 10px;
+  }
 
 .blinkViewer {
   font-family: 'Inter', sans-serif;
   border: 1px solid #ccc;
   border-radius: 20px;
-  padding: 20px 20px 20px 20px;
+  padding: 20px;
   margin: auto;
-  width: 500px; // Fixed width similar to an embedded Twitter card
+  max-width: 480px; // Fixed width similar to an embedded Twitter card
+  min-width: 460px; // Minimum width to prevent the card from shrinking too much
   min-height: auto;
   box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.272); // Adding some shadow for depth
   background: #fff; // Assuming a light mode card, set a white background
@@ -753,4 +783,19 @@ padding: 0px !important;
   color: rgb(113, 113, 113);
   font-weight: 400 !important;
   align-items: center;
+}
+
+
+.miniAppMenu {
+  // flex items-center justify-center bg-black w-20 border rounded
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: black;
+  width: 75px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  cursor: pointer;
+  color: white;
+  
 }

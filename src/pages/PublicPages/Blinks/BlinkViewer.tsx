@@ -135,7 +135,7 @@ const menuProps = {
 
   const renderAddressBox = () => {
     if (!walletContext || walletContext.accounts.length === 0) {
-      return <div className='connect-message '>Please connect Wallet to select account.</div>;
+      return <div className='connect-message '>Please connect Wallet.</div>;
     }
     return (
       <Space wrap>

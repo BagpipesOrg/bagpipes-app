@@ -44,13 +44,13 @@ console.log("WalletWidget", walletTitle, walletLogoSrc, status);
   if (!showAsButton) {
     // Naked mode, only display the icon
     return (
-      <button onClick={openSelectWallet} className="">
+      <button onClick={openSelectWallet} className="buttonIcon">
         <span className="icon-and-text">
-          <span className="icon">
+          <span className="">
             {walletLogoSrc ? (
               <img src={walletLogoSrc} alt={walletTitle} className="wallet-logo-small" />
             ) : (
-              <WalletIcon className="h-5 w-5" fillColor="black" />
+              <WalletIcon className="h-5 w-5" fillColor="white" />
             )}
           </span>
         </span>   
