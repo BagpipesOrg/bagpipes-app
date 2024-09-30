@@ -36,7 +36,7 @@ function WalletInfo (): React.ReactElement {
                 </Link>
 
           
-                <Link to="/blinks" className="builder-btn flex justify-between mb-4">
+                <Link to="/blink-builder" className="builder-btn flex justify-between mb-4">
                 <span className='icon-and-text'>
                     <BlinkIcon />
                     <span>Blinks</span>
