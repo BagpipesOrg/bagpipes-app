@@ -81,6 +81,7 @@ export function WalletContextProvider ({ children }: Props) {
   );
 
   const walletContext = {
+    
     wallet: getWalletBySource(walletKey),
     evmWallet: getEvmWalletBySource(walletKey),
     accounts,
@@ -111,9 +112,12 @@ export function WalletContextProvider ({ children }: Props) {
 
   useEffect(() => {
     if (walletType === 'substrate') {
+      console.log('Wallet key:', walletKey);
       const wallet = getWalletBySource(walletKey);
+      
 
       if (wallet && wallet.installed) {
+        console.log('Wallet is installed:', wallet);
         setStatus('connecting');
         setTimeout(() => {
           void afterSelectWallet(wallet)

@@ -236,59 +236,104 @@ const BlinkAppPostViewer: React.FC = () => {
       }, []);
 
 
-      
       useEffect(() => {
-        // Listener for messages from iframe
+        // Listener for messages from the parent
         const handleMessage = (event: MessageEvent) => {
-          // Validate the origin
-          if (event.origin !== 'https://blink.bagpipes.io') return;
-    
+          const allowedOrigins = ['http://localhost:5173', 'https://blink.bagpipes.io'];
+          
+          // Only process messages from allowed origins
+          if (!allowedOrigins.includes(event.origin)) {
+            console.warn(`Ignored message from origin: ${event.origin}`);
+            return;
+          }
+          console.log('Message from parent:', event);
+      
           const { type, payload } = event.data;
-    
-          if (type === 'FROM_IFRAME') {
-            console.log('Message from iframe:', payload);
-            // Handle the message as needed
-          }
-    
-          if (type === 'WALLET_CONNECT_REQUEST') {
-            console.log('Wallet connect request:', payload);
-            const { walletKey, walletType } = payload;
-    
-            // Interact with the extension to get wallet data
-            // This depends on how the extension exposes its APIs
-            // Placeholder for actual extension interaction logic
-    
-            // Example: Assuming the extension sends back the wallet data via content script
-            // Here, you might need to implement a way to retrieve the wallet data
-            // For simplicity, let's assume the content script will handle it and send back 'WALLET_CONNECT_RESPONSE'
-    
-            // Optionally, you can emit a custom event or manage state to handle the response
-          }
-    
-          if (type === 'WALLET_CONNECT_RESPONSE') {
-            console.log('Wallet connect response:', payload);
-            const { wallet, walletType } = payload;
-    
-            // Update the wallet context
-            walletContext.setWallet(wallet, walletType);
-    
-            // Optionally, navigate or provide feedback
-            if (walletType === 'substrate') {
-              // navigate('/wallet-info');
-            } else {
-              // navigate('/evm-wallet-info');
-            }
+          
+          console.log(`iframe received message: type=${type}, payload=${JSON.stringify(payload)}`);
+      
+          // Handle different message types
+          switch (type) {
+            case 'TEST_RESPONSE':
+              console.log(`Received TEST_RESPONSE: ${payload}`);
+              break;
+      
+            case 'WALLET_CONNECT_RESPONSE':
+              console.log(`Received WALLET_CONNECT_RESPONSE:`, payload);
+              // Update the WalletContext with the received wallet data
+              // Assuming `walletContext` is available and defined properly
+              walletContext.setWallet(payload.wallet, payload.walletType);
+              break;
+      
+            default:
+              console.warn(`Unhandled message type: ${type}`);
           }
         };
-    
+      
         window.addEventListener('message', handleMessage);
-    
+      
+        // Send a test message to the parent
+        window.parent.postMessage(
+          { type: 'TEST_MESSAGE', payload: 'Hello from iframe!' },
+          'http://localhost:5173' // Use the same origin for messaging
+        );
+      
         return () => {
           window.removeEventListener('message', handleMessage);
         };
-      }, [walletContext, saveFetchedOnChainBlink, getFetchedOnChainBlink]);
-    
+      }, [walletContext]);
       
+
+
+
+      // useEffect(() => {
+      //   // Listener for messages from the parent
+      //   const handleMessage = (event) => {
+      //     // Verify the origin of the message
+      //     if (event.origin !== 'http://localhost:5173') {
+      //       console.warn(`Ignored message from origin: ${event.origin}`);
+      //       return;
+      //     }
+    
+      //     const { type, payload } = event.data;
+    
+      //     console.log(`iframe received message: type=${type}, payload=${JSON.stringify(payload)}`);
+    
+      //     // Handle different message types
+      //     switch (type) {
+      //       case 'TEST_RESPONSE':
+      //         console.log(`Received TEST_RESPONSE: ${payload}`);
+      //         break;
+    
+      //       case 'WALLET_CONNECT_RESPONSE':
+      //         console.log(`Received WALLET_CONNECT_RESPONSE:`, payload);
+      //         // Update the WalletContext with the received wallet data
+      //         walletContext.setWallet(payload.wallet, payload.walletType);
+      //         break;
+    
+      //       default:
+      //         console.warn(`Unhandled message type: ${type}`);
+      //     }
+      //   };
+    
+      //   window.addEventListener('message', handleMessage);
+    
+      //   // Send a test message to the parent
+      //   window.parent.postMessage(
+      //     { type: 'TEST_MESSAGE', payload: 'Hello from iframe!' },
+      //     'http://localhost:5173'
+      //   );
+    
+      //   // Optionally, request wallet connection on mount
+      //   window.parent.postMessage(
+      //     { type: 'WALLET_CONNECT_REQUEST', payload: { /* any necessary data */ } },
+      //     'http://localhost:5173'
+      //   );
+    
+      //   return () => {
+      //     window.removeEventListener('message', handleMessage);
+      //   };
+      // }, [walletContext]);
       
 
 

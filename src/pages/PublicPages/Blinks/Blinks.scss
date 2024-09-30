@@ -39,7 +39,7 @@
 .blinkMiniAppContainer {
   height: 100%;
   display: flex;
-  background: rgba(229, 229, 229, 0);
+  background: rgba(255, 255, 255, 0);
   // the background is a local file that is a noise texture noiserectangle.png
   // padding-bottom: 50px;
   // the contents of this container should be on top of each other
@@ -326,8 +326,8 @@ label {
   width: 100%;
   flex-direction: column;
   outline: 2px dashed rgb(105, 255, 125);
-  border-radius: 25px;
-  background: black ;
+  border-radius: 0px;
+  background: rgb(0, 0, 0) ;
   max-width: 500px;
   // margin: 0 auto;
 
@@ -360,11 +360,11 @@ label {
   border: 1px solid #ccc;
   border-radius: 20px;
   padding: 20px;
-  margin: auto;
+  margin: 10px;
   max-width: 480px; // Fixed width similar to an embedded Twitter card
   min-width: 460px; // Minimum width to prevent the card from shrinking too much
   min-height: auto;
-  box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.272); // Adding some shadow for depth
+  box-shadow: 4px 4px 17px rgba(0, 0, 0, 0.305); // Adding some shadow for depth
   background: #fff; // Assuming a light mode card, set a white background
   // font-family: Inter,Roboto,Helvetica,sans-serif; 
   // ok we want the position of the viewer to always be floating on the right side and centered vertically
