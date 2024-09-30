@@ -80,7 +80,7 @@ class ChainRpcService {
 
     try {
     
-        const formattedParams = this.formatTxParams(api, method, params);
+        const formattedParams = this.formatTxParams(api, method, params, methodName);
         const extrinsic = method(...formattedParams);
         const signedExtrinsic = await signExtrinsicUtil(api, signer, extrinsic, signerAddress);
         return signedExtrinsic;
@@ -121,7 +121,7 @@ static async createChainTxRenderedMethod({ chainKey, palletName, methodName, par
   }
 
   try {
-      const formattedParams = this.formatTxParams(api, method, params);
+      const formattedParams = this.formatTxParams(api, method, params, methodName);
       const extrinsic = method(...formattedParams);
       const encodedCallData = extrinsic.method.toHex();
 
@@ -169,15 +169,24 @@ static async createChainTxRenderedMethod({ chainKey, palletName, methodName, par
 /**
  * Formats parameters according to their defined types in Substrate metadata.
  */
-static formatTxParams(api: ApiPromise, method: any, params: any): any[] {
+static formatTxParams(api: ApiPromise, method: any, params: any, methodName: string): any[] {
+  console.log('formatTxParams:', params);
   return params.arguments.map(arg => {
       const key = Object.keys(arg)[0];
       let value = Object.values(arg)[0];
-      const typeInfo = method.meta.args.find(a => a.name.toString() === key);
-      const paramType = typeInfo.type.toString();
+      const typeInfo = method?.meta?.args.find(a => a.name.toString() === key);
+      if (!typeInfo) {
+        throw new Error(`Argument "${key}" is not a valid parameter for method "${methodName}". Expected arguments: ${method.meta.args.map(a => a.name.toString()).join(', ')}`);
+      }
+      console.log('Provided argument key:', key);
+console.log('Available method argument names:', method.meta.args.map(a => a.name.toString()));
+
+      console.log('formatTxParams typeInfo to string:', typeInfo?.type?.toString());
+      const paramType = typeInfo?.type?.toString();
+      console.log('formatTxParams paramType:', paramType);  
 
       // Handle optional types
-      if (paramType.startsWith('Option<')) {
+      if (paramType?.startsWith('Option<')) {
           if (value === "None") {
               return null; // Convert "None" to null
           } else if (value && typeof value === 'object' && 'Some' in value) {
@@ -185,7 +194,7 @@ static formatTxParams(api: ApiPromise, method: any, params: any): any[] {
           }
       }
       // Create the parameter using the appropriate type from the registry
-      return api.registry.createType(paramType, value);
+      return api?.registry?.createType(paramType, value);
   });
 }
 
