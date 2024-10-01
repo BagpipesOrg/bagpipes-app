@@ -3,7 +3,8 @@ import type { BlinkMetadata} from './types';
 import { WalletContext } from '../../../components/Wallet/contexts';
 import { getAssetBalanceForChain } from '../../../Chains/Helpers/AssetHelper';
 import { listChains} from '../../../Chains/ChainsInfo';
-import { Dropdown, message, Space, Tooltip } from 'antd';
+import { Dropdown, message, Space, Tooltip, Typography } from 'antd';
+
 import { UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import CreatorIdentity from './CreatorIdentity';
@@ -15,6 +16,8 @@ import './Blinks.scss';
 import WalletWidget from '../../../components/WalletWidget/WalletWidget';
 import { Button } from 'antd';
 import { BlinkIcon } from '../../../components/Icons/icons';
+
+const { Link, Text } = Typography;
 
 export interface BlinkViewerProps {
   action: BlinkMetadata<"action">;
@@ -33,8 +36,8 @@ console.log('BlinkMiniApp action:', action);
   const [isFetchingBalance, setIsFetchingBalance] = useState(false);
   const [chainSymbol, setChainSymbol] = useState('');
   const [balance, setBalance] = useState(null);
-  const [selectedUserAddress, setSelectedUserAddress] = useState(formData?.selectedUserAddress || walletContext.accounts[0]?.address || '');
-  const [selectedUserAddressName, setSelectedUserAddressName] = useState(formData?.selectedUserAddressName || walletContext.accounts[0]?.name || '');
+  const [selectedSenderAddress, setSelectedSenderAddress] = useState(formData?.selectedUserAddress || walletContext.accounts[0]?.address || '');
+  const [selectedSenderAddressName, setSelectedSenderAddressName] = useState(formData?.selectedUserAddressName || walletContext.accounts[0]?.name || '');
   const [chain, setChain] = useState(null);
 
   // const [selectedCreatorAccount, setSelectedCreatorAccount] = useState(formData?.selectedCreatorAccount || null);
@@ -45,16 +48,16 @@ console.log('BlinkMiniApp action:', action);
   }, [formData?.selectedCreatorAccount]);
 
   useEffect(() => {
-    console.log('BlinkMiniApp useEffect selectedUserAddress:', selectedUserAddress, 'formData:', formData);
+    console.log('BlinkMiniApp useEffect selectedSenderAddress:', selectedSenderAddress, 'formData:', formData);
     const controller = new AbortController();
     const signal = controller.signal;
 
-    if (selectedUserAddress && formData.selectedChain) {
-      console.log('BlinkMiniApp useEffect fetchBalance selectedUserAddress:', selectedUserAddress, 'formData:', formData);
+    if (selectedSenderAddress && formData.selectedChain) {
+      console.log('BlinkMiniApp useEffect fetchBalance selectedSenderAddress:', selectedSenderAddress, 'formData:', formData);
       fetchBalance(signal);
     }
     return () => controller.abort();
-  }, [selectedUserAddress]);
+  }, [selectedSenderAddress]);
 
   useEffect(() => {
     // we should fetch chainInfo from listChains()
@@ -79,7 +82,7 @@ console.log('BlinkMiniApp action:', action);
       return;
     }
     try {
-      const fetchedBalance = await getAssetBalanceForChain(formData?.selectedChain, 0, selectedUserAddress);
+      const fetchedBalance = await getAssetBalanceForChain(formData?.selectedChain, 0, selectedSenderAddress);
       setBalance(fetchedBalance);
       if (!signal.aborted) {
         setBalance(fetchedBalance);
@@ -96,41 +99,75 @@ console.log('BlinkMiniApp action:', action);
   };
 
   const handleUserButtonClick = (e) => {
-    message.info(`Selected Address: ${selectedUserAddress}`);
+    message.info(`Selected Address: ${selectedSenderAddress}`);
   };
 
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     const selected = walletContext.accounts.find(acc => acc.address === e.key);
     // setSelectedCreatorAccount(selected || null);
-    setSelectedUserAddress(selected?.address || '');
-    setSelectedUserAddressName(selected?.name || '');
+    setSelectedSenderAddress(selected?.address || '');
+    setSelectedSenderAddressName(selected?.name || '');
     message.info(`Selected Address: ${selected?.address || ''}`);
     // Fetch balance for the selected address
     // fetchBalance(selected?.address);
 
     // we need the 
 
-  // saveBlinkMetadata(activeBlinksId, {...formData, selectedUserAddress: selected?.address, selectedUserAddressName: selected?.name});
+  // saveBlinkMetadata(activeBlinksId, {...formData, selectedSenderAddress: selected?.address, selectedSenderAddressName: selected?.name});
 
 };
- // Create a menu items array based on wallet accounts
- const items: MenuProps['items'] = walletContext.accounts.map(acc => ({
-    label: `${acc.name} (${acc.address})`,
-    key: acc.address,
-    icon: <UserOutlined />,
-  }));
+const renderInfoMessage = () => (
+  <div className="info-message p-1 text-sm">
+    <Text type="secondary">
+      Want to add connected account? Visit the{' '}
+      <Link href={generatedUrl} target="_blank" rel="noopener noreferrer">
+        Blink URL
+      </Link>{' '}
+      directly, or navigate to your extension settings.
+    </Text>
+  </div>
+);
+
+// Create a menu items array based on wallet accounts
+const accountItems: MenuProps['items'] = walletContext.accounts.map(acc => ({
+  label: (
+    <div className="flex items-center">
+      <UserOutlined style={{ marginRight: 8 }} />
+      <span>{`${acc.name} (${acc.address})`}</span>
+    </div>
+  ),
+  key: acc.address,
+}));
+
+// Append a divider and the informational message to the menu items
+const items: MenuProps['items'] = [
+  {
+    type: 'divider',
+  },
+  {
+    key: 'info-message',
+    label: renderInfoMessage(),
+    disabled: false, // Disable click on this item
+  },
+  ...accountItems,
+
+];
+
 
 const menuProps = {
   items,
+  
   onClick: handleMenuClick,
 };
 
 
   const renderAddressBox = () => {
+    
     if (!walletContext || walletContext.accounts.length === 0) {
       return <div className='connect-message '>Please <span className=''><a className='connectAnchor' href=''>connect</a></span> Wallet.</div>;
     }
     return (
+      <>
       <Space wrap>
       <Dropdown.Button
         menu={menuProps}
@@ -144,19 +181,29 @@ const menuProps = {
           React.cloneElement(rightButton as React.ReactElement<any, string>, { loading: isFetchingBalance }),
         ]}
             >
-      {selectedUserAddress ? (
+      {selectedSenderAddress ? (
         <span className='account-info '>
-          <span className="font-bold">{selectedUserAddressName}</span>
+
+          <span className="font-bold">{selectedSenderAddressName}</span>
           {/* {' - '}
           <span className="font-semibold">{balance?.total} {chainSymbol}</span>  */}
-          <span className="text-gray-600"> {selectedUserAddress.slice(0, 4)}...{selectedUserAddress.slice(-4)}</span>
+          <span className="text-gray-600"> {selectedSenderAddress.slice(0, 4)}...{selectedSenderAddress.slice(-4)}</span>
         </span>
       ) : 'Select an Account'}
 
       </Dropdown.Button>
+      
     </Space>
+    
+    </>
     );
   };
+
+  // const renderInfoMessage = (
+  //   <div className="info-message mt-2 p-2 bg-gray-100 rounded">
+  //   If you want to add a connected account, please visit the <a href="https://blink.url" className="text-blue-500 underline">Blink URL</a> directly or navigate to your extension settings.
+  // </div>
+  // );
 
   const renderCustomContent = () => (
     <>
@@ -171,7 +218,7 @@ const menuProps = {
 </>
   );
   const handleAddressChange = (event) => {
-    setSelectedUserAddress(event.target.value);
+    setSelectedSenderAddress(event.target.value);
   };
 
 
@@ -208,7 +255,7 @@ const executeTransaction = async (formData, chain) => {
       palletName: methodData.section, 
       methodName: methodData.method,
       params: methodData.arguments,
-      signerAddress: formData.selectedUserAddress,
+      signerAddress: selectedSenderAddress,
       signer: walletContext?.wallet?.signer
       
     });
@@ -295,7 +342,10 @@ useEffect(() => {
           <img src={action.icon} alt={action.title} className='blink-icon' />
         )}
         <div className="blink-container items-center">
+    
+
           <div className="link-section">
+     
           {renderAddressBox()}
             {/* <BlinkIcon className="icon ml-0 mr-0 h-3 w-3" fillColor="grey" />
             <span className="blink-title">https://blink.polkadot.network/</span> */}
