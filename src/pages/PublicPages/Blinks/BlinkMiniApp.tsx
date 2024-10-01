@@ -120,7 +120,7 @@ const renderInfoMessage = () => (
   <div className="info-message p-1 text-sm">
     <Text type="secondary">
       Want to add connected account? Visit the{' '}
-      <Link href="https://blink.url" target="_blank" rel="noopener noreferrer">
+      <Link href={generatedUrl} target="_blank" rel="noopener noreferrer">
         Blink URL
       </Link>{' '}
       directly, or navigate to your extension settings.
