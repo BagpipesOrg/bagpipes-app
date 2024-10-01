@@ -3,7 +3,8 @@ import type { BlinkMetadata} from './types';
 import { WalletContext } from '../../../components/Wallet/contexts';
 import { getAssetBalanceForChain } from '../../../Chains/Helpers/AssetHelper';
 import { listChains} from '../../../Chains/ChainsInfo';
-import { Dropdown, message, Space, Tooltip } from 'antd';
+import { Dropdown, message, Space, Tooltip, Typography } from 'antd';
+
 import { UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import CreatorIdentity from './CreatorIdentity';
@@ -15,6 +16,8 @@ import './Blinks.scss';
 import WalletWidget from '../../../components/WalletWidget/WalletWidget';
 import { Button } from 'antd';
 import { BlinkIcon } from '../../../components/Icons/icons';
+
+const { Link, Text } = Typography;
 
 export interface BlinkViewerProps {
   action: BlinkMetadata<"action">;
@@ -113,24 +116,58 @@ console.log('BlinkMiniApp action:', action);
   // saveBlinkMetadata(activeBlinksId, {...formData, selectedSenderAddress: selected?.address, selectedSenderAddressName: selected?.name});
 
 };
- // Create a menu items array based on wallet accounts
- const items: MenuProps['items'] = walletContext.accounts.map(acc => ({
-    label: `${acc.name} (${acc.address})`,
-    key: acc.address,
-    icon: <UserOutlined />,
-  }));
+const renderInfoMessage = () => (
+  <div className="info-message p-1 text-sm">
+    <Text type="secondary">
+      Want to add connected account? Visit the{' '}
+      <Link href="https://blink.url" target="_blank" rel="noopener noreferrer">
+        Blink URL
+      </Link>{' '}
+      directly, or navigate to your extension settings.
+    </Text>
+  </div>
+);
+
+// Create a menu items array based on wallet accounts
+const accountItems: MenuProps['items'] = walletContext.accounts.map(acc => ({
+  label: (
+    <div className="flex items-center">
+      <UserOutlined style={{ marginRight: 8 }} />
+      <span>{`${acc.name} (${acc.address})`}</span>
+    </div>
+  ),
+  key: acc.address,
+}));
+
+// Append a divider and the informational message to the menu items
+const items: MenuProps['items'] = [
+  {
+    type: 'divider',
+  },
+  {
+    key: 'info-message',
+    label: renderInfoMessage(),
+    disabled: false, // Disable click on this item
+  },
+  ...accountItems,
+
+];
+
 
 const menuProps = {
   items,
+  
   onClick: handleMenuClick,
 };
 
 
   const renderAddressBox = () => {
+    
     if (!walletContext || walletContext.accounts.length === 0) {
       return <div className='connect-message '>Please <span className=''><a className='connectAnchor' href=''>connect</a></span> Wallet.</div>;
     }
     return (
+      <>
       <Space wrap>
       <Dropdown.Button
         menu={menuProps}
@@ -146,6 +183,7 @@ const menuProps = {
             >
       {selectedSenderAddress ? (
         <span className='account-info '>
+
           <span className="font-bold">{selectedSenderAddressName}</span>
           {/* {' - '}
           <span className="font-semibold">{balance?.total} {chainSymbol}</span>  */}
@@ -154,9 +192,18 @@ const menuProps = {
       ) : 'Select an Account'}
 
       </Dropdown.Button>
+      
     </Space>
+    
+    </>
     );
   };
+
+  // const renderInfoMessage = (
+  //   <div className="info-message mt-2 p-2 bg-gray-100 rounded">
+  //   If you want to add a connected account, please visit the <a href="https://blink.url" className="text-blue-500 underline">Blink URL</a> directly or navigate to your extension settings.
+  // </div>
+  // );
 
   const renderCustomContent = () => (
     <>
@@ -295,7 +342,10 @@ useEffect(() => {
           <img src={action.icon} alt={action.title} className='blink-icon' />
         )}
         <div className="blink-container items-center">
+    
+
           <div className="link-section">
+     
           {renderAddressBox()}
             {/* <BlinkIcon className="icon ml-0 mr-0 h-3 w-3" fillColor="grey" />
             <span className="blink-title">https://blink.polkadot.network/</span> */}
