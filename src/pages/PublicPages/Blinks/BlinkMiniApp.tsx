@@ -33,8 +33,8 @@ console.log('BlinkMiniApp action:', action);
   const [isFetchingBalance, setIsFetchingBalance] = useState(false);
   const [chainSymbol, setChainSymbol] = useState('');
   const [balance, setBalance] = useState(null);
-  const [selectedUserAddress, setSelectedUserAddress] = useState(formData?.selectedUserAddress || walletContext.accounts[0]?.address || '');
-  const [selectedUserAddressName, setSelectedUserAddressName] = useState(formData?.selectedUserAddressName || walletContext.accounts[0]?.name || '');
+  const [selectedSenderAddress, setSelectedSenderAddress] = useState(formData?.selectedUserAddress || walletContext.accounts[0]?.address || '');
+  const [selectedSenderAddressName, setSelectedSenderAddressName] = useState(formData?.selectedUserAddressName || walletContext.accounts[0]?.name || '');
   const [chain, setChain] = useState(null);
 
   // const [selectedCreatorAccount, setSelectedCreatorAccount] = useState(formData?.selectedCreatorAccount || null);
@@ -45,16 +45,16 @@ console.log('BlinkMiniApp action:', action);
   }, [formData?.selectedCreatorAccount]);
 
   useEffect(() => {
-    console.log('BlinkMiniApp useEffect selectedUserAddress:', selectedUserAddress, 'formData:', formData);
+    console.log('BlinkMiniApp useEffect selectedSenderAddress:', selectedSenderAddress, 'formData:', formData);
     const controller = new AbortController();
     const signal = controller.signal;
 
-    if (selectedUserAddress && formData.selectedChain) {
-      console.log('BlinkMiniApp useEffect fetchBalance selectedUserAddress:', selectedUserAddress, 'formData:', formData);
+    if (selectedSenderAddress && formData.selectedChain) {
+      console.log('BlinkMiniApp useEffect fetchBalance selectedSenderAddress:', selectedSenderAddress, 'formData:', formData);
       fetchBalance(signal);
     }
     return () => controller.abort();
-  }, [selectedUserAddress]);
+  }, [selectedSenderAddress]);
 
   useEffect(() => {
     // we should fetch chainInfo from listChains()
@@ -79,7 +79,7 @@ console.log('BlinkMiniApp action:', action);
       return;
     }
     try {
-      const fetchedBalance = await getAssetBalanceForChain(formData?.selectedChain, 0, selectedUserAddress);
+      const fetchedBalance = await getAssetBalanceForChain(formData?.selectedChain, 0, selectedSenderAddress);
       setBalance(fetchedBalance);
       if (!signal.aborted) {
         setBalance(fetchedBalance);
@@ -96,21 +96,21 @@ console.log('BlinkMiniApp action:', action);
   };
 
   const handleUserButtonClick = (e) => {
-    message.info(`Selected Address: ${selectedUserAddress}`);
+    message.info(`Selected Address: ${selectedSenderAddress}`);
   };
 
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     const selected = walletContext.accounts.find(acc => acc.address === e.key);
     // setSelectedCreatorAccount(selected || null);
-    setSelectedUserAddress(selected?.address || '');
-    setSelectedUserAddressName(selected?.name || '');
+    setSelectedSenderAddress(selected?.address || '');
+    setSelectedSenderAddressName(selected?.name || '');
     message.info(`Selected Address: ${selected?.address || ''}`);
     // Fetch balance for the selected address
     // fetchBalance(selected?.address);
 
     // we need the 
 
-  // saveBlinkMetadata(activeBlinksId, {...formData, selectedUserAddress: selected?.address, selectedUserAddressName: selected?.name});
+  // saveBlinkMetadata(activeBlinksId, {...formData, selectedSenderAddress: selected?.address, selectedSenderAddressName: selected?.name});
 
 };
  // Create a menu items array based on wallet accounts
@@ -144,12 +144,12 @@ const menuProps = {
           React.cloneElement(rightButton as React.ReactElement<any, string>, { loading: isFetchingBalance }),
         ]}
             >
-      {selectedUserAddress ? (
+      {selectedSenderAddress ? (
         <span className='account-info '>
-          <span className="font-bold">{selectedUserAddressName}</span>
+          <span className="font-bold">{selectedSenderAddressName}</span>
           {/* {' - '}
           <span className="font-semibold">{balance?.total} {chainSymbol}</span>  */}
-          <span className="text-gray-600"> {selectedUserAddress.slice(0, 4)}...{selectedUserAddress.slice(-4)}</span>
+          <span className="text-gray-600"> {selectedSenderAddress.slice(0, 4)}...{selectedSenderAddress.slice(-4)}</span>
         </span>
       ) : 'Select an Account'}
 
@@ -171,7 +171,7 @@ const menuProps = {
 </>
   );
   const handleAddressChange = (event) => {
-    setSelectedUserAddress(event.target.value);
+    setSelectedSenderAddress(event.target.value);
   };
 
 
@@ -208,7 +208,7 @@ const executeTransaction = async (formData, chain) => {
       palletName: methodData.section, 
       methodName: methodData.method,
       params: methodData.arguments,
-      signerAddress: formData.selectedUserAddress,
+      signerAddress: selectedSenderAddress,
       signer: walletContext?.wallet?.signer
       
     });
