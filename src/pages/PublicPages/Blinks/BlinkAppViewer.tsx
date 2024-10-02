@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Button, Spin } from 'antd';
 import toast from 'react-hot-toast';
 import useBlinkStore from '../../../store/useBlinkStore';
-import BlinkMiniApp from './BlinkMiniApp';
+import BlinkMiniApp from './PostViewer/BlinkMiniApp';
 import { generateUrl }  from './generateBlink';
 import { fetchBlinkData } from './helpers';
 

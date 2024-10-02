@@ -1,20 +1,21 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { WalletContext } from '../../../components/Wallet/contexts';
+import { WalletContext } from '../../../../components/Wallet/contexts';
 import { useParams } from 'react-router-dom';
 import { Button, Spin } from 'antd';
 import toast from 'react-hot-toast';
-import useBlinkStore from '../../../store/useBlinkStore';
+import useBlinkStore from '../../../../store/useBlinkStore';
 import BlinkMiniApp from './BlinkMiniApp';
-import { generateUrl }  from './generateBlink';
-import { fetchBlinkData } from './helpers';
+import { generateUrl }  from '../generateBlink';
+import { fetchBlinkData } from '../helpers';
+import ConnectWalletButton from './popup/ConnectWalletButton'; 
 
-import { BlinkIcon } from '../../../components/Icons/icons'; 
-import WalletWidget from '../../../components/WalletWidget/WalletWidget';
+import { BlinkIcon } from '../../../../components/Icons/icons'; 
+import WalletWidget from '../../../../components/WalletWidget/WalletWidget';
 
-import type { Action, NewActionForm} from './types';
+import type { Action, NewActionForm} from '../types';
 
 
-import './Blinks.scss';
+import '../Blinks.scss';
 
 const BlinkAppPostViewer: React.FC = () => {
   const walletContext = useContext(WalletContext);
@@ -27,11 +28,9 @@ const BlinkAppPostViewer: React.FC = () => {
 
 
     useEffect(() => {
-        // Listener for messages from parent
         const handleMessage = (event) => {
           if (event.data && event.data.type === 'FROM_PARENT') {
             console.log('Message from parent:', event.data.payload);
-            // Handle the message as needed
           }
         };
     
@@ -44,6 +43,43 @@ const BlinkAppPostViewer: React.FC = () => {
           window.removeEventListener('message', handleMessage);
         };
       }, []);
+
+
+       // message listener to handle responses from the popup
+  useEffect(() => {
+    const handleMessage = (event) => {
+      // Validate the origin
+      const allowedOrigins = ['https://blink.bagpipes.io']; // Update with your DApp's origin
+      if (!allowedOrigins.includes(event.origin)) {
+        console.warn(`Ignored message from origin: ${event.origin}`);
+        return;
+      }
+
+      const { type, payload } = event.data;
+
+      switch (type) {
+        case 'WALLET_CONNECTED':
+          console.log('Wallet connected:', payload);
+          walletContext.setWallet(payload.wallet, payload.walletType);
+          toast.success('Wallet connected successfully!');
+          break;
+
+        case 'WALLET_CONNECTION_FAILED':
+          console.error('Wallet connection failed:', payload);
+          toast.error(`Wallet connection failed: ${payload}`);
+          break;
+
+        default:
+          console.warn(`Unhandled message type: ${type}`);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, [walletContext]);
     
 
        // State initialization with default values moved into a function
@@ -358,7 +394,7 @@ const BlinkAppPostViewer: React.FC = () => {
         
         <span className='cutOutLabel'>Blink Mini App injected </span>
       <div className='visibleApp'>
-
+      <ConnectWalletButton />
         <BlinkMiniApp action={action} generatedUrl={generatedUrl} />
 
         {loading && (

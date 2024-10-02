@@ -19,7 +19,7 @@ import CreatorPage from '../../pages/PublicPages/CreatorPage/CreatorPage';
 import CreatorsPage from '../../pages/PublicPages/CreatorsPage/CreatorsPage';
 import BlinkBuilder from '../../pages/PublicPages/Blinks/BlinkBuilder/';
 import BlinkAppViewer from '../../pages/PublicPages/Blinks/BlinkAppViewer';
-import BlinkAppPostViewer from '../../pages/PublicPages/Blinks/BlinkAppPostViewer';
+import BlinkAppPostViewer from '../../pages/PublicPages/Blinks/PostViewer/BlinkAppPostViewer';
 import ScenarioInfo from '../../pages/Lab/Scenario';
 import Parachains from '../../pages/Parachains/Parachains';
 import ThemeContext from '../../contexts/ThemeContext';

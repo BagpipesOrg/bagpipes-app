@@ -1,21 +1,21 @@
 import React, { useState, useContext, useEffect } from 'react';
-import type { BlinkMetadata} from './types';
-import { WalletContext } from '../../../components/Wallet/contexts';
-import { getAssetBalanceForChain } from '../../../Chains/Helpers/AssetHelper';
-import { listChains} from '../../../Chains/ChainsInfo';
+import type { BlinkMetadata} from '../types';
+import { WalletContext } from '../../../../components/Wallet/contexts';
+import { getAssetBalanceForChain } from '../../../../Chains/Helpers/AssetHelper';
+import { listChains} from '../../../../Chains/ChainsInfo';
 import { Dropdown, message, Space, Tooltip, Typography } from 'antd';
 
 import { UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import CreatorIdentity from './CreatorIdentity';
-import { broadcastToChain } from '../../../Chains/api/broadcastToChain';
-import { createCallParams } from './executeBlink/createCallParams';
+import CreatorIdentity from '../CreatorIdentity';
+import { broadcastToChain } from '../../../../Chains/api/broadcastToChain';
+import { createCallParams } from '../executeBlink/createCallParams';
 import toast  from 'react-hot-toast';
-import ChainRpcService from '../../../services/ChainRpcService';
-import './Blinks.scss';
-import WalletWidget from '../../../components/WalletWidget/WalletWidget';
+import ChainRpcService from '../../../../services/ChainRpcService';
+import '../Blinks.scss';
+import WalletWidget from '../../../../components/WalletWidget/WalletWidget';
 import { Button } from 'antd';
-import { BlinkIcon } from '../../../components/Icons/icons';
+import { BlinkIcon } from '../../../../components/Icons/icons';
 
 const { Link, Text } = Typography;
 
