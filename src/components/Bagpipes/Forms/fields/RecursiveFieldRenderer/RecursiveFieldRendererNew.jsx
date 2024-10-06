@@ -114,7 +114,7 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
         case 'input':
 
             const getFormDataForInput = _.get(formData, `params.${fieldPath}`, null)
-            console.log('RecursiveFieldRenderer - input getFormDataForInput:', getFormDataForInput, fieldPath);
+            console.log('RecursiveFieldRenderer - input getFormDataForInput 1:', getFormDataForInput, fieldPath);
 
             // if we have made every input an object that contains typeName as well as the value
 
