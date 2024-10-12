@@ -190,7 +190,7 @@ const BlinkAppViewer: React.FC = () => {
       </div>
       <div className='blinkMiniAppContainer'>
 
-        <div className='viewerWrapper'>
+        <div className='viewerBuilderWrapper'>
 
             <div className='share-blink'>
                   <Button
