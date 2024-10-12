@@ -1,10 +1,10 @@
 export const chainActions = [
     { label: 'Transfer', value: 'transfer' },
-    { label: 'Stake', value: 'stake' },
-    { label: 'Mint', value: 'mint' },
-    { label: 'Delegate', value: 'delegate' },
-    { label: 'Vote', value: 'vote' },
-    { label: 'Claim', value: 'claim' }
+    { label: 'Stake (coming soon)', value: 'stake' },
+    { label: 'Mint (coming soon)', value: 'mint' },
+    { label: 'Delegate (coming soon)', value: 'delegate' },
+    { label: 'Vote (coming soon)', value: 'vote' },
+    { label: 'Claim (coming soon)', value: 'claim' }
 ];
 
 

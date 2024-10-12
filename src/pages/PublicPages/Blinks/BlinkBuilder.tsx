@@ -398,9 +398,10 @@ const fetchBalance = async (signal) => {
     setActionType(value);
     const config = actionCallsData[value] || { args: [] };
     setActionConfig(config.args);
+    const label = chainActions.find(action => action.value === value)?.label || '';
 
     const updatedActionLink = {
-      label: `${value}`,
+      label: `${label}`,
       href: `/api/${config.section}/${config.method}`,
       parameters: config.args.map(arg => ({
         name: arg.key,
@@ -677,7 +678,7 @@ const fetchBalance = async (signal) => {
   return (
     <>
       <WalletWidget />
-      <div className='blinkHeader'>
+      <div className='blinkBuilderHeader'>
 
       <div className='blinkTitleInfo'> 
         <h1>Blink DApp Builder</h1>

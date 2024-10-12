@@ -352,7 +352,7 @@ const BlinkAppPostViewer: React.FC = () => {
 
 
         <div 
-          className='viewerWrapper'
+          className='viewerBuilderWrapper'
           style={miniAppView === 'true' ? { margin: '0 auto' } : {}}
        >
         

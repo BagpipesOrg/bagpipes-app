@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import './Blinks.scss';
+import './BlinkViewer.scss';
 import type { Action } from './types';
 import { BlinkIcon, VerificationIcon } from '../../../components/Icons/icons';
 import { WalletContext } from '../../../components/Wallet/contexts';
@@ -242,7 +243,7 @@ const executeTransaction = async (formData, chain) => {
 
   
   return (
-    <div className='viewerWrapper'>
+    <div className='viewerBuilderWrapper'>
       <div className='blinkViewer'>
      
         {action.icon && (
