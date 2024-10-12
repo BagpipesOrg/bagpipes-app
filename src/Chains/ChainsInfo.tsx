@@ -99,7 +99,7 @@ export function listChains() {
 
       const HydraDX: ChainInfo = {
         name: 'hydraDx',
-        display: 'Hydra DX',
+        display: 'Hydration',
         paraid: 2034,
         prefix: 0,
         token_decimals: 12,
