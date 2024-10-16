@@ -40,16 +40,12 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
     const fieldType = fieldObject.type;
 
     const sequenceData = _.get(formData.params, fieldPath, []);
-    console.log('RecursiveFieldRenderer -  sequenceData for :', fieldPath, sequenceData);
     const [items, setItems] = useState(() => {
-       if (!sequenceData || !Array.isArray(sequenceData)) {
-           return [];   
-         } else {
-        return sequenceData?.map((item, index) => ({
+        const dataArray = Array.isArray(sequenceData) ? sequenceData : [sequenceData];
+        return dataArray.map((item, index) => ({
             value: item,
             pathKey: generatePath(fieldPath, index, 'sequenceItem', 'sequenceItem'),
         }));
-    }
     });
 
     const initialArrayItems = formValues?.[fieldName] || Array.from({ length: fieldObject.length }, () => ({}));
@@ -373,43 +369,43 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
 
             case 'sequence':
                 console.log('RecursiveFieldRenderer - sequence:', fieldObject);
-                
-              
             
+                const sequenceData = _.get(formData.params, fieldPath, []);
+                const items = Array.isArray(sequenceData) ? sequenceData.map((_, idx) => idx) : [];
             
-                // Add new item to the sequence
                 const handleAddItem = () => {
-                    const newItemDefaultValue = initializeDefaultValues(fieldObject.elementType, generatePath(fieldPath, items.length, 'sequenceItem', 'sequenceItem'), 'sequenceDefault');
-                    const newItem = { value: newItemDefaultValue, 
-                        pathKey: generatePath(fieldPath, items.length, 'sequenceItem', 'sequenceItem'),
-                    };
-                    const updatedItems = [...items, newItem];
-                    setItems(updatedItems);
-                    handleChange(newItem.pathKey, newItemDefaultValue, false, 'sequence', formData);
+                    const newItemDefaultValue = initializeDefaultValues(
+                        fieldObject.elementType,
+                        [...fieldPath, items.length],
+                        'sequenceDefault'
+                    );
+            
+                    const updatedParams = _.cloneDeep(formData.params);
+                    const arrayData = _.get(updatedParams, fieldPath, []);
+            
+                    if (!Array.isArray(arrayData)) {
+                        _.set(updatedParams, fieldPath, []);
+                    }
+            
+                    _.update(updatedParams, fieldPath, arr => {
+                        arr.push(newItemDefaultValue);
+                        return arr;
+                    });
+            
+                    saveNodeFormData(activeScenarioId, nodeId, { ...formData, params: updatedParams });
                 };
             
-
-                // Update an item in the sequence
-                const handleChangeItem = (index, newValue) => {
-                    const itemPath = generatePath(fieldPath, index, 'sequenceItem', 'sequenceItem');
-                    handleChange(itemPath, newValue, true, 'sequence', formData);
-                    const updatedItems = [...items];
-                    updatedItems[index].value = newValue;
-                    setItems(updatedItems);
-                };
-
-
-                // Remove item from the sequence
                 const handleRemoveItem = (index) => {
-                    const newItems = items.filter((_, i) => i !== index);
-                    setItems(newItems);
-                    const updatedArray = newItems.map(item => item.value);
-                    handleChange(fieldPath, updatedArray, true, 'sequence', formData);
+                    const updatedParams = _.cloneDeep(formData.params);
+                    const arrayData = _.get(updatedParams, fieldPath, []);
+            
+                    if (Array.isArray(arrayData)) {
+                        arrayData.splice(index, 1);
+                        _.set(updatedParams, fieldPath, arrayData);
+                        saveNodeFormData(activeScenarioId, nodeId, { ...formData, params: updatedParams });
+                    }
                 };
             
-
-            
-                // Render sequence items
                 return (
                     <div className='sequence-container'>
                         <div className='add-remove-box'>
@@ -418,8 +414,8 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
                                 <label>Add item</label>
                             </button>
                         </div>
-                        {items.map((item, index) => (
-                            <React.Fragment key={item.pathKey}>
+                        {items.map((index) => (
+                            <React.Fragment key={index}>
                                 <label className='font-semibold'>
                                     <span className="index-style">{index}:</span>
                                     <span className="type-name">{' <'}{fieldObject.typeName}{'>'}</span>
@@ -427,10 +423,9 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
                                 <div className='sequence-item'>
                                     <RecursiveFieldRenderer
                                         fieldObject={fieldObject.elementType}
-                                        formValues={item.value}
-                                        onChange={(newValue) => handleChangeItem(index, newValue)}
+                                        formValues={_.get(formData.params, [...fieldPath, index])}
                                         nodeId={nodeId}
-                                        fieldPath={item.pathKey}
+                                        fieldPath={[...fieldPath, index]}
                                         fromType={'sequenceField'}
                                     />
                                 </div>
@@ -444,8 +439,8 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
                         ))}
                     </div>
                 );
-            
-        
+
+                
         // an array just displays other fields it doesnt really do changing, so maybe should just pass it through. The reason why i say this is because if i select a variant within an array, the formObject that is passed in, does not go into the nested object it just passes what is already there. Therefore the next fields are not rendered. 
         case 'array':
             console.log('RecursiveFieldRenderer - array:', fieldObject);
