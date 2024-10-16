@@ -243,13 +243,17 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
 
             // Generate the selected variant object
             const selectedVariant = fieldObject?.variants.find(variant => variant.index === selectedIndex);
-            console.log('RecursiveFieldRenderer - variant 2j. selectedVariant:', { selectedIndex, selectedVariant, fieldPath });
+            const hasMultipleFields = selectedVariant?.fields?.length > 1;
+            const fieldsAreUnnamed = selectedVariant?.fields?.every(field => !field.name);
+        
+            console.log('RecursiveFieldRenderer - variant 2j. selectedVariant:', { selectedIndex, selectedVariant, fieldPath, hasMultipleFields, fieldsAreUnnamed });
 
             if (!selectedVariant) {
                 console.warn('RecursiveFieldRenderer - variant: Selected variant not found', { selectedIndex, fieldObject });
                 return <div>Selected variant not found.</div>;
             }            
             const selectedVariantName = selectedVariant?.name;
+            console.log('RecursiveFieldRenderer - variant 2j. selectedVariantName:', { selectedVariantName, selectedVariant, fieldPath });
             const variantPath = generatePath(fieldPath, selectedVariantName, 'variant', 'variantSecond');
 
             // Determine if multiple input fields exist
@@ -275,7 +279,7 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
                     {selectedIndex !== null && fieldObject.variants.find(variant => variant.index === selectedIndex)?.fields.map((field, index) => {
                         console.log('RecursiveFieldRenderer - variant field before fieldVariantPath:', field, fieldPath);
                     
-                        const isAllSiblingsVariant = selectedVariant.fields.every(f => f.resolvedType.type === 'variant');
+                        // const isAllSiblingsVariant = selectedVariant.fields.every(f => f.resolvedType.type === 'variant');
 
 
 
@@ -283,7 +287,7 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
                         console.log('RecursiveFieldRenderer - variant field before fieldVariantPath:', field, fieldPath);
                         let subFieldsType = field.resolvedType.type;
                         let subFieldPath;
-                        let fieldName = field.name || selectedVariantName;
+                        let fieldName = field.name;
                     
                         // Check if the field is a composite with typeId === "1"
                         if (field?.resolvedType?.fields?.[0]?.typeId === "1") {
@@ -291,9 +295,25 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
                             subFieldPath = variantPath; // Use variantPath directly
                             fieldName = selectedVariantName; // Use the variant name as the field name
                             console.log('RecursiveFieldRenderer - variant field is type id 1:', { field, subFieldPath, fieldName });
-                        } else {
-                            // Regular path generation
-                        //  if (hasMultipleInputFields) {
+                        } else if (fieldsAreUnnamed && hasMultipleFields) {
+                            // Fields are unnamed, store them as array elements
+                            subFieldPath = generatePath(
+                                variantPath,
+                                '', // Empty segment
+                                'variant',
+                                'variantThird',
+                                true,
+                                index // Use index for array
+                            );
+                            fieldName = null; // No field name
+                        } else if (fieldsAreUnnamed && !hasMultipleFields) {
+                            // Single unnamed field, use variantPath directly
+                            subFieldPath = variantPath;
+                            fieldName = null; // No field name
+                            console.log('RecursiveFieldRenderer - variant field is UNNAMED AND has multiple fields:', { field, subFieldPath, fieldName });
+
+                          } else {
+                            // Regular path generation for named fields
                             subFieldPath = generatePath(
                                 variantPath,
                                 field.name,
@@ -302,9 +322,6 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
                                 false,
                                 field.index
                             );
-                            //   } else {
-                //       subFieldPath = variantPath;
-                //   }
                         }
                 
 
