@@ -210,7 +210,7 @@ static formatTxParams(api: ApiPromise, method: any, params: any, methodName: str
 
     // Handle 'Call' type dynamically
     if (paramType === 'Call') {
-      console.log('formatTxParams Call type:', value);
+      console.log('formatTxParams Call type 0:', value);
 
       // Extract 'section', 'method', and 'args' from the value
       let callSection, callMethod, callArgs;
@@ -220,9 +220,9 @@ static formatTxParams(api: ApiPromise, method: any, params: any, methodName: str
         callSection = value.section.toLowerCase();
         callMethod = value.method;
         callArgs = value.args;
-        console.log('formatTxParams Call details:', callSection, callMethod, callArgs);
+        console.log('formatTxParams Call details 1a:', callSection, callMethod, callArgs);
       } else if (typeof value === 'object') {
-        console.log('formatTxParams Call type is an object:', value);
+        console.log('formatTxParams Call type is an object 1b:', value);
 
         callSection = Object.keys(value)[0]; 
         const methodCalls = value[callSection];
@@ -230,13 +230,18 @@ static formatTxParams(api: ApiPromise, method: any, params: any, methodName: str
           const methodCall = methodCalls[0];
           callMethod = Object.keys(methodCall)[0]; 
           callArgs = methodCall; 
+          console.log('formatTxParams Call details 1c:', callSection, callMethod, callArgs);
+        } else {
+          console.log('formatTxParams Call type is an object 1d:', value);
+          callMethod = Object.keys(value[callSection])[0]; 
+          callArgs = value[callSection][callMethod]; 
         }
       }
 
       // we need to make sure callSection is to lower case
       callSection = callSection.toLowerCase();
 
-      console.log('formatTxParams Call details:', callSection, callMethod, callArgs);
+      console.log('formatTxParams Call details 2:', callSection, callMethod, callArgs);
 
       if (!callSection || !callMethod) {
         throw new Error('Invalid Call parameter: missing section or method');
@@ -250,17 +255,22 @@ static formatTxParams(api: ApiPromise, method: any, params: any, methodName: str
       const callMethodMeta = api.tx[callSection][callMethod];
 
       const callMethodArgsDef = callMethodMeta.meta.args;
-      console.log('formatTxParams Call method arguments:', callMethodArgsDef.toHuman());
+      console.log('formatTxParams Call method arguments 3:', callMethodArgsDef.toHuman());
 
-      console.log('formatTxParams Call method metadata:', callMethodMeta.meta.toHuman());
+      console.log('formatTxParams Call method metadata 4:', callMethodMeta.meta.toHuman());
 
       // Prepare arguments in correct order
       const callMethodArgs = callMethodArgsDef.map(argDef => {
         const argName = argDef.name.toString();
-        const argType = argDef.type.toString();
-        const argValue = callArgs[argName];
 
-        console.log('formatTxParams Call argument:', argName, argType, argValue);
+          const argNameSnakeCase = this.toSnakeCase(argName);
+        console.log('formatTxParams Call argument 5a:', argName);
+        const argType = argDef.type.toString();
+        console.log('formatTxParams Call argument 5b:', argType);
+        const argValue = callArgs[argNameSnakeCase];
+        console.log('formatTxParams Call argument 5c:', argValue);
+
+        console.log('formatTxParams Call argument 5d:', argName, argType, argValue);
 
         if (argValue === undefined) {
           throw new Error(`Missing argument '${argName}' for method '${callSection}.${callMethod}'`);
@@ -369,9 +379,19 @@ private static formatParams(params: any): any[] {
         .replace(/(_\w)/g, (match) => match[1].toUpperCase())
         .replace(/^([A-Z])/, (match) => match.toLowerCase());
 }
+
+private static toSnakeCase(str: string): string {
+  return str
+      .replace(/([a-z])([A-Z])/g, '$1_$2') 
+      .replace(/([A-Z])([A-Z][a-z])/g, '$1_$2') 
+      .toLowerCase();
+}
+
 }
 
 export default ChainRpcService;
+
+
 
 
   // static async executeChainTxRenderedMethod({ chainKey, palletName, methodName, params, signerAddress, signer }: MethodParams): Promise<any> {

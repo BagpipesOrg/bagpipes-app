@@ -260,7 +260,18 @@ export const CHAIN_ASSETS = {
                     "symbol": "ZTG"
                 },
                 "assetId": "12"
-            }
+            },
+            {
+              "asset": {
+                  "name": "Bifrost Native Coin",
+                  "assetType": "Token",
+                  "existentialDeposit": "68,795,189,840",
+                  "xcmRateLimit": null,
+                  "symbol": "BNC"
+              },
+              "assetId": "14"
+          }
+
         ]
 
     },

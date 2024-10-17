@@ -40,16 +40,12 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
     const fieldType = fieldObject.type;
 
     const sequenceData = _.get(formData.params, fieldPath, []);
-    console.log('RecursiveFieldRenderer -  sequenceData for :', fieldPath, sequenceData);
     const [items, setItems] = useState(() => {
-       if (!sequenceData || !Array.isArray(sequenceData)) {
-           return [];   
-         } else {
-        return sequenceData?.map((item, index) => ({
+        const dataArray = Array.isArray(sequenceData) ? sequenceData : [sequenceData];
+        return dataArray.map((item, index) => ({
             value: item,
             pathKey: generatePath(fieldPath, index, 'sequenceItem', 'sequenceItem'),
         }));
-    }
     });
 
     const initialArrayItems = formValues?.[fieldName] || Array.from({ length: fieldObject.length }, () => ({}));
@@ -247,13 +243,17 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
 
             // Generate the selected variant object
             const selectedVariant = fieldObject?.variants.find(variant => variant.index === selectedIndex);
-            console.log('RecursiveFieldRenderer - variant 2j. selectedVariant:', { selectedIndex, selectedVariant, fieldPath });
+            const hasMultipleFields = selectedVariant?.fields?.length > 1;
+            const fieldsAreUnnamed = selectedVariant?.fields?.every(field => !field.name);
+        
+            console.log('RecursiveFieldRenderer - variant 2j. selectedVariant:', { selectedIndex, selectedVariant, fieldPath, hasMultipleFields, fieldsAreUnnamed });
 
             if (!selectedVariant) {
                 console.warn('RecursiveFieldRenderer - variant: Selected variant not found', { selectedIndex, fieldObject });
                 return <div>Selected variant not found.</div>;
             }            
             const selectedVariantName = selectedVariant?.name;
+            console.log('RecursiveFieldRenderer - variant 2j. selectedVariantName:', { selectedVariantName, selectedVariant, fieldPath });
             const variantPath = generatePath(fieldPath, selectedVariantName, 'variant', 'variantSecond');
 
             // Determine if multiple input fields exist
@@ -279,7 +279,7 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
                     {selectedIndex !== null && fieldObject.variants.find(variant => variant.index === selectedIndex)?.fields.map((field, index) => {
                         console.log('RecursiveFieldRenderer - variant field before fieldVariantPath:', field, fieldPath);
                     
-                        const isAllSiblingsVariant = selectedVariant.fields.every(f => f.resolvedType.type === 'variant');
+                        // const isAllSiblingsVariant = selectedVariant.fields.every(f => f.resolvedType.type === 'variant');
 
 
 
@@ -287,7 +287,7 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
                         console.log('RecursiveFieldRenderer - variant field before fieldVariantPath:', field, fieldPath);
                         let subFieldsType = field.resolvedType.type;
                         let subFieldPath;
-                        let fieldName = field.name || selectedVariantName;
+                        let fieldName = field.name;
                     
                         // Check if the field is a composite with typeId === "1"
                         if (field?.resolvedType?.fields?.[0]?.typeId === "1") {
@@ -295,9 +295,25 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
                             subFieldPath = variantPath; // Use variantPath directly
                             fieldName = selectedVariantName; // Use the variant name as the field name
                             console.log('RecursiveFieldRenderer - variant field is type id 1:', { field, subFieldPath, fieldName });
-                        } else {
-                            // Regular path generation
-                        //  if (hasMultipleInputFields) {
+                        } else if (fieldsAreUnnamed && hasMultipleFields) {
+                            // Fields are unnamed, store them as array elements
+                            subFieldPath = generatePath(
+                                variantPath,
+                                '', // Empty segment
+                                'variant',
+                                'variantThird',
+                                true,
+                                index // Use index for array
+                            );
+                            fieldName = null; // No field name
+                        } else if (fieldsAreUnnamed && !hasMultipleFields) {
+                            // Single unnamed field, use variantPath directly
+                            subFieldPath = variantPath;
+                            fieldName = null; // No field name
+                            console.log('RecursiveFieldRenderer - variant field is UNNAMED AND has multiple fields:', { field, subFieldPath, fieldName });
+
+                          } else {
+                            // Regular path generation for named fields
                             subFieldPath = generatePath(
                                 variantPath,
                                 field.name,
@@ -306,9 +322,6 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
                                 false,
                                 field.index
                             );
-                            //   } else {
-                //       subFieldPath = variantPath;
-                //   }
                         }
                 
 
@@ -373,43 +386,43 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
 
             case 'sequence':
                 console.log('RecursiveFieldRenderer - sequence:', fieldObject);
-                
-              
             
+                const sequenceData = _.get(formData.params, fieldPath, []);
+                const items = Array.isArray(sequenceData) ? sequenceData.map((_, idx) => idx) : [];
             
-                // Add new item to the sequence
                 const handleAddItem = () => {
-                    const newItemDefaultValue = initializeDefaultValues(fieldObject.elementType, generatePath(fieldPath, items.length, 'sequenceItem', 'sequenceItem'), 'sequenceDefault');
-                    const newItem = { value: newItemDefaultValue, 
-                        pathKey: generatePath(fieldPath, items.length, 'sequenceItem', 'sequenceItem'),
-                    };
-                    const updatedItems = [...items, newItem];
-                    setItems(updatedItems);
-                    handleChange(newItem.pathKey, newItemDefaultValue, false, 'sequence', formData);
+                    const newItemDefaultValue = initializeDefaultValues(
+                        fieldObject.elementType,
+                        [...fieldPath, items.length],
+                        'sequenceDefault'
+                    );
+            
+                    const updatedParams = _.cloneDeep(formData.params);
+                    const arrayData = _.get(updatedParams, fieldPath, []);
+            
+                    if (!Array.isArray(arrayData)) {
+                        _.set(updatedParams, fieldPath, []);
+                    }
+            
+                    _.update(updatedParams, fieldPath, arr => {
+                        arr.push(newItemDefaultValue);
+                        return arr;
+                    });
+            
+                    saveNodeFormData(activeScenarioId, nodeId, { ...formData, params: updatedParams });
                 };
             
-
-                // Update an item in the sequence
-                const handleChangeItem = (index, newValue) => {
-                    const itemPath = generatePath(fieldPath, index, 'sequenceItem', 'sequenceItem');
-                    handleChange(itemPath, newValue, true, 'sequence', formData);
-                    const updatedItems = [...items];
-                    updatedItems[index].value = newValue;
-                    setItems(updatedItems);
-                };
-
-
-                // Remove item from the sequence
                 const handleRemoveItem = (index) => {
-                    const newItems = items.filter((_, i) => i !== index);
-                    setItems(newItems);
-                    const updatedArray = newItems.map(item => item.value);
-                    handleChange(fieldPath, updatedArray, true, 'sequence', formData);
+                    const updatedParams = _.cloneDeep(formData.params);
+                    const arrayData = _.get(updatedParams, fieldPath, []);
+            
+                    if (Array.isArray(arrayData)) {
+                        arrayData.splice(index, 1);
+                        _.set(updatedParams, fieldPath, arrayData);
+                        saveNodeFormData(activeScenarioId, nodeId, { ...formData, params: updatedParams });
+                    }
                 };
             
-
-            
-                // Render sequence items
                 return (
                     <div className='sequence-container'>
                         <div className='add-remove-box'>
@@ -418,8 +431,8 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
                                 <label>Add item</label>
                             </button>
                         </div>
-                        {items.map((item, index) => (
-                            <React.Fragment key={item.pathKey}>
+                        {items.map((index) => (
+                            <React.Fragment key={index}>
                                 <label className='font-semibold'>
                                     <span className="index-style">{index}:</span>
                                     <span className="type-name">{' <'}{fieldObject.typeName}{'>'}</span>
@@ -427,10 +440,9 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
                                 <div className='sequence-item'>
                                     <RecursiveFieldRenderer
                                         fieldObject={fieldObject.elementType}
-                                        formValues={item.value}
-                                        onChange={(newValue) => handleChangeItem(index, newValue)}
+                                        formValues={_.get(formData.params, [...fieldPath, index])}
                                         nodeId={nodeId}
-                                        fieldPath={item.pathKey}
+                                        fieldPath={[...fieldPath, index]}
                                         fromType={'sequenceField'}
                                     />
                                 </div>
@@ -444,8 +456,8 @@ const RecursiveFieldRenderer = ({ fieldObject, formValues, onChange, nodeId, pil
                         ))}
                     </div>
                 );
-            
-        
+
+                
         // an array just displays other fields it doesnt really do changing, so maybe should just pass it through. The reason why i say this is because if i select a variant within an array, the formObject that is passed in, does not go into the nested object it just passes what is already there. Therefore the next fields are not rendered. 
         case 'array':
             console.log('RecursiveFieldRenderer - array:', fieldObject);

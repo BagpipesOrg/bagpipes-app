@@ -58,35 +58,49 @@
         console.log('initializeDefaultValues - initialize initializeDefaultValues, path:', field, path, fromType);
         let defaultValue;
         switch (field.type) {
-                  case 'variant':
-                    const defaultVariant = field.variants[0];
-                    const variantName = defaultVariant.name || `variant${defaultVariant.index}`;
-              
-                    if (defaultVariant.fields.length === 0) {
-                      // No subfields, initialize as a simple string value
-                      defaultValue = variantName;
-                    } else if (
-                      defaultVariant.fields[0]?.resolvedType?.fields?.[0]?.typeId === "1"
-                    ) {
-                      // Flatten the composite field by initializing directly
-                      const subFieldValue = initializeDefaultValues(
-                        defaultVariant.fields[0].resolvedType,
-                        path,
-                        'variant'
-                      );
-                      defaultValue = { [variantName]: subFieldValue };
-                    } else {
-                      defaultValue = { [variantName]: {} };
-                      defaultVariant.fields.forEach((subField) => {
-                        const subFieldName = subField.name || 'value';
-                        defaultValue[variantName][subFieldName] = initializeDefaultValues(
-                          subField.resolvedType,
-                          `${path}.${subFieldName}`,
-                          'variant'
-                        );
-                      });
-                    }
-                    break;
+          case 'variant':
+            const defaultVariant = field.variants[0];
+            const variantName = defaultVariant.name || `variant${defaultVariant.index}`;
+      
+            if (defaultVariant.fields.length === 0) {
+              defaultValue = variantName;
+            } else if (
+              defaultVariant.fields.length > 1 &&
+              defaultVariant.fields.every(field => !field.name)
+            ) {
+              defaultValue = [];
+              defaultVariant.fields.forEach((subField, index) => {
+                const subFieldValue = initializeDefaultValues(
+                  subField.resolvedType,
+                  `${path}[${index}]`,
+                  'variant'
+                );
+                defaultValue.push(subFieldValue);
+              });
+              defaultValue = { [variantName]: defaultValue };
+            } else if (
+              defaultVariant.fields.length === 1 &&
+              !defaultVariant.fields[0].name
+            ) {
+              const subField = defaultVariant.fields[0];
+              const subFieldValue = initializeDefaultValues(
+                subField.resolvedType,
+                path,
+                'variant'
+              );
+              defaultValue = { [variantName]: subFieldValue };
+            } else {
+              defaultValue = { [variantName]: {} };
+              defaultVariant.fields.forEach((subField) => {
+                const subFieldName = subField.name || 'value';
+                defaultValue[variantName][subFieldName] = initializeDefaultValues(
+                  subField.resolvedType,
+                  `${path}.${subFieldName}`,
+                  'variant'
+                );
+              });
+            }
+            break;
               
                   case 'composite':
                     if (
@@ -202,7 +216,7 @@
     };
 
 
-    export const generatePath = (base, segment, type, from, isParentVariantAndAllSiblings, index) => {
+    export const generatePath = (base, segment, type, from, shouldFieldsBeArray, index) => {
         console.log(`generatePath -  ${type} 0. generatePath ${type} base, segment, type:`, base, segment, type, from);
     
 
@@ -212,19 +226,24 @@
         // If the segment is undefined or empty, decide how to handle based on the type
     // If the segment is undefined or empty, decide how to handle based on the type
     if (!segment) {
-        console.log('Missing or empty segment', { base, segment, type });
-        return base;
-    }            
+      if (type === 'variant' && shouldFieldsBeArray && index !== undefined) {
+          // Use index for array elements
+          return [...basePath, index];
+      } else {
+          // Skip adding undefined or empty segment
+          return basePath;
+      }
+  }
     
     console.log('Missing or empty segment', { base, segment, type });
     // For cases where segment is not empty
     switch (type) {
         case 'variant':
-            if (isParentVariantAndAllSiblings) {
-                console.log(`generatePath - ${type} 1. generatePath ${type} isParentVariantAndAllSiblings:`, base, segment, type, from, isParentVariantAndAllSiblings, index);
+            if (shouldFieldsBeArray) {
+                console.log(`generatePath - ${type} 1. generatePath ${type} shouldFieldsBeArray:`, base, segment, type, from, shouldFieldsBeArray, index);
                 return [...basePath, `${segment}[${index}]`];
             } else {
-                console.log(`generatePath - ${type} 2a. generatePath ${type} isParentVariantAndAllSiblings:`, base, segment, type, from, isParentVariantAndAllSiblings, index);
+                console.log(`generatePath - ${type} 2a. generatePath ${type} shouldFieldsBeArray:`, base, segment, type, from, shouldFieldsBeArray, index);
                 return [...basePath, segment];
             }
         case 'input':
