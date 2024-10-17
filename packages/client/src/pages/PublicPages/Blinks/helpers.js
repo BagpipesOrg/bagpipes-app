@@ -1,5 +1,5 @@
 
-import { getApiInstance } from '../../../../../../libs/Chains/api/connect';
+import { getApiInstance } from 'packages/chains-lib/api/connect';
 import { Buffer } from 'buffer';
 
 

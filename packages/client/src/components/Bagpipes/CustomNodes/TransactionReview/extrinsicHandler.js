@@ -1,10 +1,10 @@
-import { delegate_polkadot, stake_to_dot_pool, dotToHydraDx, polkadot_vote, moon2polkadot,  generic_system_remark, moon2parachain, moon2hydra2, hydra2moonbeam, interlay2moonbeam, polkadot2moonbeam, assethub2moonbeam, turing2moonriver, moonriver2turing, mangata2turing, polkadot_assethub_to_assetHub_kusama, hydraDxToParachain, turing2mangata, generic_kusama_to_parachain, assethub2ethereum, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../../../../libs/Chains/DraftTx/DraftxTransferTx";
-import { getTokenDecimalsByAssetName, get_moonbeam_asset_decimals, getTokenDecimalsByChainName, get_hydradx_asset_symbol_decimals } from "../../../../../../../libs/Chains/Helpers/AssetHelper";
+import { delegate_polkadot, stake_to_dot_pool, dotToHydraDx, polkadot_vote, moon2polkadot,  generic_system_remark, moon2parachain, moon2hydra2, hydra2moonbeam, interlay2moonbeam, polkadot2moonbeam, assethub2moonbeam, turing2moonriver, moonriver2turing, mangata2turing, polkadot_assethub_to_assetHub_kusama, hydraDxToParachain, turing2mangata, generic_kusama_to_parachain, assethub2ethereum, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../packages/chains-lib/DraftTx/DraftxTransferTx";
+import { getTokenDecimalsByAssetName, get_moonbeam_asset_decimals, getTokenDecimalsByChainName, get_hydradx_asset_symbol_decimals } from "../packages/chains-lib/Helpers/AssetHelper";
 import toast from "react-hot-toast";
 import { isEthereumAddress } from '@polkadot/util-crypto';
 
-import { hydradx_omnipool_sell } from "../../../../../../../libs/Chains/DraftTx/DraftSwapTx";
-import { listChains } from "../../../../../../../libs/Chains/ChainsInfo";
+import { hydradx_omnipool_sell } from "../packages/chains-lib/DraftTx/DraftSwapTx";
+import { listChains } from "../packages/chains-lib/ChainsInfo";
 import { account } from "@polkadot/api-derive/balances";
 import { evm } from "@polkadot/types/interfaces/definitions";
 

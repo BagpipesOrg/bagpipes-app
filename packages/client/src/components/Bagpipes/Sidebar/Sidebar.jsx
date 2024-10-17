@@ -32,54 +32,54 @@ const Sidebar = () => {
 
       <div className="sidebar-items" >
  {/* Wallet */}
-      {/* <div className="sidebar-item" >
+      <div className="sidebar-item" >
       <Link to="#" onClick={openModal}>
 
             <WalletIcon fillColor="#757575" />
             {isExpanded && <span className="sidebar-text">Wallet</span>}
             </Link>
-        </div> */}
+        </div>
 
 
         {/* Builder */}
         <div className="sidebar-item">
-          <Link to="/blink-builder">
+          <Link to="/builder">
             <PlaygroundIcon />
             {isExpanded && <span className="sidebar-text">Builder</span>}
           </Link>
         </div>
 
         {/* Lab */}
-        {/* <div className="sidebar-item">
+        <div className="sidebar-item">
           <Link to="/lab">
             <LabIcon />
             {isExpanded && <span className="sidebar-text">Scenarios</span>}
           </Link>
-        </div> */}
+        </div>
 
                 {/* Blinks  */}
-                {/* <div className="sidebar-item">
-          <Link to="/blinks">
+                <div className="sidebar-item">
+          <Link to="/blink-builder">
             <BlinkIcon fillColor='#757575' />
             {isExpanded && <span className="sidebar-text">Blinks</span>}
           </Link>
-        </div> */}
+        </div>
 
         {/* Pages */}
-        {/* <div className="sidebar-item">
+        <div className="sidebar-item">
           <Link to="/pages">
             <ProjectIcon fillColor='#757575' />
             {isExpanded && <span className="sidebar-text">Pages</span>}
           </Link>
-        </div> */}
+        </div>
 
         {/* Creators */}
-        {/* <div className="sidebar-item">
+        <div className="sidebar-item">
           <Link to="/creators">
             <SocialIcon fillColor='#757575' />
             {isExpanded && <span className="sidebar-text">Creators</span>}
           </Link>
-        </div> */}
+        </div>
 
         {/* Chat */}
         {/* <div className="sidebar-item">

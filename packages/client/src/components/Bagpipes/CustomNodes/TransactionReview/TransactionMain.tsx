@@ -12,9 +12,9 @@ import { useNavigate } from 'react-router-dom';
 import { signExtrinsicUtil } from '../../utils/signExtrinsicUtil';
 import { ISubmittableResult } from '@polkadot/types/types';
 import ThemeContext from '../../../../contexts/ThemeContext';
-import getNonce from '../../../../../../../libs/Chains/api/getNonce';
+import getNonce from '../packages/chains-lib/api/getNonce';
 import '../../../../index.css';
-import { getApiInstance } from '../../../../../../../libs/Chains/api/connect';
+import { getApiInstance } from '../packages/chains-lib/api/connect';
 
 import './TransactionMain.scss';
 

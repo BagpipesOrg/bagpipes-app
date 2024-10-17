@@ -9,12 +9,12 @@ import useAppStore from '../../../../store/useAppStore';
 import { getOrderedList } from '../../hooks/utils/scenarioExecutionUtils';
 import AddContacts from './AddContacts'
 import {  getAssetOptions } from './options';
-import { listChains } from '../../../../../../../libs/Chains/ChainsInfo';
+import { listChains } from '../packages/chains-lib/ChainsInfo';
 import { getSavedFormState, setSavedFormState } from '../../utils/storageUtils';
-import { getAssetBalanceForChain } from '../../../../../../../libs/Chains/Helpers/AssetHelper';
+import { getAssetBalanceForChain } from '../packages/chains-lib/Helpers/AssetHelper';
 import BalanceTippy from './BalanceTippy';
 import ThemeContext from '../../../../contexts/ThemeContext';
-import { buildHrmp } from '../../../../../../../libs/Chains/Helpers/XcmHelper';
+import { buildHrmp } from '../packages/chains-lib/Helpers/XcmHelper';
 import { mapToObject } from '../../utils/storageUtils';
 import { ChainIcon } from '../../../Icons/icons';
 import '../../node.styles.scss';

@@ -1,5 +1,5 @@
 import { ApiPromise } from '@polkadot/api';
-import { getApiInstance } from '../../../../../../../../../libs/Chains/api/connect';
+import { getApiInstance } from '../../../packages/chains-lib/api/connect';
 
 interface TransactionParams {
     chainKey: string;

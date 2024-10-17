@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { TypeRegistry } from '@polkadot/types/create';
-import { getApiInstance } from '../../../../../../libs/Chains/api/connect';
+import { getApiInstance } from 'packages/chains-lib/api/connect';
 import './Blinks.scss';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css'; 

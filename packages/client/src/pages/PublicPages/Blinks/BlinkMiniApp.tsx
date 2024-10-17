@@ -1,14 +1,14 @@
 import React, { useState, useContext, useEffect } from 'react';
 import type { BlinkMetadata} from './types';
 import { WalletContext } from '../../../components/Wallet/contexts';
-import { getAssetBalanceForChain } from '../../../../../../libs/Chains/Helpers/AssetHelper';
-import { listChains} from '../../../../../../libs/Chains/ChainsInfo';
+import { getAssetBalanceForChain } from 'packages/chains-lib/Helpers/AssetHelper';
+import { listChains} from 'packages/chains-lib/ChainsInfo';
 import { Dropdown, message, Space, Tooltip, Typography } from 'antd';
 
 import { UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import CreatorIdentity from './CreatorIdentity';
-import { broadcastToChain } from '../../../../../../libs/Chains/api/broadcastToChain';
+import { broadcastToChain } from 'packages/chains-lib/api/broadcastToChain';
 import { createCallParams } from './executeBlink/createCallParams';
 import toast  from 'react-hot-toast';
 import ChainRpcService from '../../../services/ChainRpcService';

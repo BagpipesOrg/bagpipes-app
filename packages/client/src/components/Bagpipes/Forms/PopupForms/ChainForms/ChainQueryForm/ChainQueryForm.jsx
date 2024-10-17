@@ -3,7 +3,7 @@ import useAppStore from '../../../../../../store/useAppStore';
 import { CollapsibleField }  from '../../../fields';
 import { ChainQueryIcon } from '../../../../../Icons/icons';
 import { useTippy } from '../../../../../../contexts/tooltips/TippyContext';
-import { listChains} from '../../../../../../../../../libs/Chains/ChainsInfo';
+import { listChains} from '../../../packages/chains-lib/ChainsInfo';
 
 import { processScenarioData, validateDiagramData, processAndSanitizeFormData, getUpstreamNodeIds } from '../../../../utils/scenarioUtils';
 import { getOrderedList } from '../../../../hooks/utils/scenarioExecutionUtils';

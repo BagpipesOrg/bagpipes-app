@@ -19,8 +19,8 @@ import { ChainToastContent, ActionToastContent, CustomToastContext } from '../..
 
 import { getOrderedList } from './utils/scenarioExecutionUtils';
 import { handleNodeViewport } from '../handlers/handleNodeViewport';
-import { broadcastToChain } from '../../../../../../libs/Chains/api/broadcastToChain';
-import { getPaymentInfo } from '../../../../../../libs/Chains/Helpers/FeeHelper';
+import { broadcastToChain } from 'packages/chains-lib/api/broadcastToChain';
+import { getPaymentInfo } from 'packages/chains-lib/Helpers/FeeHelper';
 import { useTippy } from '../../../contexts/tooltips/TippyContext';
 // import { sign } from 'crypto';
 

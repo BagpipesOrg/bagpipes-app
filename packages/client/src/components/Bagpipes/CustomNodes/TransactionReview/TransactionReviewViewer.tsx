@@ -2,10 +2,10 @@
 import React, { useEffect } from 'react';
 import { ActionData } from '../ActionNode/ActionInterface';
 import styled from 'styled-components';
-import { getPaymentInfo, PaymentInfo } from '../../../../../../../libs/Chains/Helpers/FeeHelper';
+import { getPaymentInfo, PaymentInfo } from '../packages/chains-lib/Helpers/FeeHelper';
 import { SubmittableExtrinsic } from '@polkadot/api-base/types';
 import { ISubmittableResult } from '@polkadot/types/types';
-import { getApiInstance } from '../../../../../../../libs/Chains/api/connect';
+import { getApiInstance } from '../packages/chains-lib/api/connect';
 import ThemeContext from '../../../../contexts/ThemeContext';
 import '../../styles.module.css';
 import '../../../../index.css';

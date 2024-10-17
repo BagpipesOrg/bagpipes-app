@@ -1,11 +1,12 @@
 import React, { useState, useContext, useEffect } from 'react';
 import './Blinks.scss';
+import './BlinkViewer.scss';
 import type { Action } from './types';
 import { BlinkIcon, VerificationIcon } from '../../../components/Icons/icons';
 import { WalletContext } from '../../../components/Wallet/contexts';
 import BalanceTippy from '../../../components/Bagpipes/Forms/PopupForms/ChainForms/ChainTxForm/BalanceTippy';
-import { getAssetBalanceForChain } from '../../../../../../libs/Chains/Helpers/AssetHelper';
-import { listChains} from '../../../../../../libs/Chains/ChainsInfo';
+import { getAssetBalanceForChain } from 'packages/chains-lib/Helpers/AssetHelper';
+import { listChains} from 'packages/chains-lib/ChainsInfo';
 import useBlinkStore from '../../../store/useBlinkStore';
 import { Button, Dropdown, message, Space, Tooltip } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
@@ -13,7 +14,7 @@ import type { MenuProps } from 'antd';
 import CreatorIdentity from './CreatorIdentity';
 import { getApiInstance } from 'packages/client/src/Chains/api/connect';
 import { signExtrinsicUtil } from 'packages/client/src/components/Bagpipes/utils/signExtrinsicUtil';
-import { broadcastToChain } from '../../../../../../libs/Chains/api/broadcastToChain';
+import { broadcastToChain } from 'packages/chains-lib/api/broadcastToChain';
 import { createCallParams } from './executeBlink/createCallParams';
 import toast  from 'react-hot-toast';
 import { actionSubmittableStructure } from './actions';
@@ -242,7 +243,7 @@ const executeTransaction = async (formData, chain) => {
 
   
   return (
-    <div className='viewerWrapper'>
+    <div className='viewerBuilderWrapper'>
       <div className='blinkViewer'>
      
         {action.icon && (

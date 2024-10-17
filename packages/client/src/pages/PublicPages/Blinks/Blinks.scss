@@ -6,6 +6,7 @@
   // we want items to be stacked under each other
   flex-direction: column;
   background: #F7F8FA;
+  // background: rgb(229, 229, 229);
   padding: 20px;
 
   h1 {
@@ -798,4 +799,8 @@ padding: 0px !important;
   cursor: pointer;
   color: white;
   
+}
+
+.blinkBuilderHeader {
+  background: rgb(255, 255, 255);
 }

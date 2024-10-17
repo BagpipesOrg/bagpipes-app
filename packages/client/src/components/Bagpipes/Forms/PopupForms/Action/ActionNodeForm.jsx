@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { Handle, Position, useNodeId } from 'reactflow';
 import useAppStore from '../../../../../store/useAppStore';
-import { getHydraDxSellPrice } from '../../../../../../../../libs/Chains/Helpers/PriceHelper';
+import { getHydraDxSellPrice } from '../../packages/chains-lib/Helpers/PriceHelper';
 import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
 import RemarkSVG from '/remark.svg';
@@ -11,7 +11,7 @@ import VoteSVG from '/vote.svg';
 import { getOrderedList } from '../../../hooks/utils/scenarioExecutionUtils';
 import { convertFormStateToActionType } from '../../../CustomNodes/ActionNode/actionUtils';
 import PriceInfo from '../../../CustomNodes/PriceInfo';
-import { contract_info } from '../../../../../../../../libs/Chains/DraftTx/DraftInk';
+import { contract_info } from '../../packages/chains-lib/DraftTx/DraftInk';
 import { Select } from 'antd';
 import Selector, { useOutsideAlerter } from '../../../CustomNodes/ActionNode/Selector';
 import toast from 'react-hot-toast';

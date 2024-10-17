@@ -5,7 +5,7 @@ import { ChainIcon } from '../../../Icons/icons';
 import { useTippy } from '../../../../contexts/tooltips/TippyContext';
 import EventNotification from '../../../EventNotifications/EventNotification';
 import useAppStore from '../../../../store/useAppStore';
-import { listChains } from '../../../../../../../libs/Chains/ChainsInfo';
+import { listChains } from '../packages/chains-lib/ChainsInfo';
 
 import './LightClientNode.scss';
 import '../../node.styles.scss';

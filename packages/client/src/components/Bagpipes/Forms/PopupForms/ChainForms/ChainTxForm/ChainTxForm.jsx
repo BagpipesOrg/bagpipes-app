@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo, useContext, useRef } from 'react';
 import useAppStore from '../../../../../../store/useAppStore';
 import { WalletContext } from '../../../../../Wallet/contexts';
-import { getAssetBalanceForChain } from '../../../../../../../../../libs/Chains/Helpers/AssetHelper';
+import { getAssetBalanceForChain } from '../../../packages/chains-lib/Helpers/AssetHelper';
 import BalanceTippy from './BalanceTippy';
 
-import { broadcastToChain } from '../../../../../../../../../libs/Chains/api/broadcastToChain';
-import { decodeCallData } from '../../../../../../../../../libs/Chains/api/codecForCallData';
+import { broadcastToChain } from '../../../packages/chains-lib/api/broadcastToChain';
+import { decodeCallData } from '../../../packages/chains-lib/api/codecForCallData';
 
 import toast  from 'react-hot-toast';
 import { ChainToastContent, ActionToastContent, CustomToastContext } from '../../../../../toasts/CustomToastContext'
@@ -20,7 +20,7 @@ import { ChainQueryIcon } from '../../../../../Icons/icons';
 import { useTippy } from '../../../../../../contexts/tooltips/TippyContext';
 import { usePanelTippy } from '../../../../../../contexts/tooltips/TippyContext';
 import useTooltipClick from '../../../../../../contexts/tooltips/tooltipUtils/useTooltipClick';
-import { listChains} from '../../../../../../../../../libs/Chains/ChainsInfo';
+import { listChains} from '../../../packages/chains-lib/ChainsInfo';
 import { queryMetadata } from '../QueryMetadata';
 import { parseMetadataPallets, resolveFieldType, resolveTypeName } from '../parseMetadata'
 import { parseLookupTypes } from '../parseMetadata/ParseMetadataTypes';

@@ -9,7 +9,7 @@ import { Data } from '@polkadot/types';
 import { WalletContext } from '../../../components/Wallet/contexts';
 import CollapsibleField from '../../../components/Bagpipes/Forms/fields/CollapsibleField';
 import { listChains} from 'chains-lib/ChainsInfo';
-import { getAssetBalanceForChain } from '../../../../../../libs/Chains/Helpers/AssetHelper';
+import { getAssetBalanceForChain } from 'packages/chains-lib/Helpers/AssetHelper';
 import BalanceTippy from '../../../components/Bagpipes/Forms/PopupForms/ChainForms/ChainTxForm/BalanceTippy';
 import { actionCallsData, chainActions } from './actions';
 import WalletWidget from '../../../components/WalletWidget/WalletWidget';
@@ -398,9 +398,10 @@ const fetchBalance = async (signal) => {
     setActionType(value);
     const config = actionCallsData[value] || { args: [] };
     setActionConfig(config.args);
+    const label = chainActions.find(action => action.value === value)?.label || '';
 
     const updatedActionLink = {
-      label: `${value}`,
+      label: `${label}`,
       href: `/api/${config.section}/${config.method}`,
       parameters: config.args.map(arg => ({
         name: arg.key,
@@ -677,7 +678,7 @@ const fetchBalance = async (signal) => {
   return (
     <>
       <WalletWidget />
-      <div className='blinkHeader'>
+      <div className='blinkBuilderHeader'>
 
       <div className='blinkTitleInfo'> 
         <h1>Blink DApp Builder</h1>

@@ -2,8 +2,8 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { Handle, Position, useNodeId } from 'reactflow';
 import useAppStore from '../../../../store/useAppStore';
-import { getHydraDxSellPrice } from '../../../../../../../libs/Chains/Helpers/PriceHelper';
-import { query_contract } from '../../../../../../../libs/Chains/DraftTx/DraftInk';
+import { getHydraDxSellPrice } from '../packages/chains-lib/Helpers/PriceHelper';
+import { query_contract } from '../packages/chains-lib/DraftTx/DraftInk';
 import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
 import RemarkSVG from '/remark.svg';
@@ -72,14 +72,14 @@ export default function ActionNode({ children, data, isConnectable }) {
 
   const assetInFormData = useMemo(() => {
     const nodeData = nodes.find(node => node.id === assetInNodeId);
-   console.log('ActionNode assetInFormData inside useMemo:', nodeData?.formData);
-    return nodeData?.formData;
+   console.log('ActionNode assetInFormData inside useMemo:', nodeData);
+    return nodeData;
   }, [assetInNodeId, nodes]);
   
   const assetOutFormData = useMemo(() => {
     const nodeData = nodes.find(node => node.id === assetOutNodeId);
-     console.log('ActionNode assetOutFormData inside useMemo:', nodeData?.formData);
-    return nodeData?.formData;
+     console.log('ActionNode assetInFormData assetOutFormData inside useMemo:', nodeData);
+    return nodeData;
   }, [assetOutNodeId, nodes]);
   const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -203,29 +203,20 @@ export default function ActionNode({ children, data, isConnectable }) {
     }
 };
 
-    useEffect(() => {
-      if (!selectedNodeId || !selectedNodeId.startsWith('action_')) return;
-      // console.log('[ActionNode] active node:', selectedNodeId);
+useEffect(() => {
+  if (!nodeId || !nodeId.startsWith('action_')) return;
 
-      const orderedList = getOrderedList(scenarios[activeScenarioId]?.diagramData?.edges);
-      // console.log('ActionNode scenario edges:', scenarios[activeScenarioId]?.diagramData?.edges);
-      // console.log('ActionNode Ordered List:', orderedList);
+  const orderedList = getOrderedList(scenarios[activeScenarioId]?.diagramData?.edges);
+  const currentIndex = orderedList.indexOf(nodeId);
 
-      const currentIndex = orderedList.indexOf(selectedNodeId);
-      // console.log('ActionNode Current Index:', currentIndex);
+  if (currentIndex === -1) return;
 
-      if (currentIndex === -1) return;
+  const assetInNodeId = orderedList[currentIndex - 1];
+  const assetOutNodeId = orderedList[currentIndex + 1];
 
-      const assetInNodeId = orderedList[currentIndex - 1];
-
-      const assetOutNodeId = orderedList[currentIndex + 1];
-      // console.log('[ActionNode] assetInNodeId:', assetInNodeId);
-      // console.log('[ActionNode] assetOutNodeId:', assetOutNodeId);
-
-        
-        setAssetInNodeId(assetInNodeId);
-        setAssetOutNodeId(assetOutNodeId);
-    }, [selectedNodeId, scenarios]);
+  setAssetInNodeId(assetInNodeId);
+  setAssetOutNodeId(assetOutNodeId);
+}, [nodeId, scenarios]);
 
   
     // This effect will only run once when the component mounts
@@ -757,7 +748,7 @@ console.log('previousNodeFormData: ', previousNodeFormData);
           <div className="small-spinner"></div>
         ) : (
           sellPriceInfoMap[nodeId] ? (
-            <PriceInfo sourceInfo={assetInFormData} targetInfo={assetOutFormData} priceInfo={sellPriceInfoMap[nodeId]} />
+<PriceInfo sourceInfo={currentActionData.source} targetInfo={currentActionData.target} priceInfo={sellPriceInfoMap[nodeId]} />
           ) : (
             // Placeholder for when no price info is available
             <div className="in-node-border rounded m-2 p-2 ">Swaps</div>

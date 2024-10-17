@@ -4,7 +4,7 @@ import '../../../../index.css';
 import '../../node.styles.scss';
 import './AccountDropdown.scss';
 import { WalletAccount } from '../../../../../Wallet/connect-wallet/src/types';
-import { listChains } from '../../../../../../../../../libs/Chains/ChainsInfo';
+import { listChains } from '../../../packages/chains-lib/ChainsInfo';
 import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
 
 function AccountDropdown({ selectedChainName, onSelect, selectedAddress }: { 
