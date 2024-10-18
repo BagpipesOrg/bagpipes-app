@@ -237,8 +237,7 @@ switch (currentType) {
             break;
 
       case 'Tuple':
-              
-        
+
               result = {
                 type: 'tuple',
                 path: newPath,
@@ -257,7 +256,9 @@ switch (currentType) {
                     path: [...newPath, tupleTypePathSegmentElement]
                   };
                 })
+                : []
               };
+
               break;
           
       default:

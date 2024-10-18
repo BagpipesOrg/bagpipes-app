@@ -59,3 +59,15 @@ export interface NewActionForm {
   inputName: string;
   amountType: string; // "fixedAmount" or "inputAmount"
 }
+
+export interface Balance {
+  free: string;
+  reserved: string;
+  total: string;
+}
+
+export interface Chain {
+  display?: string;
+  name: string;
+  id: string;
+}

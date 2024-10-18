@@ -9,39 +9,52 @@ import { startFromWorker } from "polkadot-api/smoldot/from-worker";
 // import SmWorker from "polkadot-api/smoldot/worker";
 
 // const worker = new SmWorker();
+export async function initializeSmoldotWorker() {
+  const worker = new Worker(
+    new URL("polkadot-api/smoldot/worker", import.meta.url)
+  );
+  const smoldot = startFromWorker(worker);
+  const chain = await smoldot.addChain({ chainSpec });
+  const client = createClient(
+    getSmProvider(chain)
+  );
+  return client;
+}
 
-
-// Using Webpack
-const worker = new Worker(
-  new URL("polkadot-api/smoldot/worker", import.meta.url)
-);
-
-
- 
-// Using Webpack
+// // Using Webpack
 // const worker = new Worker(
 //   new URL("polkadot-api/smoldot/worker", import.meta.url)
 // );
+
+
  
-const smoldot = startFromWorker(worker);
-const chain = await smoldot.addChain({ chainSpec });
+// // Using Webpack
+// // const worker = new Worker(
+// //   new URL("polkadot-api/smoldot/worker", import.meta.url)
+// // );
  
-// Connect to the polkadot relay chain.
-const client = createClient(
-  getSmProvider(chain)
-);
+// const smoldot = startFromWorker(worker);
+// const chain = await smoldot.addChain({ chainSpec });
  
-// With the `client`, you can get information such as subscribing to the last
-// block to get the latest hash:
-client.finalizedBlock$.subscribe((finalizedBlock) =>
-  console.log(finalizedBlock.number, finalizedBlock.hash),
-)
+// // Connect to the polkadot relay chain.
+// const client = createClient(
+//   getSmProvider(chain)
+// );
+
+
+
  
-// To interact with the chain, you need to get the `TypedApi`, which includes
-// all the types for every call in that chain:
-const dotApi = client.getTypedApi(dot)
+// // With the `client`, you can get information such as subscribing to the last
+// // block to get the latest hash:
+// client.finalizedBlock$.subscribe((finalizedBlock) =>
+//   console.log(finalizedBlock.number, finalizedBlock.hash),
+// )
  
-// get the value for an account
-const accountInfo = await dotApi.query.System.Account.getValue(
-  "16JGzEsi8gcySKjpmxHVrkLTHdFHodRepEz8n244gNZpr9J",
-)
+// // To interact with the chain, you need to get the `TypedApi`, which includes
+// // all the types for every call in that chain:
+// const dotApi = client.getTypedApi(dot)
+ 
+// // get the value for an account
+// const accountInfo = await dotApi.query.System.Account.getValue(
+//   "16JGzEsi8gcySKjpmxHVrkLTHdFHodRepEz8n244gNZpr9J",
+// )

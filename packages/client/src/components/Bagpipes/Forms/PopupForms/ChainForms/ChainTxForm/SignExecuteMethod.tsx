@@ -1,4 +1,4 @@
-import { getApiInstance } from '../../../packages/chains-lib/api/connect';
+import { getApiInstance, ChainKey }from 'chains-lib';
 
 interface MethodParams {
     chainKey: string;
@@ -10,7 +10,7 @@ interface MethodParams {
 
 async function executeMethod({ chainKey, palletName, methodName, params, atBlock }: MethodParams) {
     console.log('Executing method:', methodName, 'on pallet:', palletName, 'with params:', params, 'at block:', atBlock);
-    const api = await getApiInstance(chainKey);
+    const api = await getApiInstance(chainKey as ChainKey);
     const camelPalletName = toCamelCase(palletName);
     const camelMethodName = toCamelCase(methodName);
 

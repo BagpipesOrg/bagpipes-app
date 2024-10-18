@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { Handle, Position, useNodeId } from 'reactflow';
 import useAppStore from '../../../../../store/useAppStore';
-import { getHydraDxSellPrice } from '../../packages/chains-lib/Helpers/PriceHelper';
+import { getHydraDxSellPrice, contract_info } from 'chains-lib';
 import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
 import RemarkSVG from '/remark.svg';
@@ -11,20 +11,20 @@ import VoteSVG from '/vote.svg';
 import { getOrderedList } from '../../../hooks/utils/scenarioExecutionUtils';
 import { convertFormStateToActionType } from '../../../CustomNodes/ActionNode/actionUtils';
 import PriceInfo from '../../../CustomNodes/PriceInfo';
-import { contract_info } from '../../packages/chains-lib/DraftTx/DraftInk';
-import { Select } from 'antd';
 import Selector, { useOutsideAlerter } from '../../../CustomNodes/ActionNode/Selector';
 import toast from 'react-hot-toast';
 import ThemeContext from '../../../../../contexts/ThemeContext';
 import { ActionIcon } from '../../../../Icons/icons';
 import FormHeader from '../../FormHeader';
+import ActionSelector from '../ActionSelector';
+
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css'; 
 import 'tippy.js/themes/light.css';
 import '../../../../../index.css';
 import '../../../node.styles.scss';
 import '../../../../../main.scss';
-import ActionSelector from '../ActionSelector';
+import { Select } from 'antd';
 
 const formatTime = (date) => {
   const hours = String(date.getHours()).padStart(2, '0');

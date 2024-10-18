@@ -5,23 +5,30 @@ import type { Action } from './types';
 import { BlinkIcon, VerificationIcon } from '../../../components/Icons/icons';
 import { WalletContext } from '../../../components/Wallet/contexts';
 import BalanceTippy from '../../../components/Bagpipes/Forms/PopupForms/ChainForms/ChainTxForm/BalanceTippy';
-import { getAssetBalanceForChain } from 'packages/chains-lib/Helpers/AssetHelper';
-import { listChains} from 'packages/chains-lib/ChainsInfo';
+import { getAssetBalanceForChain } from 'chains-lib';
+import { listChains} from 'chains-lib';
 import useBlinkStore from '../../../store/useBlinkStore';
 import { Button, Dropdown, message, Space, Tooltip } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import CreatorIdentity from './CreatorIdentity';
-import { getApiInstance } from 'packages/client/src/Chains/api/connect';
-import { signExtrinsicUtil } from 'packages/client/src/components/Bagpipes/utils/signExtrinsicUtil';
-import { broadcastToChain } from 'packages/chains-lib/api/broadcastToChain';
+import { getApiInstance, ChainKey } from 'chains-lib';
+import { signExtrinsicUtil } from '../../../components/Bagpipes/utils/signExtrinsicUtil';
+import { broadcastToChain } from 'chains-lib';
 import { createCallParams } from './executeBlink/createCallParams';
 import toast  from 'react-hot-toast';
 import { actionSubmittableStructure } from './actions';
 import ChainRpcService from '../../../services/ChainRpcService';
+import type { ChainInfo } from 'chains-lib';
 
 export interface BlinkViewerProps {
   action: Action<"action">;
+}
+
+export interface Balance {
+  free: number;
+  reserved: number;
+  total: number;
 }
 
 const BlinkViewer: React.FC<BlinkViewerProps> = ({ action }) => {
@@ -40,10 +47,12 @@ const BlinkViewer: React.FC<BlinkViewerProps> = ({ action }) => {
   console.log('BlinkViewer walletContext:', walletContext);
   const [isFetchingBalance, setIsFetchingBalance] = useState(false);
   const [chainSymbol, setChainSymbol] = useState('');
-  const [balance, setBalance] = useState(null);
+
+  const [balance, setBalance] = useState<Balance | null>(null);
   const [selectedUserAddress, setSelectedUserAddress] = useState(formData?.selectedUserAddress || walletContext.accounts[0]?.address || '');
   const [selectedUserAddressName, setSelectedUserAddressName] = useState(formData?.selectedUserAddressName || walletContext.accounts[0]?.name || '');
-  const [chain, setChain] = useState(null);
+  
+  const [chain, setChain] = useState<ChainInfo | null>(null);
   // const [selectedCreatorAccount, setSelectedCreatorAccount] = useState(formData?.selectedCreatorAccount || null);
   let selectedCreatorAccount = formData?.selectedCreatorAccount || null;
 
@@ -68,7 +77,7 @@ const BlinkViewer: React.FC<BlinkViewerProps> = ({ action }) => {
     // we should fetch chainInfo from listChains()
     const chainsArray = Object.values(listChains()); // Convert to array if originally an object
     const chain = chainsArray.find(c => c.name.toLowerCase() === formData?.selectedChain?.toLowerCase());
-    setChain(chain);
+    setChain(chain || null);
 
       }, [formData?.selectedChain]);
  
@@ -80,18 +89,20 @@ const BlinkViewer: React.FC<BlinkViewerProps> = ({ action }) => {
     const chainsArray = Object.values(listChains()); // Convert to array if originally an object
     const chain = chainsArray.find(c => c.name.toLowerCase() === chainKey.toLowerCase());
     console.log('fetchBalance chain:', chain);
-    setChainSymbol(chain.symbol || '');
-    console.log('fetchBalance chain symbol:', chain.symbol);
+    setChainSymbol(chain?.symbol || '');
+    console.log('fetchBalance chain symbol:', chain?.symbol);
       if (!chain) {
       console.error("No chain information available for:", chainKey);
       return;
     }
     try {
-      const fetchedBalance = await getAssetBalanceForChain(formData?.selectedChain, 0, selectedUserAddress);
-      setBalance(fetchedBalance);
+      const fetchedBalance = await getAssetBalanceForChain(formData?.selectedChain, selectedUserAddress, 0, signal);
       if (!signal.aborted) {
-        setBalance(fetchedBalance);
-      }
+        setBalance({
+          free: fetchedBalance.free,
+          reserved: fetchedBalance.reserved,
+          total: fetchedBalance.total ?? 0, // Provide a default value if undefined
+        });      }
     } catch (error) {
       if (!signal.aborted) {
         console.error("Failed to fetch balance", error);

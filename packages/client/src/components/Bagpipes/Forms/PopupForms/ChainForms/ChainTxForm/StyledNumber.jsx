@@ -8,7 +8,7 @@ import '../../../../node.styles.scss';
 const StyledNumber = ({ value, symbol }) => {
   const { theme } = useContext(ThemeContext);
     // If value is "1234.5678", this splits it into whole="1234" and decimal="5678"
-    const [whole, decimal] = value.split('.');
+    const [whole, decimal] = String(value).split('.');
 
     const displayDecimal = decimal === '' || !decimal ? '0000' : decimal;
 

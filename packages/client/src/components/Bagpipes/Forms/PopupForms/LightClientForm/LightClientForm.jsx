@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo, useContext, useRef } from 'react';
 import useAppStore from '../../../../../store/useAppStore';
 import { WalletContext } from '../../../../Wallet/contexts';
-import { getAssetBalanceForChain } from '../../../../../Chains/Helpers/AssetHelper';
+import { getAssetBalanceForChain } from 'chains-lib';
 import BalanceTippy from './BalanceTippy';
 
-import { broadcastToChain } from '../../../../../Chains/api/broadcastToChain';
-import { decodeCallData } from '../../../../../Chains/api/codecForCallData';
+import { broadcastToChain } from 'chains-lib';
+import { decodeCallData } from 'chains-lib';
 
 import toast  from 'react-hot-toast';
 
@@ -19,7 +19,7 @@ import { ChainQueryIcon } from '../../../../Icons/icons';
 import { useTippy } from '../../../../../contexts/tooltips/TippyContext';
 import { usePanelTippy } from '../../../../../contexts/tooltips/TippyContext';
 import useTooltipClick from '../../../../../contexts/tooltips/tooltipUtils/useTooltipClick';
-import { listChains} from '../../../../../Chains/ChainsInfo';
+import { listChains} from 'chains-lib';
 import ChainRpcService from '../../../../../services/ChainRpcService';
 import CustomInput from '../../fields/CustomInput';
 import FormHeader from '../../FormHeader';
@@ -708,7 +708,7 @@ const handleMethodFieldChange = (updatedParams) => {
       return;
     }
     try {
-      const fetchedBalance = await getAssetBalanceForChain(formData.selectedChain, 0, formData.selectedAddress);
+      const fetchedBalance = await getAssetBalanceForChain(formData.selectedChain, formData.selectedAddress, 0, signal);
       setBalance(fetchedBalance);
       if (!signal.aborted) {
         setBalance(fetchedBalance);

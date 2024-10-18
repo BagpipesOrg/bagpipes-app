@@ -9,12 +9,10 @@ import useAppStore from '../../../../store/useAppStore';
 import { getOrderedList } from '../../hooks/utils/scenarioExecutionUtils';
 import AddContacts from './AddContacts'
 import {  getAssetOptions } from './options';
-import { listChains } from '../packages/chains-lib/ChainsInfo';
+import { listChains, getAssetBalanceForChain, buildHrmp } from 'chains-lib';
 import { getSavedFormState, setSavedFormState } from '../../utils/storageUtils';
-import { getAssetBalanceForChain } from '../packages/chains-lib/Helpers/AssetHelper';
 import BalanceTippy from './BalanceTippy';
 import ThemeContext from '../../../../contexts/ThemeContext';
-import { buildHrmp } from '../packages/chains-lib/Helpers/XcmHelper';
 import { mapToObject } from '../../utils/storageUtils';
 import { ChainIcon } from '../../../Icons/icons';
 import '../../node.styles.scss';
@@ -309,7 +307,7 @@ const ChainNode = ({ data, isConnectable }) => {
     try {
       setIsFetchingBalance(true);
       console.log('Fetching balance for:', formState.chain, formState.asset.assetId, formState.address);
-      const fetchedBalance = await getAssetBalanceForChain(formState.chain, formState.asset.assetId, formState.address, signal); 
+      const fetchedBalance = await getAssetBalanceForChain(formState.chain,  formState.address, formState.asset.assetId, signal); 
       if (!signal.aborted) {
         setBalance(fetchedBalance);
       }

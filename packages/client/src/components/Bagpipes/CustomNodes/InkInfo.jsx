@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { query_contract, contract_info  } from 'packages/chains-lib/DraftTx/DraftInk';
+import { query_contract, contract_info  } from 'chains-lib';
 
 
 const InfoDivider = ({ label, value }) => (

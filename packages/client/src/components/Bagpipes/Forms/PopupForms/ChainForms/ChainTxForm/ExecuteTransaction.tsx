@@ -1,5 +1,5 @@
 import { ApiPromise } from '@polkadot/api';
-import { getApiInstance } from '../../../packages/chains-lib/api/connect';
+import { getApiInstance, ChainKey } from 'chains-lib';
 
 interface TransactionParams {
     chainKey: string;
@@ -9,7 +9,7 @@ interface TransactionParams {
 }
 
 async function executeTransaction({ chainKey, palletName, methodName, params }: TransactionParams) {
-    const api = await getApiInstance(chainKey);
+    const api = await getApiInstance(chainKey as ChainKey);
     const camelPalletName = toCamelCase(palletName);
     const camelMethodName = toCamelCase(methodName);
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { getApiInstance } from '../../../Chains/api/connect';
+import { getApiInstance } from 'chains-lib';
 
 const BlinkLoader = () => {
   const location = useLocation();

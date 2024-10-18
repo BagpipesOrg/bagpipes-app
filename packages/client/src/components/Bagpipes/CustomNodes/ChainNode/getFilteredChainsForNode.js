@@ -1,6 +1,6 @@
 import { getOrderedList } from "../../hooks/utils/scenarioExecutionUtils";
 import { useAppStore } from "../../hooks";
-import { buildHrmp } from "../packages/chains-lib/Helpers/XcmHelper";
+import { buildHrmp } from 'chains-lib';
 
 export async function getFilteredChainsForNode(nodeId, hrmpChannels, scenarios, activeScenarioId) {
     const orderedList = getOrderedList(scenarios[activeScenarioId]?.diagramData?.edges);

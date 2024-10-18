@@ -9,12 +9,10 @@ import useAppStore from '../../../../store/useAppStore';
 import { getOrderedList } from '../../hooks/utils/scenarioExecutionUtils';
 import AddContacts from '../../CustomNodes/ChainNode/AddContacts'
 import {  getAssetOptions } from '../../CustomNodes/ChainNode/options';
-import { listChains } from '../packages/chains-lib/ChainsInfo';
 import { getSavedFormState, setSavedFormState } from '../../utils/storageUtils';
-import { getAssetBalanceForChain } from '../packages/chains-lib/Helpers/AssetHelper';
 import BalanceTippy from '../../CustomNodes/ChainNode/BalanceTippy';
 import ThemeContext from '../../../../contexts/ThemeContext';
-import { buildHrmp } from '../packages/chains-lib/Helpers/XcmHelper';
+import { buildHrmp, listChains, getAssetBalanceForChain } from 'chains-lib';
 import { mapToObject } from '../../utils/storageUtils';
 import { ChainIcon } from '../../../Icons/icons';
 import { ChainNodeFormProps } from '../types';
@@ -307,7 +305,7 @@ const ChainNodeForm: React.FC<ChainNodeFormProps> = ({ visible, nodeId, nodes, e
   const fetchBalance = async (signal) => {
     try {
       setIsFetchingBalance(true);
-      const fetchedBalance = await getAssetBalanceForChain(formState.chain, formState.asset.assetId, formState.address, signal); 
+      const fetchedBalance = await getAssetBalanceForChain(formState.chain, formState.address,  formState.asset.assetId, signal); 
       if (!signal.aborted) {
         setBalance(fetchedBalance);
       }

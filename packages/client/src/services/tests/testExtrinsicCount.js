@@ -1,4 +1,4 @@
-import { getApiInstance } from '../../../../../libs/Chains/api/connect';
+import { getApiInstance } from 'chains-lib';
 
 
 async function testExtrinsicCount(api) {

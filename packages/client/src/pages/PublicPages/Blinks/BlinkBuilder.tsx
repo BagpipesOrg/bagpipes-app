@@ -8,8 +8,8 @@ import { debounce } from 'lodash';
 import { Data } from '@polkadot/types';
 import { WalletContext } from '../../../components/Wallet/contexts';
 import CollapsibleField from '../../../components/Bagpipes/Forms/fields/CollapsibleField';
-import { listChains} from 'chains-lib/ChainsInfo';
-import { getAssetBalanceForChain } from 'packages/chains-lib/Helpers/AssetHelper';
+import { listChains} from 'chains-lib';
+import { getAssetBalanceForChain } from 'chains-lib';
 import BalanceTippy from '../../../components/Bagpipes/Forms/PopupForms/ChainForms/ChainTxForm/BalanceTippy';
 import { actionCallsData, chainActions } from './actions';
 import WalletWidget from '../../../components/WalletWidget/WalletWidget';
@@ -18,6 +18,9 @@ import { BlinkIcon, CopyIcon } from '../../../components/Icons/icons';
 import { signAndSendRemark } from './generateBlink';
 import toast from 'react-hot-toast';
 import type {ActionType, Parameter, Arg, LinkedAction, Action, NewActionForm, BlinkMetadata} from './types';
+import type { Balance, Chain } from './types';
+
+
 
 
 
@@ -107,10 +110,12 @@ let formData = getBlinkMetadata(activeBlinksId);
   const [actionType, setActionType] = useState<string>("select");
   const [actionConfig, setActionConfig] = useState([]);
   const [amountTypes, setAmountTypes] = useState<string[]>([]); 
-  const [balance, setBalance] = useState(null);
+  
+  const [balance, setBalance] = useState<Balance | null>(null);
   const [isFetchingBalance, setIsFetchingBalance] = useState(false);
   const [chainSymbol, setChainSymbol] = useState('');
-  const [chains, setChains] = useState([]);
+
+  const [chains, setChains] = useState<Chain[]>([]);
   const [selectedChain, setSelectedChain] = useState(formData?.selectedChain || '');
   const [selectedCreatorAccount, setSelectedCreatorAccount] = useState('');
   const[selectedCreatorAccountName, setSelectedCreatorAccountName] = useState('');
@@ -243,17 +248,20 @@ const fetchBalance = async (signal) => {
   const chainsArray = Object.values(listChains()); // Convert to array if originally an object
   const chain = chainsArray.find(c => c.name.toLowerCase() === chainKey.toLowerCase());
   console.log('fetchBalance chain:', chain);
-  setChainSymbol(chain.symbol || '');
-  console.log('fetchBalance chain symbol:', chain.symbol);
+  setChainSymbol(chain?.symbol || '');
+  console.log('fetchBalance chain symbol:', chain?.symbol);
     if (!chain) {
     console.error("No chain information available for:", chainKey);
     return;
   }
   try {
-    const fetchedBalance = await getAssetBalanceForChain(formData?.selectedChain, 0, formData?.selectedCreatorAccount);
-    setBalance(fetchedBalance);
+    const fetchedBalance = await getAssetBalanceForChain(formData?.selectedChain, formData?.selectedCreatorAccount, 0, signal);
     if (!signal.aborted) {
-      setBalance(fetchedBalance);
+      setBalance({
+        free: fetchedBalance.free.toString(),
+        reserved: fetchedBalance.reserved.toString(),
+        total: fetchedBalance.total?.toString() ?? '0', // Provide a default value if undefined
+      });    
     }
   } catch (error) {
     if (!signal.aborted) {
@@ -492,14 +500,14 @@ const fetchBalance = async (signal) => {
     if (!config) return null;
   
     let href = `/api/${config.section}/${config.method}?`;
-    let parameters = [];
+    let parameters: { name: string; label: string }[] = [];
   
     config.args.forEach(arg => {
       const formValue = actionForms.find(form => form.key === arg.key);
       if (arg.userEditable) {
         parameters.push({
-          name: arg.key,
-          label: formValue?.label || arg.label // Use form-specified label if available
+          name: arg.key as string,
+          label: (formValue?.label || arg.label) as string // Use form-specified label if available
         });
       } else {
         // Append to URL as query if not user-editable
@@ -517,13 +525,15 @@ const fetchBalance = async (signal) => {
   const addNewActionForm = () => {
     if (actionType !== "" && actionType !== "no action") {
       const newAction = generateActionLink(actionType, actionForms);
-      setAction(prev => ({
-        ...prev,
-        links: {
-          ...prev.links,
-          actions: [...prev.links.actions, newAction]
-        }
-      }));
+      if (newAction) {
+        setAction(prev => ({
+          ...prev,
+          links: {
+            ...prev.links,
+            actions: [...prev.links.actions, newAction]
+          }
+        }));
+      }
       saveBlinkMetadata (activeBlinksId, {...formData, links: { actions: [...formData.links.actions, newAction] }});
     }
   };

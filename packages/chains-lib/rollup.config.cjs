@@ -5,20 +5,18 @@ const resolve = require('@rollup/plugin-node-resolve').default;
 const commonjs = require('@rollup/plugin-commonjs');
 const postcss = require('rollup-plugin-postcss');
 const wasm = require('@rollup/plugin-wasm');
-// const inspect = require('@rollup/plugin-inspect');
-const dts = require('rollup-plugin-dts').default;   
+const dts = require('rollup-plugin-dts').default;
 
 const pkg = require('./package.json');
-
 
 const commonPlugins = [
   peerDepsExternal(),
   typescript({
     tsconfig: './tsconfig.json',
+    declaration: false,
     noEmitOnError: false,
-    declarationDir: "./dist/types",   
-
-  }),  nodePolyfills(),
+  }),
+  nodePolyfills(),
   resolve({
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
   }),
@@ -31,7 +29,6 @@ const commonPlugins = [
     sourceMap: true,
   }),
   wasm(),
-  // inspect({ /* options */ }),
 ];
 
 module.exports = [
@@ -39,7 +36,7 @@ module.exports = [
   {
     input: 'src/index.ts',
     output: {
-      dir: 'dist',      
+      file: 'dist/cjs/index.js',
       format: 'cjs',
       sourcemap: true,
       exports: 'named',
@@ -47,33 +44,30 @@ module.exports = [
     plugins: commonPlugins,
     external: [
       ...Object.keys(pkg.peerDependencies || {}),
-      /^@polkadot\//, // exclude all @polkadot/* packages
+      /^@polkadot\//,
       /^@substrate\//,
       /^smoldot\//,
       /^react-hot-toast$/,
-      'src/lite-client/WellKnown.js'
-
     ],
   },
   // ES Module Build
   {
     input: 'src/index.ts',
     output: {
-      dir: 'dist',      
+      file: 'dist/esm/index.js',
       format: 'esm',
       sourcemap: true,
     },
     plugins: commonPlugins,
     external: [
       ...Object.keys(pkg.peerDependencies || {}),
-      /^@polkadot\//, // exclude all @polkadot/* packages
+      /^@polkadot\//,
       /^@substrate\//,
       /^smoldot\//,
       /^react-hot-toast$/,
-      'src/lite-client/WellKnown.js'
-
     ],
   },
+  // Type Declarations Build
   {
     input: 'src/index.ts',
     output: {

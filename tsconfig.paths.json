@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+      "baseUrl": ".",
+      "paths": {
+        "chains-lib": ["packages/chains-lib/dist/esm"],
+        "chains-lib/*": ["packages/chains-lib/dist/esm/*"],
+      }
+    }
+  }

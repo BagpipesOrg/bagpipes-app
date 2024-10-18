@@ -3,7 +3,7 @@ import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
 import RemarkSVG from '/remark.svg';
 import VoteSVG from '/vote.svg';
-import { listChains } from '../../../../../libs/Chains/ChainsInfo';
+import { listChains } from 'chains-lib';
 import { toast } from 'react-hot-toast';
 import ThemeContext from '../../contexts/ThemeContext';
 import { ChainQueryIcon, WebhookIcon, HttpIcon } from '../Icons/icons';

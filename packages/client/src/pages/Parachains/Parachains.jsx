@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAppStore } from '../../components/Bagpipes/hooks';
-import { listChains, listRelayChains } from '../../../../../libs/Chains/ChainsInfo';
-import { listParachainsConnectedToRelay, polkadotGetLeaseTime } from '../../../../../libs/Chains/Helpers/XcmHelper';
+import { listChains, listRelayChains, listParachainsConnectedToRelay, polkadotGetLeaseTime  } from 'chains-lib';
 import ThemeContext from '../../contexts/ThemeContext';
 import './Parachains.scss';
 

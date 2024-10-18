@@ -1,4 +1,4 @@
-import { listAssetHubAssets, list_onchainassets, listassetHub_kusamaAssets, listMoonRiverAssets, listTuringAssets, listMangataxAssets, listHydraDxAssets, listInterlayAssets } from '../packages/chains-lib/Assets/listAssetsForChain';
+import { listAssetHubAssets, list_onchainassets, listassetHub_kusamaAssets, listMoonRiverAssets, listTuringAssets, listMangataxAssets, listHydraDxAssets, listInterlayAssets } from 'chains-lib';
 
 const dotAssets = {
   asset: {

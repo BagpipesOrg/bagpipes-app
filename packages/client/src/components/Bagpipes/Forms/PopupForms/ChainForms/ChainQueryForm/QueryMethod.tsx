@@ -1,5 +1,5 @@
-import { getApiInstance } from 'chains-lib/src/api/connect';
-import { ChainKey } from 'chains-lib/api/metadata';
+import { getApiInstance } from 'chains-lib';
+import { ChainKey } from 'chains-lib';
 
 interface MethodParams {
     chainKey: string;

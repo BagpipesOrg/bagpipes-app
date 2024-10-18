@@ -1,6 +1,6 @@
 import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic, SubmittableExtrinsicFunction } from '@polkadot/api/types';
-import { getApiInstance } from '../../../../libs/Chains/api/connect';
+import { getApiInstance, ChainKey } from 'chains-lib';
 import { signExtrinsicUtil } from '../components/Bagpipes/utils/signExtrinsicUtil';
 import { Codec, ISubmittableResult } from '@polkadot/types/types';
 import { TypeRegistry } from '@polkadot/types';
@@ -44,7 +44,7 @@ class ChainRpcService {
 
 
   static async executeChainQueryMethod({ chainKey, palletName, methodName, params, atBlock }: MethodParams): Promise<any> {
-    const api = await getApiInstance(chainKey);
+    const api = await getApiInstance(chainKey as ChainKey);
     const method = this.resolveMethod(api, palletName, methodName, false);
   console.log('1. executeChainQueryMethod method:', method);
     try {
@@ -65,7 +65,7 @@ class ChainRpcService {
 
 
   static async executeChainTxMethod({ chainKey, palletName, methodName, params, signerAddress, signer }: MethodParams): Promise<any> {
-    const api = await getApiInstance(chainKey);
+    const api = await getApiInstance(chainKey as ChainKey);
     const method = this.resolveMethod(api, palletName, methodName, true);
   
     if (!signerAddress) throw new Error("Signer address is required for transaction signing.");
@@ -84,7 +84,7 @@ class ChainRpcService {
 
   static async executeChainTxRenderedMethod({ chainKey, palletName, methodName, params, signerAddress, signer }: MethodParams): Promise<any> {
     console.log(`executeChainTxRenderedMethod: chainKey, palletName, methodName, params: `, chainKey, palletName, methodName, params, signerAddress, signer);
-    const api = await getApiInstance(chainKey);
+    const api = await getApiInstance(chainKey as ChainKey);
     const method = this.resolveMethod(api, palletName, methodName, true);
 
     if (!method) throw new Error(`Method ${methodName} is not available on pallet ${palletName}.`);
@@ -105,7 +105,7 @@ class ChainRpcService {
 
 static async executeChainTxBlinkRenderedMethod({ chainKey, palletName, methodName, params, signerAddress, signer }: MethodParams): Promise<any> {
   console.log(`executeChainTxBlinkRenderedMethod: chainKey, palletName, methodName, params: `, chainKey, palletName, methodName, params, signerAddress, signer);
-  const api = await getApiInstance(chainKey);
+  const api = await getApiInstance(chainKey as ChainKey);
   const method = this.resolveMethod(api, palletName, methodName, true);
   console.log(`executeChainTxBlinkRenderedMethod: method resolved:...`, method);
 
@@ -126,7 +126,7 @@ static async executeChainTxBlinkRenderedMethod({ chainKey, palletName, methodNam
 
 
 static async createChainTxRenderedMethod({ chainKey, palletName, methodName, params }) {
-  const api = await getApiInstance(chainKey);
+  const api = await getApiInstance(chainKey as ChainKey);
   const method = this.resolveMethod(api, palletName, methodName, true);
 
   if (!method) {
@@ -396,7 +396,8 @@ export default ChainRpcService;
 
   // static async executeChainTxRenderedMethod({ chainKey, palletName, methodName, params, signerAddress, signer }: MethodParams): Promise<any> {
   //   console.log(`executeChainTxRenderedMethod: chainKey, palletName, methodName, params: `, chainKey, palletName, methodName, params);
-  //   const api = await getApiInstance(chainKey);
+  //      const api = await getApiInstance(chainKey as ChainKey);
+
   //   console.log(`executeChainTxRenderedMethod: now about to resole method:...`);
   //   const method = this.resolveMethod(api, palletName, methodName, true);
   //   console.log(`executeChainTxRenderedMethod: method resolved:...`, method);
@@ -451,7 +452,8 @@ export default ChainRpcService;
 
   // /// Execute a query method on a chain
   // static async executeChainQueryMethod({ chainKey, palletName, methodName, params, atBlock }: MethodParams): Promise<any> {
-  //   const api = await getApiInstance(chainKey);
+  //      const api = await getApiInstance(chainKey as ChainKey);
+
   //   const method = this.resolveMethod(api, palletName, methodName, false);
   //   const formattedParams = this.formatParams(params);
   //   console.log('1. executeChainQueryMethod formattedParams:', formattedParams);
@@ -477,7 +479,8 @@ export default ChainRpcService;
   // /// Execute a transaction method on a chain
   // static async executeChainTxMethod({ chainKey, palletName, methodName, params, signerAddress, signer }: MethodParams): Promise<any> {
   //   console.log(`executeChainTxMethod: chainKey, palletName, methodName, params: `, chainKey, palletName, methodName, params); 
-  //   const api = await getApiInstance(chainKey);
+  //       const api = await getApiInstance(chainKey as ChainKey);
+
   //   const method = this.resolveMethod(api, palletName, methodName, true);
   //   const formattedParams = this.formatParams(params);
   //   if (!signerAddress) throw new Error("Signer address is required for transaction signing.");
@@ -501,7 +504,8 @@ export default ChainRpcService;
 
   
   // static async createChainTxMethod({ chainKey, palletName, methodName, params }: MethodParams) {
-  //   const api = await getApiInstance(chainKey);
+  //      const api = await getApiInstance(chainKey as ChainKey);
+
   //   const camelPalletName = this.toCamelCase(palletName.toLowerCase());
   //   const camelMethodName = this.toCamelCase(methodName);
 

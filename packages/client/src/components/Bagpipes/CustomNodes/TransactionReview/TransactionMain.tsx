@@ -12,9 +12,8 @@ import { useNavigate } from 'react-router-dom';
 import { signExtrinsicUtil } from '../../utils/signExtrinsicUtil';
 import { ISubmittableResult } from '@polkadot/types/types';
 import ThemeContext from '../../../../contexts/ThemeContext';
-import getNonce from '../packages/chains-lib/api/getNonce';
+import { getNonce, getApiInstance, ChainKey } from 'chains-lib';
 import '../../../../index.css';
-import { getApiInstance } from '../packages/chains-lib/api/connect';
 
 import './TransactionMain.scss';
 
@@ -38,7 +37,7 @@ export default function TransactionMain() {
   const walletContext = useContext(WalletContext);
 
   const [isReviewingTransactions, setIsReviewingTransactions] = useState(true);
-  const [signedExtrinsics, setSignedExtrinsics] = useState([]);
+  const [signedExtrinsics, setSignedExtrinsics] = useState<any[]>([]);
   const currentScenarioNodes = scenarios[activeScenarioId]?.diagramData?.nodes || [];
   const [fetchedNonces, setFetchedNonces] = useState<{ [key: string]: number }>({});
   const [isFetchingNonces, setIsFetchingNonces] = useState<boolean>(false);
@@ -54,7 +53,7 @@ export default function TransactionMain() {
 const signExtrinsic = async (draftedExtrinsic: SubmittableExtrinsic<"promise", ISubmittableResult>, address: string, currentChain: string, nonce?: number) => {
   const signer = walletContext.wallet?.signer;
   console.log("[signExtrinsic] chain:", currentChain);
-  const api = await getApiInstance(currentChain);
+  const api = await getApiInstance(currentChain as ChainKey);
 
   return await signExtrinsicUtil(api, signer, draftedExtrinsic, address, nonce);
 };
@@ -123,15 +122,32 @@ const handleAcceptTransactions = async () => {
   
       updateTransactionStatus({ draftedExtrinsic, formData }, 'waiting for extrinsic to be signed...');
   
+      let signedExtrinsic;
       // Sign with the adjusted nonce
-      const signedExtrinsic = await signExtrinsic(draftedExtrinsic, source.address, currentChain, currentNonce);
-      allSignedExtrinsics.push(signedExtrinsic);
-      console.log('All signed extrinsics:', allSignedExtrinsics);
+      if (currentChain) {
+         signedExtrinsic = await signExtrinsic(draftedExtrinsic, source.address, currentChain, currentNonce);
+        allSignedExtrinsics.push(signedExtrinsic);
+        console.log('All signed extrinsics:', allSignedExtrinsics);
 
-      // Increment the signed count
+        // Increment the signed count
+        setSignedCount(prevCount => prevCount + 1);
+
+        saveSignedExtrinsic(activeScenarioId, nodeId, signedExtrinsic);      
+        
+        allSignedExtrinsics.push(signedExtrinsic);
+        console.log('All signed extrinsics:', allSignedExtrinsics);
+
+        // Increment the signed count
       setSignedCount(prevCount => prevCount + 1);
   
       saveSignedExtrinsic(activeScenarioId, nodeId, signedExtrinsic);
+
+
+      } else {
+        console.error("Current chain is undefined for transaction:", { draftedExtrinsic, formData });
+      }
+
+      
   }
   
 

@@ -1,21 +1,21 @@
 import React, { useState, useContext, useEffect } from 'react';
-import type { BlinkMetadata} from './types';
 import { WalletContext } from '../../../components/Wallet/contexts';
-import { getAssetBalanceForChain } from 'packages/chains-lib/Helpers/AssetHelper';
-import { listChains} from 'packages/chains-lib/ChainsInfo';
+import { getAssetBalanceForChain, listChains, broadcastToChain, ChainKey } from 'chains-lib';
 import { Dropdown, message, Space, Tooltip, Typography } from 'antd';
-
 import { UserOutlined } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
 import CreatorIdentity from './CreatorIdentity';
-import { broadcastToChain } from 'packages/chains-lib/api/broadcastToChain';
 import { createCallParams } from './executeBlink/createCallParams';
-import toast  from 'react-hot-toast';
 import ChainRpcService from '../../../services/ChainRpcService';
-import './Blinks.scss';
 import WalletWidget from '../../../components/WalletWidget/WalletWidget';
 import { Button } from 'antd';
 import { BlinkIcon } from '../../../components/Icons/icons';
+
+import type { BlinkMetadata} from './types';
+import type { MenuProps } from 'antd';
+import type { ChainInfo } from 'chains-lib'; 
+import type { Balance } from './types';
+import toast  from 'react-hot-toast';
+import './Blinks.scss';
 
 const { Link, Text } = Typography;
 
@@ -24,7 +24,6 @@ export interface BlinkViewerProps {
   showConnectWallet?: boolean;
   generatedUrl?: string;
 }
-
 
 const BlinkMiniApp: React.FC<BlinkViewerProps> = ({ action, showConnectWallet=false, generatedUrl }) => {
 
@@ -35,10 +34,13 @@ console.log('BlinkMiniApp action:', action);
   console.log('BlinkMiniApp walletContext:', walletContext);
   const [isFetchingBalance, setIsFetchingBalance] = useState(false);
   const [chainSymbol, setChainSymbol] = useState('');
-  const [balance, setBalance] = useState(null);
+
+  
+  const [balance, setBalance] = useState<Balance | null>(null);
   const [selectedSenderAddress, setSelectedSenderAddress] = useState(formData?.selectedUserAddress || walletContext.accounts[0]?.address || '');
   const [selectedSenderAddressName, setSelectedSenderAddressName] = useState(formData?.selectedUserAddressName || walletContext.accounts[0]?.name || '');
-  const [chain, setChain] = useState(null);
+  
+  const [chain, setChain] = useState<ChainInfo | null>(null);
 
   // const [selectedCreatorAccount, setSelectedCreatorAccount] = useState(formData?.selectedCreatorAccount || null);
   let selectedCreatorAccount = formData?.selectedCreatorAccount || null;
@@ -63,7 +65,7 @@ console.log('BlinkMiniApp action:', action);
     // we should fetch chainInfo from listChains()
     const chainsArray = Object.values(listChains()); // Convert to array if originally an object
     const chain = chainsArray.find(c => c.name.toLowerCase() === formData?.selectedChain?.toLowerCase());
-    setChain(chain);
+    setChain(chain || null);
 
       }, [formData?.selectedChain]);
  
@@ -73,19 +75,30 @@ console.log('BlinkMiniApp action:', action);
     const chainKey = formData?.selectedChain;
     setIsFetchingBalance(true);
     const chainsArray = Object.values(listChains()); // Convert to array if originally an object
-    const chain = chainsArray.find(c => c.name.toLowerCase() === chainKey.toLowerCase());
+    const chain = chainsArray.find(c => c.name.toLowerCase() === chainKey?.toLowerCase());
     console.log('fetchBalance chain:', chain);
-    setChainSymbol(chain.symbol || '');
-    console.log('fetchBalance chain symbol:', chain.symbol);
+    setChainSymbol(chain?.symbol || '');
+    console.log('fetchBalance chain symbol:', chain?.symbol);
       if (!chain) {
       console.error("No chain information available for:", chainKey);
       return;
     }
     try {
-      const fetchedBalance = await getAssetBalanceForChain(formData?.selectedChain, 0, selectedSenderAddress);
-      setBalance(fetchedBalance);
+      const chainKey = formData?.selectedChain;
+      if (!chainKey) {
+        throw new Error("Selected chain is not defined");
+      }
+      const selectedCreatorAccount = formData?.selectedCreatorAccount;
+      if (!selectedCreatorAccount) {
+        throw new Error("Selected creator account is not defined");
+      }
+      const fetchedBalance = await getAssetBalanceForChain(chainKey as ChainKey, selectedCreatorAccount, 0, signal);
       if (!signal.aborted) {
-        setBalance(fetchedBalance);
+        setBalance({
+          free: fetchedBalance.free.toString(),
+          reserved: fetchedBalance.reserved.toString(),
+          total: fetchedBalance.total?.toString() ?? '0', // Provide a default value if undefined
+        });    
       }
     } catch (error) {
       if (!signal.aborted) {
@@ -317,7 +330,12 @@ useEffect(() => {
             icon={<BlinkIcon className='h-5 w-5' fillColor='white' />}
             onClick={async () => {
               try {
-                await navigator.clipboard.writeText(generatedUrl);
+                if (generatedUrl) {
+                  await navigator.clipboard.writeText(generatedUrl);
+                  toast.success(`Copied ${generatedUrl} to clipboard`);
+                } else {
+                  toast.error('No URL to copy');
+                }
                 toast.success(`Copied ${generatedUrl} to clipboard`);
               } catch (err) {
                 toast.error('Failed to copy');

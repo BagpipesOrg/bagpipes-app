@@ -5,7 +5,7 @@ import xTransferSVG from '/xTransfer.svg';
 import VoteSVG from '/vote.svg';
 
 import { HttpIcon, WebhookIcon } from '../Icons/icons';
-import { listChains } from '../../../../../libs/Chains/ChainsInfo';
+import { listChains } from 'chains-lib';
 
 // Mapping of node types to their respective icons
 const nodeTypeIcons = {

@@ -1,5 +1,6 @@
-import { getApiInstance } from 'chains-lib/api/connect';
+import { getApiInstance } from 'chains-lib';
 import { ApiPromise } from '@polkadot/api';
+import { ChainKey } from 'chains-lib';
 import { u8aToHex, hexToString, u8aToString } from '@polkadot/util';
 import { Metadata } from '@polkadot/types/metadata';
 import { TypeRegistry } from '@polkadot/types/create';
@@ -15,7 +16,7 @@ async function fetchAndDecodeMetadata(api: ApiPromise) {
 
 
 export async function queryMetadata(chainKey: string) {
-    const api = await getApiInstance(chainKey);
+    const api = await getApiInstance(chainKey as ChainKey);
         
     const metadata = await fetchAndDecodeMetadata(api);
     console.log('metadata from queryMetadata:', metadata);

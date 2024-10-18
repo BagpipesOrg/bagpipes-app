@@ -1,6 +1,5 @@
-import { getApiInstance } from 'packages/chains-lib/api/connect';
+import { getApiInstance, broadcastToChain } from 'chains-lib';
 import { signExtrinsicUtil } from '../../../components/Bagpipes/utils/signExtrinsicUtil';
-import { broadcastToChain } from 'packages/chains-lib/api/broadcastToChain';
 import toast from 'react-hot-toast';
 
 export const signAndSendRemark = async (chainName, walletContext, accountAddress, data, options) => {

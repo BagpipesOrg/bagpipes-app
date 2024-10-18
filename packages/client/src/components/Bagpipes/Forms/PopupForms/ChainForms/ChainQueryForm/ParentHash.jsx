@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getApiInstance } from '../../../../../../Chains/api/connect'; // Adjust the path to where your getApiInstance function is defined
+import { getApiInstance } from 'chains-lib'; // Adjust the path to where your getApiInstance function is defined
 
 const ExtrinsicCountTester = ({ chainKey }) => {
   const [extrinsicCount, setExtrinsicCount] = useState('');

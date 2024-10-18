@@ -3,7 +3,7 @@ import useAppStore from '../../../../../../store/useAppStore';
 import { CollapsibleField } from '../../../fields';
 import { ChainQueryIcon } from '../../../../../Icons/icons';
 import { useTippy } from '../../../../../../contexts/tooltips/TippyContext';
-import { listChains } from '../../../../../../Chains/ChainsInfo';
+import { listChains } from 'chains-lib';
 
 import { queryMetadata } from '../QueryMetadata';
 import { parseMetadataRuntimeApis } from '../utils/parseMetadataRuntimeApis';

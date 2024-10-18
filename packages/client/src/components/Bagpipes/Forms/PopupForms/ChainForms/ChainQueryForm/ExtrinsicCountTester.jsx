@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getApiInstance } from '../../../packages/chains-lib/api/connect'; // Adjust the path to where your getApiInstance function is defined
+import { getApiInstance } from 'chains-lib'; 
 
 const ExtrinsicCountTester = ({ chainKey }) => {
   const [extrinsicCount, setExtrinsicCount] = useState('');
@@ -9,8 +9,8 @@ const ExtrinsicCountTester = ({ chainKey }) => {
     try {
       const api = await getApiInstance(chainKey);
       const count = await api.query.system.parentHash();
-      setExtrinsicCount(count.toHuman()); // Convert and display in a human-readable format
-      setError(''); // Clear any previous errors
+      setExtrinsicCount(count.toHuman()); 
+      setError('');
       console.log("Extrinsic Count:", count.toHuman());
     } catch (err) {
       console.error("Error fetching extrinsic count:", err);

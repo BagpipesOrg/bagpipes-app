@@ -4,6 +4,7 @@ export * from "./ChainsInfo";
 export * from "./DraftTx/DraftInk";
 export * from "./DraftTx/DraftSwapTx";
 export * from "./DraftTx/DraftxTransferTx";
+export * from "./DraftTx/Delegate";
 export * from "./Helpers/AssetHelper";
 export * from "./Helpers/FeeHelper";
 export * from "./Helpers/PriceHelper";

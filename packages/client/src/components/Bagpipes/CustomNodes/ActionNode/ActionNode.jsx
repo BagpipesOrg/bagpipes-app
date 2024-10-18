@@ -2,8 +2,8 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { Handle, Position, useNodeId } from 'reactflow';
 import useAppStore from '../../../../store/useAppStore';
-import { getHydraDxSellPrice } from '../packages/chains-lib/Helpers/PriceHelper';
-import { query_contract } from '../packages/chains-lib/DraftTx/DraftInk';
+import { getHydraDxSellPrice } from 'chains-lib';
+import { query_contract } from 'chains-lib';
 import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
 import RemarkSVG from '/remark.svg';

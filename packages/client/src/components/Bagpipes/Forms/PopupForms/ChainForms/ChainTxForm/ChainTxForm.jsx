@@ -1,15 +1,10 @@
 import React, { useState, useEffect, useMemo, useContext, useRef } from 'react';
 import useAppStore from '../../../../../../store/useAppStore';
 import { WalletContext } from '../../../../../Wallet/contexts';
-import { getAssetBalanceForChain } from '../../../packages/chains-lib/Helpers/AssetHelper';
+import { getAssetBalanceForChain, broadcastToChain, decodeCallData, listChains } from 'chains-lib';
 import BalanceTippy from './BalanceTippy';
-
-import { broadcastToChain } from '../../../packages/chains-lib/api/broadcastToChain';
-import { decodeCallData } from '../../../packages/chains-lib/api/codecForCallData';
-
 import toast  from 'react-hot-toast';
 import { ChainToastContent, ActionToastContent, CustomToastContext } from '../../../../../toasts/CustomToastContext'
-
 import { processScenarioData, validateDiagramData, processAndSanitizeFormData, getUpstreamNodeIds } from '../../../../utils/scenarioUtils';
 import { constructCallData, formatCallData } from '../../../../utils/callDataUtils';
 import { generatePathKey } from '../../../fields/utils';
@@ -20,7 +15,6 @@ import { ChainQueryIcon } from '../../../../../Icons/icons';
 import { useTippy } from '../../../../../../contexts/tooltips/TippyContext';
 import { usePanelTippy } from '../../../../../../contexts/tooltips/TippyContext';
 import useTooltipClick from '../../../../../../contexts/tooltips/tooltipUtils/useTooltipClick';
-import { listChains} from '../../../packages/chains-lib/ChainsInfo';
 import { queryMetadata } from '../QueryMetadata';
 import { parseMetadataPallets, resolveFieldType, resolveTypeName } from '../parseMetadata'
 import { parseLookupTypes } from '../parseMetadata/ParseMetadataTypes';
@@ -715,7 +709,7 @@ const handleMethodFieldChange = (updatedParams) => {
       return;
     }
     try {
-      const fetchedBalance = await getAssetBalanceForChain(formData.selectedChain, 0, formData.selectedAddress);
+      const fetchedBalance = await getAssetBalanceForChain(formData.selectedChain, formData.selectedAddress, 0, signal);
       setBalance(fetchedBalance);
       if (!signal.aborted) {
         setBalance(fetchedBalance);

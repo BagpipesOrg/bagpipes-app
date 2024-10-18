@@ -7,16 +7,16 @@ import {
   hydraDxToParachain,
   dotToHydraDx,
   assethub2interlay,
-} from "../../../libs/Chains/DraftTx/DraftxTransferTx";
+} from 'chains-lib';
 import * as assert from "assert";
 import {
   checkAssetHubBalance,
   assetHubNativeBalance,
   checkHydraDxAssetBalance,
   checkRelayRawNativeBalance,
-} from "../../../libs/Chains/Helpers/AssetHelper";
+} from 'chains-lib';
 import { Keyring } from "@polkadot/keyring";
-import { inAndOutChannels } from "../../../libs/Chains/Helpers/XcmHelper";
+import { inAndOutChannels } from 'chains-lib';
 
 async function test_interlay() {
   console.log(`testing interlay`);
