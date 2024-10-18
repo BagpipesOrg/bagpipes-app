@@ -15,12 +15,12 @@
     "src"
   ],
   "peerDependencies": {
-    "@polkadot/api": "^6.0.0",
-    "@polkadot/wasm-crypto": "^6.0.0",
-    "@polkadot/wasm-crypto-init": "^6.0.0",
-    "@polkadot/x-randomvalues": "^6.0.0",
-    "@polkadot/x-textdecoder": "^6.0.0",
-    "@polkadot/x-textencoder": "^6.0.0",
+   
+    "@polkadot/wasm-crypto": "^12.2.1",
+    "@polkadot/wasm-crypto-init": "^12.2.1",
+    "@polkadot/x-randomvalues": "^12.2.1",
+    "@polkadot/x-textdecoder": "^12.2.1",
+    "@polkadot/x-textencoder":"^12.2.1",
     "@substrate/connect": "^1.0.0",
     "react": "^17.0.0 || ^18.0.0",
     "react-dom": "^17.0.0 || ^18.0.0",
@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@rollup/plugin-wasm": "^6.2.2",
-    "polkadot-api": "^1.5.1",
+   
     "rollup": "^2.0.0",
     "rollup-plugin-dts": "^6.1.1",
     "rollup-plugin-node-polyfills": "^0.2.1",
