@@ -15,7 +15,7 @@ export * from "./api/broadcastToChain";
 export * from "./api/codecForCallData";
 export * from "./api/connect";
 export * from "./api/getNonce";
-export * from "./api/light-client/SmoldotWorker";
+export * from "./light-client/SmoldotWorker";
 export * from "./api/metadata";
 // export * from "./lite-client/WellKnown";
 export * from "./utils/utils";
