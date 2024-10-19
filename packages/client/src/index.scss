@@ -1,7 +1,8 @@
-@import "variables";
+@use "sass:color";
+@use "variables";
 body {
   margin: 0;
-  font-family: $primary-font !important;
+  font-family: variables.$primary-font !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #020412;
@@ -34,11 +35,11 @@ code {
   transition: background-color 0.3s;
   cursor: pointer;
   // min-width: 130px;
-    background-color: $lighter-primary-color;
+    background-color: variables.$lighter-primary-color;
   
   
   &:hover {
-    background-color: darken(#007bff, 10%);
+    background-color: color.adjust(#007bff, $lightness: -10%);
     color: white !important;
   }
   }
@@ -132,7 +133,7 @@ code {
 }
 
 .font-prim  {
-  font-family: $primary-font;
+  font-family: variables.$primary-font;
 }
 
 .default_connected {
@@ -157,7 +158,7 @@ code {
 }
 
 .lab-buttons {
-  background-color: $primary-color;
+  background-color: variables.$primary-color;
   color: white;
   border: none;
   border-radius: 5px;
