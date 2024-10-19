@@ -1,6 +1,6 @@
 {
   "version": 0,
-  "descriptorPath": ".papi/descriptors",
+  "descriptorPath": "../../../.papi/descriptors",
   "entries": {
     "dot": {
       "chain": "polkadot",
