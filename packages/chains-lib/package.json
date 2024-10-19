@@ -38,6 +38,8 @@
     "typescript": "^4.0.0"
   },
   "peerDependencies": {
+    "@polkadot-api/descriptors": "file:../../../.papi/descriptors",
+
     "@polkadot/wasm-crypto": "^7.3.2",
     "@polkadot/wasm-crypto-init": "^7.3.2",
     "@polkadot/x-randomvalues": "^13.1.1",
