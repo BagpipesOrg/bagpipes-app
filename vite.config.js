@@ -18,7 +18,7 @@ export default defineConfig({
   ],
 optimizeDeps: {
   // include: ['wasm-crypto'],
-  include: ['chains-lib'],
+  include: ['chains-lib', '@polkadot-api/descriptors'],
 
   esbuildOptions: {
       // Node.js global to browser globalThis
@@ -61,6 +61,8 @@ optimizeDeps: {
   resolve: {
     alias: {
       'chains-lib': path.resolve(__dirname, 'packages/chains-lib/dist/esm'),
+      '@polkadot-api/descriptors': path.resolve(__dirname, '.papi/descriptors/dist'),
+
     },
   },
   build: {
