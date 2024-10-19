@@ -1,4 +1,4 @@
-@import "../../variables";
+@use "../../variables";
 
 
 .react-flow__renderer {
@@ -13,7 +13,7 @@
     color: var(--node-color) !important;
     color: #333;
     border-radius: 12px !important;
-    font-family: $primary-font, sans-serif;
+    font-family: variables.$primary-font, sans-serif;
     font-size: x-small;
 
     width:fit-content !important;
@@ -28,7 +28,7 @@
     border-color:var(--border-color);
     color: var(--node-color) !important;
     border-radius: 12px !important;
-    font-family: $primary-font, sans-serif;
+    font-family: variables.$primary-font, sans-serif;
     font-size: x-small;
     width:fit-content !important;
     height:fit-content !important;
@@ -42,7 +42,7 @@
     background-color: var(--node-bg);
     color: var(--node-color) !important;
     box-shadow: 10px 20px 10px 10px var(--box-shadow-color) !important;
-    font-family: $primary-font, sans-serif;
+    font-family: variables.$primary-font, sans-serif;
     /* border: 3px solid black !important; */
     outline: 15px solid transparent; /* Transparent outline by default */
     transition: outline 0.5s ease, box-shadow 0.3s ease; /* Adjust the duration (0.3s) and timing function (ease) as needed */
@@ -263,7 +263,7 @@ background-color: white !important;
   }
 
   .primary-font {
-    font: $primary-font, sans-serif;
+    font: variables.$primary-font, sans-serif;
   }
 
   .text-xxs {

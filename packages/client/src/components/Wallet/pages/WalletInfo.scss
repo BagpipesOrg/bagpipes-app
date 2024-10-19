@@ -1,4 +1,4 @@
-@import '../../../variables.scss';
+@use '../../../variables.scss';
 
 .wallet-info-page {
   padding: 50px 8px;
@@ -38,13 +38,13 @@
 .builder-btn {
   display: inline-block;
   padding: 8px 16px;
-  background-color: $lighter-primary-color;
+  background-color: variables.$lighter-primary-color;
   color: white;
   text-decoration: none;
   border-radius: 7px;
 
   &:hover {
-    background-color: $primary-color;
+    background-color: variables.$primary-color;
     color: white;
   }
 

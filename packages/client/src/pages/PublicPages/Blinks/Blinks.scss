@@ -1,4 +1,5 @@
-@import '../../../variables.scss';
+@use '../../../variables.scss';
+@use "sass:color";
 
 .blinkTitleInfo {
   display: flex;
@@ -228,7 +229,7 @@ label {
     //   cursor: pointer;
 
     //   &:hover {
-    //     background: darken(#007bff, 10%);
+    //     background: color.scale(#007bff, $lightness: -10%);
     //   }
     // }
 
@@ -298,7 +299,7 @@ label {
     //   cursor: pointer;
 
     //   &:hover {
-    //     background: darken(#28a745, 10%);
+    //     background: color.scale(#28a745, $lightness: -10%);
     //   }
     // }
 
@@ -543,7 +544,7 @@ label {
       cursor: pointer;
 
       &:hover {
-          background: darken(#007bff, 10%);
+          background: color.scale(#007bff, $lightness: -10%);
       }
   }
 
@@ -641,7 +642,7 @@ padding: 0px !important;
 
 
       &:hover {
-        background: darken(#222222, 10%); // Darken on hover
+        background: color.scale(#222222, $lightness: -10%); // color.scale on hover
     }
 
   }

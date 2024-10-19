@@ -1,5 +1,7 @@
-@import "../../variables";
-  
+@use "../../variables";
+@use "sass:color";
+
+
   .lab-container {
      padding: 20px;
      flex-grow: 1; /* Takes up the available space */
@@ -16,7 +18,7 @@
   }
   
   .create-scenario-button {
-    background-color: $primary-color;
+    background-color: variables.$primary-color;
     color: white;
     border: none;
     padding: 10px;
@@ -115,7 +117,7 @@
   }
 
   .close-button-right {
-    background-color: $primary-color;
+    background-color: variables.$primary-color;
     color: white;
     border: none;
     border-radius: 5px;
@@ -123,7 +125,7 @@
     cursor: pointer;
    
   &:hover {
-    background-color: darken($primary-color, 10%);
+    background-color: color.scale(variables.$primary-color, $lightness: -10%);
   }
 }
   .scenario-content {

@@ -1,4 +1,4 @@
-@import '../../variables.scss';
+@use '../../variables.scss';
 
 
 .widget-container {
@@ -43,7 +43,7 @@
   box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.194);
 
   &:hover {
-    background-color: $primary-color;
+    background-color: variables.$primary-color;
     color: white;
   }
 

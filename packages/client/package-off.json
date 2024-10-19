@@ -1,5 +1,5 @@
 {
-  "name": "chains-lib",
+  "name": "client",
   "version": "0.4.3",
   "description": "Shared utilities and helpers for blockchain interactions for Bagpipes",
   "main": "dist/cjs/index.js",

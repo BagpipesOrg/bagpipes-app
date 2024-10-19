@@ -1,4 +1,4 @@
-@import "../../../../variables";
+@use "../../../../variables";
 
 .section {
     border-radius: 8px;
@@ -59,22 +59,22 @@
 }
 
 .unbounded-black {
-    font-family:  $unbounded-font !important;
+    font-family:  variables.$unbounded-font !important;
     font-weight: 700;
 }
 
 .unbounded {
-    font-family:  $unbounded-font, sans-serif;
+    font-family:  variables.$unbounded-font, sans-serif;
     font-weight: 400;
 }
 
 .unbounded-medium {
-    font-family:  $unbounded-font;
+    font-family:  variables.$unbounded-font;
     font-weight: 500;
 }
 
 .unbounded-bold {
-    font-family: $unbounded-font, sans-serif;
+    font-family: variables.$unbounded-font, sans-serif;
     font-weight: 600;
 }
 

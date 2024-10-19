@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 .viewerBuilderWrapper {
     display: flex;
     justify-content: center;
@@ -221,7 +223,7 @@
         cursor: pointer;
   
         &:hover {
-            background: darken(#007bff, 10%);
+            background: color.scale(#007bff, $lightness: -10%);
         }
     }
   

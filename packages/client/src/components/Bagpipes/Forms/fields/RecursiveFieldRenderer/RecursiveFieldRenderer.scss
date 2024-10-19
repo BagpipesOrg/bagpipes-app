@@ -1,4 +1,4 @@
-@import '../../../../../variables.scss';
+@use '../../../../../variables.scss';
 
 .sequence-container, .composite-container, .array-container, .variant-container, .input-container {
     display: flex;

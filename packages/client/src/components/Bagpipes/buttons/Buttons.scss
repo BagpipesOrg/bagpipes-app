@@ -1,6 +1,7 @@
-@import '../../../variables.scss';
+@use '../../../variables.scss';
+@use "sass:color";
 
-
+$color: #eef2ff;
 .top-bar-buttons {
   display: flex;
   align-items: center; /* Vertically center the items */
@@ -21,7 +22,7 @@
 
 
   &:hover {
-    background-color: darken(#eef2ff, 10%);
+    background-color: color.scale($color, $lightness: -10%);
     color: white !important;
     // border: 3px solid #007bff;
   }
@@ -31,7 +32,7 @@
     background-color: rgb(0, 197, 0);
 
     &:hover {
-      background-color: darken(#eef2ff, 10%);
+      background-color: color.scale(#eef2ff, $lightness: -10%);
       color: white !important;
       // border: 3px solid #007bff;
     }
@@ -41,7 +42,7 @@
     background-color: rgb(218, 0, 0);
 
     &:hover {
-      background-color: darken(#eef2ff, 10%);
+      background-color: color.scale(#eef2ff, $lightness: -10%);
       color: white !important;
       // border: 3px solid #007bff;
     }
@@ -67,7 +68,7 @@
   0%, 100% { 
     transform: translateX(0) rotate(0); 
   }
-  10%, 30%, 50%, 70%, 90% { 
+   10%, 30%, 50%, 70%, 90% { 
     transform: translateX(-5px) rotate(-3deg); 
   }
   20%, 40%, 60%, 80% { 

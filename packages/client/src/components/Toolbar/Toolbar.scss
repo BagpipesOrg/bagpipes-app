@@ -1,4 +1,4 @@
-@import '../../variables.scss';
+@use '../../variables.scss';
 
 .toolbar-node {
     display: flex;
@@ -8,7 +8,7 @@
     top: 15px; // 20px margin from the bottom
     left: 50%;
     transform: translateX(-50%);
-    background-color: $primary-color; // Theme-based background
+    background-color: variables.$primary-color; // Theme-based background
     padding: 10px 20px;
     border-radius: 16px; // Rounded edges
     box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.282); // Subtle shadow for depth
