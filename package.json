@@ -1,5 +1,5 @@
 {
-  "name": "@bagpipes/xcmsend-ui",
+  "name": "@bagpipes/sdk",
   "author": "Ramsey Ajram (Decentration) <ramsey@decentration.org>",
   "maintainers": [
     "Ramsey Ajram <ramsey@decentration.org>",
@@ -17,8 +17,12 @@
     "build:tailwind": "npx tailwindcss -c ./tailwind.config.js -i ./packages/client/src/index.css -o dist/output.css",
     "dev": "npm run build:tailwind && vite --force",
     "build": "yarn workspaces run build && npm run papi:generate && tsc && npm run build:tailwind && vite build",
+
     "build-workspaces": "yarn workspaces run build",
     "build:chains-lib": "yarn workspace chains-lib build",
+    "build:client": "yarn workspace client build",
+    "build:wallet": "yarn workspace wallet build",
+
     "test": "npx tsx src/run_tests.ts",
     "format": "npx prettier --write 'src/*/*/*.ts' && npx prettier --write 'src/*.ts'",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
@@ -38,7 +42,7 @@
     "@galacticcouncil/sdk": "^3.1.1",
     "@metamask/providers": "^11.1.1",
     "@metamask/types": "^1.1.0",
-    "@polkadot-api/descriptors": "file:./.papi/descriptors",
+    "@polkadot-api/descriptors": "file:.papi/descriptors",
     "@polkadot/api": "^12.2.1",
     "@polkadot/api-augment": "^12.2.1",
     "@polkadot/api-base": "^12.4.2",
@@ -63,7 +67,6 @@
     "@polkadot/util": "^12.6.2",
     "@polkadot/util-crypto": "^12.6.2",
     "@polkadot/wasm-crypto": "^7.3.2",
-    "@sub-wallet/wallet-connect": "./packages/client/src/components/Wallet/connect-wallet",
     "@subwallet/wallet-connect": "^0.2.3",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.0.0",
@@ -75,6 +78,7 @@
     "antd": "^4.18.6",
     "axios": "^1.4.0",
     "chains-lib": "file:packages/chains-lib",
+    "client": "file:packages/client",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "draft-js": "^0.11.7",
@@ -107,6 +111,7 @@
     "util": "^0.12.5",
     "uuid": "^9.0.0",
     "validator": "^13.12.0",
+    "wallet": "file:packages/wallet",
     "web-vitals": "^2.1.0",
     "web3": "^1.7.3",
     "zukeeper": "^1.0.2",

@@ -18,8 +18,7 @@ export default defineConfig({
   ],
 optimizeDeps: {
   // include: ['wasm-crypto'],
-  include: ['chains-lib'],
-
+  include: ['chains-lib', 'client', 'wallet'],
   esbuildOptions: {
       // Node.js global to browser globalThis
       define: {
@@ -61,6 +60,8 @@ optimizeDeps: {
   resolve: {
     alias: {
       'chains-lib': path.resolve(__dirname, 'packages/chains-lib/dist/esm'),
+      'client': path.resolve(__dirname, 'packages/client/dist/esm'),
+      'wallet': path.resolve(__dirname, 'packages/wallet/dist/esm'),
       
     },
   },

@@ -8,7 +8,7 @@ import { generateUrl }  from './generateBlink';
 import { fetchBlinkData } from './helpers';
 
 import { BlinkIcon } from '../../../components/Icons/icons'; 
-import WalletWidget from '../../../components/WalletWidget/WalletWidget';
+import WalletWidget from 'wallet/src/WalletWidget/WalletWidget';
 
 import type { Action, NewActionForm} from './types';
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useContext, useRef } from 'react';
 import useAppStore from '../../../../../store/useAppStore';
-import { WalletContext } from '../../../../Wallet/contexts';
+import { WalletContext } from '../../wallet/src/contexts';
 import { getAssetBalanceForChain } from 'chains-lib';
 import BalanceTippy from './BalanceTippy';
 

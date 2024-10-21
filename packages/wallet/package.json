@@ -1,6 +1,6 @@
 {
   "name": "wallet",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "An MVP wallet that used the Sub Wallet template as a placeholder",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",

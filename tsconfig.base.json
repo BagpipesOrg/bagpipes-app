@@ -16,40 +16,12 @@
     "forceConsistentCasingInFileNames": true,
     "paths": {
       "@polkadot-api/descriptors": [".papi/descriptors/dist/index"],
-      "chains-lib/*": ["packages/chains-lib/src/*"]
-
+      "chains-lib/*": ["packages/chains-lib/src/*"],
+      "client/*": ["packages/client/src/*"],
+      "wallet/*": ["packages/wallet/src/*"]
     }
   },
   "include": [],
   "exclude": ["node_modules", "dist"]
 }
-
-// {
-//   "compilerOptions": {
-//     "compilerOptions": {
-//       "jsx": "react-jsx",
-//       "baseUrl": "./",
-//       "esModuleInterop": true,
-//       "target": "ES2020",
-//       "skipLibCheck": true,
-//       "resolveJsonModule": true,
-//       "allowSyntheticDefaultImports": true,
-//       "moduleResolution": "node",
-//       "allowImportingTsExtensions": true,
-//       "isolatedModules": true,
-//       "moduleDetection": "force",
-//       "useDefineForClassFields": true,
-//       "module": "ESNext",
-//       "strict": true,
-//       "forceConsistentCasingInFileNames": true,
-//       "paths": {
-//         "@polkadot-api/descriptors": [".papi/descriptors/dist/index"]
-//       }
-//   },
-//   // "include": ["packages/client/src/**/*.ts", "packages/client/src/**/*.tsx", "packages/client/src/**/*.js", "packages/client/src/**/*.json", "packages/client/src/components/Bagpipes/Forms/PopupForms/ActionSelector.jsx", "packages/client/src/pages/Lab/utils/renderNodeDetails.jsx", "packages/client/src/components/Toolbar/nodeDescriptions.jsx", "packages/client/src/contexts/tooltips/tooltipUtils/useTooltipClick.jsx", "packages/client/src/pages/PublicPages/Blinks/utils.jsx"],
-//   "include": [],
-//   "exclude": ["vite.config.js", "node_modules"]
-// }
-
-// // monorepo/tsconfig.base.json
 

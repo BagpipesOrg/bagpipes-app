@@ -14,7 +14,7 @@ import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/light.css';
 
 // import LightClientForm from '../../Forms/PopupForms/LightClientForm/LightClientForm';
-import { WalletContext } from '../../../Wallet/contexts';
+import { WalletContext } from '../wallet/src/contexts';
 import ChainRpcService from '../../../../services/ChainRpcService';
 
 

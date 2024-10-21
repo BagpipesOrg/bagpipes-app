@@ -4,7 +4,7 @@
 import { Button } from 'antd';
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { OpenSelectWallet, WalletContext } from './Wallet/contexts';
+import { OpenSelectWallet, WalletContext } from 'wallet/src/contexts';
 import ThemeContext from '../contexts/ThemeContext';
 import { WalletIcon } from './Icons/icons'
 import ThemeToggleButton from './Theme/ThemeToggleButton'

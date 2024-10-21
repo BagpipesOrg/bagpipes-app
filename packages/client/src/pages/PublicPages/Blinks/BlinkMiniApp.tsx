@@ -1,12 +1,12 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { WalletContext } from '../../../components/Wallet/contexts';
+import { WalletContext } from 'wallet/src/contexts';
 import { getAssetBalanceForChain, listChains, broadcastToChain, ChainKey } from 'chains-lib';
 import { Dropdown, message, Space, Tooltip, Typography } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import CreatorIdentity from './CreatorIdentity';
 import { createCallParams } from './executeBlink/createCallParams';
 import ChainRpcService from '../../../services/ChainRpcService';
-import WalletWidget from '../../../components/WalletWidget/WalletWidget';
+import WalletWidget from 'wallet/src/WalletWidget/WalletWidget';
 import { Button } from 'antd';
 import { BlinkIcon } from '../../../components/Icons/icons';
 

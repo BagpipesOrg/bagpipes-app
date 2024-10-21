@@ -3,7 +3,7 @@ import './Blinks.scss';
 import './BlinkViewer.scss';
 import type { Action } from './types';
 import { BlinkIcon, VerificationIcon } from '../../../components/Icons/icons';
-import { WalletContext } from '../../../components/Wallet/contexts';
+import { WalletContext } from 'wallet/src/contexts';
 import BalanceTippy from '../../../components/Bagpipes/Forms/PopupForms/ChainForms/ChainTxForm/BalanceTippy';
 import { getAssetBalanceForChain } from 'chains-lib';
 import { listChains} from 'chains-lib';

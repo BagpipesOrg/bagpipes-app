@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { WalletContext } from '../../../components/Wallet/contexts';
+import { WalletContext } from 'wallet/src/contexts';
 import { useParams } from 'react-router-dom';
 import { Button, Spin } from 'antd';
 import toast from 'react-hot-toast';
@@ -9,7 +9,7 @@ import { generateUrl }  from './generateBlink';
 import { fetchBlinkData } from './helpers';
 
 import { BlinkIcon } from '../../../components/Icons/icons'; 
-import WalletWidget from '../../../components/WalletWidget/WalletWidget';
+import WalletWidget from 'wallet/src/WalletWidget/WalletWidget';
 
 import type { Action, NewActionForm} from './types';
 

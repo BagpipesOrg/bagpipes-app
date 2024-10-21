@@ -14,7 +14,7 @@
     "moduleResolution": "node",    // Ensure proper module resolution
     "esModuleInterop": true,       // Enable interop with CommonJS modules
     "paths": {
-      "chains-lib/*": ["src/*"]
+      "client/*": ["../client/src/*"]    
     }
   },
   "include": [
