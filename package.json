@@ -5,11 +5,11 @@
     "Ramsey Ajram <ramsey@decentration.org>",
     "Filip Kalebo <filip@rustsyndi.cat>"
   ],
-  "private": true,
+  "private": false,
   "workspaces": [
     "packages/*"
   ],
-  "version": "0.8.2",
+  "version": "0.5.0",
   "license": "Bagpipes License",
   "type": "module",
   "scripts": {
