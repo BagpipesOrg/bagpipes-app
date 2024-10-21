@@ -1,0 +1,30 @@
+{
+  "extends": "../../tsconfig.paths.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "module": "ESNext",
+    "target": "ES2020",
+    "declaration": false,         
+    "sourceMap": true,
+    "rootDir": "src",
+    "noEmit": true,                
+    "allowJs": true,
+    "checkJs": false,
+    "isolatedModules": true,
+    "moduleResolution": "node",  
+    "esModuleInterop": true,      
+    "resolveJsonModule": true,
+    "paths": {
+      "wallet/*": ["src/*"]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.js",
+    "src/**/*.json",
+    "src/**/*.jsx",
+     "src/global.d.ts"
+  ],
+  "exclude": ["node_modules", "dist", "**/*.scss", "**/*.css"]
+}
