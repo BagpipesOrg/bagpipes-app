@@ -15,8 +15,10 @@
     "src"
   ],
   "dependencies": {
+    "@polkadot-api/descriptors": "file:.papi/descriptors",
     "@rollup/plugin-wasm": "^6.2.2",
     "@types/rollup-plugin-peer-deps-external": "^2.2.5",
+    "polkadot-api": "^1.6.2",
     "rollup-plugin-dts": "^6.1.1"
   },
   "devDependencies": {
@@ -38,7 +40,6 @@
     "typescript": "^4.0.0"
   },
   "peerDependencies": {
-    "@polkadot-api/descriptors": "file:../../.papi/descriptors",
     "@polkadot/wasm-crypto": "^7.3.2",
     "@polkadot/wasm-crypto-init": "^7.3.2",
     "@polkadot/x-randomvalues": "^13.1.1",

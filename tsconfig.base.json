@@ -15,7 +15,6 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "paths": {
-      "@polkadot-api/descriptors": [".papi/descriptors/dist/index"],
       "chains-lib/*": ["packages/chains-lib/src/*"],
       "client/*": ["packages/client/src/*"],
       "wallet/*": ["packages/wallet/src/*"]
