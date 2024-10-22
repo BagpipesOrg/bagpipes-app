@@ -132,6 +132,8 @@ module.exports = [
       /^react-hot-toast$/,
       /\.css$/u,
       /\.scss$/u,
+      /\.rollupUtils.ts$/u,
+
     ],
 
 
