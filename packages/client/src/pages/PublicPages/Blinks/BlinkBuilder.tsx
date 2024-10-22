@@ -16,7 +16,7 @@ import type { Action, NewActionForm } from './types';
 import type { Balance, Chain } from './types';
 import toast from 'react-hot-toast';
 import './Blinks.scss';
-
+import 'wallet/wallet.css';
 
 
 

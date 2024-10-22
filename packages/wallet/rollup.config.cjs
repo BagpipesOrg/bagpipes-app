@@ -15,6 +15,7 @@ const { terser } = require('rollup-plugin-terser');
 const ignore = require('rollup-plugin-ignore');
 const { removeScssImports } = require('./rollupUtils.ts');
 const pkg = require('./package.json');
+const tailwindcss = require('tailwindcss');
 
 const commonPlugins = [
   peerDepsExternal(),
@@ -42,7 +43,7 @@ const commonPlugins = [
   }),
   
   postcss({
-    extract: true,
+    extract: 'wallet.css',
     minimize: true,
     sourceMap: true,
     extensions: ['.css', '.scss'],
@@ -57,7 +58,10 @@ const commonPlugins = [
         },
       ],
     ],
-    plugins: [autoprefixer()],
+    plugins: [
+      tailwindcss(),
+      autoprefixer()
+    ],
   }),
   terser(),
   json(),

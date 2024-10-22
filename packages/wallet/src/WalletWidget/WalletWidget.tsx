@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { WalletContext, OpenSelectWallet } from '../contexts';
 import { WalletIcon } from '../components/Icons/icons';
 import '../styles/WalletWidget.scss';
+import '../styles/tailwind.css';
 import { title } from 'process';
 
 interface WalletWidgetProps {

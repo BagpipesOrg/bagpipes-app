@@ -1,4 +1,6 @@
 
+import './styles/tailwind.css';
+
 export * from './contexts';
 export * from './providers/WalletContextProvider';
 export * from './WalletWidget/WalletWidget';
