@@ -13,9 +13,22 @@ const image = require('@rollup/plugin-image');
 const json = require('@rollup/plugin-json');
 const { terser } = require('rollup-plugin-terser');
 const ignore = require('rollup-plugin-ignore');
-const { removeScssImports } = require('./rollupUtils.ts');
 const pkg = require('./package.json');
 const tailwindcss = require('tailwindcss');
+
+const removeScssImports = () => ({
+  name: 'remove-scss-imports',
+  transform(code, id) {
+    if (id.endsWith('.ts') || id.endsWith('.tsx')) {
+      const transformedCode = code.replace(/import\s+.*?['"][^'"]+\.scss['"];?/g, '');
+      return {
+        code: transformedCode,
+        map: null,
+      };
+    }
+    return null;
+  },
+});
 
 const commonPlugins = [
   peerDepsExternal(),
@@ -87,7 +100,7 @@ module.exports = [
       /^@polkadot\//,
       /^@substrate\//,
       /^react-hot-toast$/,
-      /\.rollupUtils.ts$/u,
+      /\.rollupUtils.js$/u,
     ],
   },
   // ES Module Build
@@ -104,7 +117,7 @@ module.exports = [
       /^@polkadot\//,
       /^@substrate\//,
       /^react-hot-toast$/,
-      /\.rollupUtils.ts$/u,
+      /\.rollupUtils.js$/u,
     ],
   },
   // Type Declarations Build
@@ -138,8 +151,7 @@ module.exports = [
       /^react-hot-toast$/,
       /\.css$/u,
       /\.scss$/u,
-      /\.rollupUtils.ts$/u,
-
+      /\.rollupUtils.js$/u,
     ],
 
 
