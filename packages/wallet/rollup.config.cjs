@@ -87,6 +87,7 @@ module.exports = [
       /^@polkadot\//,
       /^@substrate\//,
       /^react-hot-toast$/,
+      /\.rollupUtils.ts$/u,
     ],
   },
   // ES Module Build
@@ -103,6 +104,7 @@ module.exports = [
       /^@polkadot\//,
       /^@substrate\//,
       /^react-hot-toast$/,
+      /\.rollupUtils.ts$/u,
     ],
   },
   // Type Declarations Build
