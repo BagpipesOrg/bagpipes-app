@@ -1,12 +1,8 @@
 // Copyright 2024 Bagpipes license, see LICENSE.md 
-
-
-import { Button } from 'antd';
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { OpenSelectWallet, WalletContext } from 'wallet/src/contexts';
+import { OpenSelectWallet, WalletContext, WalletIcon } from 'wallet';
 import ThemeContext from '../contexts/ThemeContext';
-import { WalletIcon } from './Icons/icons'
 import ThemeToggleButton from './Theme/ThemeToggleButton'
 import'./styles/Header.scss';
 

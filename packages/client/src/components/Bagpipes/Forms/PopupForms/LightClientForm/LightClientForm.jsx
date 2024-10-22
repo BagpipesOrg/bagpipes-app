@@ -1,37 +1,27 @@
 import React, { useState, useEffect, useMemo, useContext, useRef } from 'react';
 import useAppStore from '../../../../../store/useAppStore';
-import { WalletContext } from '../../wallet/src/contexts';
-import { getAssetBalanceForChain } from 'chains-lib';
+import { WalletContext } from 'wallet';
+import { getAssetBalanceForChain, broadcastToChain, decodeCallData, listChains } from 'chains-lib';
 import BalanceTippy from './BalanceTippy';
-
-import { broadcastToChain } from 'chains-lib';
-import { decodeCallData } from 'chains-lib';
-
-import toast  from 'react-hot-toast';
-
 import { processScenarioData, validateDiagramData, processAndSanitizeFormData, getUpstreamNodeIds } from '../../../utils/scenarioUtils';
 import { constructCallData, formatCallData } from '../../../utils/callDataUtils';
 import { generatePathKey } from '../../fields/utils';
 import { getOrderedList } from '../../../hooks/utils/scenarioExecutionUtils';
-
 import { CollapsibleField }  from '../../fields';
 import { ChainQueryIcon } from '../../../../Icons/icons';
 import { useTippy } from '../../../../../contexts/tooltips/TippyContext';
 import { usePanelTippy } from '../../../../../contexts/tooltips/TippyContext';
 import useTooltipClick from '../../../../../contexts/tooltips/tooltipUtils/useTooltipClick';
-import { listChains} from 'chains-lib';
 import ChainRpcService from '../../../../../services/ChainRpcService';
 import CustomInput from '../../fields/CustomInput';
 import FormHeader from '../../FormHeader';
 import FormFooter from '../../FormFooter';
 import RecursiveFieldRenderer from '../../fields/RecursiveFieldRenderer/RecursiveFieldRendererNew';
 import { generatePath } from '../../fields/RecursiveFieldRenderer/utils';
-
-
+import toast  from 'react-hot-toast';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css'; 
 import 'tippy.js/themes/light.css';
-
 import '../ChainForms/ChainForm.scss';
 import '../Popup.scss';
 import '../../../../../index.css';

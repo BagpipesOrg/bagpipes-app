@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Button, Spin } from 'antd';
-import toast from 'react-hot-toast';
 import useBlinkStore from '../../../store/useBlinkStore';
 import BlinkMiniApp from './BlinkMiniApp';
 import { generateUrl }  from './generateBlink';
 import { fetchBlinkData } from './helpers';
-
 import { BlinkIcon } from '../../../components/Icons/icons'; 
-import WalletWidget from 'wallet/src/WalletWidget/WalletWidget';
-
+import { WalletWidget } from 'wallet';
+import { Button, Spin } from 'antd';
+import toast from 'react-hot-toast';
 import type { Action, NewActionForm} from './types';
-
-
 import './Blinks.scss';
 
 const BlinkAppViewer: React.FC = () => {

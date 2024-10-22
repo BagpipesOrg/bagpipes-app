@@ -5,7 +5,7 @@ import { TransactionReview } from './TransactionReviewViewer';
 import { prepareTransactionsForReview } from './transactionUtils';
 import useAppStore from '../../../../store/useAppStore';
 import { getOrderedList } from "../../hooks/utils/scenarioExecutionUtils";
-import { WalletContext } from 'wallet/src/contexts';
+import { WalletContext } from 'wallet';
 import { extrinsicHandler } from './extrinsicHandler';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { useNavigate } from 'react-router-dom';

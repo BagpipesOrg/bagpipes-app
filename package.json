@@ -5,11 +5,11 @@
     "Ramsey Ajram <ramsey@decentration.org>",
     "Filip Kalebo <filip@rustsyndi.cat>"
   ],
-  "private": false,
+ "private": true,  
   "workspaces": [
     "packages/*"
   ],
-  "version": "0.5.0",
+  "version": "0.5.3",
   "license": "Bagpipes License",
   "type": "module",
   "scripts": {
@@ -67,7 +67,6 @@
     "@polkadot/util": "^12.6.2",
     "@polkadot/util-crypto": "^12.6.2",
     "@polkadot/wasm-crypto": "^7.3.2",
-    "@subwallet/wallet-connect": "^0.2.3",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.0.0",
     "@testing-library/user-event": "^13.2.1",

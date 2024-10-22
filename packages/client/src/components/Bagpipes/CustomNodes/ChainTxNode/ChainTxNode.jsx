@@ -14,7 +14,7 @@ import 'tippy.js/themes/light.css';
 
 import ChainTxForm from '../../Forms/PopupForms/ChainForms/ChainTxForm/ChainTxForm';
 import TransactionSignForm from '../../Forms/PopupForms/ChainForms/ChainTxForm/TransactionSignForm';
-import { WalletContext } from '../wallet/src/contexts';
+import { WalletContext } from 'wallet';
 import ChainRpcService from '../../../../services/ChainRpcService';
 
 

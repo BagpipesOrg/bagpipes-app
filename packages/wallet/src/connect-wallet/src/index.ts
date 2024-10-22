@@ -74,8 +74,8 @@ export const PREDEFINED_EVM_WALLETS: EvmWalletInfo[] = [
 
 
 // Export utility functions
-export * from './detectOther';
-export * from './detectPackage';
+
+
 
 // Export predefined wallets and classes from dotsama
 export * from './dotsama/BaseDotSamaWallet';
@@ -89,4 +89,3 @@ export * from './evm/predefinedWallet';
 
 // Export types and package information
 export * from './types';
-export * from './packageInfo';

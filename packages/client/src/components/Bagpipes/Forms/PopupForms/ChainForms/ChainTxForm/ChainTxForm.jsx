@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useContext, useRef } from 'react';
 import useAppStore from '../../../../../../store/useAppStore';
-import { WalletContext } from '../../../wallet/src/contexts';
+import { WalletContext } from 'wallet';
 import { getAssetBalanceForChain, broadcastToChain, decodeCallData, listChains } from 'chains-lib';
 import BalanceTippy from './BalanceTippy';
 import toast  from 'react-hot-toast';

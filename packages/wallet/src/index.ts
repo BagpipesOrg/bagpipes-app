@@ -7,7 +7,6 @@ export * from './pages/EvmWalletInfo';
 export * from './pages/WalletInfo';
 export * from './components/Icons/icons';
 
-
 export { default as WalletWidget } from './WalletWidget/WalletWidget';
 export { default as AccountList } from './components/AccountList';
 export { default as SelectWallet } from './components/SelectWallet';
@@ -30,4 +29,3 @@ export { windowReload } from './utils/window';
 
 // Exporting wallet connectors
 export * from './connect-wallet/src';
-export * from './wagmi-connector/src/exports';

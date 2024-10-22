@@ -3,9 +3,9 @@
 
 import React, { useContext, useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { WalletContext } from 'wallet/src/contexts';
+import { WalletContext } from 'wallet';
+import SelectWalletModal from './SelectWalletModal';
 import ThemeContext from '../contexts/ThemeContext';
-import SelectWalletModal from 'wallet/src/components/SelectWalletModal';
 import Header from './Header';
 import ThemeToggleButton from './Theme/ThemeToggleButton';
 import './styles/Layout.scss';

@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { SettingsIcon, ChatIcon, ProjectIcon, SocialIcon, PlaygroundIcon, LabIcon, WalletIcon, BlinkIcon } from '../../Icons/icons';
 import ThemeContext from '../../../contexts/ThemeContext';
-import { OpenSelectWallet, WalletContext } from 'wallet/src/contexts';
+import { OpenSelectWallet, WalletContext } from 'wallet';
 
 
 import './Sidebar.scss';

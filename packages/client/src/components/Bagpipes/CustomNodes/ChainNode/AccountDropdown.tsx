@@ -1,9 +1,8 @@
 import React, { useState, useContext } from 'react';
-import { WalletContext } from 'wallet/src/contexts';
+import { WalletContext } from 'wallet';
 import '../../../../index.css';
 import '../../node.styles.scss';
 import './AccountDropdown.scss';
-import { WalletAccount } from 'wallet/src/connect-wallet/src/types';
 import { listChains } from 'chains-lib';
 import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
 import { isEthereumAddress } from '@polkadot/util-crypto';

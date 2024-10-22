@@ -22,7 +22,7 @@ activated extension will be showed after this code first time.
 
 ```typescript
 // examples/example1.ts
-import { getWallets } from '../wallets';
+import { getWallets } from 'wallets';
 import { Wallet } from '../types';
 
 // Get all supported wallets
@@ -40,7 +40,7 @@ You can use wallet methods after enable extension. Example get account list:
 
 ```typescript
 // examples/example2.ts
-import { getWalletBySource } from '../wallets';
+import { getWalletBySource } from 'wallets';
 import { BaseDotsamaWallet } from '../base-dotsama-wallet';
 
 const wallet = getWalletBySource('subwallet-js') as BaseDotsamaWallet;

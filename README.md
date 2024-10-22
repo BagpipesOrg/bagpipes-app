@@ -35,13 +35,6 @@ npm run build -f
 npm run dev
 ```
 
-### 🔧 Build Tailwind
-
-To build TailwindCSS, running the following:
-
-```shell
-npx tailwindcss -c ./tailwind.config.js -i ./src/index.css -o dist/output.css
-```
 
 ## ⚖️ License
 

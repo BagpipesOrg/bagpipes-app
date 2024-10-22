@@ -1,6 +1,5 @@
 
 
-
 export function adjustBalance(balance: number, tokenDecimals: number): string {
   if (typeof balance === "undefined" || balance === null) {
     return "0"; // or whatever default value you wish to return for undefined balances
@@ -67,3 +66,5 @@ export function toUnit(
     parseFloat((bi - div * mod).toString()) / parseFloat(mod.toString())
   );
 }
+
+
