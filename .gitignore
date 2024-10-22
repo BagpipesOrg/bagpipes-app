@@ -27,3 +27,5 @@ build
 .vercel
 .env.local
 .env
+
+.papi
