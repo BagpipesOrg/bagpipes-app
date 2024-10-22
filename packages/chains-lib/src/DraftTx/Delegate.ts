@@ -1,7 +1,7 @@
 import { getApiInstance } from "../api/connect";
 import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
-import { ChainKey } from "../api/metadata";
+import { ChainKey } from "../ChainsInfo/metadata";
 
 export type Transaction = SubmittableExtrinsic<'promise'>;
 

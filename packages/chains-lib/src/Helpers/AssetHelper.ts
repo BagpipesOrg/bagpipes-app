@@ -1,10 +1,10 @@
 import { getApiInstance } from "../api/connect";
-import { listChains } from "../ChainsInfo";
+import { listChains } from "../ChainsInfo/ChainsInfo";
 import { ApiPromise } from "@polkadot/api";
 import { list_onchainassets, listInterlayAssets } from "../Assets/listAssetsForChain";
 import {  formatToFourDecimals, toUnit } from "../utils/utils";
 import { getRawAddress } from "../utils/getRawAddress";
-import { ChainKey } from "../api/metadata";
+import { ChainKey } from "../ChainsInfo/metadata";
 
 interface BaseBalance {
   free: number;

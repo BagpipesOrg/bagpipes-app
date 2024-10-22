@@ -1,5 +1,5 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
-import { CHAIN_METADATA, ChainMetadata, ChainKey } from "./metadata";
+import { CHAIN_METADATA, ChainMetadata, ChainKey } from "../ChainsInfo/metadata";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
 import toast from "react-hot-toast";
 

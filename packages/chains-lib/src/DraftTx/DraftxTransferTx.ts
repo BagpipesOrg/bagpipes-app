@@ -3,7 +3,7 @@ import {  decodeAddress } from "@polkadot/util-crypto";
 import { getApiInstance } from "../api/connect";
 import { get_hydradx_asset_symbol_decimals } from "../Helpers/AssetHelper";
 import { substrate_address_to_evm } from "../Helpers/txHelper";
-import { ChainKey } from "../api/metadata";
+import { ChainKey } from "../ChainsInfo/metadata";
 import toast, { Toaster } from "react-hot-toast";
 import { getRawAddress } from "../utils/getRawAddress";
 

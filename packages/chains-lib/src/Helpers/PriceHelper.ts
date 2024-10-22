@@ -8,8 +8,8 @@ import {
 } from "@galacticcouncil/sdk";
 
 import { getApiInstance } from "../api/connect";
-import { ChainKey } from "../api/metadata";
-import endpoints from "../api/WsEndpoints";
+import { ChainKey } from "../ChainsInfo/metadata";
+import endpoints from "../ChainsInfo/WsEndpoints";
 
 ///let tradeRouter: { getAllAssets: () => any; getBestSpotPrice: (tokenIn: string, tokenOut: string) => any; getBestSell: (tokenIn: string, tokenOut: string, amountIn:  number | string) => any; };
 

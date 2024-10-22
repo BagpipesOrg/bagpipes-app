@@ -1,7 +1,7 @@
 import { getApiInstance } from "../api/connect";
-import { ChainInfo, listChains, listRelayChains } from "../ChainsInfo";
+import { ChainInfo, listChains, listRelayChains } from "../ChainsInfo/ChainsInfo";
 import { ApiPromise } from "@polkadot/api";
-import { ChainKey } from "../api/metadata";
+import { ChainKey } from "../ChainsInfo/metadata";
 
 /*
 returns a list of paraid's

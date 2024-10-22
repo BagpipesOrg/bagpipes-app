@@ -10,6 +10,7 @@ const endpoints = {
   polkadot: {
     default: "wss://polkadot.api.onfinality.io/public-ws",
     assetHub: "wss://statemint.api.onfinality.io/public-ws",
+    bifrost: "wss://bifrost-polkadot-rpc.dwellir.com",
     hydraDx: "wss://hydradx-rpc.dwellir.com",
     polkadex: "wss://polkadex-parachain.public.curie.radiumblock.co/ws",
     interlay: "wss://interlay-rpc.dwellir.com",

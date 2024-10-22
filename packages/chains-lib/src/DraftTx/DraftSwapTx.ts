@@ -1,6 +1,6 @@
 import { getApiInstance } from "../api/connect";
-import { ChainKey } from "../api/metadata";
-import endpoints from "../api/WsEndpoints";
+import { ChainKey } from "../ChainsInfo/metadata";
+import endpoints from "../ChainsInfo/WsEndpoints";
 import { getAssetDecimals } from "../Helpers/AssetHelper";
 import {
   getHydraDxSpotPrice,

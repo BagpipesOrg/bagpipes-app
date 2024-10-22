@@ -1,6 +1,7 @@
 export enum ChainKey {
     AssetHub = "assetHub",
     AssetHubKusama = "assetHub_kusama",
+    Bifrost = "bifrost",
     HydraDX = "hydraDx",
     Interlay = "interlay",
     Kusama = "kusama",
@@ -37,6 +38,20 @@ export enum ChainKey {
       ],
       queryAssetPaths: ["assets.metadata"],
       queryBalancePaths: ["system.account", "assets.account"],
+      nativeAccount: true,
+    },
+    [ChainKey.Bifrost]: {
+      chain: "Bifrost",
+      endpoints: [
+        "wss://bifrost-polkadot-rpc.dwellir.com",
+        "wss://bifrost-polkadot.ibp.network",
+        "wss://bifrost-polkadot.dotters.network",
+        "wss://hk.p.bifrost-rpc.liebi.com",
+        "wss://eu.bifrost-polkadot-rpc.liebi.com/ws",
+        "wss://bifrost.public.curie.radiumblock.co/ws"
+      ],
+      queryAssetPaths: ["assetRegistry.assetMetadatas"],
+      queryBalancePaths: ["system.account", "balances.account"],
       nativeAccount: true,
     },
     [ChainKey.HydraDX]: {

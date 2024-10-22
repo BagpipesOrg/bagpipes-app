@@ -1,8 +1,8 @@
 // todo reload asset at build time
-import endpoints from "../api/WsEndpoints";
-import { ChainInfo, listChains } from "../ChainsInfo";
+import endpoints from "../ChainsInfo/WsEndpoints";
+import { ChainInfo, listChains } from "../ChainsInfo/ChainsInfo";
 import { getApiInstance } from "../api/connect";
-import { CHAIN_METADATA, ChainKey } from "../api/metadata";
+import { CHAIN_METADATA, ChainKey } from "../ChainsInfo/metadata";
 import { CHAIN_ASSETS } from "./chainAssets";
 
 const HydraDx = listChains();

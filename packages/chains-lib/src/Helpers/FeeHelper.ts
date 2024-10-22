@@ -2,7 +2,7 @@ import { ApiPromise } from "@polkadot/api";
 import { IExtrinsic } from "@polkadot/types/types";
 import { u64 } from "@polkadot/types/primitive";
 import { getApiInstance } from "../api/connect";
-import { ChainKey } from "../api/metadata";
+import { ChainKey } from "../ChainsInfo/metadata";
 
 async function getApi(chain: string): Promise<ApiPromise> {
   console.log(`getApi chain:`, chain);

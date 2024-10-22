@@ -3,10 +3,10 @@
 import { ApiPromise } from "@polkadot/api";
 import { genericRawNativeBalance } from "./AssetHelper";
 import { getApiInstance } from "../api/connect";
-import { supported_Polkadot_Chains } from "../ChainsInfo";
-import endpoints from "../api/WsEndpoints";
+import { supported_Polkadot_Chains } from "../ChainsInfo/ChainsInfo";
+import endpoints from "../ChainsInfo/WsEndpoints";
 import { addressToEvm } from "@polkadot/util-crypto";
-import { ChainKey } from "../api/metadata";
+import { ChainKey } from "../ChainsInfo/metadata";
 
 const u8aToHex = (bytes: number[] | Uint8Array): string => {
   const arr = bytes instanceof Uint8Array ? Array.from(bytes) : bytes;

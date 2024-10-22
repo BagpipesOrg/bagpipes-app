@@ -1,5 +1,5 @@
-import endpoints from './api/WsEndpoints';
-import { CHAIN_METADATA } from './api/metadata';
+import endpoints from './WsEndpoints';
+import { CHAIN_METADATA } from './metadata';
 
 interface ChainInfo {
 	name: string,
@@ -28,6 +28,22 @@ export function listChains() {
     const chainList: Record<number, ChainInfo> = {};
 
 
+    const Bifrost: ChainInfo = {
+      name: 'bifrost',
+      display: 'Bifrost',
+      paraid: 2030,
+      prefix: 6, 
+      token_decimals: 12,
+      logo: '/chains/assethub.svg',
+      relayParent: 'kusama',
+      parachain: true,
+      symbol: 'KSM'
+    };
+    chainList[2030] = Bifrost;
+
+
+
+
     const KusamaAssethub: ChainInfo = {
       name: 'assetHub_kusama',
       display: 'Assethub (Kusama)',
@@ -39,22 +55,9 @@ export function listChains() {
       parachain: true,
       symbol: 'KSM'
     };
+    chainList[21000] = KusamaAssethub;//fake paraid
 
-  chainList[21000] = KusamaAssethub;//fake paraid
 
-  const Moonriver: ChainInfo = {
-    name: 'moonriver',
-    display: 'Moonriver (Kusama)',
-    paraid: 2023,
-    prefix: 42, 
-    token_decimals: 18, 
-    logo: '/chains/moonriver.svg',
-    parachain: true, 
-    relayParent: "kusama",
-    relay: false,
-    symbol: 'MOVR'
-  };
-  chainList[2023] = Moonriver;
 
   const MangataX: ChainInfo = {
     name: "mangatax",
@@ -82,47 +85,63 @@ export function listChains() {
     parachain: true,
     symbol: 'TUR'
   };
+
+  const Moonriver: ChainInfo = {
+    name: 'moonriver',
+    display: 'Moonriver (Kusama)',
+    paraid: 2023,
+    prefix: 42, 
+    token_decimals: 18, 
+    logo: '/chains/moonriver.svg',
+    parachain: true, 
+    relayParent: "kusama",
+    relay: false,
+    symbol: 'MOVR'
+  };
+  chainList[2023] = Moonriver;
+
+
   chainList[2114] = Turing;
 
-      const AssetHub: ChainInfo = {
-        name: 'assetHub',
-        display: 'Asset Hub (Polkadot)',
-        paraid: 1000,
-        prefix: 63,
-        token_decimals: 10,
-        logo: '/chains/assethub.svg',
-        relayParent: 'polkadot',
-        parachain: true,
-        symbol: 'DOT'
-      };
-      chainList[1000] = AssetHub;
+  const AssetHub: ChainInfo = {
+    name: 'assetHub',
+    display: 'Asset Hub (Polkadot)',
+    paraid: 1000,
+    prefix: 63,
+    token_decimals: 10,
+    logo: '/chains/assethub.svg',
+    relayParent: 'polkadot',
+    parachain: true,
+    symbol: 'DOT'
+  };
+  chainList[1000] = AssetHub;
 
-      const HydraDX: ChainInfo = {
-        name: 'hydraDx',
-        display: 'Hydration',
-        paraid: 2034,
-        prefix: 0,
-        token_decimals: 12,
-        logo: '/chains/hydradx.svg',
-        relayParent: 'polkadot',
-        parachain: true,
-        symbol: 'HDX'
-      };
-      chainList[2034] = HydraDX;
+  const HydraDX: ChainInfo = {
+    name: 'hydraDx',
+    display: 'Hydration',
+    paraid: 2034,
+    prefix: 0,
+    token_decimals: 12,
+    logo: '/chains/hydradx.svg',
+    relayParent: 'polkadot',
+    parachain: true,
+    symbol: 'HDX'
+  };
+  chainList[2034] = HydraDX;
 
-      const Ethereum: ChainInfo = {
-        name: 'ethereum',
-        display: 'Ethereum',
-        paraid: 0,
-        prefix: 1,
-        token_decimals: 12,
-        logo: '/chains/ethereum.svg',
-        relayParent: 'Ethereum',
-        parachain: true,
-        symbol: 'ETH'
-        
-      };
-      chainList[100000] = Ethereum;
+  const Ethereum: ChainInfo = {
+    name: 'ethereum',
+    display: 'Ethereum',
+    paraid: 0,
+    prefix: 1,
+    token_decimals: 12,
+    logo: '/chains/ethereum.svg',
+    relayParent: 'Ethereum',
+    parachain: true,
+    symbol: 'ETH'
+    
+  };
+  chainList[100000] = Ethereum;
 
 
 

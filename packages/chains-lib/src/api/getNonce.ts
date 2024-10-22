@@ -1,6 +1,6 @@
 //ts-nocheck
 import { getApiInstance } from "./connect";
-import { ChainKey } from "./metadata";
+import { ChainKey } from "../ChainsInfo/metadata";
 
 const getNonce = (chainEndpoint: string, address: string) => {
   return new Promise<number>(async (resolve, reject) => {

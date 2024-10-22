@@ -2,7 +2,7 @@
 
 import { ApiPromise } from "@polkadot/api";
 import { getApiInstance } from "./connect";
-import { CHAIN_METADATA, ChainKey } from "./metadata";
+import { CHAIN_METADATA, ChainKey } from "../ChainsInfo/metadata";
 import toast from "react-hot-toast";
 import { SubmittableExtrinsic } from "@polkadot/api-base/types";
 
