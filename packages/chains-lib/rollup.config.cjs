@@ -81,7 +81,6 @@ module.exports = [
   ],
   external: [
     '@polkadot-api/descriptors',
-    // ... other external dependencies
   ],
   },
 ];
