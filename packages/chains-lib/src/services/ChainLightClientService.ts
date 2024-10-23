@@ -3,6 +3,7 @@ import { createClient } from "polkadot-api";
 import { getSmProvider } from "polkadot-api/sm-provider";
 import { chainSpec } from "polkadot-api/chains/polkadot";
 import { startFromWorker } from "polkadot-api/smoldot/from-worker";
+// import { initializeSmoldotWorker } from "../light-client/SmoldotWorker";
 // import SmWorker from "polkadot-api/smoldot/worker?worker";
 
 
@@ -22,6 +23,7 @@ class SmoldotService {
         new URL("polkadot-api/smoldot/worker", import.meta.url)
       );      this.smoldotClient = startFromWorker(worker);
       this.chain = await this.smoldotClient.addChain({ chainSpec });
+      console.log('chain spec', chainSpec);
     } catch (error) {
       console.error('Error initializing Smoldot client:', error);
       throw error;
