@@ -16,6 +16,7 @@
     "src"
   ],
   "dependencies": {
+    
     "@polkadot-api/descriptors": "file:../../.papi/descriptors",
     "@rollup/plugin-wasm": "^6.2.2",
     "@types/rollup-plugin-peer-deps-external": "^2.2.5",
@@ -23,12 +24,14 @@
     "rollup-plugin-dts": "^6.1.1"
   },
   "devDependencies": {
+    "@polkadot-api/descriptors": "file:../../.papi/descriptors",
     "@rollup/plugin-commonjs": "^28.0.0",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-typescript": "^12.1.0",
     "@rollup/plugin-wasm": "^6.2.2",
     "@types/jest": "^27.0.0",
     "@types/rollup-plugin-peer-deps-external": "^2.2.5",
+    "polkadot-api": "^1.6.2",
     "jest": "^27.0.0",
     "rollup": "^4.24.0",
     "rollup-plugin-dts": "^6.1.1",

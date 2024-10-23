@@ -17,7 +17,8 @@ export * from "./api/connect";
 export * from "./api/getNonce";
 export * from "./light-client/SmoldotWorker";
 export * from "./ChainsInfo/metadata";
-// export * from "./lite-client/WellKnown";
+export * from "./services/ChainLightClientService";
+
 export * from "./utils/utils";
 
 export { default as getNonce } from "./api/getNonce";
