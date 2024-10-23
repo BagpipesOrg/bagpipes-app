@@ -16,6 +16,7 @@
     "src"
   ],
   "dependencies": {
+    "@polkadot-api/descriptors": "file:../../.papi/descriptors",
     "@rollup/plugin-wasm": "^6.2.2",
     "@types/rollup-plugin-peer-deps-external": "^2.2.5",
     "polkadot-api": "^1.6.2",
