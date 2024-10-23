@@ -80,6 +80,11 @@ module.exports = [
     }),
   ],
   external: [
+    ...Object.keys(pkg.peerDependencies || {}),
+    /^@polkadot\//,
+    /^@substrate\//,
+    /^smoldot\//,
+    /^react-hot-toast$/,
     '@polkadot-api/descriptors',
   ],
   },
