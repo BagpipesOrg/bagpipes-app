@@ -59,8 +59,8 @@ optimizeDeps: {
  
   resolve: {
     alias: {
-      '@polkadot-api/descriptors': path.resolve(__dirname, 'node_modules/@polkadot-api/descriptors/dist/index.mjs'),
-      '@polkadot-api/descriptors': path.resolve(__dirname, 'packages/chains-lib/node_modules/@polkadot-api/descriptors/dist/index.mjs'),
+      '@polkadot-api/descriptors': path.resolve(__dirname, 'packages/chains-lib/.papi/descriptors/dist'),
+      // '@polkadot-api/descriptors': path.resolve(__dirname, 'packages/chains-lib/node_modules/@polkadot-api/descriptors/dist/index.mjs'),
 
       'chains-lib': path.resolve(__dirname, 'packages/chains-lib/dist/esm'),
       'client': path.resolve(__dirname, 'packages/client/dist/esm'),

@@ -96,11 +96,14 @@ module.exports = [
     },
     plugins: commonPlugins,
     external: [
+      '@polkadot-api/descriptors',
+
       ...Object.keys(pkg.peerDependencies || {}),
       /^@polkadot\//,
       /^@substrate\//,
       /^react-hot-toast$/,
       /\.rollupUtils.js$/u,
+
     ],
   },
   // ES Module Build
@@ -113,11 +116,14 @@ module.exports = [
     },
     plugins: commonPlugins,
     external: [
+      '@polkadot-api/descriptors',
+
       ...Object.keys(pkg.peerDependencies || {}),
       /^@polkadot\//,
       /^@substrate\//,
       /^react-hot-toast$/,
       /\.rollupUtils.js$/u,
+
     ],
   },
   // Type Declarations Build
@@ -145,6 +151,8 @@ module.exports = [
 
     ],
     external: [
+      '@polkadot-api/descriptors',
+
       ...Object.keys(pkg.peerDependencies || {}),
       /^@polkadot\//,
       /^@substrate\//,
@@ -152,6 +160,7 @@ module.exports = [
       /\.css$/u,
       /\.scss$/u,
       /\.rollupUtils.js$/u,
+
     ],
 
 

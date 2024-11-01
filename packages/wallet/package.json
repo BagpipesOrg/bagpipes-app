@@ -10,21 +10,6 @@
     "watch": "rollup -c -w",
     "test": "tsc --noEmit && jest"
   },
-  "files": [
-    "dist",
-    "dist/wallet.css"
-  ],
-  "peerDependencies": {
-    "@polkadot/wasm-crypto": "^7.3.2",
-    "@polkadot/wasm-crypto-init": "^7.3.2",
-    "@polkadot/x-randomvalues": "^13.1.1",
-    "@polkadot/x-textdecoder": "^13.1.1",
-    "@polkadot/x-textencoder": "^13.1.1",
-    "@substrate/connect": "^1.3.1",
-    "react": "^17.0.0 || ^18.0.0",
-    "react-dom": "^17.0.0 || ^18.0.0",
-    "react-hot-toast": "^2.4.0"
-  },
   "dependencies": {
     "@babel/runtime": "^7.16.7",
     "@metamask/detect-provider": "^2.0.0",

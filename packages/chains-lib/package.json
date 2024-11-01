@@ -8,7 +8,10 @@
   "scripts": {
     "build": "rollup -c && rm -rf .temp",
     "watch": "rollup -c -w",
-    "test": "tsc --noEmit && jest"
+    "test": "tsc --noEmit && jest",
+    "papi:generate": "npx papi add dot -n polkadot && npx papi",
+
+    "postinstall": "papi"
     },
   
   "files": [
