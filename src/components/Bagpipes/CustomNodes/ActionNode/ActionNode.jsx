@@ -8,6 +8,8 @@ import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
 import RemarkSVG from '/remark.svg';
 import VoteSVG from '/vote.svg';
+import ScheduleTransferSVG from '/clock.svg';
+
 import DelegateSVG from '/delegate.svg';
 import InkSVG from '/ink.svg';
 import StakeSVG from '/stake.svg';
@@ -88,6 +90,8 @@ export default function ActionNode({ children, data, isConnectable }) {
     if (formState.action === 'swap') return SwapSVG;
     if (formState.action === 'xTransfer') return xTransferSVG;
     if (formState.action === "remark") return RemarkSVG;
+    if (formState.action === 'ScheduleTransfer') return ScheduleTransferSVG; 
+
     if (formState.action === "Remark") return RemarkSVG;
     if (formState.action === "stake") return StakeSVG;
     if (formState.action === "delegate") return DelegateSVG;
@@ -273,7 +277,15 @@ function get_previous_node() {
   return previousNodeFormData;
 }
 
-  
+function get_next_node() {
+  const nodes = scenarios[activeScenarioId]?.diagramData?.nodes || [];
+  const currentNodeIndex = nodes.findIndex(node => node.id === nodeId);
+  const previousNode = currentNodeIndex > 0 ? nodes[currentNodeIndex + 1] : null;
+  const previousNodeFormData = previousNode ? previousNode.formData : null;
+  return previousNodeFormData;
+}  
+
+
 // store the system remark message
   const setRemark = (value) => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
@@ -296,6 +308,25 @@ function get_previous_node() {
     saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
   
 
+
+  };
+  const setDateSchedule = (value) => {
+    console.log(`setDateSchedule called`);
+    const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+    console.log(`currentNodeFormData: `, currentNodeFormData);
+    const currentActionData = currentNodeFormData.actionData || {};
+    console.log(`set date schedule: `, value.target.value);
+    currentActionData.actionType = 'ScheduleTransfer';
+    const updatedActionData = {
+      ...currentActionData,
+      source: get_previous_node(),
+      target: get_next_node(),
+      extra: value.target.value
+
+    };
+    setActionData(updatedActionData);
+    saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
+  console.log(`ScheduleTransfer wrote updated data: `, updatedActionData);
 
   };
 
@@ -632,6 +663,7 @@ console.log('previousNodeFormData: ', previousNodeFormData);
           SwapSVG={SwapSVG}
           xTransferSVG={xTransferSVG}
           RemarkSVG={RemarkSVG}
+          ScheduleTransferSVG={ScheduleTransferSVG}
           VoteSVG={VoteSVG}
           DelegateSVG={DelegateSVG}
           InkSVG={InkSVG}
@@ -664,6 +696,14 @@ console.log('previousNodeFormData: ', previousNodeFormData);
           </select>
 </div>
 )}
+    
+    {formState && formState.action === 'ScheduleTransfer' && (
+
+<div className="in-node-border rounded m-2 p-2 ">Schedule a XCM asset tranfer on date: 
+<input required min={new Date().toISOString().split('T')[0]}   onChange={(newValue) => setDateSchedule(newValue)}  type="datetime-local" id="contact-name"  placeholder="Message" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
+</div>
+)}
+    
      {formState && formState.action === 'stake' && (
 
 <div className="in-node-border rounded m-2 p-2 ">Stake dot to a nomination pool
