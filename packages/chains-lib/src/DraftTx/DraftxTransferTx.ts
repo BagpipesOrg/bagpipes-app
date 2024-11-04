@@ -63,6 +63,149 @@ export async function polkadot_vote(
   };
   return api.tx.convictionVoting.vote(refnr, vote);
 }
+export async function paseo2assethub(amount: number, accountdest: string) {
+  const api = await getApiInstance(ChainKey.Paseo);
+  const accountid = getRawAddress(accountdest); // make sure its accountid32 pubkey
+  const destination = {
+    interior: { X1: { Parachain: 1000 } },
+    parents: 0,
+  };
+  const account = {
+    interior: {
+      X1: {
+        Accountid32: {
+          id: accountid,
+          network: null,
+        },
+      },
+    },
+  };
+  const asset = {
+    fun: {
+      Fungible: amount,
+    },
+    id: {
+      Concrete: {
+        parents: 0,
+        interior: {
+          Here: null,
+        },
+      },
+    },
+  };
+
+  const tx = api.tx.xcmPallet.limitedTeleportAssets(
+    { V3: destination },
+    { V3: account },
+    { V3: [asset] },
+    0,
+    { Unlimited: null },
+  );
+  return tx;
+}
+
+
+/// send PAS from paseo to pop
+export async function paseo2pop(amount: number, accountdest: string) {
+  const api = await getApiInstance(ChainKey.Paseo); // dial paseo relaychain
+
+  const accountid = getRawAddress(accountdest); // make sure its accountid32 pubkey
+  const destination = {
+    interior: { X1: { Parachain: 4001 } },
+    parents: 0,
+  };
+  const account = {
+    interior: {
+      X1: {
+        Accountid32: {
+          id: accountid,
+          network: null,
+        },
+      },
+    },
+    parents: 0,
+  };
+
+  const asset = {
+    fun: {
+      Fungible: amount,
+    },
+    id: {
+      Concrete: {
+        parents: 0,
+        interior: {
+          Here: null,
+        },
+      },
+    },
+  };
+
+  const tx = api.tx.xcmPallet.limitedReserveTransferAssets(
+    { V3: destination },
+    { V3: account },
+    { V3: [asset] },
+    0,
+    { Unlimited: null },
+  );
+  return tx;
+}
+
+export async function schedule_task(transfer_tx: any, datestring: string) {
+  const currentTimestamp2 = new Date(datestring).valueOf(); // should always be UTC
+  //const transfer_tx = await turing2moonriver(accountido, amount);
+  const secondsInHour = 600;
+  const millisecondsInHour = 600 * 1000;
+  console.log("currentTimestamp2: ", currentTimestamp2);
+  const future_timestamp =
+    (currentTimestamp2 - (currentTimestamp2 % millisecondsInHour)) / 1000 +
+    secondsInHour;
+
+  const api = await getApiInstance(ChainKey.Turing);
+  console.log(`unix timestamp: `, future_timestamp);
+  const tx_me = await api.tx.automationTime.scheduleDynamicDispatchTask(
+    { fixed: { executionTimes: [future_timestamp] } },
+    transfer_tx,
+  );
+  return tx_me;
+}
+
+
+export async function assethub2paseo(amount: number, accountdest: string) {
+  const api = await getApiInstance(ChainKey.PaseoAssethub);
+  console.log(`[assethub2paseo] connected`);
+  const accountId = api
+    .createType("AccountId32", getRawAddress(accountdest))
+    .toHex();
+  const destination = {
+    parents: 1,
+    interior: { Here: null },
+  };
+
+  const account = {
+    parents: 0,
+    interior: { X1: { AccountId32: { id: accountId, network: null } } },
+  };
+
+  const asset = [
+    {
+      id: { Concrete: { parents: 1, interior: "Here" } }, // The asset is on the parachain (origin)
+      fun: { Fungible: amount },
+    },
+  ];
+
+  const tx = api.tx.polkadotXcm.limitedTeleportAssets(
+    { V3: destination },
+    { V3: account },
+    { V3: asset },
+    { fee_asset_item: 0 },
+    { Unlimited: null },
+  );
+
+  return tx;
+}
+
+
+
 
 // snowbridge
 // ref: https://assethub-polkadot.subscan.io/extrinsic/6841319-2?event=6841319-10

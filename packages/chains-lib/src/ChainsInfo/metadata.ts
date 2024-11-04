@@ -14,9 +14,13 @@ export enum ChainKey {
     Rococo = "rococo",
     RococoAssethub = "rococo_assethub",
     RococoContracts = "rococo_contracts",
+    Paseo = "paseo",
+    PaseoPop = "paseo_pop",
+    PaseoAssethub = "paseo_assethub",
     Turing = "turing",
   }
 
+ 
   export interface ChainMetadata extends BaseChainMetadata {}
 
 
@@ -54,6 +58,38 @@ export enum ChainKey {
       queryBalancePaths: ["system.account", "balances.account"],
       nativeAccount: true,
     },
+
+  [ChainKey.Paseo]: {
+      chain: "paseo",
+      endpoints: [
+          "wss://paseo-rpc.dwellir.com",
+          "wss://rpc.ibp.network/paseo"
+      ],
+      queryBalancePaths: ["system.account"],
+      nativeAccount: true
+  },
+  
+  [ChainKey.PaseoPop]: {
+      chain: "paseo_pop",
+      endpoints: [
+          "wss://rpc3.paseo.popnetwork.xyz"
+      ],
+      queryBalancePaths: ["system.account"],
+      nativeAccount: true
+  },
+  
+  [ChainKey.PaseoAssethub]: {
+      chain: "paseo_assethub",
+      endpoints: [
+          "wss://asset-hub-paseo-rpc.dwellir.com",
+          "wss://sys.dotters.network/asset-hub-paseo"
+      ],
+      queryBalancePaths: ["system.account"],
+      nativeAccount: true
+  },
+  
+ 
+ 
     [ChainKey.HydraDX]: {
         chain: "HydraDX",
         endpoints: [
@@ -148,6 +184,7 @@ export enum ChainKey {
       queryBalancePaths: ["system.account"],
       nativeAccount: true,
     },
+
     [ChainKey.Mangatax]: {
       chain: "mangatax",
       endpoints: [
