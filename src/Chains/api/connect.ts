@@ -57,7 +57,6 @@ export async function connectToWsEndpoint(chain: string): Promise<ApiPromise> {
 
   let lastError: any;
   for (const endpoint of metadata.endpoints) {
-
     try {
       console.log("Attempting to connect to endpoint", endpoint);
       const provider = new WsProvider(endpoint);

@@ -17,7 +17,7 @@ import Toolbar from '../Toolbar/Toolbar';
 // import AppsToolbar from '../Toolbar/AppsToolbar';
 import FormGroupNode from './FormGroupNode';
 import CustomEdge from './CustomEdges/CustomEdge';
-import { ChainNode, ActionNode, RouterNode, WebhookNode,WebsocketNode, APINode, HttpNode, CodeNode, ScheduleNode, DiscordNode, OpenAINode, ChatGptNode,  ChainQueryNode, ChainTxNode, DelayNode, LightClientNode, BlinksNode } from './CustomNodes';
+import { ChainNode, ActionNode, RouterNode, WebhookNode,WebsocketNode, ScheduleNode, APINode, HttpNode, CodeNode, DiscordNode, OpenAINode, ChatGptNode,  ChainQueryNode, ChainTxNode, DelayNode, LightClientNode, BlinksNode } from './CustomNodes';
 import { startDraftingProcess, preProcessDraftTransactions } from './utils/startDraftingProcess';
 import { calculateTippyPosition } from './utils/canvasUtils';
 import { MarkerType } from 'reactflow';
@@ -638,7 +638,7 @@ const BagpipesFlow = () => {
       console.log(`got form data`);
       console.log(`isActionDataComplete actionType:`, node.formData.action);
       
-      if (["Remark", "vote", "stake", "delegate", "ink"].includes(node.formData.action)) {
+      if (["Remark", "vote", "stake", "delegate", "ink", "ScheduleTransfer"].includes(node.formData.action)) {
         
         return true;
       }
