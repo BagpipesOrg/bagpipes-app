@@ -34,7 +34,7 @@ export function listChains() {
       paraid: 2030,
       prefix: 6, 
       token_decimals: 12,
-      logo: '/chains/assethub.svg',
+      logo: '/chains/bifrost.svg',
       relayParent: 'kusama',
       parachain: true,
       symbol: 'KSM'
