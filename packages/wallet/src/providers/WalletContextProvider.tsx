@@ -1,12 +1,11 @@
 // Copyright 2019-2022 @subwallet/wallet-connect authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
+import React, { useCallback, useEffect, useState } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { windowReload } from '../utils/window';
 import { getWalletBySource } from '../connect-wallet/src/dotsama/wallets';
 import { getEvmWalletBySource } from '../connect-wallet/src/evm/evmWallets';
 import { EvmWallet, Wallet, WalletAccount } from '../connect-wallet/src/types';
-import React, { useCallback, useEffect, useState } from 'react';
 
 import { OpenSelectWallet, WalletContext, WalletContextInterface, WalletStatus } from '../contexts';
 

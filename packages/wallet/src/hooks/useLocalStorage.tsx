@@ -1,31 +1,39 @@
-// Copyright 2019-2022 @subwallet authors & contributors
-// SPDX-License-Identifier: Apache-2.0
-
 import { useEffect, useState } from 'react';
 
 export function useLocalStorage (
   key: string,
   initialValue = ''
 ): [string, (v: string) => void] {
-  const [storedValue, setStoredValue] = useState(initialValue);
-
-  useEffect(() => {
-    const item =
-      typeof window !== 'undefined' ? window.localStorage.getItem(key) : false;
-
-    if (item) {
+  const [storedValue, setStoredValue] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const item = window.localStorage.getItem(key);
       try {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        setStoredValue(JSON.parse(item as string));
+        return item ? JSON.parse(item) : initialValue;
       } catch (e) {
-        setStoredValue(initialValue);
+        return initialValue;
       }
     }
-  }, [initialValue, key, setStoredValue]);
+    return initialValue;
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const item = window.localStorage.getItem(key);
+      if (item) {
+        try {
+          setStoredValue(JSON.parse(item));
+        } catch (e) {
+          setStoredValue(initialValue);
+        }
+      }
+    }
+  }, [initialValue, key]);
 
   const setValue = (value: string) => {
     setStoredValue(value);
-    window.localStorage.setItem(key, JSON.stringify(value));
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(key, JSON.stringify(value));
+    }
   };
 
   return [storedValue, setValue];

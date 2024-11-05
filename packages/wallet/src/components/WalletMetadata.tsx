@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable @typescript-eslint/no-floating-promises */
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { Button, message } from 'antd';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { InjectedMetadataKnown, MetadataDef } from '@polkadot/extension-inject/types';
 

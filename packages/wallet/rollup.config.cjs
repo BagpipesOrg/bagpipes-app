@@ -30,6 +30,13 @@ const removeScssImports = () => ({
   },
 });
 
+const externalPackages = [
+  'react',
+  'react-dom',
+ 
+];
+
+
 const commonPlugins = [
   peerDepsExternal(),
   typescript({
@@ -96,6 +103,8 @@ module.exports = [
     },
     plugins: commonPlugins,
     external: [
+      ...externalPackages,
+
       '@polkadot-api/descriptors',
 
       ...Object.keys(pkg.peerDependencies || {}),
@@ -116,6 +125,8 @@ module.exports = [
     },
     plugins: commonPlugins,
     external: [
+      ...externalPackages,
+
       '@polkadot-api/descriptors',
 
       ...Object.keys(pkg.peerDependencies || {}),
@@ -151,8 +162,8 @@ module.exports = [
 
     ],
     external: [
+      ...externalPackages,
       '@polkadot-api/descriptors',
-
       ...Object.keys(pkg.peerDependencies || {}),
       /^@polkadot\//,
       /^@substrate\//,

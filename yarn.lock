@@ -5736,7 +5736,7 @@
   dependencies:
     "@types/react" "^17"
 
-"@types/react-dom@^18.2.18":
+"@types/react-dom@^18.2.18", "@types/react-dom@^18.3.1":
   version "18.3.1"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-18.3.1.tgz#1e4654c08a9cdcfb6594c780ac59b55aad42fe07"
   integrity sha512-qW1Mfv8taImTthu4KoXgDfLuk4bydU6Q/TkADnDWWHwi4NX4BR+LWfTp2sVmTqRrsHvyDDTelgelxJ+SsejKKQ==
@@ -5758,6 +5758,14 @@
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "^0.16"
+    csstype "^3.0.2"
+
+"@types/react@^18.3.12":
+  version "18.3.12"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.3.12.tgz#99419f182ccd69151813b7ee24b792fe08774f60"
+  integrity sha512-D2wOSq/d6Agt28q7rSI3jhU7G6aiuzljDGZ2hTZHIkrTLUI+AF3WMeKkEZ9nN2fkBAlcktT6vcZjDFiIhMYEQw==
+  dependencies:
+    "@types/prop-types" "*"
     csstype "^3.0.2"
 
 "@types/resolve@1.17.1":
@@ -8636,7 +8644,7 @@ caseless@~0.12.0:
 "chains-lib@file:packages/chains-lib":
   version "0.4.5"
   dependencies:
-    "@polkadot-api/descriptors" "file:../../Library/Caches/Yarn/v6/npm-chains-lib-0.4.5-8210de19-27cd-4e83-adbd-5ae32a916a10-1729693438920/node_modules/chains-lib/.papi/descriptors"
+    "@polkadot-api/descriptors" "file:../../Library/Caches/Yarn/v6/npm-chains-lib-0.4.5-98725ae9-adb5-42f2-bbc4-aea2f71341a8-1730824112920/node_modules/chains-lib/.papi/descriptors"
     "@rollup/plugin-wasm" "^6.2.2"
     "@types/rollup-plugin-peer-deps-external" "^2.2.5"
     polkadot-api "^1.6.2"
