@@ -16,6 +16,7 @@ export const communities: Community[] = [
               id: "polkadot-bagpipes-1",
               title: "Polkadot Bagpipes Template 1",
               description: "A template for creating Polkadot projects using Bagpipes.",
+              image: "/images/polkadot-ui2.png",
               // workflowOrderedList: ["Step 1", "Step 2", "Step 3"],
               links: [{ title: "GitHub", url: "https://github.com/polkadot" }]
             },
@@ -23,6 +24,7 @@ export const communities: Community[] = [
               id: "polkadot-bagpipes-2",
               title: "Polkadot Bagpipes Template 2",
               description: "Another template for creating Polkadot projects using Bagpipes.",
+              image: "/images/polkadot-ui2.png",
               // workflowOrderedList: ["Step A", "Step B", "Step C"],
               links: [{ title: "Documentation", url: "https://polkadot.network/docs" }]
             }
@@ -75,20 +77,36 @@ export const communities: Community[] = [
         templates: {
           bagpipes: [
             {
-              id: "ava-bagpipes-1",
-              title: "Ava Bagpipes Template 1",
-              description: "A template for creating Polkadot projects using Bagpipes.",
-              // workflowOrderedList: ["Step 1", "Step 2", "Step 3"],
-              links: [{ title: "GitHub", url: "https://github.com/avaprotocol" }]
-            },
-            {
               id: "ava-bagpipes-2",
 
-              title: "Ava Bagpipes Template 2",
-              description: "Another template for creating Polkadot projects using Bagpipes.",
+              title: "Scheduled Transfer",
+              description: "A templated for scheduling a transfer from Turing to any other kusama parachain.",
+              image: "/TuringScheduledTxMangata.png",
               // workflowOrderedList: ["Step A", "Step B", "Step C"],
-              links: [{ title: "Documentation", url: "https://avaprotocol.org/docs" }]
-            }
+              links: [
+                {
+                  title: "Scenario", url: "https://builder.bagpipes.io/#/create/?diagramData=nDdfMx-kj",
+                },
+                { 
+                title: "Docs", url: "https://docs.bagpipes.io/docs/scheduletransfer" 
+                },
+            ]
+            },
+            {
+              id: "ava-bagpipes-1",
+              title: "Scheduled Swap",
+              description: "An example of scheduling a swap on turing chain and executing the task on Mangata chain. ",
+              image: "/AvaMangataSwap.png",
+              // workflowOrderedList: ["Step 1", "Step 2", "Step 3"],
+              links: [
+                {
+                  title: "Scenario", url: "https://builder.bagpipes.io/#/create/?diagramData=CnQZ0dm1Y",
+                },
+                // { title: "GitHub", url: "https://github.com/avaprotocol" },
+              
+              ]
+            },
+           
           ],
           ui: [
             {
@@ -111,9 +129,10 @@ export const communities: Community[] = [
         },    
         howTos: [
           {
-            title: "How to build a Dapp on Ava",
-            image: "/images/polkadot-howto.png",
-            description: "(Example) A comprehensive guide to building and connecting a custom Dapp on Ava."
+            title: "How to build a Dapp with Ava",
+            image: "/CreateDappInMinutes.png",
+            links: [{ title: "Create a web3 app with Bagpipes in minutes", url: "https://www.loom.com/share/a48e4620e9324c72a19306cd90e0ff5e?sid=850e0562-46af-4724-93ab-6ae9a51ad458" }],
+            description: "An 'hello world' guide to building and connecting a custom Dapp on Ava."
           }
         ],    
         mostActiveCreators: ["1", "2", "3"],  

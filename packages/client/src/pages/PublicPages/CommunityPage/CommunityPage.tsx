@@ -55,39 +55,49 @@ const CommunityPage = () => {
       </header>
       <main className="community-main">
         <section className="community-section">
-          <h2>Templates</h2>
           <div className="template-container">
-            <div className="template-group">
-              <h3>Workflow Templates</h3>
-              <div className="template-flex">
-                {community.templates.bagpipes.map((template, index) => (
-                  <div key={index} className="template-box box">
-                    <strong>{template.title}</strong>
-                    <p>{template.description}</p>
-                    {template.workflowOrderedList && (
-                      <div>
-                        <h4>Workflow:</h4>
-                        <ol>
-                          {template.workflowOrderedList.map((step, i) => (
-                            <li key={i}>{step}</li>
-                          ))}
-                        </ol>
-                      </div>
-                    )}
-                    {template.links && (
-                      <div>
-                        <h4>Links:</h4>
-                        <ul>
-                          {template.links.map((link, i) => (
-                            <li key={i}><a href={link.url} target="_blank" rel="noopener noreferrer">{link.title}</a></li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
+          <div className="template-group">
+          <h2>Templates</h2>
+          <div className="template-flex">
+            {community.templates.bagpipes.map((template, index) => (
+              <div key={index} className="template-box box">
+                <h3 className=''>{template.title}</h3>
+                <p>{template.description}</p>
+                {/* New image display */}
+                {template.image && (
+                  <div className="workflow-template-image-container">
+                    <a href={template.links[0].url} target="_blank" rel="noopener noreferrer">
+                      <img src={template.image} alt={template.title} className="workflow-template-image" />
+                    </a>
                   </div>
-                ))}
+                )}
+                {template.workflowOrderedList && (
+                  <div>
+                    <h4>Workflow:</h4>
+                    <ol>
+                      {template.workflowOrderedList.map((step, i) => (
+                        <li key={i}>{step}</li>
+                      ))}
+                    </ol>
+                  </div>
+                )}
+                {template.links && (
+                  <div>
+                    <h4>Links:</h4>
+                    <ul>
+                      {template.links.map((link, i) => (
+                        <li key={i}>
+                          <a href={link.url} target="_blank" rel="noopener noreferrer">{link.title}</a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
-            </div>
+            ))}
+          </div>
+        </div>
+
             {community.uiTemplateShowcase !== false && (
             <div className="template-group">
               <h3>UI Templates</h3>
@@ -122,9 +132,12 @@ const CommunityPage = () => {
           <h2>How To</h2>
           {community.howTos.map((howTo, index) => (
             <div key={index} className="howto-box box">
-              <h3>{howTo.title}</h3>
-              <img src={howTo.image} alt={howTo.title} className="howto-image" />
-              <p>{howTo.description}</p>
+              <h3>{howTo.title}</h3>  
+               <p>{howTo.description}</p>
+              <a href={howTo.links[0].url} target="_blank" rel="noopener noreferrer">
+                <img src={howTo.image} alt={howTo.title} className="howto-image" />
+                </a>
+           
             </div>
           ))}
         </section>
