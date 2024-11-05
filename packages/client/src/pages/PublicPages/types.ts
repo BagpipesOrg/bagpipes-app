@@ -2,6 +2,7 @@ export interface Template {
   id: string;
   title: string;
   description: string;
+  chain?: string;
   image?: string;
   workflowOrderedList?: string[];
   links?: Link[];
@@ -58,6 +59,7 @@ export interface Community {
   title: string;
   description: string;
   url: string;
+  chains?: CommunityChains[];
   templates: {
     bagpipes: BagpipesTemplate[];
     ui: UITemplate[];
@@ -67,4 +69,11 @@ export interface Community {
   hashTags: string[];
   mostActiveCreators: string[];
   uiTemplateShowcase?: boolean;
+}
+
+export interface CommunityChains {
+  [key: string]: {
+    description: string;
+    logo: string;
+  };
 }

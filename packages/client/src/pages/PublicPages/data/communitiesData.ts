@@ -74,13 +74,43 @@ export const communities: Community[] = [
         description: "Ava Protocol provides intelligent automation and enhanced privacy features for blockchain transactions.",
         url: "https://avaprotocol.org/",
         uiTemplateShowcase: false,
+
+        // we need to add chains and here is the type:
+
+        // export interface CommunityChains {
+        //   [key: string]: {
+        //     description: string;
+        //     logo: string;
+        //   };
+        // }
+        chains: [
+          {
+            Ava: {
+              description: "Ava is an Ethereum L2 chain.",
+              logo: "/chains/ava.png"
+            }
+          },
+          {
+            Oak: {
+              description: "Oak is Ava's chain on Polkadot (coming soon)",
+              logo: "/chains/ava.png"
+            }
+          },
+          {
+            turing: {
+              description: "Turing is Ava's chain on Kusama. This is the where the cutting edge of blockchain automation takes place.",
+              logo: "/chains/ava.png"
+            }
+          }
+      ],
         templates: {
           bagpipes: [
             {
               id: "ava-bagpipes-2",
 
               title: "Scheduled Transfer",
-              description: "A templated for scheduling a transfer from Turing to any other kusama parachain.",
+              chain: "Turing",
+              description: "A template for scheduling a transfer from Turing to any other Kusama parachain.",
               image: "/TuringScheduledTxMangata.png",
               // workflowOrderedList: ["Step A", "Step B", "Step C"],
               links: [
@@ -95,7 +125,8 @@ export const communities: Community[] = [
             {
               id: "ava-bagpipes-1",
               title: "Scheduled Swap",
-              description: "An example of scheduling a swap on turing chain and executing the task on Mangata chain. ",
+              chain: "Turing",
+              description: "An example of scheduling a swap on Turing chain and executing the task on Mangata chain. ",
               image: "/AvaMangataSwap.png",
               // workflowOrderedList: ["Step 1", "Step 2", "Step 3"],
               links: [
@@ -129,7 +160,7 @@ export const communities: Community[] = [
         },    
         howTos: [
           {
-            title: "How to build a Dapp with Ava",
+            title: "How to build a Dapp with Turing",
             image: "/CreateDappInMinutes.png",
             links: [{ title: "Create a web3 app with Bagpipes in minutes", url: "https://www.loom.com/share/a48e4620e9324c72a19306cd90e0ff5e?sid=850e0562-46af-4724-93ab-6ae9a51ad458" }],
             description: "An 'hello world' guide to building and connecting a custom Dapp on Ava."
