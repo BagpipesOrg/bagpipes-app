@@ -68,7 +68,7 @@ export const communities: Community[] = [
       },
       {
         id: "2",
-        logo: "/chains/turing.png",
+        logo: "/chains/ava.png",
         title: "Ava Protocol",
         name: "Ava",
         description: "Ava Protocol provides intelligent automation and enhanced privacy features for blockchain transactions.",
@@ -124,9 +124,9 @@ export const communities: Community[] = [
             },
             {
               id: "ava-bagpipes-1",
-              title: "Scheduled Swap",
+              title: "Scheduled Swap (Coming soon)",
               chain: "Turing",
-              description: "An example of scheduling a swap on Turing chain and executing the task on Mangata chain. ",
+              description: "Turing ↔ Mangata An example of scheduling a swap on Turing chain and executing the task on Mangata chain.",
               image: "/AvaMangataSwap.png",
               // workflowOrderedList: ["Step 1", "Step 2", "Step 3"],
               links: [
@@ -163,7 +163,7 @@ export const communities: Community[] = [
             title: "How to build a Dapp with Turing",
             image: "/CreateDappInMinutes.png",
             links: [{ title: "Create a web3 app with Bagpipes in minutes", url: "https://www.loom.com/share/a48e4620e9324c72a19306cd90e0ff5e?sid=850e0562-46af-4724-93ab-6ae9a51ad458" }],
-            description: "An 'hello world' guide to building and connecting a custom Dapp on Ava."
+            description: "An 'hello world' guide to building and connecting a custom Dapp on Turing, Ava's Kusama parachain."
           }
         ],    
         mostActiveCreators: ["1", "2", "3"],  
