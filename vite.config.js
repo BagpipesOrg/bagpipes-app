@@ -18,7 +18,7 @@ export default defineConfig({
   ],
 optimizeDeps: {
   // include: ['wasm-crypto'],
-  include: ['chains-lib', 'client', 'wallet'],
+  include: ['react', 'react-dom', 'react-router-dom', 'chains-lib', 'wallet', 'client'],
   esbuildOptions: {
       // Node.js global to browser globalThis
       define: {
@@ -31,7 +31,12 @@ optimizeDeps: {
           })
       ]
     },
-    },    
+  },
+  server: {
+    fs: {
+      allow: ['..'] // Allow accessing files outside the root
+    }
+  },    
    
 
   allowImportingTsExtensions: true,
@@ -58,6 +63,7 @@ optimizeDeps: {
   },
  
   resolve: {
+    dedupe: ['react', 'react-dom', 'react-router-dom'],
     alias: {
       '@polkadot-api/descriptors': path.resolve(__dirname, 'packages/chains-lib/.papi/descriptors/dist'),
       // '@polkadot-api/descriptors': path.resolve(__dirname, 'packages/chains-lib/node_modules/@polkadot-api/descriptors/dist/index.mjs'),

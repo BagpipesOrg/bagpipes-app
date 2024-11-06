@@ -580,6 +580,80 @@ export const communities: Community[] = [
           { feature: "Decentralized Security", description: "Secured by a network of 19 top validator companies (Guardians)." },
           { feature: "Governance", description: "Stake W tokens to participate in protocol governance and decision-making." },
         ]
+      },
+      {
+        id: "8",
+        logo: "/communities/bifrost.svg",
+        title: "Bifrost",
+        name: "Wormhole",
+        description: "",
+        url: "https://bifrost.io",
+        templates: {
+          bagpipes: [
+            {
+              id: "bifrost-bagpipes-1",
+              title: "Bifrost Bagpipes Template 1",
+              description: "A template for creating Wormhole workflows using Bagpipes.",
+              links: [{ title: "GitHub", url: "https://github.com/" }]
+            },
+            {
+              id: "wormhole-bagpipes-2",
+              title: "Wormhole Bagpipes Template 2",
+              description: "Another template for creating Wormhole workflows using Bagpipes.",
+              links: [{ title: "Documentation", url: "https://docs.wormhole.com/" }]
+            }
+          ],
+          ui: [
+            {
+              id: "wormhole-ui-1",
+              title: "Wormhole UI Template 1",
+              description: "(Coming soon) A UI template for Wormhole-based projects.",
+              image: "/images/wormhole-ui1.png",
+              links: [{ title: "UI1", url: "https://figma.com/wormhole-ui1" }]
+            },
+            {
+              id: "wormhole-ui-2",
+              title: "Wormhole UI Template 2",
+              description: "(Coming soon) Another UI template for Wormhole-based projects.",
+              image: "/images/wormhole-ui2.png",
+              links: [{ title: "UI2", url: "https://sketch.com/wormhole-ui2" }]
+            }
+          ]
+        },
+        howTos: [
+          {
+            title: "How to Use Wormhole Connect",
+            image: "/images/wormhole-connect.png",
+            description: "Guide on how to use Wormhole Connect for bridging assets.",
+            links: [
+              { title: "Learn How to Use Wormhole Connect", url: "https://docs.wormhole.com/how-to-use-wormhole-connect" }
+            ]
+          },
+          {
+            title: "How to Transfer Assets",
+            image: "/images/wormhole-transfer.png",
+            description: "Guide on how to transfer assets using Wormhole.",
+            links: [
+              { title: "Learn How to Transfer Assets", url: "https://docs.wormhole.com/how-to-transfer-assets" }
+            ]
+          },
+          {
+            title: "How to Stake W Tokens",
+            image: "/images/wormhole-stake.png",
+            description: "Guide on how to stake W tokens for governance.",
+            links: [
+              { title: "Learn How to Stake W Tokens", url: "https://docs.wormhole.com/how-to-stake-w-tokens" }
+            ]
+          }
+        ],
+        mostActiveCreators: ["1", "2", "3"],
+        hashTags: ["1", "2", "4", "20"],
+        features: [
+          { feature: "Cross-Chain Messaging", description: "Enables communication between different blockchains using signed VAAs." },
+          { feature: "Interoperability", description: "Connects multiple blockchain ecosystems for seamless data and asset transfers." },
+          { feature: "Decentralized Security", description: "Secured by a network of 19 top validator companies (Guardians)." },
+          { feature: "Governance", description: "Stake W tokens to participate in protocol governance and decision-making." },
+        ]
       }
       
 

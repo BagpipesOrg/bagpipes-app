@@ -33,6 +33,8 @@ const removeScssImports = () => ({
 const externalPackages = [
   'react',
   'react-dom',
+  'react-router-dom',
+
  
 ];
 

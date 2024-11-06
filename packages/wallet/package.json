@@ -30,6 +30,7 @@
     "@wagmi/core": "^1.1.0",
     "@web3-react/abstract-connector": "^6.0.7",
     "@web3-react/types": "^6.0.7",
+    "react-router-dom": "^6.27.0",
     "rollup": "^4.24.0",
     "rollup-plugin-dts": "^6.1.1",
     "rollup-plugin-node-polyfills": "^0.2.1",
@@ -39,6 +40,11 @@
     "tiny-warning": "^1.0.3",
     "viem": "^1.0.0",
     "web3-core": "^1.10.1"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.27.0"
   },
   "devDependencies": {
     "@rollup/plugin-alias": "^5.1.1",
@@ -51,12 +57,14 @@
     "@types/jest": "^27.0.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
+    "@types/react-router-dom": "^5.3.3",
     "@types/web3-provider-engine": "^14.0.1",
     "autoprefixer": "^10.4.20",
     "jest": "^27.0.0",
     "postcss": "^8.4.47",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.27.0",
     "rollup": "^4.24.0",
     "rollup-plugin-dts": "^6.1.1",
     "rollup-plugin-ignore": "^1.0.10",
