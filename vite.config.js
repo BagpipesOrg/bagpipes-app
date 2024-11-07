@@ -18,7 +18,7 @@ export default defineConfig({
   ],
 optimizeDeps: {
   // include: ['wasm-crypto'],
-  include: ['react', 'react-dom', 'react-router-dom', 'chains-lib', 'wallet', 'client'],
+  include: ['react', 'react-dom', 'react-router-dom', 'chains-lib', 'client', 'wallet'],
   esbuildOptions: {
       // Node.js global to browser globalThis
       define: {
@@ -31,12 +31,7 @@ optimizeDeps: {
           })
       ]
     },
-  },
-  server: {
-    fs: {
-      allow: ['..'] // Allow accessing files outside the root
-    }
-  },    
+    },    
    
 
   allowImportingTsExtensions: true,
