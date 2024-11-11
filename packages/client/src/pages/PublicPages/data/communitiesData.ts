@@ -97,7 +97,7 @@ export const communities: Community[] = [
             }
           },
           {
-            turing: {
+            Turing: {
               description: "Turing is Ava's chain on Kusama. This is the where the cutting edge of blockchain automation takes place.",
               logo: "/chains/ava.png"
             }
@@ -583,78 +583,132 @@ export const communities: Community[] = [
       },
       {
         id: "8",
-        logo: "/communities/bifrost.svg",
-        title: "Bifrost",
-        name: "Wormhole",
-        description: "",
-        url: "https://bifrost.io",
+        logo: "/chains/bifrost.svg",
+        title: "Bifrost Network",
+        name: "Bifrost",
+        description: "Bifrost is a multichain interoperability network that provides decentralized cross-chain liquidity for staked assets, enabling users to earn staking rewards and DeFi yields with flexibility and high security across multiple chains.",
+        url: "https://bifrost.io/",
+        uiTemplateShowcase: false,
+        chains: [
+          {
+            Bifrost: {
+              description: "Bifrost is an EVM-compatible layer 1 blockchain designed to facilitate interoperability and extend Web3 capabilities to Web2 users.",
+              logo: "/chains/bifrost.png"
+            }
+          },
+          {
+            "Bifrost-Kusama": {
+              description: "Bifrost's parachain on the Kusama network, offering liquid staking and cross-chain functionalities.",
+              logo: "/chains/bifrost.png"
+            }
+          },
+          {
+            "Bifrost-Polkadot": {
+              description: "Bifrost's parachain on the Polkadot network, enhancing cross-chain interoperability and staking liquidity.",
+              logo: "/chains/bifrost.png"
+            }
+          }
+        ],
         templates: {
           bagpipes: [
             {
               id: "bifrost-bagpipes-1",
-              title: "Bifrost Bagpipes Template 1",
-              description: "A template for creating Wormhole workflows using Bagpipes.",
-              links: [{ title: "GitHub", url: "https://github.com/" }]
+              title: "Cross-Chain Asset Transfer",
+              chain: "Bifrost",
+              description: "A template for transferring assets seamlessly across different blockchain networks using Bifrost's cross-chain communication protocol.",
+              image: "/BifrostCrossChainTransfer.png",
+              links: [
+                {
+                  title: "Scenario",
+                  url: "https://builder.bagpipes.io/#/create/?diagramData=example1"
+                },
+                {
+                  title: "Docs",
+                  url: "https://docs.bifrost.io/docs/cross-chain-transfer"
+                }
+              ]
             },
             {
-              id: "wormhole-bagpipes-2",
-              title: "Wormhole Bagpipes Template 2",
-              description: "Another template for creating Wormhole workflows using Bagpipes.",
-              links: [{ title: "Documentation", url: "https://docs.wormhole.com/" }]
+              id: "bifrost-bagpipes-2",
+              title: "Liquid Staking Deployment",
+              chain: "Bifrost",
+              description: "Deploy a liquid staking solution on Bifrost to unlock staked asset liquidity while earning staking rewards.",
+              image: "/BifrostLiquidStaking.png",
+              links: [
+                {
+                  title: "Scenario",
+                  url: "https://builder.bagpipes.io/#/create/?diagramData=example2"
+                },
+                {
+                  title: "Docs",
+                  url: "https://docs.bifrost.io/docs/liquid-staking"
+                }
+              ]
             }
           ],
           ui: [
             {
-              id: "wormhole-ui-1",
-              title: "Wormhole UI Template 1",
-              description: "(Coming soon) A UI template for Wormhole-based projects.",
-              image: "/images/wormhole-ui1.png",
-              links: [{ title: "UI1", url: "https://figma.com/wormhole-ui1" }]
+              id: "bifrost-ui-1",
+              title: "Bifrost Dashboard",
+              description: "A user-friendly interface for managing cross-chain assets and staking operations on the Bifrost network.",
+              image: "/BifrostDashboard.png",
+              links: [
+                {
+                  title: "Bifrost App",
+                  url: "https://app.bifrost.io/"
+                }
+              ]
             },
             {
-              id: "wormhole-ui-2",
-              title: "Wormhole UI Template 2",
-              description: "(Coming soon) Another UI template for Wormhole-based projects.",
-              image: "/images/wormhole-ui2.png",
-              links: [{ title: "UI2", url: "https://sketch.com/wormhole-ui2" }]
+              id: "bifrost-ui-2",
+              title: "Bifrost Wallet",
+              description: "A secure wallet solution for storing and managing assets across multiple chains within the Bifrost ecosystem.",
+              image: "/BifrostWallet.png",
+              links: [
+                {
+                  title: "Download",
+                  url: "https://bifrost.io/wallet"
+                }
+              ]
             }
           ]
         },
         howTos: [
           {
-            title: "How to Use Wormhole Connect",
-            image: "/images/wormhole-connect.png",
-            description: "Guide on how to use Wormhole Connect for bridging assets.",
+            title: "How to Stake Assets on Bifrost",
+            image: "/BifrostStakingGuide.png",
             links: [
-              { title: "Learn How to Use Wormhole Connect", url: "https://docs.wormhole.com/how-to-use-wormhole-connect" }
-            ]
-          },
-          {
-            title: "How to Transfer Assets",
-            image: "/images/wormhole-transfer.png",
-            description: "Guide on how to transfer assets using Wormhole.",
-            links: [
-              { title: "Learn How to Transfer Assets", url: "https://docs.wormhole.com/how-to-transfer-assets" }
-            ]
-          },
-          {
-            title: "How to Stake W Tokens",
-            image: "/images/wormhole-stake.png",
-            description: "Guide on how to stake W tokens for governance.",
-            links: [
-              { title: "Learn How to Stake W Tokens", url: "https://docs.wormhole.com/how-to-stake-w-tokens" }
-            ]
+              {
+                title: "Staking Guide",
+                url: "https://docs.bifrost.io/docs/staking-guide"
+              }
+            ],
+            description: "A step-by-step guide to staking your assets on the Bifrost network to earn rewards and maintain liquidity."
           }
         ],
-        mostActiveCreators: ["1", "2", "3"],
-        hashTags: ["1", "2", "4", "20"],
+        mostActiveCreators: ["1", "2", "3"],         
+        hashTags: ["staking", "cross-chain", "DeFi", "liquidity"],
         features: [
-          { feature: "Cross-Chain Messaging", description: "Enables communication between different blockchains using signed VAAs." },
-          { feature: "Interoperability", description: "Connects multiple blockchain ecosystems for seamless data and asset transfers." },
-          { feature: "Decentralized Security", description: "Secured by a network of 19 top validator companies (Guardians)." },
-          { feature: "Governance", description: "Stake W tokens to participate in protocol governance and decision-making." },
+          {
+            feature: "Cross-Chain Interoperability",
+            description: "Seamlessly connect and interact with multiple blockchain networks, including Bitcoin, Ethereum, and others."
+          },
+          {
+            feature: "Liquid Staking",
+            description: "Unlock liquidity of staked assets, allowing users to earn staking rewards while maintaining asset flexibility."
+          },
+          {
+            feature: "EVM Compatibility",
+            description: "Deploy and interact with Ethereum-based smart contracts on the Bifrost network."
+          },
+          {
+            feature: "Built-in Oracle",
+            description: "Access accurate and timely off-chain information without relying on external oracles, reducing operational costs."
+          }
         ]
       }
+      
+      
       
 
       

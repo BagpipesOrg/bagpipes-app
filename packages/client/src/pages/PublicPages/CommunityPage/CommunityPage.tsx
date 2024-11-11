@@ -66,7 +66,7 @@ const CommunityPage = () => {
                 {/* New image display */}
                 {template.image && (
                   <div className="workflow-template-image-container">
-                    <a href={template.links[0].url} target="_blank" rel="noopener noreferrer">
+                    <a href={template?.links?.[0]?.url} target="_blank" rel="noopener noreferrer">
                       <img src={template.image} alt={template.title} className="workflow-template-image" />
                     </a>
                   </div>
@@ -134,7 +134,7 @@ const CommunityPage = () => {
             <div key={index} className="howto-box box">
               <h3>{howTo.title}</h3>  
                <p>{howTo.description}</p>
-              <a href={howTo.links[0].url} target="_blank" rel="noopener noreferrer">
+              <a href={howTo?.links?.[0]?.url} target="_blank" rel="noopener noreferrer">
                 <img src={howTo.image} alt={howTo.title} className="howto-image" />
                 </a>
            
@@ -166,15 +166,15 @@ const CommunityPage = () => {
             const creator = creatorRecord[creatorId];
             return (
               <li key={index} className="creator-box box">
-                <Link to={`/creators/${creator.id}`} className="creator-link">
+                <Link to={`/creators/${creator?.id}`} className="creator-link">
                   <div className="flex items-center m-1">
-                    <img src={creator.image} alt={creator.name} className="creator-image mr-2 p-1" />
+                    <img src={creator?.image} alt={creator?.name} className="creator-image mr-2 p-1" />
                     <div className="items-center">
-                      <h3>{creator.name} ({creator.username})</h3>
-                      <h4>{creator.title}</h4>
+                      <h3>{creator?.name} ({creator?.username})</h3>
+                      <h4>{creator?.title}</h4>
                     </div>
                   </div>
-                  <p className='creator-description'>{creator.description}</p>
+                  <p className='creator-description'>{creator?.description}</p>
                 </Link>
               </li>
             );
