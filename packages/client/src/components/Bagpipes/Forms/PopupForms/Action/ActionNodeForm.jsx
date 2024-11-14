@@ -126,7 +126,7 @@ export default function ActionNodeForm({ children, data, isConnectable }) {
       }
 
 
-        if(selectedAction.action === 'swap' && assetInFormData.chain === 'hydraDx' && assetOutFormData.chain === 'hydraDx') {
+        if(selectedAction.action === 'swap' && assetInFormData.chain === 'hydration' && assetOutFormData.chain === 'hydration') {
           console.log('fetchActionInfo Fetching for swap');
           console.log('fetchActionInfo Fetching for swap');
           console.log('assetInId, assetOutId, amount:', assetInId, assetOutId, amount);

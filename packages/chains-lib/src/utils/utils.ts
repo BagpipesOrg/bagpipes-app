@@ -36,35 +36,35 @@ export function formatToFourDecimals(value: string) {
 }
 
 export function toUnit(
-  balance: string | number,
+  balanceStr: string,
   token_decimals: number
-): number {
-  // console.log('[toUnit] balance', balance, token_decimals);
-  if (balance === null || balance === undefined) {
+): string {
+  if (balanceStr === null || balanceStr === undefined) {
     throw new Error("Received invalid balance: null or undefined");
   }
 
-  // Initialize balanceStr based on balance type
-  let balanceStr = typeof balance === "number" ? balance.toString() : balance;
-
-  // remove commas
-  // only apply replace if it's a string with a comma
-  if (typeof balanceStr === "string" && balanceStr.includes(",")) {
+  // Remove commas
+  if (balanceStr.includes(",")) {
     balanceStr = balanceStr.replace(/,/g, "");
   }
-  const base = 10n;
-  const exponent = BigInt(token_decimals);
-  // console.log('[toUnit] exponent', exponent);
-  const mod = base ** exponent;
-  // console.log('[toUnit] mod', mod);
+
+  // Convert balanceStr to BigInt
   let bi = BigInt(balanceStr);
-  // console.log('toUnit bi', bi);
-  var div = bi / mod;
-  // console.log('toUnit div', div);
-  return (
-    parseFloat(div.toString()) +
-    parseFloat((bi - div * mod).toString()) / parseFloat(mod.toString())
-  );
+
+  const base = BigInt(10);
+  const exponent = BigInt(token_decimals);
+  const mod = base ** exponent;
+
+  let div = bi / mod;
+  let rem = bi % mod;
+
+  // Combine integer and fractional parts
+  const integerPart = div.toString();
+  const fractionalPart = rem.toString().padStart(token_decimals, '0').replace(/0+$/, '') || '0';
+
+  return fractionalPart === '0' ? integerPart : `${integerPart}.${fractionalPart}`;
 }
+
+
 
 

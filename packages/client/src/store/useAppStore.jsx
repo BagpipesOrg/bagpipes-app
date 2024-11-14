@@ -512,7 +512,7 @@ const useAppStore = create(
               return node.id === nodeId ? { ...node, formData } : node
         });
 
-        console.log("saveNodeFormData [After Update] Updated Node formData:", nodes.find(node => node.id === nodeId).formData);
+        console.log("saveNodeFormData [After Update] Updated Node formData:", nodes.find(node => node.id === nodeId)?.formData);
 
             const updatedScenarios = {
                 ...state.scenarios,

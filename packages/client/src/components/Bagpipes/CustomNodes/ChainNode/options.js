@@ -1,13 +1,5 @@
-import { listAssetHubAssets, list_onchainassets, listassetHub_kusamaAssets, listMoonRiverAssets, listTuringAssets, listMangataxAssets, listHydraDxAssets, listInterlayAssets } from 'chains-lib';
+import { listAssetHubAssets,listBifrostAssets, listMoobeamAssets, listAssetHubAssets_Kusama, listMoonriverAssets, listTuringAssets, listMangataxAssets, listHydrationAssets, listInterlayAssets } from 'chains-lib';
 
-const dotAssets = {
-  asset: {
-    name: 'polkadotDot',
-    symbol: 'DOT',
-    description: 'Polkadot',
-  },
-  assetId: 0,
-};
 
 const assetHubAssets = {
     asset: {
@@ -18,24 +10,43 @@ const assetHubAssets = {
     assetId: 1000,
 };
 
+const bifrostAssets = {
+    asset: {
+        name: 'bifrostBnc',
+        symbol: 'BNC',
+        description: 'Bifrost',
+    },
+    assetId: 0,
+};
+
+const dotAssets = {
+  asset: {
+    name: 'polkadotDot',
+    symbol: 'DOT',
+    description: 'Polkadot',
+  },
+  assetId: 0,
+};
+
+const ksmAssets = {
+    asset: {
+      name: 'kusamaKSM',
+      symbol: 'KSM',
+      description: 'Kusama',
+    },
+    assetId: 0,
+  };
+
+
+
 const interlayAssets = {
     asset: {
-        name: 'interlayDot',
-        symbol: 'DOT',
+        name: 'interlayIntr',
+        symbol: 'INTR',
         description: 'Interlay (Polkadot)',
     },
-    assetId: 1000,
+    assetId: 0,
 };
-
-const turingAssets = {
-    asset: {
-        name: 'turingKus',
-        symbol: 'TUR',
-        description: 'Turing (Kusama)',
-    },
-    assetId: 2114,
-};
-
 
 
 
@@ -50,16 +61,24 @@ const rococoAssets = {
 
 export const assetOptions = [
     {
+        chain: 'bifrost',
+        assets: [bifrostAssets], 
+    },
+    {
         chain: 'polkadot',
         assets: [dotAssets], 
+    },
+    {
+        chain: 'kusama',
+        assets: [ksmAssets], 
     },
     {
         chain: 'rococo',
         assets: [rococoAssets], 
     },
     {
-        chain: 'hydraDx',
-        assets: [],  // We'll fetch and populate this later
+        chain: 'hydration',
+        assets: [], 
     },
     {
         chain: 'assetHub',
@@ -67,7 +86,7 @@ export const assetOptions = [
     },
     {
         chain: 'interlay',
-        assets: [], 
+        assets: [interlayAssets], 
     }
 ];
 
@@ -76,21 +95,26 @@ export const getAssetOptions = async (selectedChain, signal) => {
   
   let assets;
   switch(selectedChain) {
-      case 'hydraDx':
-            assets = await listHydraDxAssets();
-          break;
+      
       case 'assetHub':
             assets = await listAssetHubAssets();
            // Append assetHubAssets to the fetched assets list
             assets.push(assetHubAssets);
           break;
+
+    case 'bifrost':
+        assets = await listBifrostAssets();
+         assets.push(bifrostAssets);
+        break;
+    case 'hydration':
+            assets = await listHydrationAssets();
+        break;
       case 'mangatax':
         assets = await listMangataxAssets();
         //assets.push(myassets);
         break;
-
     case 'moonriver':
-        assets = listMoonRiverAssets();
+        assets = listMoonriverAssets();
         break;
 
       case 'interlay':
@@ -99,11 +123,11 @@ export const getAssetOptions = async (selectedChain, signal) => {
           break;
 
     case 'assetHub_kusama':
-        assets = listassetHub_kusamaAssets();
+        assets = listAssetHubAssets_Kusama();
         break;
     
     case 'moonbeam':
-        assets = list_onchainassets('moonbeam');
+        assets = listMoobeamAssets('moonbeam');
         break;
 
         case 'turing':
@@ -114,6 +138,10 @@ export const getAssetOptions = async (selectedChain, signal) => {
       case 'polkadot':
           assets = [dotAssets];
           break;
+    
+        case 'kusama':
+        assets = [ksmAssets];
+        break;
       case 'rococo':
           assets = [rococoAssets];
           break;

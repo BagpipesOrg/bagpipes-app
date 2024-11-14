@@ -106,7 +106,7 @@ export default function ActionNode({ children, data, isConnectable }) {
         const amount = assetInFormData?.amount;
 
         
-        if(formState.action === 'swap' && assetInFormData.chain === 'hydraDx' && assetOutFormData.chain === 'hydraDx') {
+        if(formState.action === 'swap' && assetInFormData.chain === 'hydration' && assetOutFormData.chain === 'hydration') {
           console.log('fetchActionInfo Fetching for swap');
             const fetchedPriceInfo = await getHydraDxSellPrice(assetInId, assetOutId, amount);
             console.log('fetchActionInfo fetchedPriceInfo:', fetchedPriceInfo);

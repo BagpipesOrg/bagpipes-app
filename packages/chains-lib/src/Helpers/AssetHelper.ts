@@ -1,7 +1,7 @@
 import { getApiInstance } from "../api/connect";
 import { listChains } from "../ChainsInfo/ChainsInfo";
 import { ApiPromise } from "@polkadot/api";
-import { list_onchainassets, listInterlayAssets } from "../Assets/listAssetsForChain";
+import { listMoobeamAssets, listInterlayAssets } from "../Assets/listAssetsForChain";
 import {  formatToFourDecimals, toUnit } from "../utils/utils";
 import { getRawAddress } from "../utils/getRawAddress";
 import { ChainKey } from "../ChainsInfo/metadata";
@@ -85,7 +85,7 @@ function isAssetHubAssetBalance(obj: any): obj is AssetHubAssetBalance {
   );
 }
 
-export async function checkmangataxAssetBalance(
+export async function checkMangataxAssetBalance(
   assetid: number | string,
   account_id: string,
   signal?: AbortSignal
@@ -98,7 +98,7 @@ export async function checkmangataxAssetBalance(
 }> {
   // If assetId is 0, fetch the native balance.
   //if (assetid === 0 || assetid === "0") {
-  // return hydraDxNativeBalance(account_id_32);
+  // return hydrationNativeBalance(account_id_32);
   // }
 
   let api: any;
@@ -121,7 +121,7 @@ export async function checkmangataxAssetBalance(
   }
 
   const stringBalance = hdxBalance.toHuman();
-  //  console.log(`checkHydraDxAssetBalance Raw HDX Balance:`, stringBalance);
+  //  console.log(`checkHydrationAssetBalance Raw HDX Balance:`, stringBalance);
 
   try {
     const assetlist = listInterlayAssets();
@@ -133,8 +133,8 @@ export async function checkmangataxAssetBalance(
 
     assetDecimals = decimals;
 
-    //    console.log(`checkHydraDxAssetBalance metadata`, metadata);
-    //   console.log(`checkHydraDxAssetBalance assetDecimals`, assetDecimals);
+    //    console.log(`checkHydrationAssetBalance metadata`, metadata);
+    //   console.log(`checkHydrationAssetBalance assetDecimals`, assetDecimals);
   } catch (error) {
     console.error(`Error retrieving metadata for asset ID ${assetid}:`, error);
     // You might want to set a default or throw an error here
@@ -143,7 +143,7 @@ export async function checkmangataxAssetBalance(
 
   if (isOrmlTokensAccountData(hdxBalance)) {
     const bal_obj: OrmlTokensAccountData = hdxBalance;
-    //  console.log(`checkHydraDxAssetBalance bal obj`, bal_obj.toString());
+    //  console.log(`checkHydrationAssetBalance bal obj`, bal_obj.toString());
     return {
       free: bal_obj.free,
       reserved: bal_obj.reserved,
@@ -170,7 +170,7 @@ export async function checkInterlayAssetBalance(
 }> {
   // If assetId is 0, fetch the native balance.
   //if (assetid === 0 || assetid === "0") {
-  // return hydraDxNativeBalance(account_id_32);
+  // return hydrationNativeBalance(account_id_32);
   // }
 
   let api: any;
@@ -193,7 +193,7 @@ export async function checkInterlayAssetBalance(
   }
 
   const stringBalance = interlayBalance.toHuman();
-  //  console.log(`checkHydraDxAssetBalance Raw HDX Balance:`, stringBalance);
+  //  console.log(`checkHydrationAssetBalance Raw HDX Balance:`, stringBalance);
 
   try {
     const assetlist = listInterlayAssets();
@@ -205,8 +205,8 @@ export async function checkInterlayAssetBalance(
 
     assetDecimals = decimals;
 
-    //    console.log(`checkHydraDxAssetBalance metadata`, metadata);
-    //    console.log(`checkHydraDxAssetBalance assetDecimals`, assetDecimals);
+    //    console.log(`checkHydrationAssetBalance metadata`, metadata);
+    //    console.log(`checkHydrationAssetBalance assetDecimals`, assetDecimals);
   } catch (error) {
     console.error(`Error retrieving metadata for asset ID ${assetid}:`, error);
     // You might want to set a default or throw an error here
@@ -215,7 +215,7 @@ export async function checkInterlayAssetBalance(
 
   if (isOrmlTokensAccountData(interlayBalance)) {
     const bal_obj: OrmlTokensAccountData = interlayBalance;
-    //  console.log(`checkHydraDxAssetBalance bal obj`, bal_obj.toString());
+    //  console.log(`checkHydrationAssetBalance bal obj`, bal_obj.toString());
     return {
       free: bal_obj.free,
       reserved: bal_obj.reserved,
@@ -336,7 +336,7 @@ export async function checkBalance(
       free: result.free,
       reserved: result.reserved,
       total: total,
-      // can include miscFrozen and feeFrozen if they are relevant for hydraDx
+      // can include miscFrozen and feeFrozen if they are relevant for hydration
     };
   }
 
@@ -377,8 +377,8 @@ export async function checkBalance(
     } else {
       throw new Error("Decimals not found in metadata");
     }
-    //    console.log(`checkHydraDxAssetBalance metadata`, metadata);
-    //   console.log(`checkHydraDxAssetBalance assetDecimals`, assetDecimals);
+    //    console.log(`checkHydrationAssetBalance metadata`, metadata);
+    //   console.log(`checkHydrationAssetBalance assetDecimals`, assetDecimals);
   } catch (error) {
     console.error(`Error retrieving metadata for asset ID ${assetid}:`, error);
     // You might want to set a default or throw an error here
@@ -387,7 +387,7 @@ export async function checkBalance(
 
   if (isOrmlTokensAccountData(chainBalance)) {
     const bal_obj: OrmlTokensAccountData = chainBalance;
-    //  console.log(`checkHydraDxAssetBalance bal obj`, bal_obj.toString());
+    //  console.log(`checkHydrationAssetBalance bal obj`, bal_obj.toString());
     return {
       free: bal_obj.free,
       reserved: bal_obj.reserved,
@@ -425,7 +425,7 @@ export async function checkTuringAssetBalance(
       free: result.free,
       reserved: result.reserved,
       total: total,
-      // can include miscFrozen and feeFrozen if they are relevant for hydraDx
+      // can include miscFrozen and feeFrozen if they are relevant for hydration
     };
   }
 
@@ -462,8 +462,8 @@ export async function checkTuringAssetBalance(
     } else {
       throw new Error("Decimals not found in metadata");
     }
-    //    console.log(`checkHydraDxAssetBalance metadata`, metadata);
-    //   console.log(`checkHydraDxAssetBalance assetDecimals`, assetDecimals);
+    //    console.log(`checkHydrationAssetBalance metadata`, metadata);
+    //   console.log(`checkHydrationAssetBalance assetDecimals`, assetDecimals);
   } catch (error) {
     console.error(`Error retrieving metadata for asset ID ${assetid}:`, error);
     // You might want to set a default or throw an error here
@@ -472,7 +472,7 @@ export async function checkTuringAssetBalance(
 
   if (isOrmlTokensAccountData(turingBalance)) {
     const bal_obj: OrmlTokensAccountData = turingBalance;
-    //  console.log(`checkHydraDxAssetBalance bal obj`, bal_obj.toString());
+    //  console.log(`checkHydrationAssetBalance bal obj`, bal_obj.toString());
     return {
       free: bal_obj.free,
       reserved: bal_obj.reserved,
@@ -557,7 +557,7 @@ export async function checkDOT_assetHub_kusama(
 }
 
 
-export async function checkHydraDxAssetBalance(
+export async function checkHydrationAssetBalance(
   assetid: number | string,
   account_id_32: string,
   signal?: AbortSignal
@@ -568,23 +568,23 @@ export async function checkHydraDxAssetBalance(
   frozen?: number;
   assetDecimals?: number;
 }> {
-  // console.log(`checkHydraDxAssetBalance accountId`, account_id_32);
-  // console.log(`checkHydraDxAssetBalance assetId`, assetid);
-  // console.log('checkHydraDxAssetBalance typeof asset id',typeof assetid);
+  // console.log(`checkHydrationAssetBalance accountId`, account_id_32);
+  // console.log(`checkHydrationAssetBalance assetId`, assetid);
+  // console.log('checkHydrationAssetBalance typeof asset id',typeof assetid);
 
   // If assetId is 0, fetch the native balance.
   if (assetid === 0 || assetid === "0") {
-    return hydraDxNativeBalance(account_id_32);
+    return hydrationNativeBalance(account_id_32);
   }
 
   let api: any;
   let hdxBalance: any;
   let assetDecimals: number;
 
-  // console.log(`checkHydraDxAssetBalance trying to connect`);
+  // console.log(`checkHydrationAssetBalance trying to connect`);
 
   try {
-    api = await getApiInstance(ChainKey.HydraDX, signal);
+    api = await getApiInstance(ChainKey.Hydration, signal);
     hdxBalance = await api.query.tokens.accounts(account_id_32, assetid);
   } catch (error) {
     console.error(
@@ -595,7 +595,7 @@ export async function checkHydraDxAssetBalance(
   }
 
   const stringBalance = hdxBalance.toHuman();
-  //  console.log(`checkHydraDxAssetBalance Raw HDX Balance:`, stringBalance);
+  //  console.log(`checkHydrationAssetBalance Raw HDX Balance:`, stringBalance);
 
   try {
     // Get the asset's metadata
@@ -610,8 +610,8 @@ export async function checkHydraDxAssetBalance(
     } else {
       throw new Error("Decimals not found in metadata");
     }
-    //    console.log(`checkHydraDxAssetBalance metadata`, metadata);
-    //   console.log(`checkHydraDxAssetBalance assetDecimals`, assetDecimals);
+    //    console.log(`checkHydrationAssetBalance metadata`, metadata);
+    //   console.log(`checkHydrationAssetBalance assetDecimals`, assetDecimals);
   } catch (error) {
     console.error(`Error retrieving metadata for asset ID ${assetid}:`, error);
     // You might want to set a default or throw an error here
@@ -620,7 +620,7 @@ export async function checkHydraDxAssetBalance(
 
   if (isOrmlTokensAccountData(hdxBalance)) {
     const bal_obj: OrmlTokensAccountData = hdxBalance;
-    //  console.log(`checkHydraDxAssetBalance bal obj`, bal_obj.toString());
+    //  console.log(`checkHydrationAssetBalance bal obj`, bal_obj.toString());
     return {
       free: bal_obj.free,
       reserved: bal_obj.reserved,
@@ -633,7 +633,7 @@ export async function checkHydraDxAssetBalance(
 }
 
 export function get_moonbeam_asset_decimals(assetid: string) {
-  const assetobj = list_onchainassets("moonbeam");
+  const assetobj = listMoobeamAssets("moonbeam");
   var decimals = 0;
   if (assetobj) {
         for (const x of assetobj) {
@@ -649,7 +649,7 @@ return decimals;
 // input 0x eth account
 export async function check_moonbeam(accounteth: string, dassetid: string, signal?: AbortSignal) {
   const api = await getApiInstance(ChainKey.Moonbeam, signal);
-  const assetobj = list_onchainassets("moonbeam");
+  const assetobj = listMoobeamAssets("moonbeam");
   console.log(`assetobj: `, assetobj);
   var decimals = 0;
   if (assetobj) {
@@ -776,7 +776,7 @@ export function getTokenDecimalsByChainName(chainName: string): number {
 }
 
 export async function getTokenDecimalsByAssetName(assetId: string): Promise<number> {
-  // const chainList = listHydraDxAssets();
+  // const chainList = listHydrationAssets();
   // nd(
   //   (asset) => asset.id === assetName
   // );
@@ -806,11 +806,11 @@ async function generic_check_native_balance(api: ApiPromise, address: string) {
   return { free: 0, reserved: 0, miscFrozen: 0, feeFrozen: 0 };
 }
 
-async function hydraDxNativeBalance(
+async function hydrationNativeBalance(
   address: string,
   signal?: AbortSignal
 ): Promise<{ free: number; reserved: number; total: number; frozen?: number }> {
-  const api = await getApiInstance(ChainKey.HydraDX, signal);
+  const api = await getApiInstance(ChainKey.Hydration, signal);
   const result = await generic_check_native_balance(api, address);
 
   // assuming generic_check_native_balance returns an object like:
@@ -825,7 +825,7 @@ async function hydraDxNativeBalance(
     free: result.free,
     reserved: result.reserved,
     total: total,
-    // can include miscFrozen and feeFrozen if they are relevant for hydraDx
+    // can include miscFrozen and feeFrozen if they are relevant for hydration
   };
 }
 
@@ -883,7 +883,7 @@ assetRegistry.assetMetadataMap(5)
 }
 */
 export async function get_hydradx_asset_symbol_decimals(assetid: number, signal?: AbortSignal) {
-  const api = await getApiInstance(ChainKey.HydraDX, signal);
+  const api = await getApiInstance(ChainKey.Hydration, signal);
   const resp: any = (await api.query.assetRegistry.assets(assetid)).toHuman();
   return resp;
 }
@@ -937,9 +937,9 @@ export async function getAssetBalanceForChain(
       balances = await checkRelayRawNativeBalance("kusama", accountId, signal);
       break;
 
-    case "hydraDx":
+    case "hydration":
       if (assetId !== undefined) {
-      const hydraBalanceInfo = await checkHydraDxAssetBalance(assetId, accountId, signal
+      const hydraBalanceInfo = await checkHydrationAssetBalance(assetId, accountId, signal
       );
       
       balances = hydraBalanceInfo;
@@ -1095,7 +1095,7 @@ function processChainSpecificBalances(
       }
       break;
 
-    case "hydraDx":
+    case "hydration":
       // Process balances for HydraDx
       freeInUnits = toUnit(balances.free, assetDecimals || tokenDecimals);
       reservedInUnits = toUnit(

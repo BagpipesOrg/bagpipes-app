@@ -1,8 +1,8 @@
 import { 
-    delegatePolkadot, stake_to_dot_pool, dotToHydraDx, polkadot_vote, moon2polkadot,  generic_system_remark, moon2parachain, moon2hydra2, hydra2moonbeam, interlay2moonbeam, 
-    polkadot2moonbeam, assethub2moonbeam, turing2moonriver, moonriver2turing, mangata2turing, polkadot_assethub_to_assetHub_kusama, hydraDxToParachain, turing2mangata, 
+    delegatePolkadot, stake_to_dot_pool, dotToHydration, polkadot_vote, moonbeam2polkadot,  generic_system_remark, moonbeam2parachain, moonbeam2hydrationtion, hydration2moonbeam, interlay2moonbeam, 
+    polkadot2moonbeam, assethub2moonbeam, turing2moonriver, moonriver2turing, mangata2turing, polkadotHub2KusamaHub, hydrationToParachain, turing2mangata, 
     generic_kusama_to_parachain, assethub2ethereum, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, 
-    assethub2interlay, assethub_to_polkadot, getTokenDecimalsByAssetName, get_moonbeam_asset_decimals, getTokenDecimalsByChainName, get_hydradx_asset_symbol_decimals, listChains, 
+    assethub2interlay, assethub_to_polkadot, getDecimalsForAsset, listChains, 
     hydradx_omnipool_sell } 
 from 'chains-lib';
 
@@ -37,47 +37,46 @@ export async function extrinsicHandler(actionType, formData) {
         }
 };
 
-function handleStake(formdata) {
+async function handleStake(formdata) {
     console.log(`handlestake: `, formdata);
     const source = formdata.source;
-    if (!source.chain == "polkadot") {
-        throw new Error("Staking only support on Polkadot");
+    if (source.chain !== "polkadot") {
+      throw new Error("Staking only supported on Polkadot");
     }
-    const tokenDecimals = getTokenDecimalsByChainName(source.chain);
+    const tokenDecimals = await getDecimalsForAsset(source.chain, 0);
     const stake = formdata.stake;
     const pool_id = stake.pool_id;
     const amount = source.amount * (10 ** tokenDecimals);
     return stake_to_dot_pool(amount, pool_id);
-}
+  }
 
-function handleDelegate(formdata) {
+  async function handleDelegate(formdata) {
     const source = formdata.source;
-    if (!source.chain == "polkadot") {
-        throw new Error("Delegate Voting only support on Polkadot");
+    if (source.chain !== "polkadot") {
+      throw new Error("Delegate Voting only supported on Polkadot");
     }
     const delegate = formdata.delegate;
-    const tokenDecimals = getTokenDecimalsByChainName(source.chain);
+    const tokenDecimals = await getDecimalsForAsset(source.chain, 0);
     const conviction = delegate.conviction; // string number
     const dest = delegate.to_address;
- 
     const amount = source.amount * (10 ** tokenDecimals);
     return delegatePolkadot(dest, amount, conviction);
-}
+  }
+  
 
-function handleVote(formData) {
-//    console.log(`handleVote input: `, formData);
+  async function handleVote(formData) {
     const source = formData.source;
-    if (!source.chain == "polkadot") {
-        throw new Error("Voting only support on Polkadot");
+    if (source.chain !== "polkadot") {
+      throw new Error("Voting only supported on Polkadot");
     }
-    const tokenDecimals = getTokenDecimalsByChainName(source.chain);
+    const tokenDecimals = await getDecimalsForAsset(source.chain, 0);
     const votedata = formData.votedata;
     const lock = votedata.lock;
     const refnr = votedata.refnr;
     const aye_or_nay = votedata.aye_or_nay;
     const amount = Number(source.amount) * (10 ** tokenDecimals);
     return polkadot_vote(amount, lock, refnr, aye_or_nay);
-}
+  }
 
 
 function handleRemark(formData) {
@@ -95,43 +94,38 @@ function handleRemark(formData) {
 }
 
 
-function handlexTransfer(formData) {
+async function handlexTransfer(formData) {
     console.log("handlexTransfer Handling xTransfer...");
-    const chains = listChains();
     const source = formData.source;
     const target = formData.target;
     const delay = formData.source.delay;
-
-    // check if the asset is native or on-chain asset. 
-    // Retrieve token decimals for the source chain
-    const tokenDecimals = getTokenDecimalsByChainName(source.chain);
-
-    // Adjust the source amount according to the token decimals
+  
+    const tokenDecimals = await getDecimalsForAsset(source.chain, source.assetId || 0);
     const submittableAmount = source.amount * (10 ** tokenDecimals);
-
+  
     console.log(`handlexTransfer Source chain: ${source.chain}`);
     console.log(`handlexTransfer Target chain: ${target.chain}`);
     console.log(`handlexTransfer Source amount: ${source.amount}`);
     console.log(`handlexTransfer Target address: ${target.address}`);
-
+  
     // Define a map for each xTransfer action
     const reserverTransferActions = {
-        'polkadot:hydraDx': () => {
+        'polkadot:hydration': () => {
             if(delay) {
                 const numberValue = Number(delay);
                 if (numberValue >= 1){
-                    return dotToHydraDx(submittableAmount, target.address, numberValue);
+                    return dotToHydration(submittableAmount, target.address, numberValue);
                 };
             };
             console.log("handlexTransfer for Polkadot to HydraDx...");
-            return dotToHydraDx(submittableAmount, target.address);
+            return dotToHydration(submittableAmount, target.address);
         },
-        'hydraDx:assetHub': () => {
+        'hydration:assetHub': () => {
             console.log("handlexTransfer for HydraDx to AssetHub...");
 
             return hydradx_to_assethub(source.amount, target.assetId, source.assetId, target.address);
         },
-///hydra2moonbeam, interlay2moonbeam, polkadot2moonbeam, assethubassethub2moonbeam
+        ///hydration2moonbeam, interlay2moonbeam, polkadot2moonbeam, assethubassethub2moonbeam
         'polkadot:moonbeam': () => {
             if (!isEthereumAddress(target.address)) { //  evm account check
                 throw new Error("Invalid address, select your evm account");
@@ -168,31 +162,31 @@ function handlexTransfer(formData) {
             console.log(`source:`, source);
             console.log(`source amount:`, source.amount);
             const correct_dot_amount = source.amount * (10**10);
-            return moon2polkadot(target.address, correct_dot_amount);
+            return moonbeam2polkadot(target.address, correct_dot_amount);
         },
         'moonbeam:assetHub': () => {
-            console.log(`moon2assethub`);
+            console.log(`moonbeam2assethub`);
             const mdecimals = get_moonbeam_asset_decimals(source.assetId);
             const correct_amount = source.amount * (10 ** mdecimals);
           
-            return moon2parachain(source.assetId, correct_amount, target.address, 1000);
+            return moonbeam2parachain(source.assetId, correct_amount, target.address, 1000);
         },
 
-        'moonbeam:hydraDx': () => {
+        'moonbeam:hydration': () => {
             console.log(`assetid`, source.assetId);
             const mdecimals = get_moonbeam_asset_decimals(source.assetId);
             const correct_amount = source.amount * (10 ** mdecimals);
-            console.log(`moon2hydra decimals:`, mdecimals);
-            console.log(`moon2hydra correct_amount:`, correct_amount);
-            return moon2hydra2(source.assetId, correct_amount, target.address);
+            console.log(`moonbeam2hydration decimals:`, mdecimals);
+            console.log(`moonbeam2hydration correct_amount:`, correct_amount);
+            return moonbeam2hydrationtion(source.assetId, correct_amount, target.address);
          
-//            return moon2hydra(target.address, correct_amount);
+//            return moonbeam2hydration(target.address, correct_amount);
         },
         'moonbeam:interlay': () => {
             const mdecimals = get_moonbeam_asset_decimals(source.assetId);
             const correct_amount = source.amount * (10 ** mdecimals);
             
-            return moon2parachain(source.assetId, correct_amount, target.address, 2032);
+            return moonbeam2parachain(source.assetId, correct_amount, target.address, 2032);
 
         },
 
@@ -200,8 +194,8 @@ function handlexTransfer(formData) {
         'interlay:moonbeam': () => {
             return interlay2moonbeam(source.amount, source.assetId, target.address);
         },
-        'hydraDx:moonbeam': () => {
-            return hydra2moonbeam(target.address, source.assetId, source.amount);
+        'hydration:moonbeam': () => {
+            return hydration2moonbeam(target.address, source.assetId, source.amount);
         },
         'assetHub:moonbeam': () => {
             return assethub2moonbeam(source.amount, source.assetId, target.address);
@@ -221,12 +215,12 @@ function handlexTransfer(formData) {
             console.log("handlexTransfer for AssetHub to Polkadot...");
             return assethub_to_polkadot(submittableAmount, target.address);
         },
-        'hydraDx:polkadot': () => {
+        'hydration:polkadot': () => {
             console.log("handlexTransfer for HydraDx to Polkadot...");
             const paraid = 0;
             const hamount = source.amount * (10 ** 10); // DOT asset on hydra has 10 decimals
             return hydradx_to_polkadot(hamount, target.address);
-            //return hydraDxToParachain(submittableAmount, source.assetId, target.chain, paraid);
+            //return hydrationToParachain(submittableAmount, source.assetId, target.chain, paraid);
         },
 
         'assetHub:interlay': () => {
@@ -252,7 +246,7 @@ function handlexTransfer(formData) {
         'assetHub:assetHub_kusama': () => {
             console.log(`Polkadot assethub to kusama assethub`);
             console.log(`input: `, submittableAmount, target.address);
-           return polkadot_assethub_to_assetHub_kusama(submittableAmount, target.address);
+           return polkadotHub2KusamaHub(submittableAmount, target.address);
         },
 
 
@@ -286,7 +280,7 @@ not ready yet
             return roc2assethub(amount, dest);
         },
 
-        'assetHub:hydraDx': () => {
+        'assetHub:hydration': () => {
             console.log("handlexTransfer forAssetHub to HydraDx...");
             const paraid = 2034;
             return assethub_to_hydra(source.assetId, submittableAmount, target.address);
@@ -312,26 +306,18 @@ async function handleSwap(formData) {
     const source = formData.source;
     const target = formData.target;
     console.log(`handle swap form data:`, formData);
-      // Retrieve token decimals for the source chain
-    //   const tokenDecimals = getTokenDecimalsByChainName(source.chain);
-      const tokenDecimals =  await getTokenDecimalsByAssetName(source.assetId);
-console.log(`tokenDecimals: `, tokenDecimals);
-           // Adjust the source amount according to the token decimals
-      const submittableAmount = source.amount * (10 ** tokenDecimals);
-        const assetin = source.assetId;
-        const assetout = target.assetId;
-        const amount = submittableAmount;
-        //const minBuyAmount = set as recieve amount ;
-      /// assetin = asset you have on your account
-/// assetout = asset you want to swap to
-/// amount = amount of assetin you want to swap to assetout
-/// minBuyAmount = minimum amount to buy, note: tx will fail if this is set to 0 or to low
-      // TODO: handle swaps
-    if (source.chain === 'hydraDx' && target.chain === 'hydraDx') {
-
-        
-        return hydradx_omnipool_sell(assetin, assetout, source.amount, submittableAmount);  //hydradx_omnipool_sell(assetin: string, assetout: string, amount: number, minBuyAmount: number)
-       //  true;
+  
+    const tokenDecimals = await getDecimalsForAsset(source.chain, source.assetId);
+    console.log(`tokenDecimals: `, tokenDecimals);
+  
+    const submittableAmount = source.amount * (10 ** tokenDecimals);
+    const assetin = source.assetId;
+    const assetout = target.assetId;
+    const amount = submittableAmount;
+  
+    if (source.chain === 'hydration' && target.chain === 'hydration') {
+      return hydradx_omnipool_sell(assetin, assetout, source.amount, submittableAmount);
     }
     throw new Error("You can only swap from hydradx to hydradx");
-}
+  }
+  

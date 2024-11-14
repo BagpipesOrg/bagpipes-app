@@ -24,7 +24,7 @@ export async function getHydradxAssetSymbolDecimals(
   console.log(`getHydradxAssetSymbolDecimals assetid`, assetid);
   const controller = new AbortController();
   const signal = controller.signal;
-  const api = await getApiInstance(ChainKey.HydraDX, signal); 
+  const api = await getApiInstance(ChainKey.Hydration, signal); 
   const resp = (await api.query.assetRegistry.assets(assetid)).toHuman() as any;
   const assetInfo: HydradxAssetSymbolDecimalsResponse = {
     name: resp.name,
@@ -52,7 +52,7 @@ export async function hydradx_omnipool_sell(
 ) {
   const controller = new AbortController();
   const signal = controller.signal;
-  const api = await getApiInstance(ChainKey.HydraDX, signal);   
+  const api = await getApiInstance(ChainKey.Hydration, signal);   
   const pinfo = await getHydraDxSellPrice(assetin, assetout, rawamount);
 
   const aout = pinfo.amountOut;

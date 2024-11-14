@@ -1,5 +1,145 @@
 export const CHAIN_ASSETS = {
-    "hydraDx": {
+    "bifrost": {
+    "assets": 
+      [
+        [
+          [
+            {
+              "NativeAssetId": {
+                "Token": "MOVR"
+              }
+            }
+          ],
+          {
+            "name": "Moonriver Native Token",
+            "symbol": "MOVR",
+            "decimals": 18,
+            "minimalBalance": "1,000,000,000,000"
+          }
+        ],
+        [
+          [
+            {
+              "NativeAssetId": {
+                "Token": "RMRK"
+              }
+            }
+          ],
+          {
+            "name": "RMRK Token",
+            "symbol": "RMRK",
+            "decimals": 10,
+            "minimalBalance": "10,000"
+          }
+        ],
+        [
+          [
+            {
+              "NativeAssetId": {
+                "Token": "PHA"
+              }
+            }
+          ],
+          {
+            "name": "Phala Native Token",
+            "symbol": "PHA",
+            "decimals": 12,
+            "minimalBalance": "40,000,000,000"
+          }
+        ],
+        [
+          [
+            {
+              "NativeAssetId": {
+                "Token": "KSM"
+              }
+            }
+          ],
+          {
+            "name": "Kusama",
+            "symbol": "KSM",
+            "decimals": 12,
+            "minimalBalance": "100,000,000"
+          }
+        ],
+        [
+          [
+            {
+              "NativeAssetId": {
+                "Native": "BNC"
+              }
+            }
+          ],
+          {
+            "name": "Bifrost",
+            "symbol": "BNC",
+            "decimals": 12,
+            "minimalBalance": "10,000,000,000"
+          }
+        ],
+        [
+          [
+            {
+              "NativeAssetId": {
+                "Token": "ZLK"
+              }
+            }
+          ],
+          {
+            "name": "Zenlink Network Token",
+            "symbol": "ZLK",
+            "decimals": 18,
+            "minimalBalance": "1,000,000,000,000"
+          }
+        ],
+        [
+          [
+            {
+              "NativeAssetId": {
+                "Stable": "KUSD"
+              }
+            }
+          ],
+          {
+            "name": "Karura Dollar",
+            "symbol": "KUSD",
+            "decimals": 12,
+            "minimalBalance": "100,000,000"
+          }
+        ],
+        [
+          [
+            {
+              "NativeAssetId": {
+                "Token": "KAR"
+              }
+            }
+          ],
+          {
+            "name": "Karura",
+            "symbol": "KAR",
+            "decimals": 12,
+            "minimalBalance": "100,000,000"
+          }
+        ],
+        [
+          [
+            {
+              "NativeAssetId": {
+                "VSToken": "KSM"
+              }
+            }
+          ],
+          {
+            "name": "Kusama",
+            "symbol": "KSM",
+            "decimals": 12,
+            "minimalBalance": "100,000,000"
+          }
+        ]
+      ]      
+    },
+    "hydration": {
         "assets": [
             {
                 "asset": {
@@ -33,7 +173,7 @@ export const CHAIN_ASSETS = {
             },
             {
                 "asset": {
-                    "name": "HydraDX",
+                    "name": "Hydration",
                     "assetType": "Token",
                     "existentialDeposit": "1,000,000,000,000",
                     "xcmRateLimit": null,
@@ -183,7 +323,7 @@ export const CHAIN_ASSETS = {
             },
             {
                 "asset": {
-                    "name": "HydraDX",
+                    "name": "Hydration",
                     "assetType": "Token",
                     "existentialDeposit": "1,000,000,000,000",
                     "xcmRateLimit": null,
@@ -260,23 +400,11 @@ export const CHAIN_ASSETS = {
                     "symbol": "ZTG"
                 },
                 "assetId": "12"
-            },
-            {
-              "asset": {
-                  "name": "Bifrost Native Coin",
-                  "assetType": "Token",
-                  "existentialDeposit": "68,795,189,840",
-                  "xcmRateLimit": null,
-                  "symbol": "BNC"
-              },
-              "assetId": "14"
-          }
+            }
 
         ]
 
     },
-
-
     "assetHub_kusama": {
         "assets":[
             {
@@ -290,7 +418,6 @@ export const CHAIN_ASSETS = {
             }
         ]
     },
-
     "mangatax": {
         "assets":  [
             {
@@ -429,7 +556,6 @@ export const CHAIN_ASSETS = {
           
           ]
     },
-
     "moonriver": {
         "assets": [
           {
@@ -443,7 +569,6 @@ export const CHAIN_ASSETS = {
         },
         ]
     },
-
     "turing": {
       "assets": [
     
@@ -540,7 +665,6 @@ export const CHAIN_ASSETS = {
           }
         ]      
     },
-
     "interlay": {
         "assets": [
                 {
@@ -750,7 +874,7 @@ export const CHAIN_ASSETS = {
         {
           "asset":{
             "deposit":'0',
-            "name":'HydraDX',
+            "name":'Hydration',
             "symbol":'xcHDX',
             "decimals":'12',
             "isFrozen":false
@@ -1392,10 +1516,5 @@ export const CHAIN_ASSETS = {
                 "assetId": "862,812"
             }
         ]
-      
     }
 }
-
-
-
-

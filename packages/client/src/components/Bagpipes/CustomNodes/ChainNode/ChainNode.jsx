@@ -98,22 +98,6 @@ const ChainNode = ({ data, isConnectable }) => {
 
   console.log(`sourceChainName:`, sourceChainName);
 
-//   if (sourceChainName == 'rococo') {
-//     filteredChainInfoList = ChainInfoList.filter(chainInfo => {
-//       return chainInfo.name.toLowerCase() === "rococo";
-//   });
-//   }
-
-//   if (sourceChainName == 'sora') {
-//     filteredChainInfoList = ChainInfoList.filter(chainInfo => {
-//       return chainInfo.name.toLowerCase() === "rococo";
-//   });
-//   }
-
-//  filteredChainInfoList = ChainInfoList.filter(chainInfo => {
-//     return chainInfo.name.toLowerCase() === "rococo" | hrmpForSource.length === 0 || hrmpForSource.includes(12011);
-//  });
-
   // Log a warning if the HRMP channels list is empty
   if (hrmpForSource.length === 0) {
     console.log(`hrmpForSource:`, hrmpForSource);
@@ -170,12 +154,18 @@ const ChainNode = ({ data, isConnectable }) => {
 
   const handleChainChange = async (e) => {
     const selectedChainName = e.target.value;
-    
+  
     // Update the chain in the form state
     handleFormChange("chain", selectedChainName);
+  
+    // Reset asset, amount, and balance
+    handleFormChange("asset", null);
+    handleFormChange("amount", null);
+    setBalance(null);
+  
     setIsLoading(true);
   };
-
+  
   const handleAssetChange = (e) => {
     const selectedAssetName = e.target.value;
     let selectedAssetInfo;
@@ -199,7 +189,8 @@ const ChainNode = ({ data, isConnectable }) => {
         asset: null
       }));
     }
-};
+
+  };
 
   useEffect(() => {
     if (formState.chain) {

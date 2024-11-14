@@ -1,11 +1,14 @@
 export * from "./Assets/chainAssets";
 export * from "./Assets/listAssetsForChain";
+export * from "./Assets/AssetBalanceQuery";
+export * from "./Assets/chainConfigs";
+export * from "./Assets/assetutils";
 export * from "./ChainsInfo/ChainsInfo";
 export * from "./DraftTx/DraftInk";
 export * from "./DraftTx/DraftSwapTx";
 export * from "./DraftTx/DraftxTransferTx";
 export * from "./DraftTx/Delegate";
-export * from "./Helpers/AssetHelper";
+// export * from "./Helpers/AssetHelper";
 export * from "./Helpers/FeeHelper";
 export * from "./Helpers/PriceHelper";
 export * from "./Helpers/XcmHelper";

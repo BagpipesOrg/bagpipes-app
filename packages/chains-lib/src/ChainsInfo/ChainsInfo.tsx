@@ -35,14 +35,11 @@ export function listChains() {
       prefix: 6, 
       token_decimals: 12,
       logo: '/chains/bifrost.svg',
-      relayParent: 'kusama',
+      relayParent: 'polkadot',
       parachain: true,
-      symbol: 'KSM'
+      symbol: 'BNC'
     };
     chainList[2030] = Bifrost;
-
-
-
 
     const KusamaAssethub: ChainInfo = {
       name: 'assetHub_kusama',
@@ -55,7 +52,7 @@ export function listChains() {
       parachain: true,
       symbol: 'KSM'
     };
-    chainList[21000] = KusamaAssethub;//fake paraid
+    chainList[21000] = KusamaAssethub;
 
 
 
@@ -116,8 +113,8 @@ export function listChains() {
   };
   chainList[1000] = AssetHub;
 
-  const HydraDX: ChainInfo = {
-    name: 'hydraDx',
+  const Hydration: ChainInfo = {
+    name: 'hydration',
     display: 'Hydration',
     paraid: 2034,
     prefix: 0,
@@ -127,7 +124,7 @@ export function listChains() {
     parachain: true,
     symbol: 'HDX'
   };
-  chainList[2034] = HydraDX;
+  chainList[2034] = Hydration;
 
   const Ethereum: ChainInfo = {
     name: 'ethereum',
@@ -216,19 +213,20 @@ export function listChains() {
         symbol: 'KSM'
       };
       chainList[2] = Kusama;
-      const RococoContracts: ChainInfo = {
-        name: 'rococo_contracts',
-        display: 'Contracts (Rococo)',
-        paraid: 0,
-        prefix: 0,
-        token_decimals: 12,
-        logo: '/chains/rococo.jpeg',
-        parachain: false,
-        relay: true,
-        symbol: 'ROC'
 
-      };
-      chainList[101] = RococoContracts;
+      // const RococoContracts: ChainInfo = {
+      //   name: 'rococo_contracts',
+      //   display: 'Contracts (Rococo)',
+      //   paraid: 0,
+      //   prefix: 0,
+      //   token_decimals: 12,
+      //   logo: '/chains/rococo.jpeg',
+      //   parachain: false,
+      //   relay: true,
+      //   symbol: 'ROC'
+
+      // };
+      // chainList[101] = RococoContracts;
 
       const Rococo: ChainInfo = {
         name: 'rococo',
@@ -286,7 +284,7 @@ export function listRelayChains(): ChainInfo[] {
 // handle matching chains easier
 export enum supported_Polkadot_Chains {
   polkadot,
-  hydradx,
+  hydration,
   assethub,
 }
 

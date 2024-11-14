@@ -207,7 +207,7 @@ export async function polkadotGetLeaseTime(chainname: string) {
       return "16-01-2024";
     case "assetHub":
       return "indefinitely";
-    case "hydraDx":
+    case "hydration":
       return "16-01-2024";
   }
 }

@@ -4,15 +4,15 @@ import {
   genericPolkadotToParachain,
   polkadot_to_assethub,
   assethub_to_parachain,
-  hydraDxToParachain,
-  dotToHydraDx,
+  hydrationToParachain,
+  dotToHydration,
   assethub2interlay,
 } from 'chains-lib';
 import * as assert from "assert";
 import {
   checkAssetHubBalance,
   assetHubNativeBalance,
-  checkHydraDxAssetBalance,
+  checkHydrationAssetBalance,
   checkRelayRawNativeBalance,
 } from 'chains-lib';
 import { Keyring } from "@polkadot/keyring";
@@ -76,14 +76,14 @@ async function test_transfers() {
   console.log(`Polkadot DOT > assethub scheduled tx check ok`);
 
   console.log(`Polkadot DOT > hydradx OK`);
-  const dhdx = await dotToHydraDx(amount, address, 10);
+  const dhdx = await dotToHydration(amount, address, 10);
   //   console.log(dhdx.toHex());
   console.log(`Polkadot DOT > hydradx scheduled tx check`);
   //  assert.strictEqual(dhdx.toHex(), '0x0d01040100f4c817010000630803000100c91f030001010068de6e1566e333753df02b2446f24e1cc2b796cfdf954dc0f39753c578e02a40030400000000e5140000000000');
   console.log(`Polkadot DOT > hydradx scheduled tx check ok`);
 
   console.log(`Polkadot DOT > hydradx OK`);
-  const runp2 = await dotToHydraDx(amount, address);
+  const runp2 = await dotToHydration(amount, address);
   assert.strictEqual(
     runp2.toHex(),
     "0xec04630803000100c91f030001010068de6e1566e333753df02b2446f24e1cc2b796cfdf954dc0f39753c578e02a40030400000000e5140000000000"
@@ -118,7 +118,7 @@ async function test_transfers() {
   console.log(`Assethub > Polkadot ok`);
 
   console.log(`[test] HydraDx transfers`);
-  const runh = await hydraDxToParachain(amount, assetid, address, paraid);
+  const runh = await hydrationToParachain(amount, assetid, address, paraid);
   assert.strictEqual(
     runh.toHex(),
     "0x680489010300000300a10f0000000000e51401010200a10f000000"
@@ -126,7 +126,7 @@ async function test_transfers() {
   console.log(`Hydradx > assethub ok`);
 
   console.log(`[test] Hydradx > polkadot`);
-  const hp = await hydraDxToParachain(amount, assetid, address, 0); // polkadot
+  const hp = await hydrationToParachain(amount, assetid, address, 0); // polkadot
   assert.strictEqual(
     hp.toHex(),
     "0x600489010300000300000000000000e5140101020000000000"
@@ -205,7 +205,7 @@ async function test_balances() {
   const dai = 2; // check dai asset on hydradx
   console.log("Testing Hydradx asset balance");
   const accounthydra = "7KVha5AoBK5CEcnutacBVZb9EnwsJ1TaBWooFB6XagBaP6KV"; // hydradx test ac
-  const hda = await checkHydraDxAssetBalance(dai, accounthydra);
+  const hda = await checkHydrationAssetBalance(dai, accounthydra);
   assert.ok(number_improve(hda) == 0, "DAI balance is not zero");
   console.log("Hydradx asset balance ok");
 }

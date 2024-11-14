@@ -421,7 +421,7 @@ export async function hydradx_to_assethub(
   sourceassetid: number,
   destaccount: string
 ) {
-  const api = await getApiInstance(ChainKey.HydraDX, new AbortController().signal);  
+  const api = await getApiInstance(ChainKey.Hydration, new AbortController().signal);  
   console.log(`hydradx to assethub called`);
   const assetid = destassetid;
   console.log(
@@ -482,7 +482,7 @@ export async function hydradx_to_assethub(
 }
 
 /// working: https://moonbeam.subscan.io/extrinsic/6444324-6?tab=xcm_transfer
-export async function moon2parachain(
+export async function moonbeam2parachain(
   assetid: string,
   amount: number,
   account: string,
@@ -518,7 +518,7 @@ export async function moon2parachain(
 }
 
 /// https://moonbeam.subscan.io/extrinsic/6444042-5?tab=xcm_transfer
-export async function moon2hydra2(
+export async function moonbeam2hydrationtion(
   assetid: string,
   amount: number,
   account: string
@@ -526,7 +526,7 @@ export async function moon2hydra2(
   const accountme = getRawAddress(account); //"0xb6864e89ef92820dfd586c034a264e175415cee72270d853ab8b42110f24de25";
   //const amount = 1000000000000;
   const cleanAssetId = assetid.replace(/,/g, "");
-  console.log(`moon2hydra2 input:`, cleanAssetId, accountme, amount);
+  console.log(`moonbeam2hydrationtion input:`, cleanAssetId, accountme, amount);
   const api = await getApiInstance(ChainKey.Moonbeam, new AbortController().signal);
   const dest = {
     parents: 1,
@@ -556,9 +556,9 @@ export async function moon2hydra2(
 // native only, do not use
 // only for native once
 // https://moonbeam.subscan.io/extrinsic/6443822-5?tab=xcm_transfer
-export async function moon2hydra(account: string, amount: number) {
+export async function moonbeam2hydration(account: string, amount: number) {
   const api = await getApiInstance(ChainKey.Moonbeam, new AbortController().signal);
-  console.log(`moon2hydra input: `, account, amount);
+  console.log(`moonbeam2hydration input: `, account, amount);
   const accountme = getRawAddress(account);
 
   /*
@@ -681,7 +681,7 @@ export async function interlay2assethub(
   const destination = {
     parents: 0,
     interior: {
-      x2: [
+      X2: [
         {
           Parachain: paraid,
           accountId32: {
@@ -777,7 +777,7 @@ export async function genericPolkadotToParachain(
 }
 
 // working: https://hydradx.subscan.io/xcm_message/polkadot-047344414db62b7c424c8de9037c5a99edd0794c
-export async function dotToHydraDx(
+export async function dotToHydration(
   amount: number,
   targetAddress: string,
   delay?: number
@@ -831,10 +831,10 @@ export async function dotToHydraDx(
     0,
     { Unlimited: null } // weight_limit
   );
-  //   console.log(`[dotTohydraDx] tx created!`);
-  //   console.log("[dotTohydraDx] tx to hex", tx.toHex());
-  //console.log("[dotTohydraDx] tx to human", tx.toHuman());
-  //console.log("[dotTohydraDx] tx", tx);
+  //   console.log(`[dotToHydration] tx created!`);
+  //   console.log("[dotToHydration] tx to hex", tx.toHex());
+  //console.log("[dotToHydration] tx to human", tx.toHuman());
+  //console.log("[dotToHydration] tx", tx);
 
   if (delay) {
     const future: number = (await (
@@ -901,7 +901,7 @@ export async function hydradx_to_polkadot(
   amount: number,
   dest_account: string
 ) {
-  const api = await getApiInstance(ChainKey.HydraDX, new AbortController().signal);
+  const api = await getApiInstance(ChainKey.Hydration, new AbortController().signal);
   const rawTargetAddress = raw_address_now(dest_account);
 
   const asset = {};
@@ -923,13 +923,13 @@ export async function hydradx_to_polkadot(
 // ref: https://hydradx.subscan.io/extrinsic/3330338-2?event=3330338-7
 // dry run results: https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc.hydradx.cloud#/extrinsics/decode and input this: 0x640489010300000300a10f00000000002801010200a10f000000
 // HYDRADX > parachain
-export async function hydraDxToParachain(
+export async function hydrationToParachain(
   amount: number,
   assetId: number,
   destAccount: string,
   paraId: number
 ) {
-  const api = await getApiInstance(ChainKey.HydraDX, new AbortController().signal);
+  const api = await getApiInstance(ChainKey.Hydration, new AbortController().signal);
 
   // 	console.log(`[hydradx to parachain]amount :`, amount);
   // 	console.log(`[hydradx to parachain]assetId :`, assetId);
@@ -968,45 +968,45 @@ export async function hydraDxToParachain(
   return tx;
 }
 
-async function moonbeam2parachain(
-  accountidme: string,
-  assetid: string,
-  amount: string,
-  paraid: number
-) {
-  const api = await getApiInstance(ChainKey.Moonbeam, new AbortController().signal);
+// async function moonbeam2parachain(
+//   accountidme: string,
+//   assetid: string,
+//   amount: string,
+//   paraid: number
+// ) {
+//   const api = await getApiInstance(ChainKey.Moonbeam, new AbortController().signal);
 
-  const asset = {
-    fun: {
-      Fungible: amount,
-    },
-    id: {
-      Concrete: {
-        interior: {
-          X3: [
-            { Parachain: paraid, PalletInstance: 50, GeneralIndex: assetid },
-          ],
-          parents: 1,
-        },
-      },
-    },
-  };
+//   const asset = {
+//     fun: {
+//       Fungible: amount,
+//     },
+//     id: {
+//       Concrete: {
+//         interior: {
+//           X3: [
+//             { Parachain: paraid, PalletInstance: 50, GeneralIndex: assetid },
+//           ],
+//           parents: 1,
+//         },
+//       },
+//     },
+//   };
 
-  const destination = {
-    parents: 1,
-    interior: {
-      X2: [{ Parachain: paraid, AccountId32: accountidme, network: null }],
-    },
-  };
+//   const destination = {
+//     parents: 1,
+//     interior: {
+//       X2: [{ Parachain: paraid, AccountId32: accountidme, network: null }],
+//     },
+//   };
 
-  const tx = api.tx.xTokens.transferMultiasset(
-    { V3: asset },
-    { V2: destination },
-    { Unlimited: 0 }
-  );
+//   const tx = api.tx.xTokens.transferMultiasset(
+//     { V3: asset },
+//     { V2: destination },
+//     { Unlimited: 0 }
+//   );
 
-  return tx;
-}
+//   return tx;
+// }
 
 function uint8ArrayToHex(uint8Array: Uint8Array): string {
   let hex = "";
@@ -1019,7 +1019,7 @@ function uint8ArrayToHex(uint8Array: Uint8Array): string {
   return hex;
 }
 
-export async function polkadot_assethub_to_assetHub_kusama(
+export async function polkadotHub2KusamaHub(
   amount: number,
   accountid: string
 ) {
@@ -1065,9 +1065,9 @@ export async function polkadot_assethub_to_assetHub_kusama(
 }
 
 /// moonbeam > Polkadot Relay chain
-export async function moon2polkadot(account: string, amount: number) {
+export async function moonbeam2polkadot(account: string, amount: number) {
   const api = await getApiInstance(ChainKey.Moonbeam, new AbortController().signal);
-  console.log(`moon2polkadot input account, amount: `, account, amount);
+  console.log(`moonbeam2polkadot input account, amount: `, account, amount);
   const relayAccount = raw_address_now(account);
   console.log(`relayaccount: `, relayAccount);
   const dest = {
@@ -1304,12 +1304,12 @@ export async function interlay2moonbeam(
 }
 
 /// hydra > moonbeam
-export async function hydra2moonbeam(
+export async function hydration2moonbeam(
   accountme: string,
   assetid: string,
   amount: string
 ) {
-  const api = await getApiInstance(ChainKey.HydraDX, new AbortController().signal);
+  const api = await getApiInstance(ChainKey.Hydration, new AbortController().signal);
 
   const dest = {
     parents: 1,

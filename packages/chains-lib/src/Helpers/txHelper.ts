@@ -39,8 +39,8 @@ async function spawn_native_balance_check(
     case supported_Polkadot_Chains.assethub:
       api = await getApiInstance(endpoints.polkadot.assetHub as ChainKey);
       break;
-    case supported_Polkadot_Chains.hydradx:
-      api = await getApiInstance(endpoints.polkadot.hydraDx as ChainKey);
+    case supported_Polkadot_Chains.hydration:
+      api = await getApiInstance(endpoints.polkadot.hydration as ChainKey);
       break;
   }
   const original_balance = await genericRawNativeBalance(api, account);

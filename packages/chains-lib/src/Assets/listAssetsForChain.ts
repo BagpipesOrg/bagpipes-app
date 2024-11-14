@@ -5,7 +5,7 @@ import { getApiInstance } from "../api/connect";
 import { CHAIN_METADATA, ChainKey } from "../ChainsInfo/metadata";
 import { CHAIN_ASSETS } from "./chainAssets";
 
-const HydraDx = listChains();
+const Hydration = listChains();
 
 export function listAssetHubAssets() {
   const assets = CHAIN_ASSETS.assetHub.assets;
@@ -16,7 +16,7 @@ export function listAssetHubAssets() {
   }));
 }
 
-export function listassetHub_kusamaAssets() {
+export function listAssetHubAssets_Kusama() {
   const assets = CHAIN_ASSETS.assetHub_kusama.assets;
 
   return assets.map((assetData: { asset: any; assetId: any }) => ({
@@ -25,7 +25,25 @@ export function listassetHub_kusamaAssets() {
   }));
 }
 
-export function list_onchainassets(chain: string) {
+export function listBifrostAssets() {
+  const assets = CHAIN_ASSETS.bifrost.assets;
+
+  return assets.map((assetArray: any) => {
+    const [assetIdArray, assetInfo] = assetArray;
+    const assetIdObj = assetIdArray[0]; // Assuming assetIdArray contains only one item
+
+    const assetIdKey = Object.keys(assetIdObj.NativeAssetId)[0];
+    const assetIdValue = assetIdObj.NativeAssetId[assetIdKey];
+
+    return {
+      asset: assetInfo,
+      assetId: assetIdValue, 
+    };
+  });
+}
+
+
+export function listMoobeamAssets(chain: string) {
   switch (chain) {
     case "moonbeam":
       const assets = CHAIN_ASSETS.moonbeam.assets;
@@ -88,7 +106,7 @@ async function listInterlayAssetReal() {
   return valuesArray;
 }
 
-export function listMoonRiverAssets() {
+export function listMoonriverAssets() {
   const assets = CHAIN_ASSETS.moonriver.assets;
   console.log(`listing moonriver assets`);
   return assets.map((assetData) => ({
@@ -97,8 +115,8 @@ export function listMoonRiverAssets() {
   }));
 }
 
-export function listHydraDxAssets() {
-  const assets = CHAIN_ASSETS.hydraDx.assets;
+export function listHydrationAssets() {
+  const assets = CHAIN_ASSETS.hydration.assets;
 
   return assets.map((assetData) => ({
     asset: assetData.asset,
@@ -128,10 +146,10 @@ export function listHydraDxAssets() {
 // }
 
 // COMMENTING OUT THE BELOW CODE BECAUSE IT IS FETCHING TOO OFTEN AND UNECESSARILY
-// export async function listHydraDxAssets(signal: AbortSignal) {
-// 	console.log(`[listHydraDxAssets] listing assets on hydradx`);
-// 	const api = await getApiInstance('hydraDx', signal);
-//     console.log(`[listHydraDxAssets] Assets onhydradx`, api);
+// export async function listHydrationAssets(signal: AbortSignal) {
+// 	console.log(`[listHydrationAssets] listing assets on hydradx`);
+// 	const api = await getApiInstance('hydration', signal);
+//     console.log(`[listHydrationAssets] Assets onhydradx`, api);
 // 	const dictionary = new Map<number, any>();
 
 // 	const assets = await api.query.assetRegistry.assets.entries();
@@ -142,7 +160,7 @@ export function listHydraDxAssets() {
 // 		};
 // 		dictionary.set(id.toHuman() as number, myasset);
 //       });
-// 	console.log(`[listHydraDxAssets] Assets onhydradx`, dictionary);
+// 	console.log(`[listHydrationAssets] Assets onhydradx`, dictionary);
 // 	// remove asset id in order to be able to parse it
 // 	const valuesArray = Array.from(dictionary.values());
 // //	console.log(`starting to list..`);

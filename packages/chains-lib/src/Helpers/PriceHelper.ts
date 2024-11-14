@@ -16,7 +16,7 @@ import endpoints from "../ChainsInfo/WsEndpoints";
 let tradeRouter: any;
 
 async function initializeTradeRouter() {
-  const api = await getApiInstance(ChainKey.HydraDX);
+  const api = await getApiInstance(ChainKey.Hydration);
 
   console.log(`getHydraDx Initializing PoolService...`);
   const poolService = new CachingPoolService(api);

@@ -2,7 +2,7 @@ export enum ChainKey {
     AssetHub = "assetHub",
     AssetHubKusama = "assetHub_kusama",
     Bifrost = "bifrost",
-    HydraDX = "hydraDx",
+    Hydration = "hydration",
     Interlay = "interlay",
     Kusama = "kusama",
     Mangatax = "mangatax",
@@ -13,7 +13,7 @@ export enum ChainKey {
     Polkadot = "polkadot",
     Rococo = "rococo",
     RococoAssethub = "rococo_assethub",
-    RococoContracts = "rococo_contracts",
+    // RococoContracts = "rococo_contracts",
     Paseo = "paseo",
     PaseoPop = "paseo_pop",
     PaseoAssethub = "paseo_assethub",
@@ -90,8 +90,8 @@ export enum ChainKey {
   
  
  
-    [ChainKey.HydraDX]: {
-        chain: "HydraDX",
+    [ChainKey.Hydration]: {
+        chain: "Hydration",
         endpoints: [
           "wss://hydradx-rpc.dwellir.com",
           "wss://hydradx.api.onfinality.io/public-ws",
@@ -168,12 +168,6 @@ export enum ChainKey {
     [ChainKey.Rococo]: {
       chain: "Rococo",
       endpoints: ["wss://rococo-rpc.polkadot.io"],
-      queryBalancePaths: ["system.account"],
-      nativeAccount: true,
-    },
-    [ChainKey.RococoContracts]: {
-      chain: "Contracts Rococo",
-      endpoints: ["wss://rococo-contracts-rpc.polkadot.io"],
       queryBalancePaths: ["system.account"],
       nativeAccount: true,
     },

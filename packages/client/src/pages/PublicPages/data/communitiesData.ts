@@ -284,9 +284,9 @@ export const communities: Community[] = [
       {
         id: "4",
         logo: "/chains/hydradx.svg",
-        title: "HydraDX ",
-        name: "HydraDX",
-        description: "HydraDX is a decentralized protocol for multi-asset liquidity that integrates seamlessly with the Polkadot ecosystem. Its Omnipool allows for efficient, sustainable, and trustless trading by combining all assets in a single pool.",
+        title: "Hydration ",
+        name: "Hydration",
+        description: "Hydration is a decentralized protocol for multi-asset liquidity that integrates seamlessly with the Polkadot ecosystem. Its Omnipool allows for efficient, sustainable, and trustless trading by combining all assets in a single pool.",
         url: "https://hydradx.io",
         templates: {
           bagpipes: [
