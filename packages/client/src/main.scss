@@ -1,0 +1,55 @@
+@use "sass:color";
+@use "variables";
+
+.button {
+  background-color: variables.$primary-color !important;
+  color: white;
+  border: none;
+  border-radius: 7px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-family: variables.$primary-font !important;
+
+  &:hover {
+    background-color: color.adjust(variables.$primary-color, $lightness: -10%) !important;
+  }
+
+  &:active {
+    background-color: color.adjust(variables.$primary-color, $lightness: -20%) !important;
+  }
+}
+
+.button-blue {
+  background-color: variables.$primary-color !important;
+
+  &:hover {
+    background-color: color.adjust(variables.$primary-color, $lightness: -10%) !important;
+  }
+
+  &:active {
+    background-color: color.adjust(variables.$primary-color, $lightness: -20%) !important;
+  }
+}
+
+.button-cancel {
+  background-color: rgb(250, 36, 36) !important;
+
+  &:hover {
+    background-color: color.adjust(rgb(250, 36, 36), $lightness: -10%) !important;
+  }
+
+  &:active {
+    background-color: color.adjust(rgb(250, 36, 36), $lightness: -20%) !important;
+  }
+}
+
+
+
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: 1px solid #ddd;
+  }

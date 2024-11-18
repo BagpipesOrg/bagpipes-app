@@ -2,7 +2,9 @@
 export default {
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+    "./packages/client/src/**/*.{js,ts,jsx,tsx}",
+    "./packages/wallet/src/**/*.{js,ts,jsx,tsx}",
+
   ],
   theme: {
     extend: {

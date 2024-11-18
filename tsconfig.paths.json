@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+      "baseUrl": ".",
+      "paths": {
+        "chains-lib": ["packages/chains-lib/dist/esm"],
+        "chains-lib/*": ["packages/chains-lib/dist/esm/*"],
+        "client": ["packages/client/dist/esm"],
+        "client/*": ["packages/client/dist/esm/*"],
+        "wallet": ["packages/wallet/dist/esm"],
+        "wallet/*": ["packages/wallet/dist/esm/*"],
+      }
+    }
+  }
