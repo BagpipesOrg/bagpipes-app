@@ -5,13 +5,19 @@
 
 import { BaseDotSamaWallet } from './BaseDotSamaWallet';
 import { PREDEFINED_WALLETS } from './predefinedWallet';
+import { NovaWallet } from './NovaWallet';
 import { Wallet, WalletInfo } from '../types';
 
 const walletList: Wallet[] = [];
 
 // Add more wallet, please sure you call this method before any getWallets or getWalletBySource
-export function addWallet (data: WalletInfo) {
-  const wallet = (new BaseDotSamaWallet(data)) as Wallet;
+export function addWallet(data: WalletInfo) {
+  let wallet: Wallet;
+  if (data.extensionName === 'nova-wallet') {
+    wallet = new NovaWallet(data);
+  } else {
+    wallet = new BaseDotSamaWallet(data);
+  }
 
   walletList.push(wallet);
 }
