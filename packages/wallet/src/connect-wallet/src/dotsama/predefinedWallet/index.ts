@@ -72,7 +72,7 @@ export const PREDEFINED_WALLETS: WalletInfo[] = [
     }
   },
   {
-    extensionName: 'nova-wallet',
+    extensionName: 'polkadot-js',
     title: 'Nova Wallet',
     installUrl: 'https://novawallet.io',
     logo: {
