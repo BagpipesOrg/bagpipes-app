@@ -1,4 +1,3 @@
-// Copyright 2019-2023 @subwallet authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 import React from 'react';
 import { Wallet, WalletAccount } from '../connect-wallet/src/types';
@@ -26,8 +25,7 @@ export interface WalletContextInterface {
   isWalletSelected: boolean;
   status: WalletStatus;
   setStatus: (status: WalletStatus) => void;
-
-
+  disconnectWallet: () => void;
 }
 
 export const WalletContext = React.createContext<WalletContextInterface>({
@@ -38,6 +36,8 @@ export const WalletContext = React.createContext<WalletContextInterface>({
   isWalletSelected: false,
   status: 'disconnected',
   setStatus: () => {},
+  disconnectWallet: () => {},
+
 });
 
 interface OpenSelectWalletInterface {

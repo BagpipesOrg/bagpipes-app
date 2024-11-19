@@ -3,25 +3,33 @@
 // WalletInfo.tsx
 
 import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Wallet } from '../connect-wallet/src/types';
 import AccountList from '../components/AccountList';
 import WalletMetadata from '../components/WalletMetadata';
 import { WalletContext } from '../contexts';
 
 import { BuilderIcon, BlinkIcon } from '../components/Icons/icons';
-
+import { Button } from 'antd';
 
 
 import '../styles/WalletInfo.scss';
 
 function WalletInfo (): React.ReactElement {
   const walletContext = useContext(WalletContext);
+  const navigate = useNavigate();
 
   const wallet = walletContext.wallet || walletContext.evmWallet;
   console.log("WalletInfo wallet:", wallet);
 
   const walletTitle = wallet?.title || 'Wallet';  
+
+
+    // Disconnect handler
+    const handleDisconnect = () => {
+      walletContext.disconnectWallet();
+      navigate('/'); 
+    };
 
   return ( 
     <div className={'boxed-container'}>
@@ -36,9 +44,6 @@ function WalletInfo (): React.ReactElement {
               </span>
             </Link>
 
-            
-
-      
             <Link to="/blink-builder" className="builder-btn flex justify-between mb-4">
             <span className='icon-and-text'>
                 <BlinkIcon />
@@ -65,9 +70,22 @@ function WalletInfo (): React.ReactElement {
             <AccountList />
           <div className='wallet-info-page__text'>Metadata</div>
           <WalletMetadata />
+
+          <Button 
+            type="primary" 
+            danger 
+            onClick={handleDisconnect} 
+            className="xcm-send-btn sub-wallet-icon-btn"
+          >
+            Disconnect
+          </Button>
+
+        </div>
+
+        
         </div>
       </div>
-    </div>
+
   )
 }
 
