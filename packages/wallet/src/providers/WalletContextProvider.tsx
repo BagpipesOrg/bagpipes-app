@@ -125,11 +125,9 @@ export function WalletContextProvider ({ children }: Props) {
   };
 
   useEffect(() => {
-    if (walletType === 'substrate') {
-      console.log('Wallet key:', walletKey);
+    if (walletType === 'substrate' && walletKey && isWalletSelected) {
       const wallet = getWalletBySource(walletKey);
-      
-
+  
       if (wallet && wallet.installed) {
         console.log('Wallet is installed:', wallet);
         setStatus('connecting');
@@ -143,6 +141,7 @@ export function WalletContextProvider ({ children }: Props) {
               setStatus('error');
             });
         }, 150);
+      }
     } else {
       const evmWallet = getEvmWalletBySource(walletKey);
 
