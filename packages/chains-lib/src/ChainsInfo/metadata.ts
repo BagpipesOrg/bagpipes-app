@@ -54,7 +54,7 @@ export enum ChainKey {
         "wss://eu.bifrost-polkadot-rpc.liebi.com/ws",
         "wss://bifrost.public.curie.radiumblock.co/ws"
       ],
-      queryAssetPaths: ["assetRegistry.assetMetadatas"],
+      queryAssetPaths: ["assetRegistry.currencyMetadatas" ],
       queryBalancePaths: ["system.account", "balances.account"],
       nativeAccount: true,
     },

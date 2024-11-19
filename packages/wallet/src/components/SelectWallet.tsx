@@ -69,7 +69,7 @@ function SelectWallet ({ onSelectWallet }: Props): React.ReactElement<Props> {
         {wallet.title}
       </div>
       <div className={'wallet-install'}>
-      {wallet.installed || wallet.extensionName === 'nova-wallet'
+      {wallet.extensionName === 'nova-wallet' || wallet.installed
           ? ''
           : (<a
             href={wallet.installUrl}

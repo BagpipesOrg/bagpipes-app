@@ -85,24 +85,23 @@ export class BaseDotSamaWallet implements Wallet {
     }
   }
 
-
-private waitForExtension = (retries = 5, interval = 500): Promise<boolean> => {
-  return new Promise((resolve) => {
-    const checkExtension = () => {
-      if (this.installed) {
-        resolve(true);
-      } else if (retries > 0) {
-        setTimeout(() => {
-          retries--;
-          checkExtension();
-        }, interval);
-      } else {
-        resolve(false);
-      }
-    };
-    checkExtension();
-  });
-};
+  private waitForExtension = (retries = 10, interval = 500): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const checkExtension = () => {
+        if (this.installed) {
+          resolve(true);
+        } else if (retries > 0) {
+          setTimeout(() => {
+            retries--;
+            checkExtension();
+          }, interval);
+        } else {
+          resolve(false);
+        }
+      };
+      checkExtension();
+    });
+  };
 
 
   get rawExtension() {
@@ -115,16 +114,10 @@ private waitForExtension = (retries = 5, interval = 500): Promise<boolean> => {
     }
   }
   enable = async () => {
-
     const isExtensionAvailable = await this.waitForExtension();
-
+  
     if (!isExtensionAvailable) {
       console.warn(`${this.extensionName} is not available after waiting`);
-      return;
-    }
-
-    if (!this.installed) {
-      console.warn(`${this.extensionName} is not installed`);
       return;
     }
   
@@ -157,6 +150,7 @@ private waitForExtension = (retries = 5, interval = 500): Promise<boolean> => {
       console.error(`Error enabling ${this.extensionName}:`, err);
     }
   };
+  
   
 
   private generateWalletAccount = (account: InjectedAccount): WalletAccount => {

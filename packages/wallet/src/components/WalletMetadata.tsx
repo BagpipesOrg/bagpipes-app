@@ -93,7 +93,7 @@ function WalletMetadata (): React.ReactElement {
       icon={<PlusCircleOutlined />}
       onClick={addMetadata}
       type={'primary'}
-    >Add Example Metadata</Button>
+    >Add Metadata</Button>
   </div>);
 }
 

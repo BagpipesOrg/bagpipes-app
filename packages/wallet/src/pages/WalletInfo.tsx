@@ -36,6 +36,8 @@ function WalletInfo (): React.ReactElement {
               </span>
             </Link>
 
+            
+
       
             <Link to="/blink-builder" className="builder-btn flex justify-between mb-4">
             <span className='icon-and-text'>
@@ -55,6 +57,8 @@ function WalletInfo (): React.ReactElement {
             <div className={'wallet-title'}>
               {wallet?.title}
             </div>
+
+            
             <div className='wallet-info-page__title'>Version: {(walletContext?.wallet as Wallet)?.extension?.version}</div>
           </div>
           <div className='wallet-info-page__text wallet-info-page__account-list'>Accounts</div>

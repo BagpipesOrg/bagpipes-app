@@ -25,14 +25,22 @@ export function WalletContextProvider ({ children }: Props) {
 
   const afterSelectWallet = useCallback(async (wallet: Wallet) => {
     try {
-      const infos = await wallet.getAccounts();
+      let infos = await wallet.getAccounts();
   
-      if (infos) {
+      // Retry mechanism if accounts are not immediately available
+      let retries = 5;
+      while ((!infos || infos.length === 0) && retries > 0) {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        infos = await wallet.getAccounts();
+        retries--;
+      }
+  
+      if (infos && infos.length > 0) {
         setAccounts(infos);
         setStatus('connected');
         console.log('Wallet connected:', wallet);
       } else {
-        console.warn('No accounts found in wallet');
+        console.warn('No accounts found in wallet after retries');
         setStatus('error');
       }
     } catch (error) {
@@ -135,7 +143,6 @@ export function WalletContextProvider ({ children }: Props) {
               setStatus('error');
             });
         }, 150);
-      }
     } else {
       const evmWallet = getEvmWalletBySource(walletKey);
 
