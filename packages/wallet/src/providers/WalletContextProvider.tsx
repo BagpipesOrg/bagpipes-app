@@ -26,14 +26,21 @@ export function WalletContextProvider ({ children }: Props) {
   const afterSelectWallet = useCallback(async (wallet: Wallet) => {
     try {
       const infos = await wallet.getAccounts();
-      infos && setAccounts(infos);
-      setStatus('connected');
-      console.log('Wallet connected:', wallet);
+  
+      if (infos) {
+        setAccounts(infos);
+        setStatus('connected');
+        console.log('Wallet connected:', wallet);
+      } else {
+        console.warn('No accounts found in wallet');
+        setStatus('error');
+      }
     } catch (error) {
       console.error('Error getting accounts:', error);
       setStatus('error');
     }
   }, []);
+  
 
   const selectWallet = useCallback(
     async (wallet: Wallet) => {

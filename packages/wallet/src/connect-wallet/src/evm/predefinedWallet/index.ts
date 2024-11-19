@@ -49,7 +49,7 @@ export const PREDEFINED_EVM_WALLETS: EvmWalletInfo[] = [
     initEvent: 'ethereum#initialized'
   },
   {
-    extensionName: 'nova',
+    extensionName: 'nova-wallet',
     title: 'Nova Wallet (EVM)',
     installUrl: 'https://novawallet.io',
     logo: {
