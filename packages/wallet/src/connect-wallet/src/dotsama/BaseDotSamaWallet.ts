@@ -82,8 +82,11 @@ export class BaseDotSamaWallet implements Wallet {
   get installed() {
     const injectedWindow = window as any;
   
-    if (this.extensionName === 'nova-wallet') {
-      return injectedWindow.walletExtension?.isNovaWallet === true;
+    if (this.extensionName === 'polkadot-js') {
+      const injectedExtension = injectedWindow?.injectedWeb3?.[this.extensionName];
+      const isNovaWallet = injectedWindow?.walletExtension?.isNovaWallet;
+  
+      return !!(injectedExtension && isNovaWallet);
     } else {
       return !!injectedWindow?.injectedWeb3?.[this.extensionName];
     }
@@ -108,22 +111,9 @@ export class BaseDotSamaWallet implements Wallet {
   };
 
 
-  get rawExtension() {
-    const injectedWindow = window as any;
-
-    if (this.extensionName === 'nova-wallet') {
-      return injectedWindow?.walletExtension;
-    } else {
-      return injectedWindow?.injectedWeb3?.[this.extensionName];
-    }
-  }
   enable = async () => {
-    logger.log(`Attempting to enable ${this.extensionName}`);
-
-    const isExtensionAvailable = await this.waitForExtension();
-  
-    if (!isExtensionAvailable) {
-      logger.log(`${this.extensionName} is not available after waiting`);
+    if (!this.installed) {
+      console.warn(`${this.extensionName} is not installed`);
       return;
     }
   
@@ -131,14 +121,14 @@ export class BaseDotSamaWallet implements Wallet {
       const injectedExtension = this.rawExtension;
   
       if (!injectedExtension || !injectedExtension.enable) {
-        logger.log(`${this.extensionName} does not have an enable method`);
+        console.warn(`${this.extensionName} does not have an enable method`);
         return;
       }
   
       const rawExtension = await injectedExtension.enable(DAPP_NAME);
   
       if (!rawExtension) {
-        logger.log(`Failed to enable ${this.extensionName}`);
+        console.warn(`Failed to enable ${this.extensionName}`);
         return;
       }
   
@@ -149,14 +139,11 @@ export class BaseDotSamaWallet implements Wallet {
       };
   
       this._extension = extension;
-      this._signer = extension.signer;
-      this._metadata = extension.metadata;
-      this._provider = extension.provider;
-
-      logger.log(`${this.extensionName} enabled successfully`);
-
+      this._signer = extension?.signer;
+      this._metadata = extension?.metadata;
+      this._provider = extension?.provider;
     } catch (err) {
-      logger.log(`Error enabling ${this.extensionName}: ${err}`);
+      console.error(`Error enabling ${this.extensionName}:`, err);
     }
   };
   
