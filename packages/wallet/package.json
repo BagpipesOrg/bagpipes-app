@@ -1,6 +1,6 @@
 {
   "name": "@bagpipes/wallet",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "description": "An MVP wallet that used the Sub Wallet template as a placeholder",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -19,7 +19,6 @@
     "@polkadot/extension-dapp": "^0.47.3",
     "@polkadot/extension-inject": "^0.47.3",
     "@polkadot/types": "^12.2.1",
-    "@polkadot/util": "^12.6.2",
     "@polkadot/wasm-crypto": "^7.3.2",
     "@polkadot/wasm-crypto-init": "^7.3.2",
     "@polkadot/x-randomvalues": "^13.1.1",
@@ -44,7 +43,8 @@
   "peerDependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.27.0"
+    "react-router-dom": "^6.27.0",
+    "@polkadot/util": "^12.6.2"
   },
   "devDependencies": {
     "@rollup/plugin-alias": "^5.1.1",

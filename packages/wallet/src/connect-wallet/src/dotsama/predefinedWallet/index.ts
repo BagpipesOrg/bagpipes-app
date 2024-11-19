@@ -44,6 +44,15 @@ export const PREDEFINED_WALLETS: WalletInfo[] = [
       alt: 'Talisman'
     }
   },
+  // {
+  //   extensionName: 'nova',
+  //   title: 'Nova Wallet',
+  //   installUrl: 'https://novawallet.io',
+  //   logo: {
+  //     src: NovaWalletLogo as string,
+  //     alt: 'Nova Wallet'
+  //   }
+  // },
   {
     extensionName: 'subwallet-js',
     title: 'SubWallet',

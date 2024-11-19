@@ -1,5 +1,9 @@
-import React from 'react';
+import { createContext } from 'react';
 
-const ThemeContext = React.createContext(null);
+interface ThemeContextType {
+  theme: string;
+}
+
+const ThemeContext = createContext<ThemeContextType | null>(null);
 
 export default ThemeContext;

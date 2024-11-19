@@ -60,13 +60,21 @@ optimizeDeps: {
   resolve: {
     dedupe: ['react', 'react-dom', 'react-router-dom'],
     alias: {
+      react: path.resolve(__dirname, 'node_modules/react'),
+      'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
+      'react-router-dom': path.resolve(__dirname, 'node_modules/react-router-dom'),
       '@polkadot-api/descriptors': path.resolve(__dirname, 'packages/chains-lib/.papi/descriptors/dist'),
       // '@polkadot-api/descriptors': path.resolve(__dirname, 'packages/chains-lib/node_modules/@polkadot-api/descriptors/dist/index.mjs'),
 
       'chains-lib': path.resolve(__dirname, 'packages/chains-lib/dist/esm'),
       'client': path.resolve(__dirname, 'packages/client/dist/esm'),
       'wallet': path.resolve(__dirname, 'packages/wallet/dist/esm'),
-      
+      'wallet-styles': path.resolve(__dirname, 'packages/wallet/dist/esm/wallet.css'),
+      // 'chains-lib': path.resolve(__dirname, 'packages/chains-lib/src'),
+      // 'client': path.resolve(__dirname, 'packages/client/src'),
+      // 'wallet': path.resolve(__dirname, 'packages/wallet/src'),
+     
+
     },
   },
   build: {

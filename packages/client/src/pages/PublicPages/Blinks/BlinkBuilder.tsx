@@ -16,7 +16,7 @@ import type { Action, NewActionForm } from './types';
 import type { Balance, Chain } from './types';
 import toast from 'react-hot-toast';
 import './Blinks.scss';
-import 'wallet/wallet.css';
+import 'wallet-styles';
 
 
 
@@ -719,54 +719,6 @@ const fetchBalance = async (signal) => {
           {renderChainSelection()} 
           {renderAddressSelection()} 
         
-
-
-          {/* <div className='actionArea'>
-
-
-          {actionType !== "no action" && actionForms.map((form, index) => (
-            <div className='actionRow'>
-            <div className='actionBox' key={index}><span className='font-semibold'>Action {index + 1}</span>
-              <Select
-                className='actionSelect'
-                value={form.amountType}
-                onChange={value => handleTransferButtonChange(index, value, 'amountType')}
-                placeholder="Select Amount Type"
-                style={{ width: 200 }}
-                allowClear
-              >
-                <Select.Option value="fixedAmount">Fixed Amount</Select.Option>
-                <Select.Option value="inputAmount">Input Amount</Select.Option>
-              </Select>
-
-
-
-              {form.amountType === "fixedAmount" && (
-                <div className='subField ml-2'>
-                  <input type="text" value={form.label} onChange={(e) => handleTransferButtonChange(index, e, 'label')} placeholder="Label (e.g., Send 1 DOT)" />
-                  <input type="number" value={form.amount} onChange={(e) => handleTransferButtonChange(index, e, 'amount')} placeholder="Amount" />
-                </div>
-                )}
-                {form.amountType === "inputAmount" && (
-                  <div className='subField ml-2'>
-                    <input type="text" value={form.label} onChange={(e) => handleTransferButtonChange(index, e, 'label')} placeholder="Label (e.g., Stake)" />
-                    <input type="text" value={form.inputName} onChange={(e) => handleTransferButtonChange(index, e, 'inputName')} placeholder="Name of the input (e.g., amount)" />
-                  </div>
-                )}
-                <button className='action-button' onClick={() => removeTransferButton(index)}>
-            <div className='remove-button'>-</div>
-        </button>
-            </div>
-            
-        </div>
-          ))}
-
-
-          {actionType !== "no action" && 
-          <button className='action-button' onClick={addNewTransferButton}>
-          <div className='add-button'>+</div>
-          <label>Add action</label> 
-          </button>} </div> */}
 
 
           
