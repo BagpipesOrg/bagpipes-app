@@ -81,14 +81,16 @@ export class BaseDotSamaWallet implements Wallet {
 
   get installed() {
     const injectedWindow = window as any;
-  
-    if (this.extensionName === 'polkadot-js') {
-      const injectedExtension = injectedWindow?.injectedWeb3?.[this.extensionName];
-      const isNovaWallet = injectedWindow?.walletExtension?.isNovaWallet;
-  
+
+    const injectedExtension = injectedWindow?.injectedWeb3?.[this.extensionName];
+    const isNovaWallet = injectedWindow?.walletExtension?.isNovaWallet;
+
+    if (this.title === 'Nova Wallet') {
       return !!(injectedExtension && isNovaWallet);
+    } else if (this.title === 'Polkadot{.js}') {
+      return !!(injectedExtension && !isNovaWallet);
     } else {
-      return !!injectedWindow?.injectedWeb3?.[this.extensionName];
+      return !!injectedExtension;
     }
   }
 
