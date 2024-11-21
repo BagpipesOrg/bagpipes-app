@@ -1,0 +1,167 @@
+@use "sass:color";
+@use "variables";
+body {
+  margin: 0;
+  font-family: variables.$primary-font !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #020412;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: hidden !important;
+}
+
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  monospace;
+}
+
+.xcm-send-btn-wallet {
+  display: flex;
+  align-items: center; /* Vertically center the items */
+  justify-content: center; /* Horizontally center the items */
+  color: white;
+  font-weight: 500;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  z-index: 1000;
+  transition: background-color 0.3s;
+  cursor: pointer;
+  // min-width: 130px;
+    background-color: variables.$lighter-primary-color;
+  
+  
+  &:hover {
+    background-color: color.adjust(#007bff, $lightness: -10%);
+    color: white !important;
+  }
+  }
+
+
+
+.xcm-send-btn {
+  color: rgb(0, 0, 0) !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  height: auto;
+  outline: 0;
+  box-shadow: none;
+}
+
+.xcm-send-btn-wallet > span {
+  font-size: 15px;
+  line-height: 26px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.xcm-send-btn > span {
+  font-size: 15px;
+  line-height: 26px;
+  font-weight: 500;
+  color: #000000;
+}
+
+.xcm-send-btn:hover, .xcm-send-btn:focus, .xcm-send-btn:active {
+  background-color: #ffffff;
+  color: #00266c;
+}
+
+.xcm-send-btn-normal-size {
+  padding: 11px 13px;
+}
+
+.xcm-send-btn-normal-size > span:last-child {
+  padding: 0 20px;
+}
+
+.xcm-send-btn-small-size {
+  padding: 7px 16px;
+}
+
+.xcm-send-btn-small-size > span {
+  padding: 0 12px;
+}
+
+.sub-wallet-icon-btn {
+  padding: 11px 13px;
+}
+
+.sub-wallet-sign-btn {
+  background-color: #181E42;
+  padding: 7px 16px;
+}
+
+.sub-wallet-sign-btn > span {
+  color: #42C59A;
+}
+
+.sub-wallet-sign-btn:hover, .sub-wallet-sign-btn:focus, .sub-wallet-sign-btn:active {
+  background-color: #181E42;
+}
+
+.ant-input {
+  outline: none;
+
+  &:focus {
+    box-shadow: none;
+  }
+}
+
+.ant-select {
+  outline: none;
+
+  .ant-select-selector {
+    outline: none;
+    box-shadow: none!important;
+  }
+}
+
+.ant-btn[disabled], .ant-btn[disabled]:active, .ant-btn[disabled]:focus, .ant-btn[disabled]:hover {
+  background-color: #5485fc;
+}
+
+.font-prim  {
+  font-family: variables.$primary-font;
+}
+
+.default_connected {
+  color: var(--default_edge);
+}
+
+.custom-switch .ant-switch-handle {
+  width: 10px; /* Decrease the handle width */
+  height: 10px; 
+  top: 3px; /* Adjust vertically if needed */
+  left: 3px; /* Adjust for initial position */
+}
+
+.custom-switch {
+  min-width: 25px !important; /* Increase the switch width */
+  height: 16px !important; /* Adjust the switch height if needed */
+  border-radius: 4px !important; /* Less rounded corners */
+}
+
+.custom-switch.ant-switch-checked .ant-switch-handle {
+  left: 20px !important; /* Adjust for position when switched on */
+}
+
+.lab-buttons {
+  background-color: variables.$primary-color;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding:  7px;
+  cursor: pointer;
+}
