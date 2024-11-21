@@ -60,9 +60,24 @@ class ChainRpcService {
       let result: Codec;
       if (params && params.length > 0) {
         const formattedParams = this.formatParams(params);
+       console.log(`result 0`);
         result = blockHash ? await method.at(blockHash, ...formattedParams) : await method(...formattedParams);
       } else {
-        result = blockHash ? await method.at(blockHash) : await method();
+        if (typeof method === 'object' && chainKey === 'polkadot' ){
+          console.log(`object detected `);
+          console.log(`result 1, correct`);
+          const formattedParams = this.formatParams(params);
+          console.log(`grabbing result`);
+          result = await method.getValue(...formattedParams);
+          console.log(`result 1 is:`, result);
+          console.log(`returning result 1...`);
+          return result;
+        } else {
+          console.log(`result 2`);
+          result = blockHash ? await method.at(blockHash) : await method();
+      
+        }
+       
       }
       return result.toHuman ? result.toHuman() : result.toString();
     } catch (error) {
@@ -175,8 +190,9 @@ static async createChainTxRenderedMethod({ chainKey, palletName, methodName, par
 
     const method = namespace[camelPalletName][camelMethodName];
     console.log(`executeChainTxRenderedMethod Method details:`, method);
+    console.log(`Method type: ${typeof method}`);
 
-    if (typeof method === 'function') {
+    if (typeof method === 'function' || typeof method === 'object') {
       console.log(`executeChainTxRenderedMethod Direct method access successful for: ${camelMethodName}`);
       return method;
     } else {

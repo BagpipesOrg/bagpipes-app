@@ -22,13 +22,13 @@ export async function getSmoldotApiInstance(chain: string): Promise<any> {
         } catch (error) {
           console.error(
             `Attempt ${i + 1} failed to reconnect to ${chain}:`,
-            error,
+            error
           );
         }
       }
       apiConnections.delete(chain); // Cleanup after failed reconnection attempts
       throw new Error(
-        `Failed to reconnect to ${chain} after several attempts.`,
+        `Failed to reconnect to ${chain} after several attempts.`
       );
     }
   }
