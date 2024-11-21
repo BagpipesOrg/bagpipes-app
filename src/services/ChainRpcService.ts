@@ -1,9 +1,11 @@
 import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic, SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import { getApiInstance } from '../Chains/api/connect';
+import { getSmoldotApiInstance } from '../Chains/api/connect_smol';
 import { signExtrinsicUtil } from '../components/Bagpipes/utils/signExtrinsicUtil';
 import { Codec, ISubmittableResult } from '@polkadot/types/types';
 import { TypeRegistry } from '@polkadot/types';
+import { chain } from 'lodash';
 const registry = new TypeRegistry();
 
 
@@ -44,7 +46,13 @@ class ChainRpcService {
 
 
   static async executeChainQueryMethod({ chainKey, palletName, methodName, params, atBlock }: MethodParams): Promise<any> {
-    const api = await getApiInstance(chainKey);
+    console.log(`executeChainQueryMethod: chainKey:`, chainKey);
+    
+    var api = await getApiInstance(chainKey);
+    if (chainKey == 'polkadot') {
+        console.log(`[executeChainQueryMethod] polkadot detected, running with smoldot!`);
+        api = await getSmoldotApiInstance(chainKey);
+    };
     const method = this.resolveMethod(api, palletName, methodName, false);
   console.log('1. executeChainQueryMethod method:', method);
     try {
