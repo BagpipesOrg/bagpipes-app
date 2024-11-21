@@ -9,6 +9,10 @@
 
 ---
 
+> This application is currently experimental status of implementation and should be used at your own risk.
+
+
+
 ## 🚀 Introduction
 
 Welcome to the Bagpipes SDK, a no-code platform for Web3 development. Our platform simplifies the creation and management of decentralized applications.

@@ -1,4 +1,3 @@
-// Copyright 2019-2022 @subwallet/wallet-connect authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 import React, { useCallback, useEffect, useState } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
@@ -94,6 +93,16 @@ export function WalletContextProvider ({ children }: Props) {
     [afterSelectEvmWallet, setWalletKey]
   );
 
+
+  const disconnectWallet = useCallback(() => {
+    setWalletKey(undefined);
+    setWalletType('substrate');
+    setCurrentWallet(undefined);
+    setIsWalletSelected(false);
+    setAccounts([]);
+    setStatus('disconnected');
+  }, [setWalletKey, setWalletType]);
+
   const walletContext = {
     
     wallet: getWalletBySource(walletKey),
@@ -112,6 +121,7 @@ export function WalletContextProvider ({ children }: Props) {
     isWalletSelected,
     status,
     setStatus,
+    disconnectWallet,
   };
 
   const selectWalletContext = {
@@ -165,6 +175,9 @@ export function WalletContextProvider ({ children }: Props) {
       }
     }
   }, [afterSelectEvmWallet, afterSelectWallet, walletKey, walletType]);
+
+
+
 
   return <WalletContext.Provider value={walletContext as WalletContextInterface}>
     <OpenSelectWallet.Provider value={selectWalletContext}>

@@ -6,6 +6,7 @@ import { Modal } from 'antd';
 import React, { useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { OpenSelectWallet, WalletContext } from '../contexts';
+import LogDisplay from '../connect-wallet/src/LogDisplay';
 import SelectWallet from './SelectWallet';
 import '../styles/SelectWallet.scss';
 
@@ -43,6 +44,7 @@ function SelectWalletModal ({ theme }: Props): React.ReactElement<Props> {
     wrapClassName={'sub-wallet-modal-wrapper'}
   >
     <SelectWallet onSelectWallet={onSelectWallet} />
+    <LogDisplay />
   </Modal>;
 }
 

@@ -5,8 +5,12 @@
 // This file is get idea from https://github.com/TalismanSociety/talisman-connect/blob/master/libs/wallets/src/lib/base-dotsama-wallet/index.ts
 
 import { SubscriptionFn, Wallet, WalletAccount, WalletInfo, WalletLogoProps } from '../types';
+import { logger } from '../logger';
+
   
 import { InjectedAccount, InjectedExtension, InjectedMetadata, InjectedProvider, InjectedWindow } from '@polkadot/extension-inject/types';
+
+
 import { Signer } from '@polkadot/types/types';
 
 const DAPP_NAME = 'Bagpipes';
@@ -77,11 +81,16 @@ export class BaseDotSamaWallet implements Wallet {
 
   get installed() {
     const injectedWindow = window as any;
-  
-    if (this.extensionName === 'nova-wallet') {
-      return injectedWindow.walletExtension?.isNovaWallet === true;
+
+    const injectedExtension = injectedWindow?.injectedWeb3?.[this.extensionName];
+    const isNovaWallet = injectedWindow?.walletExtension?.isNovaWallet;
+
+    if (this.title === 'Nova Wallet') {
+      return !!(injectedExtension && isNovaWallet);
+    } else if (this.title === 'Polkadot{.js}') {
+      return !!(injectedExtension && !isNovaWallet);
     } else {
-      return !!injectedWindow?.injectedWeb3?.[this.extensionName];
+      return !!injectedExtension;
     }
   }
 
@@ -104,20 +113,9 @@ export class BaseDotSamaWallet implements Wallet {
   };
 
 
-  get rawExtension() {
-    const injectedWindow = window as any;
-
-    if (this.extensionName === 'nova-wallet') {
-      return injectedWindow?.walletExtension;
-    } else {
-      return injectedWindow?.injectedWeb3?.[this.extensionName];
-    }
-  }
   enable = async () => {
-    const isExtensionAvailable = await this.waitForExtension();
-  
-    if (!isExtensionAvailable) {
-      console.warn(`${this.extensionName} is not available after waiting`);
+    if (!this.installed) {
+      console.warn(`${this.extensionName} is not installed`);
       return;
     }
   
@@ -143,9 +141,9 @@ export class BaseDotSamaWallet implements Wallet {
       };
   
       this._extension = extension;
-      this._signer = extension.signer;
-      this._metadata = extension.metadata;
-      this._provider = extension.provider;
+      this._signer = extension?.signer;
+      this._metadata = extension?.metadata;
+      this._provider = extension?.provider;
     } catch (err) {
       console.error(`Error enabling ${this.extensionName}:`, err);
     }
@@ -186,17 +184,28 @@ export class BaseDotSamaWallet implements Wallet {
   };
 
   getAccounts = async () => {
+    logger.log(`Attempting to get accounts from ${this.extensionName}`);
+
     if (!this._extension) {
+      logger.log(`Extension ${this.extensionName} is not enabled`);
+
       await this?.enable();
     }
 
     if (!this._extension) {
+      logger.log(`Extension ${this.extensionName} is still not available after enable`);
+
       return null;
     }
 
-    const accounts = await this._extension.accounts.get();
-
-    return accounts.map(this.generateWalletAccount);
-  };
+    try {
+      const accounts = await this._extension.accounts.get();
+      logger.log(`Accounts retrieved from ${this.extensionName}: ${JSON.stringify(accounts)}`);
+  
+      return accounts.map(this.generateWalletAccount);
+    } catch (err) {
+      logger.log(`Error getting accounts from ${this.extensionName}: ${err}`);
+      return null;
+    }
+  }
 }
-

@@ -92,6 +92,7 @@ export const PREDEFINED_EVM_WALLETS: EvmWalletInfo[] = [
 export * from './dotsama/BaseDotSamaWallet';
 export * from './dotsama/wallets';
 export * from './dotsama/predefinedWallet'; 
+export * from './LogDisplay';
 
 // Export predefined wallets and classes from evm
 export * from './evm/BaseEvmWallet';
