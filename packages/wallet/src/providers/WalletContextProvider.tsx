@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: Apache-2.0
 import React, { useCallback, useEffect, useState } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { windowReload } from '../utils/window';
@@ -24,30 +23,15 @@ export function WalletContextProvider ({ children }: Props) {
 
   const afterSelectWallet = useCallback(async (wallet: Wallet) => {
     try {
-      let infos = await wallet.getAccounts();
-  
-      // Retry mechanism if accounts are not immediately available
-      let retries = 5;
-      while ((!infos || infos.length === 0) && retries > 0) {
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        infos = await wallet.getAccounts();
-        retries--;
-      }
-  
-      if (infos && infos.length > 0) {
-        setAccounts(infos);
-        setStatus('connected');
-        console.log('Wallet connected:', wallet);
-      } else {
-        console.warn('No accounts found in wallet after retries');
-        setStatus('error');
-      }
+      const infos = await wallet.getAccounts();
+      infos && setAccounts(infos);
+      setStatus('connected');
+      console.log('Wallet connected:', wallet);
     } catch (error) {
       console.error('Error getting accounts:', error);
       setStatus('error');
     }
   }, []);
-  
 
   const selectWallet = useCallback(
     async (wallet: Wallet) => {
@@ -93,16 +77,6 @@ export function WalletContextProvider ({ children }: Props) {
     [afterSelectEvmWallet, setWalletKey]
   );
 
-
-  const disconnectWallet = useCallback(() => {
-    setWalletKey(undefined);
-    setWalletType('substrate');
-    setCurrentWallet(undefined);
-    setIsWalletSelected(false);
-    setAccounts([]);
-    setStatus('disconnected');
-  }, [setWalletKey, setWalletType]);
-
   const walletContext = {
     
     wallet: getWalletBySource(walletKey),
@@ -121,7 +95,6 @@ export function WalletContextProvider ({ children }: Props) {
     isWalletSelected,
     status,
     setStatus,
-    disconnectWallet,
   };
 
   const selectWalletContext = {
@@ -135,9 +108,11 @@ export function WalletContextProvider ({ children }: Props) {
   };
 
   useEffect(() => {
-    if (walletType === 'substrate' && walletKey && isWalletSelected) {
+    if (walletType === 'substrate') {
+      console.log('Wallet key:', walletKey);
       const wallet = getWalletBySource(walletKey);
-  
+      
+
       if (wallet && wallet.installed) {
         console.log('Wallet is installed:', wallet);
         setStatus('connecting');
@@ -175,9 +150,6 @@ export function WalletContextProvider ({ children }: Props) {
       }
     }
   }, [afterSelectEvmWallet, afterSelectWallet, walletKey, walletType]);
-
-
-
 
   return <WalletContext.Provider value={walletContext as WalletContextInterface}>
     <OpenSelectWallet.Provider value={selectWalletContext}>

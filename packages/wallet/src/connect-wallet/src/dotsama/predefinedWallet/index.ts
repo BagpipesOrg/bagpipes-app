@@ -1,6 +1,3 @@
-// Copyright 2019-2022 @subwallet/wallet-connect authors & contributors
-// SPDX-License-Identifier: Apache-2.0
-
 import { WalletInfo } from '../../types';
 
 // @ts-ignore
@@ -72,7 +69,7 @@ export const PREDEFINED_WALLETS: WalletInfo[] = [
     }
   },
   {
-    extensionName: 'polkadot-js',
+    extensionName: 'nova-wallet',
     title: 'Nova Wallet',
     installUrl: 'https://novawallet.io',
     logo: {

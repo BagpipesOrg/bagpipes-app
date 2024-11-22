@@ -21,21 +21,12 @@ function SelectWallet ({ onSelectWallet }: Props): React.ReactElement<Props> {
   const { theme } = React.useContext(ThemeContext);
   console.log('ThemeContext:', ThemeContext);
 
-  // const onClickDotsamaWallet = useCallback(
-  //   (wallet: Wallet ) => {
-  //     return () => {
-  //       if (wallet.installed) {
-  //         onSelectWallet(wallet.extensionName);
-  //       }
-  //     };
-  //   },
-  //   [onSelectWallet]
-  // );
-
   const onClickDotsamaWallet = useCallback(
-    (wallet: Wallet) => {
+    (wallet: Wallet ) => {
       return () => {
-        onSelectWallet(wallet.extensionName);
+        if (wallet.installed) {
+          onSelectWallet(wallet.extensionName);
+        }
       };
     },
     [onSelectWallet]
@@ -69,15 +60,16 @@ function SelectWallet ({ onSelectWallet }: Props): React.ReactElement<Props> {
         {wallet.title}
       </div>
       <div className={'wallet-install'}>
-        {wallet.title === 'Nova Wallet' || wallet.installed ? (
-          ''
-        ) : (
-          <a href={wallet.installUrl} rel='noreferrer' target='_blank'>
-            Reload or Install
-          </a>
-        )}
+        {wallet.installed
+          ? ''
+          : (<a
+            href={wallet.installUrl}
+            rel='noreferrer'
+            target='_blank'
+          >
+          Reload or Install  
+        </a>)}
       </div>
-
     </div>
   );
 
