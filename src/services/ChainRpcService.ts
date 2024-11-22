@@ -68,7 +68,7 @@ class ChainRpcService {
           console.log(`result 1, correct`);
           const formattedParams = this.formatParams(params);
           console.log(`grabbing result`);
-          result = await method.getValue(...formattedParams);
+          result = await method.getValue(formattedParams);
           console.log(`result 1 is:`, result);
           console.log(`returning result 1...`);
           return result;
