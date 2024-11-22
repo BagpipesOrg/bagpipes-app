@@ -359,7 +359,11 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
             params: parsedFormData.methodInput,
             atBlock: parsedFormData.blockHash || undefined
         });
-        setResult(JSON.stringify(output, null, 2));
+        // json doesnt serialize bigint, work around
+        const jsonString = JSON.stringify(output, (key, value) =>
+          typeof value === "bigint" ? value.toString() : value
+        );
+        setResult(jsonString);
     } catch (error) {
         console.error('Execution failed:', error);
         setResult(`Error: ${error.message}`);

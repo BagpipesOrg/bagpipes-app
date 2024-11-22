@@ -61,14 +61,25 @@ class ChainRpcService {
       if (params && params.length > 0) {
         const formattedParams = this.formatParams(params);
        console.log(`result 0`);
+       if (typeof method === 'object' && chainKey === 'polkadot' ){
+        console.log(`object detected `);
+        console.log(`result 1, correct`);
+        const formattedParams = this.formatParams(params);
+          console.log(`grabbing with params: `, formattedParams);
+          result = await method.getValue(...formattedParams);
+  
+        console.log(`result 1 is:`, result);
+        console.log(`returning result 1...`);
+        return result;
+      } else {
         result = blockHash ? await method.at(blockHash, ...formattedParams) : await method(...formattedParams);
+      }
+        
       } else {
         if (typeof method === 'object' && chainKey === 'polkadot' ){
           console.log(`object detected `);
           console.log(`result 1, correct`);
-          const formattedParams = this.formatParams(params);
-          console.log(`grabbing result`);
-          result = await method.getValue(); // ...formattedParams
+            result = await method.getValue(); // ...formattedParams
           console.log(`result 1 is:`, result);
           console.log(`returning result 1...`);
           return result.toString();

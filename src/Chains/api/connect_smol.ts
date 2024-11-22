@@ -10,7 +10,7 @@ export async function getSmoldotApiInstance(chain: string): Promise<any> {
   if (apiConnections.has(chain)) {
     const api = apiConnections.get(chain);
     if (api) {
-    console.log(`returning smoldot api`);
+      console.log(`returning smoldot api`);
       return api;
     } else {
       console.log(`Connection to ${chain} lost. Attempting to reconnect...`);
