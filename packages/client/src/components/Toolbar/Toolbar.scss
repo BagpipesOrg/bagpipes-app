@@ -5,7 +5,8 @@
     justify-content: center;
     align-items: center;
     position: fixed;
-    top: 15px; // 20px margin from the bottom
+    top: 15px; 
+    
     left: 50%;
     transform: translateX(-50%);
     background-color: variables.$primary-color; // Theme-based background
@@ -63,7 +64,16 @@
 @media (max-width: 600px) {
   .toolbar-node {
     width: 90%;
+    bottom: 0;
+    top: auto;
+    width: 100%;
+    border-radius: 10px 10px 0 0;
+    justify-content: space-between;
+    gap: 10px;
+    
   }
+
+
 }
 
 .tippy-node {

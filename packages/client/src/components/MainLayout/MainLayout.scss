@@ -1,3 +1,5 @@
+@use '../../variables.scss' as vars;
+
 .main-container {
     display: flex;
     height: 100vh;
@@ -5,9 +7,12 @@
   }
   
   .main-content {
-    flex-grow: 1; /* Takes up the available space */
-    width: 100%; /* Ensures it fills the container */
-    height: 100% !important; /* Ensures it fills the container */
-  }
-
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    transition: margin-left 0.3s ease;
   
+    @media screen and (max-width: 767px) {
+      margin-left: vars.$sidebar-width;
+    }
+  }

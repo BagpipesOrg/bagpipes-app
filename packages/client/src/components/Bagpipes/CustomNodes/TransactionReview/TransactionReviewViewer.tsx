@@ -6,7 +6,7 @@ import { getPaymentInfo, PaymentInfo, getApiInstance } from 'chains-lib';
 import { SubmittableExtrinsic } from '@polkadot/api-base/types';
 import { ISubmittableResult } from '@polkadot/types/types';
 import ThemeContext from '../../../../contexts/ThemeContext';
-import '../../styles.module.css';
+import '../../styles.module.scss';
 import '../../../../index.css';
 import './TransactionReview.scss';
 

@@ -111,8 +111,8 @@ function Lab() {
         <div className={`${theme} lab-container p-8 h-full`}>
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-2xl font-semibold">Scenarios</h1>
-                <button className="button bg-blue-500 flex items-center" onClick={createScenario}>
-                    <span className='mr-2'><PlusIcon className='' fillColor='white' /></span>Create New Scenario
+                <button className="button flex items-center" onClick={createScenario}>
+                    <span className='mr-2'><PlusIcon className='' fillColor='white' /></span>New Scenario
                 </button>
             </div>
             {templateScenarioId && <CreateTemplateLink scenarioId={templateScenarioId} />}

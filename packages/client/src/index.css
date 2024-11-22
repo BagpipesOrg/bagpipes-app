@@ -348,3 +348,10 @@ border: 1px solid rgb(184, 184, 184);
   background-color: rgba(0, 0, 0, 0.5); 
   z-index: 9999 !important; 
 }
+
+@media (max-width: 600px) {
+  .react-flow__panel.bottom {
+    bottom: 60px;
+}
+}
+

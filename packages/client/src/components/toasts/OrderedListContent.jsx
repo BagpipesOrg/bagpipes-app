@@ -10,6 +10,7 @@ import { toast } from 'react-hot-toast';
 import ThemeContext from '../../contexts/ThemeContext';
 import { ChainQueryIcon, WebhookIcon, HttpIcon } from '../Icons/icons';
 import './toast.scss';
+import './OrderedListContent.scss';
 
 const OrderedListContent = ({ list }) => {
     const chains = listChains();
@@ -19,8 +20,8 @@ const OrderedListContent = ({ list }) => {
     // console.log('OrderedListContent SwapSVG', SwapSVG);
 
     return (
-        <div className={`ordered-list-content-container flex justify-left w-full ${theme}`}>
-            <div className='ordered-list-map flex justify-left' >
+        <div className={`ordered-list-content-container flex justify-left  ${theme}`}>
+            <div className='ordered-list-map flex items-left' >
                 {list.map((item, index) => {
                     let imageSrc, altText;
                     // console.log(`OrderedListContent item is:`, item);

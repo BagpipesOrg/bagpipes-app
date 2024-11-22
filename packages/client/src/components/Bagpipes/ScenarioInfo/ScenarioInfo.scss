@@ -22,6 +22,15 @@
         background-color: #f3f3f3;
     }
 }
+
+@media (max-width: 600px) {
+  .scenario-info-container {
+    display: none;
+    
+  }
+
+
+}
  .scenario-name {
     cursor: pointer;
     text-decoration: none;
