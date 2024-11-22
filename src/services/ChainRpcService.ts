@@ -68,10 +68,10 @@ class ChainRpcService {
           console.log(`result 1, correct`);
           const formattedParams = this.formatParams(params);
           console.log(`grabbing result`);
-          result = await method.getValue(formattedParams);
+          result = await method.getValue(); // ...formattedParams
           console.log(`result 1 is:`, result);
           console.log(`returning result 1...`);
-          return result;
+          return result.toString();
         } else {
           console.log(`result 2`);
           result = blockHash ? await method.at(blockHash) : await method();
@@ -174,20 +174,22 @@ static async createChainTxRenderedMethod({ chainKey, palletName, methodName, par
 
 
   private static resolveMethod(api: ApiPromise, palletName: string, methodName: string, isTx: boolean): any {
-    const camelPalletName = this.toCamelCase(palletName);
+    const camelPalletName2 = this.toCamelCase(palletName);
     console.log(`executeChainTxRenderedMethod Resolving method: ${methodName} on pallet: ${palletName}`);
-    const camelMethodName = this.toCamelCase(methodName);
+    const camelMethodName2 = this.toCamelCase(methodName);
     const namespace = isTx ? api.tx : api.query;
 
     console.log(`executeChainTxRenderedMethod Resolving method: ${methodName} on pallet: ${palletName}`);
-    console.log(`executeChainTxRenderedMethod Camel Case Pallet Name: ${camelPalletName}, Camel Case Method Name: ${camelMethodName}`);
+    console.log(`executeChainTxRenderedMethod Camel Case Pallet Name: ${camelPalletName2}, Camel Case Method Name: ${camelMethodName2}`);
     console.log(`executeChainTxRenderedMethod Namespace details:`, namespace);
 
-    if (!namespace[camelPalletName]) {
-      console.error(`Pallet ${camelPalletName} is not available in the namespace.`);
+    if (!namespace[camelPalletName2]) {
+      console.error(`Pallet ${camelPalletName2} is not available in the namespace.`);
       return null;
     }
-
+    const camelMethodName = this.capitalizefirst_letter(camelMethodName2);
+    const camelPalletName = this.capitalizefirst_letter(camelPalletName2);
+    console.log(`camelcases: `, camelPalletName, camelMethodName);
     const method = namespace[camelPalletName][camelMethodName];
     console.log(`executeChainTxRenderedMethod Method details:`, method);
     console.log(`Method type: ${typeof method}`);
@@ -396,7 +398,11 @@ private static formatParams(params: any): any[] {
     return atBlock; // Otherwise, it's already a block hash
   }
 
+  private static capitalizefirst_letter(input: string): string {
+      if (input.length === 0) return input; // Handle empty string
+      return input[0].toUpperCase() + input.slice(1);
  
+  }
 
     private static toCamelCase(str: string): string {
     return str
