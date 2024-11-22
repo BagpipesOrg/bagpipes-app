@@ -15,6 +15,7 @@ function AccountDropdown({ selectedChainName, onSelect, selectedAddress }: {
   selectedAddress: string | null
 }) {
   const walletContext = useContext(WalletContext);
+  console.log('wallet context', walletContext);
   const chains = listChains(); 
   // console.log(  "AccountDropdown chains:", chains);
   const [selectedAccount, setSelectedAccount] = useState<string | null>(selectedAddress);
