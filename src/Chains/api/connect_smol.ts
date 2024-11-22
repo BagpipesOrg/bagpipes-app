@@ -5,11 +5,12 @@ const apiConnections = new Map<string, any>();
 export async function getSmoldotApiInstance(chain: string): Promise<any> {
   console.log("getApiInstance chain", chain);
   if (chain.toLowerCase() != "polkadot") {
-    throw new Error("ibkt");
+    throw new Error("only polkadot with smoldot is currently supported");
   }
   if (apiConnections.has(chain)) {
     const api = apiConnections.get(chain);
-    if (api && api.isConnected) {
+    if (api) {
+    console.log(`returning smoldot api`);
       return api;
     } else {
       console.log(`Connection to ${chain} lost. Attempting to reconnect...`);
@@ -26,6 +27,7 @@ export async function getSmoldotApiInstance(chain: string): Promise<any> {
           );
         }
       }
+      console.log(`deleting chain from cache`);
       apiConnections.delete(chain); // Cleanup after failed reconnection attempts
       throw new Error(
         `Failed to reconnect to ${chain} after several attempts.`
