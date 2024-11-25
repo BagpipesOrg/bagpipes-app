@@ -30,7 +30,8 @@ export async function broadcastToChain(
 
   try {
     await new Promise<void>((resolve, reject) => {
-      const unsub = signedExtrinsic.send(({ status, events, dispatchError }: { status: any; events: any; dispatchError: any }) => {
+      const unsub = signedExtrinsic.send(({ status, events, dispatchError }) => {
+        // First, handle any dispatch errors
         if (dispatchError) {
           let errorMessage;
           if (dispatchError.isModule) {
@@ -40,30 +41,35 @@ export async function broadcastToChain(
           } else {
             errorMessage = dispatchError.toString();
           }
-
-          if (status.isInBlock) {
-            console.log(
-              `Transaction included at blockHash ${status.asInBlock.toString()}`
-            );
-            onInBlock?.(status.asInBlock.toString());
-          } else if (status.isFinalized) {
-            console.log(
-              `Transaction finalized at blockHash ${status.asFinalized.toString()}`
-            );
-            onFinalized?.(status.asFinalized.toString());
-            unsub();
-            resolve();
-          } else if (status.isDropped || status.isInvalid || status.isUsurped) {
-            const errorMessage = `Error with transaction: ${status.type}`;
-            onError?.(new Error(errorMessage));
-            console.log(`Transaction status error: ${errorMessage}`);
-            unsub();
-            reject(new Error(errorMessage));
-          }
+          console.log(`Transaction failed with dispatch error: ${errorMessage}`);
+          onError?.(new Error(errorMessage));
+          unsub();
+          reject(new Error(errorMessage));
+          return; // Exit early since there's an error
         }
-      }
-     )
-    });
+    
+        // Now handle the transaction status
+        if (status.isInBlock) {
+          console.log(`Transaction included at blockHash ${status.asInBlock.toString()}`);
+          onInBlock?.(status.asInBlock.toString());
+        }
+    
+        if (status.isFinalized) {
+          console.log(`Transaction finalized at blockHash ${status.asFinalized.toString()}`);
+          onFinalized?.(status.asFinalized.toString());
+          unsub();
+          resolve();
+        }
+    
+        if (status.isDropped || status.isInvalid || status.isUsurped) {
+          const errorMessage = `Transaction error: ${status.type}`;
+          console.log(`Transaction status error: ${errorMessage}`);
+          onError?.(new Error(errorMessage));
+          unsub();
+          reject(new Error(errorMessage));
+        }
+      });
+    });    
   } catch (error) {
     const errorMessage = `Error broadcasting transaction: ${
       error instanceof Error ? error.message : String(error)
