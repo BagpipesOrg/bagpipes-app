@@ -6,15 +6,15 @@ const resolve = require('@rollup/plugin-node-resolve').default;
 const commonjs = require('@rollup/plugin-commonjs');
 const postcss = require('rollup-plugin-postcss');
 const autoprefixer = require('autoprefixer');
-const sass = require('sass'); // Import the 'sass' package
+const sass = require('sass');
 const wasm = require('@rollup/plugin-wasm');
 const dts = require('rollup-plugin-dts').default;
 const image = require('@rollup/plugin-image');
 const json = require('@rollup/plugin-json');
 const { terser } = require('rollup-plugin-terser');
 const ignore = require('rollup-plugin-ignore');
-const pkg = require('./package.json');
 const tailwindcss = require('tailwindcss');
+const pkg = require('./package.json');
 
 const removeScssImports = () => ({
   name: 'remove-scss-imports',
@@ -34,10 +34,7 @@ const externalPackages = [
   'react',
   'react-dom',
   'react-router-dom',
-
- 
 ];
-
 
 const commonPlugins = [
   peerDepsExternal(),
@@ -45,9 +42,8 @@ const commonPlugins = [
     tsconfig: './tsconfig.json',
     declaration: false,
     noEmitOnError: false,
-    exclude: ['**/*.scss', '**/*.css']
+    exclude: ['**/*.scss', '**/*.css'],
   }),
-
   babel({
     babelHelpers: 'bundled',
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
@@ -63,7 +59,6 @@ const commonPlugins = [
     include: /node_modules/,
     exclude: ['**/*.scss', '**/*.css'],
   }),
-  
   postcss({
     extract: 'wallet.css',
     minimize: true,
@@ -73,24 +68,17 @@ const commonPlugins = [
       [
         'sass',
         {
-          includePaths: [
-            './src',
-            './src/styles',
-          ]
+          includePaths: ['./src', './src/styles'],
         },
       ],
     ],
-    plugins: [
-      tailwindcss(),
-      autoprefixer()
-    ],
+    plugins: [tailwindcss(), autoprefixer()],
   }),
   terser(),
   json(),
   wasm(),
   image(),
   ignore(['**/*.scss', '**/*.css']),
-
 ];
 
 module.exports = [
@@ -98,7 +86,7 @@ module.exports = [
   {
     input: 'src/index.ts',
     output: {
-      file: 'dist/cjs/index.js',
+      dir: 'dist/cjs', // Changed from 'file' to 'dir'
       format: 'cjs',
       sourcemap: true,
       exports: 'named',
@@ -106,62 +94,47 @@ module.exports = [
     plugins: commonPlugins,
     external: [
       ...externalPackages,
-
       '@polkadot-api/descriptors',
-
       ...Object.keys(pkg.peerDependencies || {}),
       /^@polkadot\//,
       /^@substrate\//,
       /^react-hot-toast$/,
       /\.rollupUtils.js$/u,
-
     ],
   },
   // ES Module Build
   {
     input: 'src/index.ts',
     output: {
-      file: 'dist/esm/index.js',
+      dir: 'dist/esm', // Changed from 'file' to 'dir'
       format: 'esm',
       sourcemap: true,
     },
     plugins: commonPlugins,
     external: [
       ...externalPackages,
-
       '@polkadot-api/descriptors',
-
       ...Object.keys(pkg.peerDependencies || {}),
       /^@polkadot\//,
       /^@substrate\//,
       /^react-hot-toast$/,
       /\.rollupUtils.js$/u,
-
     ],
   },
   // Type Declarations Build
   {
     input: 'src/index.ts',
     output: {
-      file: 'dist/index.d.ts',
+      dir: 'dist', // Changed from 'file' to 'dir'
       format: 'es',
     },
     plugins: [
       removeScssImports(),
       dts({
         respectExclude: true,
-
-        exclude: [
-          'src/variables.scss',
-          'src/styles',
-          '**/*.scss',
-          '**/*.css',
-        ],
+        exclude: ['src/variables.scss', 'src/styles', '**/*.scss', '**/*.css'],
       }),
-      ignore([
-        '**/*.scss', 
-        '**/*.css']),
-
+      ignore(['**/*.scss', '**/*.css']),
     ],
     external: [
       ...externalPackages,
@@ -173,9 +146,6 @@ module.exports = [
       /\.css$/u,
       /\.scss$/u,
       /\.rollupUtils.js$/u,
-
     ],
-
-
   },
 ];

@@ -8,6 +8,7 @@ import { SubscriptionFn, Wallet, WalletAccount, WalletInfo, WalletLogoProps } fr
   
 import { InjectedAccount, InjectedExtension, InjectedMetadata, InjectedProvider, InjectedWindow } from '@polkadot/extension-inject/types';
 import { Signer } from '@polkadot/types/types';
+import { logger } from '../logger';
 
 const DAPP_NAME = 'Bagpipes';
 
@@ -80,6 +81,7 @@ export class BaseDotSamaWallet implements Wallet {
     const injectedExtension =
       injectedWindow?.injectedWeb3?.[this.extensionName];
       console.log("injectedExtension for bagpipes", injectedWindow, injectedExtension);
+      logger.log(`injectedWindow for ${this.extensionName}:`, injectedWindow, injectedExtension);
 
     return !!injectedExtension;
   }

@@ -4,6 +4,8 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { RequestArguments } from '@metamask/providers/dist/BaseProvider';
 import { Maybe } from '@metamask/providers/dist/utils';
+import UniversalProvider from '@walletconnect/universal-provider';
+
 
 import { InjectedExtension, InjectedMetadata, InjectedProvider, Unsubcall } from '@polkadot/extension-inject/types';
 import { Signer } from '@polkadot/types/types';
@@ -22,7 +24,7 @@ export interface WalletAccount {
   source: string;
   name?: string;
   wallet?: Wallet;
-  signer?: unknown;
+  signer?: Signer;
 }
 
 export interface WalletInfo {
@@ -49,7 +51,7 @@ export interface Wallet extends WalletInfo, WalletMethods {
 
   metadata: InjectedMetadata | undefined;
 
-  provider: InjectedProvider | undefined;
+  provider?: InjectedProvider | UniversalProvider | undefined;
 }
 export interface EvmWalletMethods {
   request<T>(args: RequestArguments): Promise<Maybe<T>>;

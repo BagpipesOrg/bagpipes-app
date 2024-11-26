@@ -77,12 +77,12 @@ export const PREDEFINED_WALLETS: WalletInfo[] = [
       alt: 'Nova Wallet'
     }
   },
-  // {
-  //   extensionName: 'wallet-connect',
-  //   title: 'Wallet Connect',
-  //   logo: {
-  //     src: WalletConnectLogo as string,
-  //     alt: 'Wallet Connect'
-  //   }
-  // }
+  {
+    extensionName: 'wallet-connect',
+    title: 'Wallet Connect',
+    logo: {
+      src: WalletConnectLogo as string,
+      alt: 'Wallet Connect'
+    }
+  }
 ];

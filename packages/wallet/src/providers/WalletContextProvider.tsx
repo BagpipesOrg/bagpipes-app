@@ -43,6 +43,10 @@ export function WalletContextProvider ({ children }: Props) {
       setWalletKey(wallet.extensionName);
       setIsWalletSelected(true);
 
+      const infos = await wallet.getAccounts();
+      infos && setAccounts(infos);
+      setStatus('connected');
+
       await afterSelectWallet(wallet);
     },
     [afterSelectWallet, setWalletKey]
@@ -114,7 +118,7 @@ export function WalletContextProvider ({ children }: Props) {
       
 
       if (wallet && wallet.installed) {
-        console.log('Wallet is installed:', wallet);
+        console.log('Wallet is installed:', wallet, wallet.installed);
         setStatus('connecting');
         setTimeout(() => {
           void afterSelectWallet(wallet)
