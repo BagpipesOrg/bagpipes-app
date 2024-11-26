@@ -15,11 +15,18 @@ export const signAndSendRemark = async (chainName, walletContext, accountAddress
       try {
         signedExtrinsic = await signExtrinsicUtil(api, signer, remarkCall, accountAddress);
         console.log('Signed extrinsic:', signedExtrinsic);
+        let signingStatus;
+
+        
         options.signedExtrinsic('Signed');
+        signingStatus = 'Signed';
+
         } catch (error) {
           if (error.message.includes('Cancelled')) {
             console.warn('User canceled the signing process.');
             options.signedExtrinsic('Cancelled');
+            signingStatus = 'Cancelled';
+
             // Handle cancellation specifically
             throw new Error('SigningCancelled');
           } else {
@@ -33,23 +40,26 @@ export const signAndSendRemark = async (chainName, walletContext, accountAddress
       }
         const transactionHash = signedExtrinsic.hash.toHex();
 
+        console.log(`broadcasting to chain...`);
         const transactionResult = await broadcastToChain('assetHub', signedExtrinsic, {
-        onInBlock: async (blockHash) => {
+          onInBlock: async (blockHash) => {
             console.log(`Remark included in block ${blockHash}`);
             toast.success(`Transaction included at blockHash: ${blockHash}`);
-
-
-            api.rpc.chain.getBlock(blockHash).then(block => {
+          
+            options.onInBlock && options.onInBlock(blockHash);
+          
+            try {
+              const block = await api.rpc.chain.getBlock(blockHash);
               const extrinsics = block.block.extrinsics;
               const txIndex = extrinsics.findIndex(ex => ex.hash.toHex() === transactionHash);
               console.log(`Transaction index in block: ${txIndex}`);
-              // Assume generateUrl and chainName are defined correctly
               const url = generateUrl(chainName, block.block.header.number.toNumber(), txIndex);
-              console.log('here is the Generated URL:', url);
+              console.log('Here is the Generated URL:', url);
               options.onUrlGenerated && options.onUrlGenerated(url);
-              options.onInBlock && options.onInBlock(blockHash);
-          }).catch(console.error);           
-        },
+            } catch (error) {
+              console.error('Error fetching block:', error);
+            }
+          },
         onFinalized: (blockHash) => {
           console.log(`Remark transaction finalized at block ${blockHash}`);
           toast.success(`Transaction finalized at blockHash: ${blockHash}`);

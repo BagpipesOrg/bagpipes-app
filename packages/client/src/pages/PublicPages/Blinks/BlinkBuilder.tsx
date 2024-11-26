@@ -5,8 +5,7 @@ import useBlinkStore from '../../../store/useBlinkStore';
 import { v4 as uuidv4 } from 'uuid';
 import { WalletContext, WalletWidget } from 'wallet';
 import CollapsibleField from '../../../components/Bagpipes/Forms/fields/CollapsibleField';
-import { listChains} from 'chains-lib';
-import { getAssetBalanceForChain } from 'chains-lib';
+import { listChains, getAssetBalanceForChain } from 'chains-lib';
 import BalanceTippy from '../../../components/Bagpipes/Forms/PopupForms/ChainForms/ChainTxForm/BalanceTippy';
 import { actionCallsData, chainActions } from './actions';
 import { Button, Modal, Spin } from 'antd';
@@ -554,12 +553,12 @@ const fetchBalance = async (signal) => {
       const result = await signAndSendRemark(formData.selectedChain, walletContext, accountAddress, serializedData, {
         signedExtrinsic: (status: string) => {
           if (status === 'Signed') {
-            setTimeout(() => {
+            // setTimeout(() => {
               console.log('Transaction signed. Waiting for the transaction to be included in a block...');
               setModalText('Transaction signed! Waiting for the transaction to be included in a block...');
               setUrlStatus('transaction signed');
               setUrlLoading(false);
-            }, 0);
+            // }, 0);
           } else if (status === 'Cancelled') {
             console.log('Transaction signing was cancelled.');
             setModalText('Transaction signing was cancelled.');
@@ -569,10 +568,8 @@ const fetchBalance = async (signal) => {
           }
         },
         onInBlock: (blockHash: any) => {
-          setTimeout(() => {
-            setModalText(`Transaction included in block:` + `${<span className='font-mono'> {blockHash}</span>}` + `URL is being generated...`);
-            setUrlStatus('Tx in block...');
-          }, 0);        
+          setModalText(`Transaction included in block: ${blockHash}. URL is being generated...`);
+          setUrlStatus('Tx in block...');
         },
         onFinalized: (blockHash: any) => {
           setModalText(`Transaction finalized at block:` + `${<span className='font-mono'> {blockHash}</span>}`);
