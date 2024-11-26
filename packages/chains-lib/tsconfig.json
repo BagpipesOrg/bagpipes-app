@@ -1,0 +1,28 @@
+{
+  "extends": "../../tsconfig.paths.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "module": "ESNext",
+    "target": "ES2020",
+    "declaration": false,          // Disable declaration generation here
+    "sourceMap": true,
+    "rootDir": "src",
+    "noEmit": true,                // Prevent TypeScript from emitting files
+    "allowJs": true,
+    "checkJs": false,
+    "isolatedModules": true,
+    "moduleResolution": "node",    // Ensure proper module resolution
+    "esModuleInterop": true,       // Enable interop with CommonJS modules
+    "paths": {
+      "chains-lib/*": ["src/*"]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.js",
+    "src/**/*.json",
+    "src/**/*.jsx"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

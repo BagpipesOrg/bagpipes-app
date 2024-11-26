@@ -1,31 +1,7 @@
 {
-  "compilerOptions": {
-    "jsx": "react-jsx",
-    "baseUrl": "./",
-    "outDir": "./build",
-    "rootDir": "./src",
-    "allowJs": true,
-    "esModuleInterop": true,
-    "target": "ES2020",
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "isolatedModules": true,
-    "moduleDetection": "force",
-    "noEmit": true,
-
-    "useDefineForClassFields": true,
-    "module": "ESNext",
-    "paths": {
-      "@polkadot-api/descriptors": [".papi/descriptors/dist/index"]
-    },
-
-
-  },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.json", "src/components/Bagpipes/Forms/PopupForms/ActionSelector.jsx", "src/pages/Lab/utils/renderNodeDetails.jsx", "src/components/Toolbar/nodeDescriptions.jsx", "src/contexts/tooltips/tooltipUtils/useTooltipClick.jsx", "src/pages/PublicPages/Blinks/utils.jsx"],
-  "exclude": ["vite.config.js", "node_modules"]
-}
-
-
+    "files": [],
+    "references": [
+      { "path": "./tsconfig.base.json" },
+      { "path": "./tsconfig.paths.json" }
+    ]
+  }
