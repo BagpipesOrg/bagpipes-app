@@ -12,9 +12,10 @@ import '../styles/SelectWallet.scss';
 
 interface Props {
   theme: string;
+  debug?: boolean;
 }
 
-function SelectWalletModal ({ theme }: Props): React.ReactElement<Props> {
+function SelectWalletModal({ theme, debug }: Props): React.ReactElement<Props> {
   const openSelectWalletContext = useContext(OpenSelectWallet);
   const walletContext = useContext(WalletContext);
   const navigate = useNavigate();
@@ -44,8 +45,8 @@ function SelectWalletModal ({ theme }: Props): React.ReactElement<Props> {
     wrapClassName={'sub-wallet-modal-wrapper'}
   >
     <SelectWallet onSelectWallet={onSelectWallet} />
-    <LogDisplay />
-  </Modal>;
+    {debug && <LogDisplay />} {/* Conditionally render LogDisplay */}
+    </Modal>;
 }
 
 export default SelectWalletModal;

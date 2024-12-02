@@ -6,6 +6,7 @@ import { substrate_address_to_evm } from "../Helpers/txHelper";
 import { ChainKey } from "../ChainsInfo/metadata";
 import toast, { Toaster } from "react-hot-toast";
 import { getRawAddress } from "../utils/getRawAddress";
+import { isCurrencyAsset } from '../utils/utils'
 
 import Keyring from "@polkadot/keyring";
 
@@ -1526,5 +1527,194 @@ export async function assethub_to_parachain(
     0,
     { Unlimited: 0 }
   );
+  return tx;
+};
+
+export async function polkadot_to_bifrost(
+  amount: number,
+  address: string,
+  delay?: number
+) {
+  const api = await getApiInstance(ChainKey.Polkadot, new AbortController().signal);
+  const paraid = 2030; // Bifrost's parachain ID
+  const accountId = api.createType("AccountId32", address).toHex();
+
+  const destination = {
+    parents: 0,
+    interior: { X1: { Parachain: paraid } },
+  };
+
+  const beneficiary = {
+    parents: 0,
+    interior: { X1: { AccountId32: { id: accountId, network: null } } },
+  };
+
+  const assets = [
+    {
+      id: { Concrete: { parents: 0, interior: "Here" } }, // Represents DOT
+      fun: { Fungible: amount },
+    },
+  ];
+
+  const tx = api.tx.xcmPallet.limitedReserveTransferAssets(
+    { V3: destination },
+    { V3: beneficiary },
+    { V3: assets },
+    0,
+    { Unlimited: null }
+  );
+
+  if (delay) {
+    const future: number = (await api.query.system.number()).toHuman() as number;
+    const priority = 0;
+    const numberfuture: number =
+      parseInt(future.toString().replace(/,/g, "")) + delay;
+    const txo = api.tx.scheduler.schedule(numberfuture, null, priority, tx);
+    return txo;
+  }
+
+  return tx;
+};
+
+export async function bifrost_to_polkadot(
+  amount: number,
+  address: string
+) {
+  const api = await getApiInstance(ChainKey.Bifrost, new AbortController().signal);
+  const destination = {
+    parents: 1, // Moving up to the Relay Chain
+    interior: { Here: null },
+  };
+
+  const beneficiary = {
+    parents: 0,
+    interior: { X1: { AccountId32: { id: getRawAddress(address), network: null } } },
+  };
+
+  const asset = {
+    id: {
+      Concrete: {
+        parents: 1,
+        interior: { X1: { Parachain: 0 } }, // Adjust based on how DOT is represented
+      },
+    },
+    fun: { Fungible: amount },
+  };
+  
+
+  const tx = api.tx.polkadotXcm.limitedTeleportAssets(
+    { V3: destination },
+    { V3: beneficiary },
+    { V3: asset },
+    0,
+    { Unlimited: null }
+  );
+
+  return tx;
+};
+
+export async function bifrost_to_parachain(
+  amount: number,
+  address: string,
+  assetId: string | number,
+  paraId: number
+) {
+  const api = await getApiInstance(ChainKey.Bifrost, new AbortController().signal);
+
+  const destination = {
+    parents: 0,
+    interior: { X1: { Parachain: paraId } },
+  };
+
+  const beneficiary = {
+    parents: 0,
+    interior: { X1: { AccountId32: { id: getRawAddress(address), network: null } } },
+  };
+
+  // Determine if the asset is a currency or token on Bifrost
+  const isCurrency = isCurrencyAsset(assetId);
+  let asset;
+
+  if (isCurrency) {
+    // Asset from currencyMetadatas
+    asset = {
+      id: {
+        Concrete: {
+          parents: 0,
+          interior: {
+            X1: { GeneralKey: api.createType('Bytes', assetId).toHex() },
+          },
+        },
+      },
+      fun: { Fungible: amount },
+    };
+  } else {
+    // Asset from assetMetadatas
+    asset = {
+      id: {
+        Concrete: {
+          parents: 0,
+          interior: {
+            X1: { GeneralIndex: assetId },
+          },
+        },
+      },
+      fun: { Fungible: amount },
+    };
+  }
+
+  const tx = api.tx.xTokens.transferMultiasset(
+    { V3: asset },
+    { V3: destination },
+    { V3: beneficiary },
+    { Unlimited: null }
+  );
+
+  return tx;
+}
+
+
+export async function polkadot_to_parachain(
+  amount: any,
+  address: any,
+  paraId: any,
+  delay: number
+) {
+  const api = await getApiInstance(ChainKey.Polkadot, new AbortController().signal);
+  const accountId = api.createType("AccountId32", address).toHex();
+
+  const destination = {
+      parents: 0,
+      interior: { X1: { Parachain: paraId } },
+  };
+
+  const beneficiary = {
+      parents: 0,
+      interior: { X1: { AccountId32: { id: accountId, network: null } } },
+  };
+
+  const assets = [
+      {
+          id: { Concrete: { parents: 0, interior: "Here" } }, // DOT
+          fun: { Fungible: amount },
+      },
+  ];
+
+  const tx = api.tx.xcmPallet.limitedReserveTransferAssets(
+      { V3: destination },
+      { V3: beneficiary },
+      { V3: assets },
+      0,
+      { Unlimited: null }
+  );
+
+  if (delay) {
+      const future = (await api.query.system.number()).toHuman();
+      const priority = 0;
+      const numberfuture = parseInt(future.toString().replace(/,/g, "")) + delay;
+      const txo = api.tx.scheduler.schedule(numberfuture, null, priority, tx);
+      return txo;
+  }
+
   return tx;
 }

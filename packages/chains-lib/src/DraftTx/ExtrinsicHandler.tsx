@@ -3,7 +3,7 @@ import {
     polkadot2moonbeam, assethub2moonbeam, turing2moonriver, moonriver2turing, mangata2turing, polkadotHub2KusamaHub, hydrationToParachain, turing2mangata, 
     generic_kusama_to_parachain, assethub2ethereum, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, 
     assethub2interlay, assethub_to_polkadot, getDecimalsForAsset, polkadot_to_bifrost, bifrost_to_polkadot, bifrost_to_parachain,
-    hydradx_omnipool_sell, listChains, getTokenDecimalsByChainName } 
+    hydradx_omnipool_sell, listChains, getTokenDecimalsByChainName, get_moonbeam_asset_decimals } 
 from 'chains-lib';
 
 // import toast from "react-hot-toast";
@@ -47,7 +47,7 @@ async function handleScheduleTransfer(formdata) {
     const target = formdata.target;
 
     console.log(`[handleScheduleTransfer] formdata:`, formdata);
-    if (!source.chain == "turing") {
+    if (source.chain !== "turing") {
         throw new Error("You can only schedule xcm transfers from Turing");
     }
 
@@ -114,7 +114,9 @@ async function handleStake(formdata) {
     const conviction = delegate.conviction; // string number
     const dest = delegate.to_address;
     const amount = source.amount * (10 ** tokenDecimals);
-    return delegatePolkadot(dest, amount, conviction);
+
+    const params = { toAddress: dest, amount, conviction };
+    return delegatePolkadot(params);
   }
   
 
@@ -199,7 +201,7 @@ async function handlexTransfer(formData) {
             if (!isEthereumAddress(target.address)) { //  evm account check
                 throw new Error("Invalid address, select your evm account");
             };
-            return polkadot2moonbeam(submittableAmount, target.address);
+            return polkadot2moonbeam(submittableAmount.toString(), target.address);
         },
 
 
@@ -432,3 +434,7 @@ async function handleSwap(formData) {
     throw new Error("You can only swap from hydradx to hydradx");
   }
   
+function polkadot_to_parachain(submittableAmount: number, address: any, paraId: number, delay: any) {
+    throw new Error('Function not implemented.');
+}
+

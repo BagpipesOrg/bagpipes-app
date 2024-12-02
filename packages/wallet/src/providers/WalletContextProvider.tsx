@@ -81,8 +81,18 @@ export function WalletContextProvider ({ children }: Props) {
     [afterSelectEvmWallet, setWalletKey]
   );
 
+  const disconnectWallet = useCallback(() => {
+    setCurrentWallet(undefined);
+    setAccounts([]);
+    setStatus('disconnected');
+    setIsWalletSelected(false);
+    setWalletKey(undefined);
+    setWalletType(''); 
+    // Optionally, reload the window or navigate to a different page
+    windowReload();
+  }, [setWalletKey, setWalletType]);
+
   const walletContext = {
-    
     wallet: getWalletBySource(walletKey),
     evmWallet: getEvmWalletBySource(walletKey),
     accounts,
@@ -99,6 +109,7 @@ export function WalletContextProvider ({ children }: Props) {
     isWalletSelected,
     status,
     setStatus,
+    disconnectWallet,
   };
 
   const selectWalletContext = {
@@ -154,6 +165,9 @@ export function WalletContextProvider ({ children }: Props) {
       }
     }
   }, [afterSelectEvmWallet, afterSelectWallet, walletKey, walletType]);
+
+
+ 
 
   return <WalletContext.Provider value={walletContext as WalletContextInterface}>
     <OpenSelectWallet.Provider value={selectWalletContext}>

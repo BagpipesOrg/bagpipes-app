@@ -1,4 +1,5 @@
 
+import { CHAIN_ASSETS } from "../Assets/chainAssets";
 
 export function adjustBalance(balance: number, tokenDecimals: number): string {
   if (typeof balance === "undefined" || balance === null) {
@@ -68,3 +69,8 @@ export function toUnit(
 
 
 
+export function isCurrencyAsset(assetId: string | number): boolean {
+  // Implement logic to determine if the asset is from currencyMetadatas
+  const currencyMetadatas = CHAIN_ASSETS.bifrost.assetRegistry.currencyMetadatas;
+  return currencyMetadatas?.some((currencyData: any) => currencyData.currencyId === assetId);
+}

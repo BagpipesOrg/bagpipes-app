@@ -58,7 +58,7 @@
 
   .react-flow__node.selected  {
     outline: 20px solid rgba(1, 179, 24, 0.203) !important;
-    border-radius: 12px !important;
+    border-radius: 11px !important;
   
     /* border: 3px solid black !important; */
   }
@@ -195,6 +195,7 @@ background-color: white !important;
     // overflow-wrap: break-word;
     padding: 5px;
     box-shadow: 8px 8px 8px 2px var(--box-shadow-color) !important;
+    border: 1px solid var(--border-color) !important;
     
     /* ...any other necessary styles... */
 

@@ -2,6 +2,7 @@ import { getOrderedList } from "../hooks/utils/scenarioExecutionUtils";
 import { prepareTransactionsForReview } from "../CustomNodes/TransactionReview/transactionUtils";
 import { extrinsicHandler } from "../CustomNodes/TransactionReview/extrinsicHandler";
 import { useAppStore } from "../hooks";
+import { toast } from "react-hot-toast";
 
 export const preProcessDraftTransactions = async (activeScenarioId, scenarios, isActionDataComplete) => {
     const actionNodes = scenarios[activeScenarioId]?.diagramData?.nodes?.filter(node => node.type === 'action');
@@ -49,7 +50,14 @@ export const startDraftingProcess = async (activeScenarioId, scenarios) => {
         const draftedExtrinsicsWithData = []; // Note the name change for clarity
         for (const formData of preparedActions) {
             console.log('[startDraftingProcess] Drafting extrinsic for action:', formData);
+
+            try {
             const draftedExtrinsic = await extrinsicHandler(formData.actionType, formData);
+            } catch (error) {
+                console.error('Error drafting extrinsic:', error);
+                toast.error(error.message);
+
+            }
             // Here we're packaging the extrinsic with its corresponding form data
             draftedExtrinsicsWithData.push({ 
                 formData: formData, 

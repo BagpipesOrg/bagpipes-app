@@ -1,6 +1,19 @@
 export const CHAIN_ASSETS = {
     "bifrost": {
-    "assets": 
+
+    "currencyMetadatas":
+    [
+      [
+        {
+          "name": "Polkadot DOT",
+          "symbol": "DOT",
+          "decimals": 10,
+          "minimalBalance": "1000000"
+        }
+      ]
+    ],    
+
+    "assetsMetadatas": 
       [
         [
           [
