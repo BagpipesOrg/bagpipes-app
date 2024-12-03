@@ -6,13 +6,17 @@ import { prepareTransactionsForReview } from './transactionUtils';
 import useAppStore from '../../../../store/useAppStore';
 import { getOrderedList } from "../../hooks/utils/scenarioExecutionUtils";
 import { WalletContext } from 'wallet';
-import { extrinsicHandler } from './extrinsicHandler';
+// import { extrinsicHandler } from './extrinsicHandler';
+import { extrinsicHandler } from 'chains-lib';
+// import toast from hot toas
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { useNavigate } from 'react-router-dom';
 import { signExtrinsicUtil } from '../../utils/signExtrinsicUtil';
 import { ISubmittableResult } from '@polkadot/types/types';
 import ThemeContext from '../../../../contexts/ThemeContext';
 import { getNonce, getApiInstance, ChainKey } from 'chains-lib';
+import { toast } from 'react-hot-toast';
+
 import '../../../../index.css';
 
 import './TransactionMain.scss';
@@ -183,15 +187,20 @@ const handleAcceptTransactions = async () => {
       const fetchDraftedExtrinsicsWithData = async () => {
         const draftedExtrinsicsWithData: { formData: any; draftedExtrinsic: any; status: string; }[] = [];
         for (const formData of preparedActions) {
-          const draftedExtrinsic = await extrinsicHandler(formData.actionType, formData);
-          const transactionData = {
-            formData: formData,
-            draftedExtrinsic: draftedExtrinsic,
-            status: 'drafted'
+          try {
+            const draftedExtrinsic = await extrinsicHandler(formData.actionType, formData);
+            const transactionData = {
+              formData: formData,
+              draftedExtrinsic: draftedExtrinsic,
+              status: 'drafted'
 
-          };
-          console.log("[fetchDraftedExtrinsicsWithData] transactionData:", transactionData);
-          draftedExtrinsicsWithData.push(transactionData);
+            };
+            console.log("[fetchDraftedExtrinsicsWithData] transactionData:", transactionData);
+            draftedExtrinsicsWithData.push(transactionData);
+          } catch (error) {
+            toast.error(error.message)
+          }
+         
         }
         return draftedExtrinsicsWithData;
       }

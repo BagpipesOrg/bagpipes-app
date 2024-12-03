@@ -56,18 +56,18 @@ export function listChains() {
 
 
 
-  const MangataX: ChainInfo = {
-    name: "mangatax",
-    display: "MangataX (Kusama)",
-    paraid: 2110,
-    prefix: 42,
-    token_decimals: 12,
-    logo: '/chains/mangata.png',
-    parachain: true, 
-    relayParent: "kusama",
-    relay: false,
-    symbol: 'MGX'
-  };
+    const MangataX: ChainInfo = {
+      name: "mangatax",
+      display: "MangataX (Kusama)",
+      paraid: 2110,
+      prefix: 42,
+      token_decimals: 12,
+      logo: '/chains/mangata.png',
+      parachain: true, 
+      relayParent: "kusama",
+      relay: false,
+      symbol: 'MGX'
+    };
 
   chainList[2110] = MangataX;
 

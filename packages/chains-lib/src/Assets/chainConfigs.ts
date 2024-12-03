@@ -9,7 +9,7 @@ export interface ChainConfig {
     getApiInstance: (signal?: AbortSignal) => Promise<ApiPromise>;
     getBalance: (api: ApiPromise, accountId: string, assetId: any) => Promise<any>;
     getAssetDecimals: (api: ApiPromise, assetId: any) => Promise<number>;
-    parseBalance: (balanceData: any) => BaseBalance;
+    parseBalance: (balanceData: any, assetId?: any) => BaseBalance;
 }
 
 export async function getDecimalsForAsset(
@@ -32,6 +32,7 @@ export const chainConfigs: { [key in ChainKey]?: ChainConfig } = {
     getApiInstance: (signal) => getApiInstance(ChainKey.AssetHub, signal),
     getBalance: async (api, accountId, assetId) => {
       if (assetId === 1000) {
+        console.log('chainConfigs assetHub assetId === 1000')
         return api.query.system.account(accountId);
       } else {
         return api.query.assets.account(assetId, accountId);
@@ -43,21 +44,33 @@ export const chainConfigs: { [key in ChainKey]?: ChainConfig } = {
       }
       const metadata = await api.query.assets.metadata(assetId);
       if (metadata && !metadata.isEmpty) {
-        const meta = (metadata as any).unwrap();
-        return meta.decimals.toNumber();
+        console.log('chainConfgs assetHub metadata', metadata)
+        return (metadata as any).decimals.toNumber();
       }
       throw new Error("Decimals not found in metadata");
     },
-    parseBalance: (balanceData) => {
+    parseBalance: (balanceData, assetId) => {
+      console.log('chainConfigs assetHub parseBalance', balanceData, assetId)
       if (balanceData.isEmpty) {
+        console.log('assetHub balanceData is empty')
         return { free: '0', reserved: '0', frozen: '0' };
       }
-      const bal = balanceData;
-      return {
-        free: bal.balance.toString(),
-        reserved: '0',
-        frozen: '0',
-      };
+      const bal = balanceData.toHuman();
+      console.log('bal in assetHub', bal, assetId)
+      if (assetId === 1000) {
+        console.log('assetId === 1000')
+        return {
+          free: bal.data.free,
+          reserved: bal.data.reserved,
+          frozen: bal.data.frozen,
+        }
+      } else {
+        return {
+          free: bal.balance,
+          reserved: '0',
+          frozen: '0',
+        };
+     }
     },
   },
 
@@ -65,6 +78,7 @@ export const chainConfigs: { [key in ChainKey]?: ChainConfig } = {
 
   assetHub_kusama: {
     getApiInstance: (signal) => getApiInstance(ChainKey.AssetHubKusama, signal),
+    
     getBalance: async (api, accountId, assetId) => {
       const assetLocation = {
         parents: 2,
@@ -72,15 +86,18 @@ export const chainConfigs: { [key in ChainKey]?: ChainConfig } = {
       };
       return api.query.foreignAssets.account(assetLocation, accountId);
     },
+
     getAssetDecimals: async () => {
-      return 10; // Assuming DOT has 10 decimals on Kusama AssetHub
+      return 10; 
     },
+
     parseBalance: (balanceData) => {
       if (!balanceData || balanceData.isEmpty) {
         return { free: '0', reserved: '0', frozen: '0' };
       }
       const bal = balanceData.toHuman();
       const balanceStr = bal.balance.replace(/,/g, "");
+      console.log('assetHub_kusama bal', bal)
       return {
         free: balanceStr,
         reserved: '0',
@@ -223,6 +240,7 @@ export const chainConfigs: { [key in ChainKey]?: ChainConfig } = {
   moonbeam: {
     getApiInstance: (signal) => getApiInstance(ChainKey.Moonbeam, signal),
     getBalance: async (api, accountId, assetId) => {
+      console.log('moonbeam getBalance', assetId, accountId)
       return api.query.assets.account(assetId, accountId);
     },
     getAssetDecimals: async (api, assetId) => {
@@ -238,6 +256,7 @@ export const chainConfigs: { [key in ChainKey]?: ChainConfig } = {
         return { free: '0', reserved: '0', frozen: '0' };
       }
       const bal = balanceData.toHuman();
+      console.log('moonbeam bal', bal)  
       const balanceStr = bal.balance.replace(/,/g, "");
       return {
         free: balanceStr,

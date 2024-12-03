@@ -8,6 +8,7 @@ export * from "./DraftTx/DraftInk";
 export * from "./DraftTx/DraftSwapTx";
 export * from "./DraftTx/DraftxTransferTx";
 export * from "./DraftTx/Delegate";
+export * from "./DraftTx/ExtrinsicHandler";
 // export * from "./Helpers/AssetHelper";
 export * from "./Helpers/FeeHelper";
 export * from "./Helpers/PriceHelper";
