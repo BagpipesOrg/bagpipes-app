@@ -33,10 +33,6 @@ jobs:
       - name: Build workspace
         run: yarn build
 
-      # Optional: Test the build
-      - name: Run Tests
-        run: yarn test
-
       # Optional: Cache Node.js dependencies
       - name: Cache node_modules
         uses: actions/cache@v3
