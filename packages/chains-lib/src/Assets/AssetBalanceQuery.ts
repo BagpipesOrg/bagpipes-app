@@ -32,6 +32,7 @@ export async function getAssetDecimals(chain: string, assetid: number, signal?: 
     baseBalance: BaseBalance,
     assetDecimals: number
   ): BaseBalance {
+    console.log(`processBalances baseBalance`, baseBalance, assetDecimals);
     const free = toUnit(baseBalance.free, assetDecimals);
     const reserved = toUnit(baseBalance.reserved, assetDecimals);
     const total = (parseFloat(free) + parseFloat(reserved)).toString();
@@ -50,17 +51,17 @@ async function getAssetBalanceGeneric(
       throw new Error(`Unsupported chain: ${chain}`);
     }
     const api = await chainConfig.getApiInstance(signal);
-    console.log('getAssetBalanceGeneric getting balanceData...')
+    console.log('getAssetBalanceGeneric getting balanceData...', api, accountId, assetId)
 
     const balanceData = await chainConfig.getBalance(api, accountId, assetId);
-    console.log('getAssetBalanceGeneric got balanceData...', balanceData)
+    console.log('getAssetBalanceGeneric got balanceData...', balanceData, chain)
     console.log('getAssetBalanceGeneric getting asset decimals...', assetId)
 
     const assetDecimals = await chainConfig.getAssetDecimals(api, assetId);
 
 
-    const baseBalance = chainConfig.parseBalance(balanceData);
-    console.log(`getAssetBalanceGeneric baseBalance`, balanceData.toHuman(), balanceData?.free, balanceData, baseBalance);
+    const baseBalance = chainConfig.parseBalance(balanceData, assetId);
+    console.log(`getAssetBalanceGeneric baseBalance`, balanceData, baseBalance);
     const processedBalances = processBalances(baseBalance, assetDecimals);
   
     return {

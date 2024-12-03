@@ -104,7 +104,7 @@ export function listMoobeamAssets(chain: string) {
       return assets.map(
         (assetData: { asset: { deposit: string; name: string; symbol: string; decimals: string; isFrozen: boolean; }; assetId: string }) => ({
           asset: assetData.asset,
-          assetId: assetData.assetId.replace(",", ""),
+          assetId: assetData.assetId,
         })
       );
   }

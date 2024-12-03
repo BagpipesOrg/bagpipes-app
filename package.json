@@ -24,7 +24,7 @@
     "build:wallet": "yarn workspace wallet build",
     "test": "npx tsx src/run_tests.ts",
     "format": "npx prettier --write 'src/*/*/*.ts' && npx prettier --write 'src/*.ts'",
-    "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint packages --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "papi:generate": "npx papi add dot -n polkadot && npx papi",
     "postinstall": "papi"

@@ -294,7 +294,7 @@ const BagpipesFlow = () => {
 
   
   
-          /**
+    /**
      * Callback function that gets triggered when the nodes state changes.
      * @param changes {object} - Contains the changes made to the node state.
      */
@@ -638,7 +638,7 @@ const BagpipesFlow = () => {
       console.log(`got form data`);
       console.log(`isActionDataComplete actionType:`, node.formData.action);
       
-      if (["Remark", "vote", "stake", "delegate", "ink", "ScheduleTransfer"].includes(node.formData.action)) {
+      if (["Remark", "vote", "stake", "delegate", "ink", "ScheduleTransfer", "xTransfer"].includes(node.formData.action)) {
         
         return true;
       }
@@ -755,9 +755,13 @@ const handleStopScenario = (instance) => {
     setIsExecuting(true);
     try {
         await executeFlowScenario(instance);
+        setIsExecuting(false);
+        setExecutionState('idle');
     } catch (error) {
         console.error("An error occurred during scenario execution:", error);
     } finally {
+      console.log("Scenario execution completed.");
+        setIsExecuting(false);
         setExecutionState('idle');
     }
 }

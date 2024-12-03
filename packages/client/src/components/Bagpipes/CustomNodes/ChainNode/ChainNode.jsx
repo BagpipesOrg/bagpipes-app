@@ -203,6 +203,7 @@ const ChainNode = ({ data, isConnectable }) => {
         try {
           const assetsData = await getAssetOptions(formState.chain, signal);
           if (!signal.aborted) {
+            console.log('assetsData', assetsData);
             setAssetsForChain(assetsData.assets || []);
             // Automatically select the first asset if needed
             // handleFormChange("asset", assetsData.assets[0]);

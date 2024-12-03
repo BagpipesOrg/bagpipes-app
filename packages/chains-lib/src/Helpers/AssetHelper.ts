@@ -661,7 +661,7 @@ export async function check_moonbeam(accounteth: string, dassetid: string, signa
   }
   }
   //const decimals = assetobj.find(assetobj => assetobj.assetId == assetid).asset.decimals;
-  const assetid = dassetid.replace(/,/g, "");
+  const assetid = dassetid;
   console.log(`moonbeam balance check: `, accounteth, assetid, decimals);
   const balance = await api.query.assets.account(assetid, accounteth);
   const b3 = balance.toHuman();

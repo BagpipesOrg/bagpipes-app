@@ -43,7 +43,7 @@ export async function broadcastToChain(
           }
           console.log(`Transaction failed with dispatch error: ${errorMessage}`);
           onError?.(new Error(errorMessage));
-          unsub();
+          unsub?.();
           reject(new Error(errorMessage));
           return; // Exit early since there's an error
         }
@@ -57,7 +57,7 @@ export async function broadcastToChain(
         if (status.isFinalized) {
           console.log(`Transaction finalized at blockHash ${status.asFinalized.toString()}`);
           onFinalized?.(status.asFinalized.toString());
-          unsub();
+          unsub?.();
           resolve();
         }
     
@@ -65,7 +65,8 @@ export async function broadcastToChain(
           const errorMessage = `Transaction error: ${status.type}`;
           console.log(`Transaction status error: ${errorMessage}`);
           onError?.(new Error(errorMessage));
-          unsub();
+          unsub?.();
+
           reject(new Error(errorMessage));
         }
       });
