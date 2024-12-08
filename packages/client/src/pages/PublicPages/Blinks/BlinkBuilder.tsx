@@ -14,6 +14,12 @@ import { signAndSendRemark } from './generateBlink';
 import type { Action, NewActionForm } from './types';
 import type { Balance, Chain } from './types';
 import toast from 'react-hot-toast';
+// import { useTippy } from '../../../contexts/tooltips/TippyContext';
+
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css'; 
+import 'tippy.js/themes/light.css';
+
 import './Blinks.scss';
 import 'wallet-styles';
 
@@ -124,6 +130,8 @@ let formData = getBlinkMetadata(activeBlinksId);
   const [urlStatus, setUrlStatus] = useState('wating for signature');
   const [urlLoading, setUrlLoading] = useState(false);
   const [loadings, setLoadings] = useState<boolean[]>([]);
+  const [themeColor, setThemeColor] = useState('#ffffff');
+
 
   const enterLoading = (index: number) => {
     setLoadings((prevLoadings) => {
@@ -155,6 +163,10 @@ let formData = getBlinkMetadata(activeBlinksId);
     console.log('handleChange', field, value, updatedFormData);
   };
 
+
+  const handleThemeColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setThemeColor(e.target.value);
+  };
 
 
   const handleTransferButtonChange = (index: number, valueOrEvent: any, field: keyof NewActionForm) => {
@@ -678,37 +690,47 @@ const fetchBalance = async (signal) => {
     setOpen(false);
   };
 
-  return (
-    <>
-      <WalletWidget />
-      <div className='blinkBuilderHeader'>
-
-      <div className='blinkTitleInfo'> 
-        <h1>Blink DApp Builder</h1>
-        <span>Blink {activeBlinksId}</span></div>
+  return(
+  <>
+   
+    <div className='blinkBuilderHeader'>
+      
+   
+    <div className='blinkTitleInfo'>
+        <h1>DApp Designer</h1>
+        <span>Blink {activeBlinksId}</span>
       </div>
-      <div className='blinkMainContainer'>
-     
-      
-      
+      <div className='header-right-menu'>
+      <Tippy
+                    content={
+                      <div className="generate-button-description">
+                        Generate the blink on-chain. Make sure that you have an on-chain ID for Polkadot, and also make sure you have some balance on AssetHub where the fees will be paid.
+                      </div>
+                    }
+                    interactive={true}
+                    placement="bottom"
+                    theme="light"
+                  >
+                <Button
+                  type="primary"
+                  // icon={<BlinkIcon className='h-4 w-4 mr-2' fillColor='white' />}
+                  loading={loadings[1]}
+                  onClick={handleSaveMetadataOnChain}
+                  className='generate-button'
+                >
+                  <span className='font-semibold'>Publish</span>
+                
+                </Button>
+              </Tippy>
+         
+      <WalletWidget />
+      </div>
+
+    </div>
+  
+    <div className='blinkMainContainer'>
       <div className='blinkBuilder'>
-      
-        {/* <button onClick={}><span>My Blinks</span></button> */}
-        
-        
         <div className='blinkForm'>
-          {/* <label>
-            Title:
-            <input type="text" value={formData?.title} onChange={handleChange('title')} placeholder="Enter Title" />
-          </label>
-          <label>
-            Icon (URL):
-            <input type="text" value={formData?.icon} onChange={handleChange('icon')} placeholder="https://bagpipes.io/polkadot-blinks.png" />
-          </label>
-          <label>
-            Description:
-            <textarea value={formData?.description} onChange={handleChange('description')} placeholder="Brief description here." />
-          </label> */}
           {renderTitleField()}
           {renderIconField()}
           {renderDescriptionField()}
@@ -717,20 +739,6 @@ const fetchBalance = async (signal) => {
           {renderAddressSelection()} 
         
 
-
-          
-          <div className='generateBlink'>
-          <Button
-            type="primary"
-            icon={<BlinkIcon className='h-4 w-4 mr-2' fillColor='white' />}
-            loading={loadings[1]}
-            onClick={handleSaveMetadataOnChain}
-            
-            className='generate-button'
-          >
-            <span className='font-semibold'>Generate Blink</span>
-          
-          </Button>
 
           
           <Modal
@@ -762,25 +770,26 @@ const fetchBalance = async (signal) => {
                 {generatedUrl && !urlLoading && (
                 
                   <div className='blink-url-container generated-url'>
-                  <Button
-                      icon={<CopyIcon className='h-4 w-4 font-semibold mr-1' fillColor='#FFF' />}
+
+                    <Button
+                      icon={<CopyIcon className="h-4 w-4 font-semibold mr-1" fillColor="#FFF" />}
                       onClick={async () => {
                         try {
                           await navigator.clipboard.writeText(generatedUrl);
                           toast.success(`Copied ${generatedUrl} to clipboard`);
                         } catch (err) {
-                          toast.error('Failed to copy');
-                          console.error('Failed to copy text: ', err);
+                          toast.error("Failed to copy");
+                          console.error("Failed to copy text: ", err);
                         }
                       }}
                       style={{ marginLeft: 8 }}
-                      className='copy-button'
-                 >
-                 {/* <a className='blink-url' href={generatedUrl} target="_blank" rel="noopener noreferrer">
-                      {generatedUrl}
-                    </a> */}
-                 </Button>
-          
+                      className="copy-button"
+                    >
+                      {/* <a className='blink-url' href={generatedUrl} target="_blank" rel="noopener noreferrer">
+                          {generatedUrl}
+                        </a> */}
+                    </Button>
+
                  <a className='' href={generatedUrl} target="_blank" rel="noopener noreferrer">
                       {generatedUrl}
                     </a>
@@ -789,82 +798,29 @@ const fetchBalance = async (signal) => {
               </div>
             </div>
           </Modal>
-          <label className='generate-button-description'>Generate the blink on-chain. Make sure that you have an on-chain ID for Polkadot, and also make sure you have some balance on AssetHub where the fees will be paid.</label>
-          </div>
+
+        
         </div>
 
       </div>
 
       <BlinkViewer action={action} />
 
-
+      {/* <div className='rightBar'>
+        <h2>Style Options</h2>
+        <div className='styleControls'>
+          <label>
+            Theme Color:
+            <input type='color' onChange={handleThemeColorChange} />
+          </label>
+        </div>
+      </div> */}
     </div>
-
-    </>
+  </>
   );
+
 };
 
 export default BlinkBuilder;
 
-
-
-//   const handleActionTypeChange = (value: string) => {
-//     // Set the new action type
-//     setActionType(value);
-//     saveBlinkMetadata(activeBlinksId, {...formData, actionType: value})
-
-//     // If changing action type to something valid, reset forms and add one default form
-//     if (value !== "no action") {
-//         setActionForms([{ label: "", amount: "", inputName: "", amountType: "" }]);
-//         // Update the main action object
-//         setAction(prev => ({
-//             ...prev,
-//             actionType: value,
-//             links: { actions: [] } // Clear existing actions
-//         }));
-//     } else {
-//         // If "no action" is selected, clear all forms
-//         setActionForms([]);
-//         setAction(prev => ({
-//             ...prev,
-//             actionType: value,
-//             links: { actions: [] }
-//         }));
-//         saveBlinkMetadata(activeBlinksId, prev => ({
-//           ...prev,
-//           actionType: value,
-//           links: { actions: [] }
-//       }));
-//     }
-// };
-
-
-
-  // const handleTransferButtonChange = (index: number, valueOrEvent: any, field: keyof NewActionForm) => {
-  //   let value: string;
-  //   if (typeof valueOrEvent === 'string') {
-  //       // This is directly from Select component
-  //       value = valueOrEvent;
-  //   } else if (valueOrEvent && valueOrEvent.target) {
-  //       // This is from standard HTML input elements
-  //       value = valueOrEvent.target.value;
-  //   } else {
-  //       // If neither, log an error or handle the case appropriately
-  //       console.error('Invalid input from form elements');
-  //       return;
-  //   }
-
-  //   const newForms = [...actionForms];
-  //   newForms[index][field] = value;
-  //   setActionForms(newForms);
-
-  //   // Update main action state to reflect changes
-  //   const updatedActions = newForms.map(form => ({
-  //       label: form.label,
-  //       href: form.amountType === "fixedAmount" ? `/api/${actionType}/recipient?amount=${form.amount}` : `/api/${actionType}/recipient`,
-  //       type: form.amountType,
-  //       parameters: form.amountType === "inputAmount" ? [{ name: form.inputName, label: form.label, type: 'inputAmount' }] : []
-  //   }));
-  //   setAction(prev => ({ ...prev, links: { actions: updatedActions } }));
-  // };
 

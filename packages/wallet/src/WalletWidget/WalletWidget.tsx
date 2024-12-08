@@ -7,6 +7,7 @@ import { title } from 'process';
 
 interface WalletWidgetProps {
   showAsButton?: boolean;
+  containerClass?: string;
 }
 
 interface WalletContextType {
@@ -17,7 +18,7 @@ interface WalletContextType {
 
 
 
-function WalletWidget({ showAsButton = true }: WalletWidgetProps): React.ReactElement {
+function WalletWidget({ showAsButton = true, containerClass = "" }: WalletWidgetProps): React.ReactElement {
   const { open: openSelectWallet } = useContext(OpenSelectWallet);
 
   const walletContext = useContext(WalletContext) as WalletContextType;
@@ -69,8 +70,8 @@ console.log("WalletWidget", walletTitle, walletLogoSrc, status);
 
 
   return (
-    <div className="widget-container">
-      <button onClick={openSelectWallet} className="widget-btn items-center mb-4">
+    <div className={containerClass}>
+      <button onClick={openSelectWallet} className="widget-btn items-center">
         <span className="icon-and-text">
           <span className="icon">
             {walletLogoSrc ? (

@@ -6,12 +6,12 @@
   align-items: left;
   // we want items to be stacked under each other
   flex-direction: column;
-  background: #F7F8FA;
+  // background: #F7F8FA;
   // background: rgb(229, 229, 229);
-  padding: 20px;
+  padding: 12px;
 
   h1 {
-    font-size:32px;
+    font-size:26px;
     font-weight: bold;
     margin: 0px;
     padding: 0px;
@@ -19,7 +19,8 @@
 
   span {
     margin-left: 2px;
-    color: grey
+    color: grey;
+    font-size: 12px;
   }
 
 
@@ -32,6 +33,9 @@
     overflow-y: scroll;
     height: 100%;
     display: flex;
+
+    // flex-direction: row; 
+    // align-items: flex-start; 
     background: rgba(0, 0, 0, 0.067);
     // the background is a local file that is a noise texture noiserectangle.png
     background-image: url('./noiserectangle.png');
@@ -375,6 +379,8 @@ label {
   // right: 200px;
   //  margin: auto;
   //  overflow: scroll;
+  width: 30%;
+
 ;
    
 
@@ -680,26 +686,50 @@ padding: 0px !important;
   border: 1px dashed #ccc;
   margin-top: 10px;
   border-radius: 7px;
-
   padding: 15px !important;
 }
 
 .generate-button-description {
   font-size: 12px;
-  color: rgb(137, 137, 137);
-  margin-top: 10px;
+  color: rgb(85, 85, 85);
+  margin-top: 5px;
   font-weight: 300 !important;
+}
+
+
+.header-right-menu {
+  display: flex;
+  gap: 10px;
+}
+.widget-container {
+    width: auto !important;
+    padding: 5px !important;
+    align-self: center;
+}
+
+.widget-btn {
+  margin-bottom: 0 !important;
+  align-items: center;
+  font-size: 14px !important;
+
+  span {
+    font-size: inherit;
+  }
 }
 
 .generate-button {
   display: flex;
   align-items: center;
   justify-content: center;
+  align-self: center;
+  padding: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
   cursor: pointer;
   border: 0px;
   outline: 0px;
   border-radius: 8px !important;
   padding: 16px 16px !important; 
+
 
   span {
     display: block; /* Makes the span a block element to fill height */
@@ -714,7 +744,7 @@ padding: 0px !important;
 
 .ant-btn {
   display: flex !important;
-  border-radius: 8px !important;
+  border-radius: 7px !important;
   align-items: center;
   justify-content: center;
 }
@@ -804,4 +834,80 @@ padding: 0px !important;
 
 .blinkBuilderHeader {
   background: rgb(255, 255, 255);
+  display: flex;
+  justify-content: space-between;
+}
+
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  // border: 1px solid #d2d2d2;
+  position: fixed;
+  width: 100%;
+  z-index: 100;
+  height: 60px;
+}
+
+// .generateBlink {
+//   align-self: center;
+//   align-items: center;
+
+//   cursor: pointer;
+//   border: 0px;
+//   outline: 0px;
+//   border-radius: 8px !important;
+//   padding: 16px 16px !important; 
+//   // background: rgb(66, 66, 66);
+//   color: white !important;
+//   font-weight: 500 !important;
+// }
+
+
+
+.rightBar {
+  width: 250px;
+  padding: 20px;
+  background: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  // border: 1px solid #d2d2d2;
+  position: absolute;
+  right: 0;
+  top: 30;
+  height: 100%;
+
+  h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .styleControls {
+    display: flex;
+    flex-direction: column;
+
+    label {
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    input[type='color'] {
+      width: 100%;
+      height: 30px;
+      border: none;
+      cursor: pointer;
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .blinkMainContainer {
+    flex-direction: column;
+  }
+
+  .blinkBuilder,
+  .BlinkViewer,
+  .rightBar {
+    width: 100%;
+  }
 }
