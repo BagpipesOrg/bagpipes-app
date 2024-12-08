@@ -75,7 +75,7 @@ const TopBar = ({
         </div>
       )}
 
-      <div className="">
+      <div className="flex">
         {showExecuteButton ? (
           <>
             <ExecuteButton

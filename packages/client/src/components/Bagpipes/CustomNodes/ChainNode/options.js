@@ -104,6 +104,7 @@ export const getAssetOptions = async (selectedChain, signal) => {
 
     case 'bifrost':
         assets = await listBifrostAssets();
+        console.log("Bifrost Assets:", assets);
          assets.push(bifrostAssets);
         break;
     case 'hydration':

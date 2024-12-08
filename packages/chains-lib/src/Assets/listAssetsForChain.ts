@@ -25,22 +25,76 @@ export function listAssetHubAssets_Kusama() {
   }));
 }
 
+// export function listBifrostAssets() {
+//   const assets = CHAIN_ASSETS.bifrost.assets;
+
+//   return assets.map((assetArray: any) => {
+//     const [assetIdArray, assetInfo] = assetArray;
+//     const assetIdObj = assetIdArray[0]; // Assuming assetIdArray contains only one item
+
+//     const assetIdKey = Object.keys(assetIdObj.NativeAssetId)[0];
+//     const assetIdValue = assetIdObj.NativeAssetId[assetIdKey];
+
+//     return {
+//       asset: assetInfo,
+//       assetId: assetIdValue, 
+//     };
+//   });
+// }
+
 export function listBifrostAssets() {
-  const assets = CHAIN_ASSETS.bifrost.assets;
+  const assetMetadatas = CHAIN_ASSETS.bifrost.assetsMetadatas;
+  const currencyMetadatas = CHAIN_ASSETS.bifrost.currencyMetadatas;
+  console.log(`currencyMetadatas`, currencyMetadatas);
 
-  return assets.map((assetArray: any) => {
-    const [assetIdArray, assetInfo] = assetArray;
-    const assetIdObj = assetIdArray[0]; // Assuming assetIdArray contains only one item
+  const assets = [];
 
-    const assetIdKey = Object.keys(assetIdObj.NativeAssetId)[0];
-    const assetIdValue = assetIdObj.NativeAssetId[assetIdKey];
+  // Process assetMetadatas
+  assetMetadatas?.forEach((assetData: any) => {
+    // assetData is an array with two elements: assetIdArray and assetInfo
+    const [assetIdArray, assetInfo] = assetData;
+    let assetIdValue;
 
-    return {
-      asset: assetInfo,
-      assetId: assetIdValue, 
-    };
+    // Extract assetId from assetIdArray
+    if (Array.isArray(assetIdArray)) {
+      const assetIdObj = assetIdArray[0]; // Assuming assetIdArray contains only one item
+      const assetIdKey = Object.keys(assetIdObj)[0]; 
+      const assetIdValueObj = assetIdObj[assetIdKey]; 
+      const assetIdSubKey = Object.keys(assetIdValueObj)[0]; 
+      assetIdValue = assetIdValueObj[assetIdSubKey]; 
+    } else {
+      assetIdValue = assetIdArray;
+    }
+
+    assets.push({
+      asset: {
+        "name": assetInfo.name,
+        "symbol": assetInfo.symbol,
+        "decimals": assetInfo.decimals,
+        "minimalBalance": assetInfo.minimalBalance.toString(),
+      },
+      assetId: assetIdValue ? assetIdValue.toString() : "Unknown",
+    });
   });
+
+  // Process currencyMetadatas
+  currencyMetadatas?.forEach((currencyData: any) => {
+    // currencyData is an array containing one object
+    const currencyInfo = currencyData[0];
+    assets.push({
+      asset: {
+        "name": currencyInfo.name,
+        "symbol": currencyInfo.symbol,
+        "decimals": currencyInfo.decimals,
+        "minimalBalance": currencyInfo.minimalBalance.toString(),
+      },
+      assetId: currencyInfo.currencyId ? currencyInfo.currencyId.toString() : "0", // Assign default assetId "0" for DOT
+    });
+  });
+
+  return assets;
 }
+
 
 
 export function listMoobeamAssets(chain: string) {
@@ -50,7 +104,7 @@ export function listMoobeamAssets(chain: string) {
       return assets.map(
         (assetData: { asset: { deposit: string; name: string; symbol: string; decimals: string; isFrozen: boolean; }; assetId: string }) => ({
           asset: assetData.asset,
-          assetId: assetData.assetId.replace(",", ""),
+          assetId: assetData.assetId,
         })
       );
   }

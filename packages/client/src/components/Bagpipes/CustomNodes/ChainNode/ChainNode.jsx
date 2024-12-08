@@ -158,13 +158,15 @@ const ChainNode = ({ data, isConnectable }) => {
     // Update the chain in the form state
     handleFormChange("chain", selectedChainName);
   
-    // Reset asset, amount, and balance
+    // Reset asset, amount, balance, and assetsForChain
     handleFormChange("asset", null);
     handleFormChange("amount", null);
     setBalance(null);
+    setAssetsForChain([]); // Reset assetsForChain
   
     setIsLoading(true);
   };
+  
   
   const handleAssetChange = (e) => {
     const selectedAssetName = e.target.value;
@@ -199,19 +201,16 @@ const ChainNode = ({ data, isConnectable }) => {
   
       const fetchAssets = async () => {
         try {
-          const assetsData = await getAssetOptions(formState.chain, signal); 
+          const assetsData = await getAssetOptions(formState.chain, signal);
           if (!signal.aborted) {
-            setAssetsForChain(assetsData.assets);
-            // console.log('Fetched assets:', assetsData);
-  
-            if (!formState.asset && assetsData.assets?.length) {
-              handleFormChange("asset", assetsData.assets[0]);
-            }
+            console.log('assetsData', assetsData);
+            setAssetsForChain(assetsData.assets || []);
+            // Automatically select the first asset if needed
+            // handleFormChange("asset", assetsData.assets[0]);
           }
         } catch (error) {
           if (!signal.aborted) {
             console.error("Failed to fetch assets for chain", formState.chain, error);
-            // Handle this error as needed, maybe show a user-friendly message
           }
         } finally {
           if (!signal.aborted) {
@@ -222,7 +221,11 @@ const ChainNode = ({ data, isConnectable }) => {
   
       fetchAssets();
   
-      return () => controller.abort();  // Cleanup function
+      return () => controller.abort(); // Cleanup function
+    } else {
+      // If no chain is selected, clear assets
+      setAssetsForChain([]);
+      handleFormChange("asset", null);
     }
   }, [formState.chain]);
   
@@ -362,27 +365,32 @@ const ChainNode = ({ data, isConnectable }) => {
           </div>
         </div>
         <div className="in-node-border p-2 rounded mb-2 ">
-        {formState.chain &&  (
+        {formState.chain && (
           <div className="asset-selection mb-2">
             <h3 className="text-xxs node-input primary-font mb-1">Asset</h3>
             {isLoading ? (
-               <div className="select-container">
-               <div className="in-node-border border-gray-300 p-2 rounded-md w-full">
-                 <div className="spinner"></div>  
-               </div>
-             </div>
-          ) : (
-            <select className="asset-selector text-black in-node-border border-gray-300 p-2 rounded font-semibold" onChange={handleAssetChange} value={formState.asset ? formState.asset.name : ""}>
-              <option value="">Select an asset</option>
-               {assetsForChain.map(asset => (
-                   <option key={asset.assetId} value={asset.asset.name}>
+              <div className="select-container">
+                <div className="in-node-border border-gray-300 p-2 rounded-md w-full">
+                  <div className="spinner"></div>
+                </div>
+              </div>
+            ) : (
+              <select
+                className="asset-selector text-black in-node-border border-gray-300 p-2 rounded font-semibold"
+                onChange={handleAssetChange}
+                value={formState.asset ? formState.asset.name : ""}
+              >
+                <option value="">Select an asset</option>
+                {assetsForChain.map(asset => (
+                  <option key={asset.assetId} value={asset.asset.name}>
                     {asset.asset.symbol} | {asset.asset.name} | AssetId: {asset.assetId}
-                   </option>
-               ))}
-            </select>
-          )}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
         )}
+
       </div>
   
       {formState.chain && (

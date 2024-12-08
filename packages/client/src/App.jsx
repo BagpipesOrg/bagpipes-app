@@ -72,7 +72,7 @@ function App () {
                 </div>
                 
                 {/* <SelectWalletModal theme={'dark'} /> */}
-                <SelectWalletModal />
+                <SelectWalletModal theme="light" debug={false} />
                 </PanelTippyProvider>
                 </TippyProvider> 
               </AddressBookProvider>
