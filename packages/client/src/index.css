@@ -355,3 +355,6 @@ border: 1px solid rgb(184, 184, 184);
 }
 }
 
+.fetch-action {
+  background: blue !important;
+}

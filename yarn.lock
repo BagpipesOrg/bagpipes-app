@@ -1219,7 +1219,7 @@
     "@babel/helper-validator-identifier" "^7.25.9"
 
 "@bagpipes/chains@file:/Users/ramsey/xcm-send/xcmsend-ui/packages/chains-lib":
-  version "0.5.4"
+  version "0.5.5"
   resolved "file:packages/chains-lib"
   dependencies:
     "@polkadot-api/descriptors" "file:.papi/descriptors"
@@ -9065,7 +9065,7 @@ caseless@~0.12.0:
     sha.js "^2.4.11"
 
 "chains-lib@file:packages/chains-lib":
-  version "0.5.4"
+  version "0.5.5"
   resolved "file:packages/chains-lib"
   dependencies:
     "@polkadot-api/descriptors" "file:.papi/descriptors"

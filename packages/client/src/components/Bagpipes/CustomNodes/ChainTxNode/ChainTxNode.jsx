@@ -4,19 +4,15 @@ import { ChainQueryIcon } from '../../../Icons/icons';
 import { useTippy } from '../../../../contexts/tooltips/TippyContext';
 import EventNotification from '../../../EventNotifications/EventNotification';
 import useAppStore from '../../../../store/useAppStore';
-import { listChains } from 'chains-lib';
-
-import './ChainTx.scss';
-import '../../node.styles.scss';
-
-import 'tippy.js/dist/tippy.css'; 
-import 'tippy.js/themes/light.css';
-
 import ChainTxForm from '../../Forms/PopupForms/ChainForms/ChainTxForm/ChainTxForm';
 import TransactionSignForm from '../../Forms/PopupForms/ChainForms/ChainTxForm/TransactionSignForm';
 import { WalletContext } from 'wallet';
 import ChainRpcService from '../../../../services/ChainRpcService';
-
+import { listChains } from 'chains-lib';
+import './ChainTx.scss';
+import '../../node.styles.scss';
+import 'tippy.js/dist/tippy.css'; 
+import 'tippy.js/themes/light.css';
 
 export default function ChainTxNode({ data }) {
   const { scenarios, activeScenarioId, executionId, updateExecutionSigningJob, updateNodeResponseData } = useAppStore(state => ({
@@ -34,10 +30,7 @@ export default function ChainTxNode({ data }) {
   const { showTippy, hideTippy } = useTippy();
   const nodeId = useNodeId();
   const nodeRef = useRef();
-
   const [signedResponse, setSignedResponse] = useState(null);
-
-
   const [chainList, setChainList] = useState({});
   const ChainInfoList = Object.values(chainList);
   const formData = scenarios[activeScenarioId]?.diagramData?.nodes.find(node => node.id === nodeId)?.formData || {};

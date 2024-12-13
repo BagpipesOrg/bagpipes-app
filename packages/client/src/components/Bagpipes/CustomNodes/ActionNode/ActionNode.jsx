@@ -837,7 +837,7 @@ console.log('previousNodeFormData: ', previousNodeFormData);
 
     <button 
       onClick={() => fetchActionInfo(nodeId)} 
-      className="fetch-action  hover:bg-blue-700 flex justify-center align-center hover:bg- font-bold py-1 px-1 mb-1 in-node-border-gray-300 hover:in-node-border-green rounded" 
+      className="fetch-action hover:bg-blue-700 flex justify-center align-center font-bold py-1 px-1 mb-1 in-node-border-gray-300 hover:in-node-border-green rounded" 
     >
        { isFetchingActionData ? (
           <div className="small-spinner"></div>
