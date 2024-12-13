@@ -18,6 +18,7 @@ export * from "./ChainsInfo/WsEndpoints";
 export * from "./api/broadcastToChain";
 export * from "./api/codecForCallData";
 export * from "./api/connect";
+export * from "./api/connectPapi";
 export * from "./api/getNonce";
 export * from "./light-client/SmoldotWorker";
 export * from "./ChainsInfo/metadata";

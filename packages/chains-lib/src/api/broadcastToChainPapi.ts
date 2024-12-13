@@ -1,8 +1,10 @@
 // broadcast.ts
 
-import { HexString, PolkadotClient } from "polkadot-api";
-import { getApiInstancePapi } from "./connectPapi";
+import { PolkadotClient } from "polkadot-api";
+import { getClient } from "./getClient";
 import { ChainKey } from "../ChainsInfo/metadata";
+import toast from "react-hot-toast";
+import { HexString } from "polkadot-api/types";
 import { InvalidTxError } from "polkadot-api";
 
 interface BroadcastCallbacks {
@@ -23,11 +25,11 @@ export async function broadcastToChain(
   signedExtrinsic: HexString,
   { onInBlock, onFinalized, onError }: BroadcastCallbacks = {}
 ): Promise<void> {
-  console.log(`Broadcasting to chain ${chain}`);
+  console.log(`broadcasting to ${chain}`);
 
   let client: PolkadotClient;
   try {
-    client = await getApiInstancePapi(chain);
+    client = await getClient(chain);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     onError?.(new Error(`Failed to connect to the endpoint: ${errorMessage}`));
@@ -44,9 +46,12 @@ export async function broadcastToChain(
           switch (event.type) {
             case "broadcasted":
               console.log(`Transaction broadcasted with hash ${event.txHash}`);
+              // This is optional: it's just a signal that the tx is out in the network.
               break;
 
             case "txBestBlocksState":
+              // This event fires every time the transaction is found or not found in a best block.
+              // If `found:true`, the transaction is included in a best block (similar to "in block" in old API).
               if (event.found) {
                 console.log(
                   `Transaction included in block ${event.block.hash} (not finalized yet).`
@@ -56,13 +61,13 @@ export async function broadcastToChain(
               break;
 
             case "finalized":
+              // The transaction is included in a finalized block
               console.log(
                 `Transaction finalized at blockHash ${event.block.hash}`
               );
+              // Check if it was successful:
               if (!event.ok) {
-                const errMsg = `Transaction failed on-chain: ${
-                  event.dispatchError?.type ?? "Unknown error"
-                }`;
+                const errMsg = `Transaction failed on-chain: ${event.dispatchError?.type ?? "Unknown error"}`;
                 console.log(errMsg);
                 onError?.(new Error(errMsg));
                 subscription.unsubscribe();
@@ -75,6 +80,7 @@ export async function broadcastToChain(
               break;
 
             default:
+              // Other cases should not happen, but let's log them for completeness
               console.log(`Unknown event type: ${(event as any).type}`);
               break;
           }
@@ -82,6 +88,7 @@ export async function broadcastToChain(
         error: (err: unknown) => {
           let errorMessage = "Unknown error broadcasting transaction.";
           if (err instanceof InvalidTxError) {
+            // Transaction is invalid at runtime
             errorMessage = `Invalid transaction: ${JSON.stringify(err.error)}`;
           } else if (err instanceof Error) {
             errorMessage = err.message;
@@ -92,7 +99,8 @@ export async function broadcastToChain(
           reject(new Error(errorMessage));
         },
         complete: () => {
-          // Subscription completes on successful finalization; already handled in 'finalized' event.
+          // The subscription completes if the transaction is finalized successfully.
+          // We've already handled that case in "finalized" event.
         },
       });
   });
