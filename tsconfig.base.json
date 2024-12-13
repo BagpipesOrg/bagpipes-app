@@ -18,7 +18,9 @@
     "paths": {
       "chains-lib/*": ["packages/chains-lib/src/*"],
       "client/*": ["packages/client/src/*"],
-      "wallet/*": ["packages/wallet/src/*"]
+      "wallet/*": ["packages/wallet/src/*"],
+      "@/*": ["packages/client/src/*"]
+
     }
   },
   "include": [],

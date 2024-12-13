@@ -70,6 +70,9 @@ optimizeDeps: {
       'client': path.resolve(__dirname, 'packages/client/dist/esm'),
       'wallet': path.resolve(__dirname, 'packages/wallet/dist/esm'),
       'wallet-styles': path.resolve(__dirname, 'packages/wallet/dist/esm/wallet.css'),
+
+      "@": path.resolve(__dirname, "packages/client/src")
+
       // 'chains-lib': path.resolve(__dirname, 'packages/chains-lib/src'),
       // 'client': path.resolve(__dirname, 'packages/client/src'),
       // 'wallet': path.resolve(__dirname, 'packages/wallet/src'),
