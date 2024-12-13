@@ -1,6 +1,6 @@
 {
   "name": "@bagpipes/chains",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "description": "Shared utilities and helpers for blockchain interactions for Bagpipes",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -23,7 +23,7 @@
     "@polkadot-api/descriptors": "file:.papi/descriptors",
     "@rollup/plugin-wasm": "^6.2.2",
     "@types/rollup-plugin-peer-deps-external": "^2.2.5",
-    "polkadot-api": "^1.6.2",
+    "polkadot-api": "^1.7.7",
     "rollup-plugin-dts": "^6.1.1"
   },
   "devDependencies": {

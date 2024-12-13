@@ -1,9 +1,10 @@
-name: Build
+name: Build and Release
 
 on:
   push:
     branches:
-      - '*'
+      - '*' # Trigger on all branches, adjust as necessary
+  workflow_dispatch: # Allow manual triggering
 
 jobs:
   build:
@@ -33,7 +34,7 @@ jobs:
       - name: Build workspace
         run: yarn build
 
-      # Optional: Cache Node.js dependencies
+      # Step 5: Cache Node.js dependencies (optional for faster builds)
       - name: Cache node_modules
         uses: actions/cache@v3
         with:
@@ -43,3 +44,38 @@ jobs:
           key: yarn-${{ matrix.node-version }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             yarn-${{ matrix.node-version }}-
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Extract version
+      - name: Extract version
+        id: version
+        run: echo "::set-output name=VERSION::$(node -p \"require('./package.json').version\")"
+
+      # Step 3: Debug VERSION
+      - name: Debug VERSION
+        run: echo "VERSION is ${{ steps.version.outputs.VERSION }}"
+
+      # Step 4: Create Release
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: v${{ steps.version.outputs.VERSION }}
+          name: Release v${{ steps.version.outputs.VERSION }}
+          generateReleaseNotes: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Step 5: Upload artifacts (optional)
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: |
+            dist/
+            packages/**/dist/
