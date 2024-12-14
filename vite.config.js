@@ -65,6 +65,7 @@ optimizeDeps: {
       'react-router-dom': path.resolve(__dirname, 'node_modules/react-router-dom'),
       '@polkadot-api/descriptors': path.resolve(__dirname, 'packages/chains-lib/.papi/descriptors/dist'),
       // '@polkadot-api/descriptors': path.resolve(__dirname, 'packages/chains-lib/node_modules/@polkadot-api/descriptors/dist/index.mjs'),
+      "@": path.resolve(__dirname, "packages/client/src"),
 
       'chains-lib': path.resolve(__dirname, 'packages/chains-lib/dist/esm'),
       'client': path.resolve(__dirname, 'packages/client/dist/esm'),

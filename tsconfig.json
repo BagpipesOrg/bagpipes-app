@@ -1,7 +1,13 @@
 {
-    "files": [],
-    "references": [
-      { "path": "./tsconfig.base.json" },
-      { "path": "./tsconfig.paths.json" }
-    ]
-  }
+  "files": [],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["packages/client/src/*"]
+    }
+  },
+  "references": [
+    { "path": "./tsconfig.base.json" },
+    { "path": "./tsconfig.paths.json" }
+  ]
+}
