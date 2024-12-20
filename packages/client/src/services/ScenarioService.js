@@ -6,6 +6,8 @@ import useAppStore from '../store/useAppStore';
 import toast from 'react-hot-toast';
 import threadbagInstance from './AxiosService'
 import config from "../config";
+import { compressString } from '../components/Bagpipes/TemplateFeatures/compress';
+
 
 class ScenarioService {
     constructor() {
@@ -229,21 +231,33 @@ class ScenarioService {
     }
     
 
+
+    async get_api_scenario_id(scenarioId) {
+        let diagramdata = useAppStore.getState().scenarios[scenarioId]?.diagramData;
+        const compressed_link = await compressString(JSON.stringify(diagramdata));
+        return compressed_link;
+    }
+
     async startPersistScenario(scenarioId) {
         try {
             console.log('startPersistScenario', scenarioId);
-
+            let diagramdata = useAppStore.getState().scenarios[scenarioId]?.diagramData;
+            const compressed_link = await compressString(JSON.stringify(diagramdata));
             const response = await axios.post(`${config.threadbagUrl}/job/start`, {
-                id: scenarioId
+                id: compressed_link
             }, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
 
+            if (!response.data.success) {
+                toast.error(response.data.result || 'Could not start job');
+                throw Error("could not start scenario");
+            } else {
+                toast.success(`Scenarion Persistance worker started`);
+            }
 
-
-           // const response = await threadbagInstance.post('/job/start', { id: scenarioId });
             console.log('Server response:', response.data);
             return response.data;
         } catch (error) {
@@ -262,6 +276,13 @@ class ScenarioService {
                 }
             });
             console.log('Server response:', response.data);
+            if (!response.data.success) {
+                toast.error(response.data.result || 'Could not start job');
+                throw Error("could not stop scenario");
+            } else {
+                toast.success(`Scenario worker stopped`);
+            }
+
             return response.data;
         } catch (error) {
             console.error(`Failed to persist scenario ${scenarioId}:`, error);
@@ -269,13 +290,18 @@ class ScenarioService {
         }
     }
 
+
     async fetchPersistedScenarioLogs(scenarioId) {
         try {
             const response = await threadbagInstance.post(
-                `/scenario/worker/logs`, { id: scenarioId }, { withCredentials: true }
+                `/scenario/worker/logs`, { id: scenarioId },
+                 {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }}
             );
             console.log('Server response:', response.data);
-            return response.data;
+            return JSON.stringify(response.data);
         } catch (error) {
             console.error(`Failed to get logs for scenario ${scenarioId}:`, error);
             throw error;
